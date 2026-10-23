@@ -326,3 +326,14 @@ Story: 1.1
 **Por quê:** o template do Nest CLI 12 troca Jest por Vitest, ESLint por oxlint e CommonJS por ESM, contrariando D-019, D-022, D-024 e D-028. O Nest 11 gera exatamente o que essas decisões descrevem, e o CLI do TypeORM funciona sem atrito em CommonJS.
 **Alternativas descartadas:** template do Nest 12 (exigiria substituir quatro decisões e adaptar o TypeORM ao ESM); Nest 12 com Jest e ESLint trocados à mão (mais trabalho e dependências fora da lista aprovada).
 **Consequência:** ao instalar qualquer `@nestjs/*`, conferir que o `peerDependencies` aceita o Nest 11, porque o `latest` do npm aponta para a linha 12.
+
+## D-033: oxlint no front, ESLint na API
+
+Status: Aceita
+Data: 2026-10-23
+Story: 1.1
+
+**Decisão:** o front usa o oxlint que o template `react-ts` do Vite já traz, com `complexity: ['error', 10]` e `typescript/no-explicit-any` como erro. A API continua com o ESLint do Nest CLI 11. Prettier nos dois, com a mesma config.
+**Por quê:** cada projeto segue o padrão do próprio framework, sem dependência extra. O oxlint tem as duas regras exigidas pela D-022 e pela D-028.
+**Alternativas descartadas:** trocar o oxlint por ESLint no front (dependências a mais só para uniformizar a ferramenta).
+**Consequência:** as regras de lint ficam em dois formatos (`api/eslint.config.mjs` e `web/.oxlintrc.json`); regra nova precisa entrar nos dois.
