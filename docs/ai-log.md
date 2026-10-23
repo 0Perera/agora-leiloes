@@ -51,3 +51,18 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Erro da IA que peguei:**
 - Para o anti-sniping, a IA afirmou que "fim = agora + 2 min" era o comportamento comum em leilões. Pedi para conferir, e a pesquisa mostrou que não existe um padrão único: o Catawiki, uma das referências do próprio desafio, soma o tempo ao fim atual. A decisão final (D-011) foi pela leitura literal do enunciado e pelo Catawiki.
+
+## Story 1.1: Esqueleto do monorepo no ar
+
+**O que a IA gerou:**
+- `docker-compose.yml` com o Postgres, projeto Nest (config de envs validada, TypeORM, migration inicial vazia, `/health` com teste) e projeto React com a página "API: ok".
+- Workflow de CI com os jobs `api`, `web` e `readme`, e os commits da story.
+- Seção "Rodar local" do README e as entradas D-031 e D-032.
+
+**O que revisei ou reescrevi:**
+- Decidi rodar as migrations no boot (`migrationsRun`) em vez de no start command (D-031).
+- O Nest CLI atual gerou Vitest, oxlint e ESM. Mandei fixar o CLI 11 e instalar só versões das libs `@nestjs/*` compatíveis com o Nest 11, conferindo o `peerDependencies` antes do commit (D-032).
+- Fiz o commit inicial direto na `main`; daí em diante, branch por story.
+
+**Sugestões rejeitadas e por quê:**
+- *Aceitar o template do Nest 12:* contrariava as decisões de testes e lint já tomadas.

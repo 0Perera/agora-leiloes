@@ -13,7 +13,7 @@ Contexto para a story de esqueleto e para qualquer story que mexa em deploy. Os 
 ## Limitações do Render free que afetam o projeto
 
 - **Sem pre-deploy command** (só nos planos pagos). Migrations precisam rodar quando a API sobe.
-  Em aberto, decidir na story: start command `npm run migration:run && node dist/main` ou `migrationsRun: true` no TypeORM.
+  Decidido na D-031: `migrationsRun: true` no TypeORM, então o start command é só `node dist/main`.
 - **Sem shell e sem one-off jobs.** Não dá para rodar comandos no servidor.
 - **Filesystem efêmero**: tudo que for gravado em disco some no redeploy, no restart ou quando o serviço dorme. Nada de upload ou arquivo local.
 - **Dorme após 15 min sem tráfego**; o primeiro acesso depois disso pode levar até ~1 min.

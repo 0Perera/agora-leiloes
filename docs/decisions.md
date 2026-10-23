@@ -304,3 +304,25 @@ Status: Aceita · Story: planejamento
 **Por quê:** quem avalia roda o projeto local com um comando, sem instalar Node.
 **Alternativas descartadas:** compose só com o Postgres (exige Node instalado e três terminais).
 **Consequência:** o Render continua rodando Node direto, sem Docker. O compose entra numa story própria, depois do esqueleto.
+
+## D-031: Migrations rodam no boot da API
+
+Status: Aceita
+Data: 2026-10-23
+Story: 1.1
+
+**Decisão:** `migrationsRun: true` no TypeORM. A API aplica as migrations pendentes ao subir; o start command no Render é só `node dist/main`.
+**Por quê:** o Render free não tem pre-deploy. Rodando no boot, `npm run start:dev` local, o deploy e o seed (que sobe o contexto do Nest) aplicam as migrations do mesmo jeito, com uma configuração só.
+**Alternativas descartadas:** start command `npm run migration:run && node dist/main` (explícito no Render, mas o `start:dev` local não migraria sozinho e o CLI em produção dependeria do data-source compilado).
+**Consequência:** migration com erro impede a API de subir. O log do boot mostra as migrations executadas.
+
+## D-032: Nest CLI 11 no lugar do 12
+
+Status: Aceita
+Data: 2026-10-23
+Story: 1.1
+
+**Decisão:** API criada com `@nestjs/cli@11` e libs `@nestjs/*` na linha cujo `peerDependencies` aceita `@nestjs/common` 11 (`@nestjs/config@4`, `@nestjs/typeorm@11`), com `typeorm` 0.3.
+**Por quê:** o template do Nest CLI 12 troca Jest por Vitest, ESLint por oxlint e CommonJS por ESM, contrariando D-019, D-022, D-024 e D-028. O Nest 11 gera exatamente o que essas decisões descrevem, e o CLI do TypeORM funciona sem atrito em CommonJS.
+**Alternativas descartadas:** template do Nest 12 (exigiria substituir quatro decisões e adaptar o TypeORM ao ESM); Nest 12 com Jest e ESLint trocados à mão (mais trabalho e dependências fora da lista aprovada).
+**Consequência:** ao instalar qualquer `@nestjs/*`, conferir que o `peerDependencies` aceita o Nest 11, porque o `latest` do npm aponta para a linha 12.
