@@ -1,5 +1,6 @@
 name: agora
 
+# Portas do host configuráveis (DB_PORT, API_PORT, WEB_PORT) caso alguma já esteja em uso.
 services:
   db:
     image: postgres:17
@@ -8,7 +9,6 @@ services:
       POSTGRES_PASSWORD: agora
       POSTGRES_DB: agora
     ports:
-      # Porta do host configurável caso a 5432 já esteja em uso.
       - "${DB_PORT:-5432}:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
@@ -17,6 +17,30 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+  api:
+    build: ./api
+    environment:
+      DATABASE_URL: postgres://agora:agora@db:5432/agora
+      DB_SSL: "false"
+      WEB_ORIGIN: http://localhost:${WEB_PORT:-5173}
+      PORT: "3000"
+    ports:
+      - "${API_PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./web
+      args:
+        # O navegador chama a API pela porta publicada no host.
+        VITE_API_URL: http://localhost:${API_PORT:-3000}
+    ports:
+      - "${WEB_PORT:-5173}:80"
+    depends_on:
+      - api
 
 volumes:
   db-data:
