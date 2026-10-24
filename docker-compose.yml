@@ -4,6 +4,7 @@ name: agora
 services:
   db:
     image: postgres:17
+    container_name: agora-postgres
     environment:
       POSTGRES_USER: agora
       POSTGRES_PASSWORD: agora
