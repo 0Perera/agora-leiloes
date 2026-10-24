@@ -298,7 +298,7 @@ Status: Aceita · Story: planejamento
 
 ## D-030: Docker Compose sobe o projeto inteiro
 
-Status: Aceita · Story: planejamento
+Status: Aceita · Momento de implementação substituído por D-035 · Story: planejamento
 
 **Decisão:** `docker compose up` sobe banco, API e web. Dockerfiles em `api/` e `web/` servem só ao compose.
 **Por quê:** quem avalia roda o projeto local com um comando, sem instalar Node.
@@ -348,3 +348,14 @@ Story: 1.1
 **Por quê:** a configuração do deploy fica versionada e revisável na PR, em vez de espalhada no dashboard. Virginia é a região do Render mais próxima do Brasil. A `DATABASE_URL` vem do banco por referência, o que simplifica recriar o banco na entrega (D-027).
 **Alternativas descartadas:** configurar os três serviços à mão no dashboard (nada versionado, fácil esquecer o rewrite ou o health check).
 **Consequência:** `WEB_ORIGIN` e `VITE_API_URL` usam `sync: false`: são pedidas só na criação e, depois disso, mudam só pelo dashboard. Mudança de build, start ou rota passa pelo `render.yaml`.
+
+## D-035: Compose completo na story 1.1, com o front em nginx
+
+Status: Aceita
+Data: 2026-10-23
+Story: 1.1 · Substitui a parte da D-030 que adiava o compose para uma story própria
+
+**Decisão:** os Dockerfiles e o compose com banco, API e web entram já na story 1.1. O front no container é o build do Vite servido por nginx, com fallback para `index.html`.
+**Por quê:** com o esqueleto pronto, o compose completo custava pouco e já deixa o projeto rodando com um comando. O nginx reproduz o Static Site do Render (arquivos estáticos e rewrite), sem dependência npm nova.
+**Alternativas descartadas:** manter o compose para uma story própria (adiaria algo barato); Vite dev server no container (diferente de produção e com atrito de volume em `node_modules`).
+**Consequência:** mudança de código exige `docker compose up --build`; para desenvolver com hot reload, sobe-se só o `db` e roda-se API e front com npm. `VITE_API_URL` é argumento de build da imagem do front.

@@ -15,23 +15,23 @@ _(credenciais do seed e um roteiro curto de teste)_
 
 ## Rodar local
 
-Pré-requisitos: Docker e Node 24.
+Tudo com Docker, num comando só (pré-requisito: Docker):
 
 ```bash
-# Banco (Postgres 17). Se a 5432 estiver ocupada: DB_PORT=5433 docker compose up -d
-docker compose up -d
+docker compose up --build
+```
 
-# API em http://localhost:3000. As migrations rodam sozinhas no boot.
-cd api
-cp .env.example .env   # ajuste a porta em DATABASE_URL se mudou DB_PORT
-npm ci
-npm run start:dev
+Front em http://localhost:5173 (mostra "API: ok"), API em http://localhost:3000, banco na 5432.
+Se alguma porta estiver ocupada: `WEB_PORT=5174 API_PORT=3001 DB_PORT=5433 docker compose up --build`.
+As migrations rodam sozinhas no boot da API.
 
-# Front em http://localhost:5173 (outro terminal). A página mostra "API: ok".
-cd web
-cp .env.example .env
-npm ci
-npm run dev
+Para desenvolver com hot reload (pré-requisito: Node 24), suba só o banco e rode API e front com npm:
+
+```bash
+docker compose up -d db
+
+cd api && cp .env.example .env && npm ci && npm run start:dev   # ajuste DATABASE_URL se mudou DB_PORT
+cd web && cp .env.example .env && npm ci && npm run dev         # outro terminal
 ```
 
 A API não sobe se faltar variável de ambiente, e a mensagem diz qual.

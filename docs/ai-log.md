@@ -57,7 +57,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **O que a IA gerou:**
 - `docker-compose.yml` com o Postgres, projeto Nest (config de envs validada, TypeORM, migration inicial vazia, `/health` com teste) e projeto React com a página "API: ok".
 - Workflow de CI com os jobs `api`, `web` e `readme`, e os commits da story.
-- Seção "Rodar local" do README, o `render.yaml` e as entradas D-031 a D-034.
+- Seção "Rodar local" do README, o `render.yaml`, os Dockerfiles e o compose completo, e as entradas D-031 a D-035.
 
 **O que revisei ou reescrevi:**
 - Decidi rodar as migrations no boot (`migrationsRun`) em vez de no start command (D-031).
@@ -65,6 +65,8 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Fiz o commit inicial direto na `main`; daí em diante, branch por story.
 - O template do Vite também trocou ESLint por oxlint. Mantive o oxlint, com as mesmas duas regras da API (D-033).
 - Pedi o deploy via Blueprint, ainda no plano free, na região Virginia (D-034). A IA conferiu os campos do `render.yaml` na documentação do Render (`staticPublishPath` relativo ao `rootDir`, sintaxe de `routes`).
+- Pedi para trazer o compose completo (D-030) para esta story. A IA avisou que estava fora do escopo escrito; decidi incluir, com o front em nginx (D-035).
+- Na revisão final pedida por mim, a IA achou um bug que ela mesma tinha introduzido: o ajuste do `tsconfig` para o TS 6 tirou o cache incremental da `dist` e quebrou o `start:dev`. Corrigido, com um segundo build no CI para pegar a regressão.
 - Pedi Prettier no front, com a mesma config da API, e `strictPropertyInitialization` ligado, para ficar coerente com o `!` exigido nas entidades.
 
 **Sugestões rejeitadas e por quê:**
