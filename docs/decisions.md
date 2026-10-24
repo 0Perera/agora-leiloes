@@ -337,3 +337,14 @@ Story: 1.1
 **Por quê:** cada projeto segue o padrão do próprio framework, sem dependência extra. O oxlint tem as duas regras exigidas pela D-022 e pela D-028.
 **Alternativas descartadas:** trocar o oxlint por ESLint no front (dependências a mais só para uniformizar a ferramenta).
 **Consequência:** as regras de lint ficam em dois formatos (`api/eslint.config.mjs` e `web/.oxlintrc.json`); regra nova precisa entrar nos dois.
+
+## D-034: Deploy pelo Blueprint do Render
+
+Status: Aceita
+Data: 2026-10-23
+Story: 1.1
+
+**Decisão:** API, front e banco declarados num `render.yaml` na raiz (Blueprint), todos no plano free, na região `virginia`.
+**Por quê:** a configuração do deploy fica versionada e revisável na PR, em vez de espalhada no dashboard. Virginia é a região do Render mais próxima do Brasil. A `DATABASE_URL` vem do banco por referência, o que simplifica recriar o banco na entrega (D-027).
+**Alternativas descartadas:** configurar os três serviços à mão no dashboard (nada versionado, fácil esquecer o rewrite ou o health check).
+**Consequência:** `WEB_ORIGIN` e `VITE_API_URL` usam `sync: false`: são pedidas só na criação e, depois disso, mudam só pelo dashboard. Mudança de build, start ou rota passa pelo `render.yaml`.

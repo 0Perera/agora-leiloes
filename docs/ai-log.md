@@ -57,13 +57,14 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **O que a IA gerou:**
 - `docker-compose.yml` com o Postgres, projeto Nest (config de envs validada, TypeORM, migration inicial vazia, `/health` com teste) e projeto React com a página "API: ok".
 - Workflow de CI com os jobs `api`, `web` e `readme`, e os commits da story.
-- Seção "Rodar local" do README e as entradas D-031 a D-033.
+- Seção "Rodar local" do README, o `render.yaml` e as entradas D-031 a D-034.
 
 **O que revisei ou reescrevi:**
 - Decidi rodar as migrations no boot (`migrationsRun`) em vez de no start command (D-031).
 - O Nest CLI atual gerou Vitest, oxlint e ESM. Mandei fixar o CLI 11 e instalar só versões das libs `@nestjs/*` compatíveis com o Nest 11, conferindo o `peerDependencies` antes do commit (D-032).
 - Fiz o commit inicial direto na `main`; daí em diante, branch por story.
 - O template do Vite também trocou ESLint por oxlint. Mantive o oxlint, com as mesmas duas regras da API (D-033).
+- Pedi o deploy via Blueprint, ainda no plano free, na região Virginia (D-034). A IA conferiu os campos do `render.yaml` na documentação do Render (`staticPublishPath` relativo ao `rootDir`, sintaxe de `routes`).
 - Pedi Prettier no front, com a mesma config da API, e `strictPropertyInitialization` ligado, para ficar coerente com o `!` exigido nas entidades.
 
 **Sugestões rejeitadas e por quê:**
