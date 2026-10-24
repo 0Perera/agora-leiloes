@@ -22,6 +22,9 @@ jobs:
       - run: npm run lint:check
       - run: npm test
       - run: npm run build
+      # O segundo build reaproveita o cache incremental do tsc: se o cache ficar fora da dist, nada é emitido.
+      - name: Build repetido gera dist/main.js
+        run: npm run build && test -f dist/main.js
 
   web:
     runs-on: ubuntu-latest
