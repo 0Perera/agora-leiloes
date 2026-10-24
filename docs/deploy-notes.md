@@ -10,10 +10,25 @@ Contexto para a story de esqueleto e para qualquer story que mexa em deploy. Os 
   - A API usa a **Internal Database URL** (rede interna, sem SSL): `DB_SSL=false`.
   - Da máquina local (seed), usar a **External Database URL**, que exige SSL: `DB_SSL=true`.
 
+## Blueprint (`render.yaml`)
+
+Os três serviços estão declarados no `render.yaml` da raiz (D-034), região `virginia`. Para criar:
+
+1. No Render: New → Blueprint, escolher o repositório e a branch.
+2. O Render pede os valores marcados com `sync: false`:
+   - `WEB_ORIGIN`: URL do front, esperada `https://agora-web.onrender.com`.
+   - `VITE_API_URL`: URL da API, esperada `https://agora-api.onrender.com`.
+3. Depois de criado, conferir as URLs reais nos serviços. Se o Render tiver adicionado sufixo ao nome,
+   corrigir as duas variáveis no dashboard e fazer novo deploy (o front embute `VITE_API_URL` no build).
+
+`sync: false` só é perguntado na criação: num sync posterior do Blueprint essas variáveis são ignoradas,
+então qualquer mudança nelas é feita no dashboard. `DATABASE_URL` vem do banco por `fromDatabase`
+(`connectionString` é a URL interna) e se atualiza sozinha.
+
 ## Limitações do Render free que afetam o projeto
 
 - **Sem pre-deploy command** (só nos planos pagos). Migrations precisam rodar quando a API sobe.
-  Em aberto, decidir na story: start command `npm run migration:run && node dist/main` ou `migrationsRun: true` no TypeORM.
+  Decidido na D-031: `migrationsRun: true` no TypeORM, então o start command é só `node dist/main`.
 - **Sem shell e sem one-off jobs.** Não dá para rodar comandos no servidor.
 - **Filesystem efêmero**: tudo que for gravado em disco some no redeploy, no restart ou quando o serviço dorme. Nada de upload ou arquivo local.
 - **Dorme após 15 min sem tráfego**; o primeiro acesso depois disso pode levar até ~1 min.
@@ -65,8 +80,8 @@ Front (Render Static Site, valores usados no build):
 O Postgres free expira 30 dias após a criação. Recriar na entrega faz os 30 dias cobrirem o processo seletivo inteiro.
 
 1. Apagar o Postgres atual no Render.
-2. Criar um novo, mesma região da API, mesma versão major (17).
-3. Atualizar `DATABASE_URL` da API com a nova Internal Database URL. O redeploy roda as migrations no start.
+2. Rodar um sync manual do Blueprint: ele recria o `agora-db` (mesma região e versão) e o `fromDatabase` liga a nova URL interna à API.
+3. Conferir na API se `DATABASE_URL` aponta para o banco novo; se não, atualizar com a nova Internal Database URL. O redeploy roda as migrations no start.
 4. Conferir nos logs que as migrations rodaram e que `/health` responde.
 5. Rodar o seed da máquina local com a nova External Database URL e o **mesmo** `BID_HMAC_SECRET` do Render.
 6. Abrir a auditoria do lote do seed e confirmar que aparece como íntegro.

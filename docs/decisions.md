@@ -298,9 +298,64 @@ Status: Aceita · Story: planejamento
 
 ## D-030: Docker Compose sobe o projeto inteiro
 
-Status: Aceita · Story: planejamento
+Status: Aceita · Momento de implementação substituído por D-035 · Story: planejamento
 
 **Decisão:** `docker compose up` sobe banco, API e web. Dockerfiles em `api/` e `web/` servem só ao compose.
 **Por quê:** quem avalia roda o projeto local com um comando, sem instalar Node.
 **Alternativas descartadas:** compose só com o Postgres (exige Node instalado e três terminais).
 **Consequência:** o Render continua rodando Node direto, sem Docker. O compose entra numa story própria, depois do esqueleto.
+
+## D-031: Migrations rodam no boot da API
+
+Status: Aceita
+Data: 2026-10-23
+Story: 1.1
+
+**Decisão:** `migrationsRun: true` no TypeORM. A API aplica as migrations pendentes ao subir; o start command no Render é só `node dist/main`.
+**Por quê:** o Render free não tem pre-deploy. Rodando no boot, `npm run start:dev` local, o deploy e o seed (que sobe o contexto do Nest) aplicam as migrations do mesmo jeito, com uma configuração só.
+**Alternativas descartadas:** start command `npm run migration:run && node dist/main` (explícito no Render, mas o `start:dev` local não migraria sozinho e o CLI em produção dependeria do data-source compilado).
+**Consequência:** migration com erro impede a API de subir. O log do boot mostra as migrations executadas.
+
+## D-032: Nest CLI 11 no lugar do 12
+
+Status: Aceita
+Data: 2026-10-23
+Story: 1.1
+
+**Decisão:** API criada com `@nestjs/cli@11` e libs `@nestjs/*` na linha cujo `peerDependencies` aceita `@nestjs/common` 11 (`@nestjs/config@4`, `@nestjs/typeorm@11`), com `typeorm` 0.3.
+**Por quê:** o template do Nest CLI 12 troca Jest por Vitest, ESLint por oxlint e CommonJS por ESM, contrariando D-019, D-022, D-024 e D-028. O Nest 11 gera exatamente o que essas decisões descrevem, e o CLI do TypeORM funciona sem atrito em CommonJS.
+**Alternativas descartadas:** template do Nest 12 (exigiria substituir quatro decisões e adaptar o TypeORM ao ESM); Nest 12 com Jest e ESLint trocados à mão (mais trabalho e dependências fora da lista aprovada).
+**Consequência:** ao instalar qualquer `@nestjs/*`, conferir que o `peerDependencies` aceita o Nest 11, porque o `latest` do npm aponta para a linha 12.
+
+## D-033: oxlint no front, ESLint na API
+
+Status: Aceita
+Data: 2026-10-23
+Story: 1.1
+
+**Decisão:** o front usa o oxlint que o template `react-ts` do Vite já traz, com `complexity: ['error', 10]` e `typescript/no-explicit-any` como erro. A API continua com o ESLint do Nest CLI 11. Prettier nos dois, com a mesma config.
+**Por quê:** cada projeto segue o padrão do próprio framework, sem dependência extra. O oxlint tem as duas regras exigidas pela D-022 e pela D-028.
+**Alternativas descartadas:** trocar o oxlint por ESLint no front (dependências a mais só para uniformizar a ferramenta).
+**Consequência:** as regras de lint ficam em dois formatos (`api/eslint.config.mjs` e `web/.oxlintrc.json`); regra nova precisa entrar nos dois.
+
+## D-034: Deploy pelo Blueprint do Render
+
+Status: Aceita
+Data: 2026-10-23
+Story: 1.1
+
+**Decisão:** API, front e banco declarados num `render.yaml` na raiz (Blueprint), todos no plano free, na região `virginia`.
+**Por quê:** a configuração do deploy fica versionada e revisável na PR, em vez de espalhada no dashboard. Virginia é a região do Render mais próxima do Brasil. A `DATABASE_URL` vem do banco por referência, o que simplifica recriar o banco na entrega (D-027).
+**Alternativas descartadas:** configurar os três serviços à mão no dashboard (nada versionado, fácil esquecer o rewrite ou o health check).
+**Consequência:** `WEB_ORIGIN` e `VITE_API_URL` usam `sync: false`: são pedidas só na criação e, depois disso, mudam só pelo dashboard. Mudança de build, start ou rota passa pelo `render.yaml`.
+
+## D-035: Compose completo na story 1.1, com o front em nginx
+
+Status: Aceita
+Data: 2026-10-23
+Story: 1.1 · Substitui a parte da D-030 que adiava o compose para uma story própria
+
+**Decisão:** os Dockerfiles e o compose com banco, API e web entram já na story 1.1. O front no container é o build do Vite servido por nginx, com fallback para `index.html`.
+**Por quê:** com o esqueleto pronto, o compose completo custava pouco e já deixa o projeto rodando com um comando. O nginx reproduz o Static Site do Render (arquivos estáticos e rewrite), sem dependência npm nova.
+**Alternativas descartadas:** manter o compose para uma story própria (adiaria algo barato); Vite dev server no container (diferente de produção e com atrito de volume em `node_modules`).
+**Consequência:** mudança de código exige `docker compose up --build`; para desenvolver com hot reload, sobe-se só o `db` e roda-se API e front com npm. `VITE_API_URL` é argumento de build da imagem do front.
