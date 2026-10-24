@@ -4,8 +4,8 @@ Casa de leilões online de arte clássica europeia, com lances ao vivo e histór
 
 _(o que faz: lista curta de funcionalidades)_
 
-- App: _(link do deploy)_
-- API: _(link do deploy)_
+- App: https://agora-web-gp1g.onrender.com
+- API: https://agora-api-w6z9.onrender.com (status em [`/health`](https://agora-api-w6z9.onrender.com/health))
 
 ## Testar agora
 
