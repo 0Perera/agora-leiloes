@@ -119,6 +119,9 @@ FR25, FR26, FR27: Épico 6 - seed e compose, Swagger opcional
 
 ## Lista de épicos
 
+### Épico 1: Fundação
+Esqueleto do monorepo, CI, deploy no Render e compose. Concluído na story 1.1.
+
 ### Épico 2: Contas e carteira
 Visitante cria conta com papel fixo e entra; licitante vê a carteira e faz depósito simulado. Traz a base de autorização por papel e o exception filter com códigos de domínio.
 **FRs:** FR1, FR2, FR3, FR4 (saldos), FR5 · **UX:** DR1, DR5, DR7
@@ -141,6 +144,20 @@ Seed idempotente também no deploy, compose verificado num checkout limpo, READM
 
 NFR3 a NFR9 são transversais: entram como critério de aceite nas stories que tocam cada ponto.
 `lots` é tocada nos épicos 3, 4 e 5 de propósito: cada épico é uma fatia vertical com front, e a sobreposição é só nas colunas que cada um precisa.
+
+---
+
+## Épico 1: Fundação
+
+API e front rodando local e em produção, com CI verde e compose completo, sem regra de negócio. Concluído.
+
+### Story 1.1: Esqueleto do monorepo no ar
+
+Como desenvolvedor,
+quero o monorepo com API, front, CI e deploy funcionando,
+para tirar o risco de deploy no primeiro dia.
+
+**Status:** concluída (`9c920bb`). Detalhe e critérios em `docs/stories/1.1-esqueleto.md`.
 
 ---
 

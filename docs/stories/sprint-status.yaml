@@ -1,0 +1,86 @@
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created, ready for development
+#   - in-progress: Developer actively working on implementation
+#   - review: Implementation complete, ready for review
+#   - done: Story completed
+
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+
+# Action Item Status:
+#   - open: Committed during a retrospective, not yet addressed
+#   - in-progress: Actively being worked on
+#   - done: Completed
+
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when its first story starts (via build's sprint sync)
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates the next story after the previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+# - Retrospective appends its action items to action_items; the status view surfaces open ones
+generated: 10-25-2026 20:10
+last_updated: 10-25-2026 20:10
+project: Ágora
+project_key: NOKEY
+tracking_system: file-system
+story_location: docs/stories
+# Chaves normalizadas para ASCII à mão: o sprint_plan.py gera com acento a partir dos títulos.
+# Depois de rodar o generate de novo, normalizar as chaves e reconciliar as órfãs.
+development_status:
+  epic-1: done
+  1-1-esqueleto-do-monorepo-no-ar: done
+  epic-1-retrospective: optional
+
+  epic-2: backlog
+  2-1-cadastro-e-login-na-api: backlog
+  2-2-carteira-e-deposito-simulado-na-api: backlog
+  2-3-telas-entrar-e-criar-conta: backlog
+  2-4-tela-carteira: backlog
+  epic-2-retrospective: optional
+
+  epic-3: backlog
+  3-1-busca-no-acervo-da-cleveland: backlog
+  3-2-criacao-de-lote-com-snapshot-e-imagem: backlog
+  3-3-vitrine-destaque-e-detalhe-do-lote-na-api: backlog
+  3-4-painel-do-leiloeiro-na-api: backlog
+  3-5-tela-painel-do-leiloeiro: backlog
+  3-6-tela-pagina-inicial-vitrine: backlog
+  3-7-tela-sala-do-lote-ao-vivo-leitura: backlog
+  epic-3-retrospective: optional
+
+  epic-4: backlog
+  4-1-regras-de-lance-saldo-comprometido-e-anti-sniping-tdd: backlog
+  4-2-cadeia-de-hmac-selo-e-alias-tdd: backlog
+  4-3-dar-lance-na-api: backlog
+  4-4-testcontainers-ci-e-lances-simultaneos: backlog
+  4-5-tempo-real-historico-e-situacao-do-licitante-na-api: backlog
+  4-6-tela-sala-do-lote-ao-vivo-lances-e-tempo-real: backlog
+  4-7-destaque-ao-vivo-e-lotes-comprometidos-na-carteira: backlog
+  epic-4-retrospective: optional
+
+  epic-5: backlog
+  5-1-regras-de-liquidacao-tdd: backlog
+  5-2-liquidacao-e-comprovante-assinado-na-api: backlog
+  5-3-timer-de-liquidacao-em-memoria: backlog
+  5-4-comprovante-meus-lances-e-resultado-do-painel-na-api: backlog
+  5-5-auditoria-da-cadeia-na-api-tdd: backlog
+  5-6-sala-encerrada-e-tela-comprovante-de-arremate: backlog
+  5-7-tela-meus-lances-e-resultado-no-painel: backlog
+  5-8-tela-auditoria-do-lote-e-campo-da-pagina-inicial: backlog
+  epic-5-retrospective: optional
+
+  epic-6: backlog
+  6-1-seed-idempotente-e-compose-verificado: backlog
+  6-2-readme-final: backlog
+  6-3-documentacao-da-api-com-swagger-opcional: backlog
+  epic-6-retrospective: optional
