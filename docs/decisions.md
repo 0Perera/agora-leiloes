@@ -359,3 +359,105 @@ Story: 1.1 · Substitui a parte da D-030 que adiava o compose para uma story pr�
 **Por quê:** com o esqueleto pronto, o compose completo custava pouco e já deixa o projeto rodando com um comando. O nginx reproduz o Static Site do Render (arquivos estáticos e rewrite), sem dependência npm nova.
 **Alternativas descartadas:** manter o compose para uma story própria (adiaria algo barato); Vite dev server no container (diferente de produção e com atrito de volume em `node_modules`).
 **Consequência:** mudança de código exige `docker compose up --build`; para desenvolver com hot reload, sobe-se só o `db` e roda-se API e front com npm. `VITE_API_URL` é argumento de build da imagem do front.
+
+## D-036: Número do lote sequencial, exibido em romano
+
+Status: Aceita
+Data: 2026-10-24
+Story: planejamento
+
+**Decisão:** cada lote recebe um número sequencial, global e único, exibido em algarismos romanos ("Lote VII"). A busca da auditoria aceita o número em arábico ou em romano ("7" ou "VII").
+**Por quê:** dá ao lote um identificador curto, que o visitante consegue digitar para abrir a auditoria, e o romano combina com o tema de arte clássica.
+**Alternativas descartadas:** expor o `id` interno (longo, sem significado para quem lê); número em arábico (funciona, mas perde a identidade visual do tema).
+**Consequência:** o número é uma coluna própria com `UNIQUE`, gerada por sequência no banco, e não muda depois da criação. A conversão para romano e a leitura de "VII" ficam no front; a API trabalha com o número inteiro.
+
+## D-037: Destaque da vitrine pelo maior lance ao vivo
+
+Status: Aceita
+Data: 2026-10-24
+Story: planejamento
+
+**Decisão:** o destaque da página inicial é o lote ao vivo com o maior lance atual. Sem lote ao vivo com lance, entra o ao vivo que encerra primeiro; sem lote ao vivo, o próximo agendado; sem lote nenhum, o bloco some. O lote escolhido não troca enquanto o usuário está na página; só os valores atualizam ao vivo.
+**Por quê:** o maior lance aponta para a disputa mais movimentada, que é o que vale mostrar primeiro. A escolha sai dos dados, sem curadoria manual.
+**Alternativas descartadas:** lote que encerra primeiro (cria urgência, mas pode destacar um lote sem disputa); destaque escolhido pelo leiloeiro (exige campo e tela a mais); trocar o destaque em tempo real (o lote mudaria na frente do usuário).
+**Consequência:** a vitrine precisa de uma consulta que ordene os lotes ao vivo pelo lance atual, com índice que a sustente.
+
+## D-038: Dados da obra só do acervo
+
+Status: Aceita
+Data: 2026-10-24
+Story: planejamento
+
+**Decisão:** título, artista, descrição e demais dados da obra vêm só do snapshot da Cleveland. O leiloeiro não edita o título nem acrescenta observações ou texto livre ao lote.
+**Por quê:** impede anunciar uma peça com nome ou descrição falsos, e mantém vitrine, sala, auditoria e comprovante fiéis ao acervo.
+**Alternativas descartadas:** título editável ou campo de observações (mais flexível, mas abre espaço para descrição enganosa e para texto livre sem moderação).
+**Consequência:** a ficha do novo lote mostra os dados do acervo só para leitura. O leiloeiro define apenas lance inicial, incremento mínimo, início e fim.
+
+## D-039: Carteira para toda conta
+
+Status: Aceita
+Data: 2026-10-25
+Story: planejamento
+
+**Decisão:** todo usuário ganha uma carteira no cadastro, inclusive o leiloeiro. A liquidação credita o valor do arremate na carteira do leiloeiro. Depósito e as rotas de carteira continuam só para o licitante.
+**Por quê:** o enunciado diz "credita-se ao leiloeiro"; com carteira, o crédito é um movimento real de saldo na mesma transação do débito do vencedor, travado pela mesma regra de ordem por `id`.
+**Alternativas descartadas:** total recebido calculado só pela soma dos comprovantes, sem carteira do leiloeiro (não há crédito de fato, só um relatório).
+**Consequência:** a carteira é criada na mesma transação do cadastro, e a migration cria a carteira dos usuários já existentes. O painel do leiloeiro lê o total recebido dos comprovantes, não do saldo.
+
+## D-040: Hash de senha com `scrypt` nativo e guard JWT à mão
+
+Status: Aceita
+Data: 2026-10-25
+Story: planejamento
+
+**Decisão:** senha guardada com `crypto.scrypt` do Node, salt aleatório por usuário e comparação com `timingSafeEqual`. Token emitido e verificado com `@nestjs/jwt`, num guard escrito à mão, sem `passport`.
+**Por quê:** `scrypt` é um KDF resistente a força bruta e já vem no Node, sem dependência nova nem binário nativo para compilar no Render. O guard à mão tem poucas linhas e evita três pacotes (`@nestjs/passport`, `passport`, `passport-jwt`) para uma estratégia só.
+**Alternativas descartadas:** `bcrypt` (binário nativo, dependência a mais); `argon2` (melhor KDF, mas dependência nativa); `passport-jwt` (abstração a mais para um único fluxo).
+**Consequência:** o hash guarda salt e parâmetros junto (`scrypt$N$r$p$salt$hash`), para os parâmetros poderem mudar depois sem invalidar senhas antigas.
+
+## D-041: `react-router` v7 no modo biblioteca
+
+Status: Aceita
+Data: 2026-10-25
+Story: planejamento
+
+**Decisão:** roteamento do front com `react-router` v7 no modo biblioteca (`createBrowserRouter`), sem o modo framework.
+**Por quê:** o front é um SPA estático no Render; o modo biblioteca não traz build próprio, SSR nem convenção de arquivos, e encaixa no Vite que já existe.
+**Alternativas descartadas:** modo framework do React Router (substitui o build do Vite e puxa SSR que não é usado); TanStack Router (mais tipado, mas menos conhecido pelo avaliador).
+**Consequência:** rotas declaradas em `web/src/app/`, com guarda por papel feita no próprio layout das rotas.
+
+## D-042: Lance atual guardado no lote, como cópia só para exibição
+
+Status: Aceita · Story: 3.2
+
+**Decisão:** a tabela `lots` guarda `current_bid` e `bid_count`, atualizados na mesma transação de cada lance, com o lote travado. Essas colunas servem só para exibir e ordenar (vitrine, destaque, painel). Tudo que envolve dinheiro ou vencedor lê a tabela de lances: a liquidação, o comprovante e a regra de "você já está ganhando" usam sempre o último lance da cadeia.
+**Por quê:** a vitrine lista vários lotes com o lance atual de cada um. Calcular o maior lance na tabela de lances a cada listagem é mais caro e mais difícil de indexar. Com a cópia no lote, a listagem lê uma coluna só. Mas a cópia não é protegida pela cadeia de HMAC: se alguém alterar `current_bid` direto no banco, nada detecta. A tabela de lances é protegida, e qualquer alteração nela aparece na auditoria. Por isso a cópia nunca decide quem paga nem quanto.
+**Alternativas descartadas:** calcular o maior lance e a contagem na tabela de lances a cada listagem (sem dado duplicado, mas mais lento e sem índice simples); usar `current_bid` também na liquidação (abriria fraude sem detecção: trocar o valor da cópia mudaria o valor cobrado e a auditoria continuaria íntegra).
+**Consequência:** se a cópia for adulterada, o pior efeito é a vitrine mostrar um número errado; o valor cobrado e o vencedor continuam corretos. Testes da liquidação devem cobrir esse caso: `current_bid` diferente do último lance e a liquidação usando o lance da cadeia.
+
+## D-043: 422 para todas as recusas de lance
+
+Status: Aceita · Story: 4.3
+
+**Decisão:** as cinco recusas de lance (`BID_BELOW_MINIMUM`, `INSUFFICIENT_BALANCE`, `ALREADY_WINNING`, `LOT_NOT_STARTED`, `LOT_ENDED`) respondem 422, com `{ code, ...detalhe }`. O front decide a mensagem pelo `code`, nunca pelo status.
+**Por quê:** em todas o pedido é bem formado, mas fere uma regra de negócio. Um status só deixa o filter simples e evita que o front dependa de uma divisão que não muda nada na tela.
+**Alternativas descartadas:** 409 para estado do lote e liderança e 422 para valor e saldo (divisão defensável, mas sem uso no front e mais um mapeamento para manter).
+**Consequência:** 400 fica só para `VALIDATION_FAILED`, 404 para lote inexistente ou cancelado, 403 para `ROLE_NOT_ALLOWED`.
+
+## D-044: Alias com 6 caracteres em base32
+
+Status: Aceita · Story: 4.2
+
+**Decisão:** o alias do licitante no lote é "Licitante " seguido dos 6 primeiros caracteres em base32 do HMAC `alias:` de `user_id` + `lot_id` (ex.: "Licitante K7QX2M").
+**Por quê:** o front deriva "você está ganhando" comparando `me.alias` com o alias do evento. Dois licitantes com o mesmo alias no mesmo lote veriam os dois "ganhando". Com 6 caracteres (30 bits), a chance de colisão entre os licitantes de um lote é desprezível; com 4 (20 bits), deixa de ser.
+**Alternativas descartadas:** 4 caracteres (mais curto de ler, mas risco real de colisão); alias sequencial por lote, como "Licitante 3" (sem colisão, mas exige guardar o número e revela a ordem de entrada).
+**Consequência:** o alias é calculado, não guardado. Mudar o tamanho depois muda todos os aliases exibidos, mas não afeta a cadeia, que assina o `user_id`.
+
+## D-045: Lote encerrado no seed com `Clock` deslocado
+
+Status: Aceita · Story: 6.1
+
+**Decisão:** além do lote ao vivo, o seed cria um lote já encerrado e liquidado. Para isso, o seed troca o `Clock` por um deslocado para o passado enquanto cria esse lote e os lances dele, sempre pelos services; depois volta ao relógio real e liquida o lote pelo service de liquidação.
+**Por quê:** o avaliador precisa ver comprovante, total recebido e a aba Encerrados no primeiro acesso, sem esperar um lote terminar. Passando pelos services, a cadeia de HMAC, o selo e a assinatura do comprovante saem válidos.
+**Alternativas descartadas:** só o lote ao vivo, com o roteiro pedindo para criar um lote curto (o avaliador espera minutos para ver a liquidação); `INSERT` direto com datas no passado (cadeia inválida, a auditoria acusaria adulteração, D-020).
+**Consequência:** o `Clock` precisa ser trocável no contexto do seed. As datas desse lote ficam no passado de verdade, como se o leilão tivesse acontecido.

@@ -80,8 +80,11 @@ dto/place-bid.dto.ts
 - Um módulo por domínio: `auth`, `users`, `wallets`, `catalog`, `lots`, `bids`, `settlement`, `audit`, `receipts`.
 - Controller fino: valida entrada (DTO + `class-validator`) e delega. Regra de negócio só no service.
 - Erros de negócio são exceções de domínio com código estável, mapeadas por um exception filter:
-  `BID_BELOW_MINIMUM`, `INSUFFICIENT_BALANCE`, `ALREADY_WINNING`, `LOT_NOT_STARTED`, `LOT_ENDED`, `ROLE_NOT_ALLOWED`.
+  `BID_BELOW_MINIMUM`, `INSUFFICIENT_BALANCE`, `ALREADY_WINNING`, `LOT_NOT_STARTED`, `LOT_ENDED`, `ROLE_NOT_ALLOWED`,
+  `EMAIL_TAKEN`, `INVALID_CREDENTIALS` (o mesmo para e-mail inexistente e senha errada).
+  `CATALOG_UNAVAILABLE` (503), `IMAGE_DOWNLOAD_FAILED` (502), `LOT_HAS_BIDS` (409).
   O front traduz o código; o backend não devolve texto livre para essas recusas.
+- Erro de validação de DTO no formato `{ code: 'VALIDATION_FAILED', fields: { <campo>: <regra> } }`, para o front traduzir por campo.
 - Configuração só via variáveis de ambiente validadas na inicialização. Todo novo env vai para o `.env.example`.
 - Papel (`AUCTIONEER` ou `BIDDER`) escolhido no cadastro e fixo depois. Leiloeiro não dá lance; licitante não cria lote.
 - Lote não é editável depois de criado. "Gerenciar" é: criar, cancelar sem lances e ver o resultado.
@@ -162,6 +165,7 @@ dto/place-bid.dto.ts
   Se o download falhar, o lote não é criado. Validar `content-type` de imagem e tamanho máximo.
 - Nenhuma tela de lote usa URL do CDN da Cleveland. Só a busca do painel do leiloeiro mostra imagens direto de lá.
 - `creators` costuma vir vazio em peças antigas: usar `culture` como fallback.
+- Dados da obra vêm só do acervo: o leiloeiro não edita título nem adiciona texto livre ao lote.
 
 ## Segurança e privacidade
 
