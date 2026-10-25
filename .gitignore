@@ -20,3 +20,7 @@ npm-debug.log*
 .vscode/
 .idea/
 .DS_Store
+
+# BMAD e Claude Code (ferramentas locais; os artefatos gerados ficam em docs/)
+_bmad/
+.claude/
