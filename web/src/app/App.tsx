@@ -3,7 +3,7 @@ import { router } from './router';
 import { SessionProvider } from './session-provider';
 
 function expire() {
-  void router.navigate('/login', { replace: true, state: { expired: true } });
+  void router.navigate('/login', { replace: true });
 }
 
 function App() {

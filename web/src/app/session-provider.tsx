@@ -19,29 +19,33 @@ function initialSession(): Session | null {
 
 export function SessionProvider({ children, onExpire }: Props) {
   const [session, setSession] = useState(initialSession);
+  const [expired, setExpired] = useState(false);
 
   const signIn = useCallback((auth: AuthResponse) => {
     saveSession(auth);
     setToken(auth.token);
     setSession(auth);
+    setExpired(false);
   }, []);
 
   const signOut = useCallback(() => {
     clearSession();
     setToken(null);
     setSession(null);
+    setExpired(false);
   }, []);
 
   useEffect(() => {
     setUnauthorizedHandler(() => {
       signOut();
+      setExpired(true);
       onExpire();
     });
   }, [signOut, onExpire]);
 
   const value = useMemo(
-    () => ({ session, signIn, signOut }),
-    [session, signIn, signOut],
+    () => ({ session, expired, signIn, signOut }),
+    [session, expired, signIn, signOut],
   );
 
   return (

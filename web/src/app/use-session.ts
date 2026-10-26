@@ -4,6 +4,7 @@ import type { Session } from './session';
 
 export type SessionValue = {
   session: Session | null;
+  expired: boolean;
   signIn: (auth: AuthResponse) => void;
   signOut: () => void;
 };

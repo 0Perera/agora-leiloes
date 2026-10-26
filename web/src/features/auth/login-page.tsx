@@ -1,4 +1,5 @@
-import { Link, useLocation } from 'react-router';
+import { Link } from 'react-router';
+import { useSession } from '../../app/use-session';
 import { api } from '../../shared/api/client';
 import type { LoginRequest } from '../../shared/api/types';
 import { AuthCard } from './auth-card';
@@ -8,18 +9,14 @@ import { useAuthForm } from './use-auth-form';
 
 const initial: LoginRequest = { email: '', password: '' };
 
-function isExpired(state: unknown): boolean {
-  return typeof state === 'object' && state !== null && 'expired' in state;
-}
-
 export function LoginPage() {
-  const location = useLocation();
+  const { expired } = useSession();
   const { values, errors, submitting, change, submit } = useAuthForm(
     'login',
     initial,
     api.login,
   );
-  const showExpired = isExpired(location.state) && !errors.notice;
+  const showExpired = expired && !errors.notice;
 
   return (
     <AuthCard>
