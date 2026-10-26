@@ -87,6 +87,7 @@ export function DepositForm() {
               inputMode="decimal"
               autoComplete="off"
               value={value}
+              readOnly={submitting}
               onChange={(event) => change(event.target.value)}
               aria-invalid={Boolean(error)}
               aria-describedby="dep-help dep-err"
@@ -103,6 +104,7 @@ export function DepositForm() {
               key={cents}
               className="chip"
               type="button"
+              disabled={submitting}
               onClick={() => change((cents / 100).toLocaleString('pt-BR'))}
             >
               {formatMoney(cents)}
