@@ -108,3 +108,25 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - *Teto do saldo com status 400:* troquei para 422, o mesmo das recusas de lance (D-043); 400 fica só para `VALIDATION_FAILED`.
 - *Teto como `VALIDATION_FAILED` com `fields.amount`:* a regra depende do saldo no banco, não é validação do DTO.
+
+## Story 2.3: Telas Entrar e Criar conta
+
+**O que a IA gerou:**
+- Rotas com `react-router` 7 (`createBrowserRouter`), layout com cabeçalho por papel, `RequireRole`, `GuestOnly` e o provider de sessão em `web/src/app/`.
+- Client único com Bearer, `ApiError` (status, código e campos) e encerramento da sessão em 401 com token; sessão no `localStorage` validada pelo `exp` do JWT (D-047).
+- Telas `/login` e `/signup` reescritas em React a partir do canvas, com `tokens.css` e `bundle.css` copiados sem edição; tradução dos erros da API por código e por campo em `auth-errors.ts`.
+- Vitrine e painel do leiloeiro provisórios, `vitest` com os testes aprovados na spec e o passo `npm test` no job `web` do CI.
+- Correção feita pela própria IA na revisão: o aviso de sessão expirada dependia do state da navegação e podia se perder no redirecionamento da guarda (e reaparecer ao recarregar); passou para um estado em memória no provider de sessão.
+
+**O que revisei ou reescrevi:**
+- Defini o canvas `docs/design/Entrar.dc.html` como referência e pedi a cópia de `tokens.css` e `bundle.css` para `web/src/shared/ui/`, reescrevendo em React sem o runtime nem a simulação do canvas.
+- Escolhi um `/dashboard` mínimo protegido por papel para o leiloeiro até a story 3.5.
+- Pedi o botão "Sair" no cabeçalho para licitante e leiloeiro.
+- Aprovei o `vitest` como devDependency com os casos propostos e pedi o `npm test` no job `web` do CI.
+- Pedi para registrar o token no `localStorage` no `decisions.md`, com o trade-off (XSS; cookie httpOnly descartado pela D-006; mitigado pelo escape do React e pela validade de 8h) (D-047).
+- Acrescentei: usuário logado que abre `/login` ou `/signup` vai para a página do seu papel.
+- Acrescentei: 401 que encerra a sessão leva para `/login` com o aviso "Sua sessão expirou, entre de novo".
+- Mantive a spec inteira, acima do limite de tamanho, em vez de dividir.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma: as opções recomendadas foram aceitas, com os acréscimos acima.

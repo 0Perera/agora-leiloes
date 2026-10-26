@@ -1,0 +1,65 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--marble-000);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 18px;
+  line-height: 28px;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--ultramarine);
+}
+
+a:hover {
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.on-dark :focus-visible {
+  outline-color: var(--gold-300);
+}
+
+.ag-btn,
+.ag-badge,
+.ag-input {
+  border-radius: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.page-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 38px;
+}
+
+.page-lede {
+  margin: 6px 0 0;
+  font-size: 17px;
+  line-height: 24px;
+  color: var(--ink-muted);
+}

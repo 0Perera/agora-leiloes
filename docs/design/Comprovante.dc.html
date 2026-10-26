@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Ágora · Comprovante de arremate</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/agora/tokens.css">
+<link rel="stylesheet" href="ds/agora/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#f2ede3;color:#2b2520;font-family:"EB Garamond",Garamond,Georgia,serif}
+a{color:#1f4b96}a:hover{color:#2b2520}
+:focus-visible{outline:2px solid #1f4b96;outline-offset:2px}
+.ag-btn,.ag-badge,.ag-input{border-radius:0}
+.ag-btn--quiet{min-height:44px}
+.nav-link{display:inline-flex;align-items:center;min-height:44px;box-sizing:border-box;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#2b2520;text-decoration:none;padding:0 4px;border-bottom:2px solid transparent}
+.nav-link:hover{border-bottom-color:#9a7529;color:#2b2520}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skel{background-color:#dfd6c5;animation:skel 1.4s ease-in-out infinite}
+@keyframes skel{50%{opacity:.5}}
+@media (prefers-reduced-motion:reduce){.skel{animation:none}}
+
+/* o certificado: folha de mármore com moldura de meandro */
+.cert{position:relative;max-width:880px;margin:0 auto;background-color:#ebe4d7;border:1px solid #745616;box-shadow:0 30px 50px -36px rgba(43,37,32,.55)}
+.cert__frame{margin:10px;border:1px solid #9a7529;padding:0}
+.cert__band{height:18px;border-bottom:1px solid #9a7529}
+.cert__band--bottom{border-bottom:0;border-top:1px solid #9a7529}
+.cert__body{padding:clamp(24px,5vw,56px);display:flex;flex-direction:column;gap:32px;
+  background-image:linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529);
+  background-repeat:no-repeat;background-size:30px 3px,3px 30px,30px 3px,3px 30px,30px 3px,3px 30px,30px 3px,3px 30px;
+  background-position:left 14px top 14px,left 14px top 14px,right 14px top 14px,right 14px top 14px,left 14px bottom 14px,left 14px bottom 14px,right 14px bottom 14px,right 14px bottom 14px}
+.cert__cols{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:760px){.cert__cols{grid-template-columns:minmax(0,1fr)}.cert__frame{margin:6px}}
+.niche{position:relative;width:100%;aspect-ratio:440/540;background-color:#f2ede3;border:1px solid #9a7529;border-bottom:0;border-radius:999px 999px 0 0;box-shadow:inset 0 22px 30px -22px rgba(43,37,32,.30),inset 0 0 0 6px #f2ede3,inset 0 0 0 7px #cfc3ab}
+.niche__stage{position:absolute;top:24%;left:11%;right:11%;bottom:7%;display:flex;align-items:center;justify-content:center}
+.art{box-sizing:border-box;max-width:100%;max-height:100%;background-color:#dfd6c5}
+.art-square{height:100%;aspect-ratio:1/1;max-height:92%}
+.framed{border:7px solid #9a7529;box-shadow:0 0 0 1px #745616,inset 0 0 0 1px #e4cd92,0 14px 18px -12px rgba(43,37,32,.55)}
+.dl{display:grid;grid-template-columns:minmax(120px,max-content) minmax(0,1fr);gap:14px 24px;margin:0}
+.dl dt{font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;line-height:26px;letter-spacing:0.08em;text-transform:uppercase;color:#5e5449}
+.dl dd{margin:0;font-size:18px;line-height:26px}
+@media (max-width:480px){.dl{grid-template-columns:minmax(0,1fr);gap:2px}.dl dd{margin-bottom:12px}}
+.sign{display:flex;flex-wrap:wrap;align-items:center;gap:24px;padding:24px 0 0;border-top:3px double #9a7529}
+.hash{display:inline-flex;align-items:center;gap:0;border:1px solid #9a7529;background-color:#f2ede3;max-width:100%}
+.hash code{padding:10px 14px;font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;font-size:15px;color:#2b2520;overflow-wrap:anywhere}
+.hash button{min-height:44px;padding:0 14px;border:0;border-left:1px solid #9a7529;background:transparent;cursor:pointer;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#745616}
+/* celular: menu em uma linha que rola para o lado, em vez de ocupar várias linhas */
+@media (max-width:760px){.nav-main{order:3;width:100%;flex-wrap:nowrap !important;overflow-x:auto;gap:0 20px !important;scrollbar-width:thin}.nav-main a{white-space:nowrap;flex:none}}
+</style>
+</helmet>
+
+<div class="ag-ground" style="min-height: 100vh; background-color: var(--marble-000); color: var(--ink); font-family: var(--font-text);">
+
+<!-- ============ CABEÇALHO (público) ============ -->
+<header>
+  <div style="max-width: 1240px; margin: 0 auto; padding: 10px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px;">
+    <a href="Main.dc.html" aria-label="Ágora, página inicial" style="display: flex; align-items: center; gap: 12px; min-height: 44px; text-decoration: none; color: var(--ink);">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="48" rx="16" ry="16" fill="#1f4b96"></rect><rect x="5" y="5" width="24" height="48" rx="12" ry="12" fill="#f2ede3"></rect><rect x="8" y="8" width="18" height="48" rx="9" ry="9" fill="#9a7529"></rect><rect x="12" y="12" width="10" height="48" rx="5" ry="5" fill="#b23a1f"></rect></svg>
+      <span style="font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 28px; letter-spacing: 0.12em;">ÁGORA</span>
+    </a>
+    <nav class="nav-main" aria-label="Principal" style="display: flex; flex-wrap: wrap; gap: 4px 20px;">
+      <a class="nav-link" href="Main.dc.html">Vitrine</a>
+      <a class="nav-link" href="Main.dc.html#como-funciona">Como funciona</a>
+      <a class="nav-link" href="Auditoria.dc.html">Auditoria</a>
+    </nav>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+      <a class="ag-btn ag-btn--secondary" href="Entrar.dc.html" style="min-height: 44px;">Entrar</a>
+      <a class="ag-btn ag-btn--primary" href="Entrar.dc.html" style="min-height: 44px;">Criar conta</a>
+    </div>
+  </div>
+  <div class="ag-meander" style="background-color: var(--marble-100); border-top: 1px solid var(--gold-500); border-bottom: 1px solid var(--gold-500); height: 18px;"></div>
+</header>
+
+<main style="max-width: 1240px; margin: 0 auto; padding: 40px 16px 80px;">
+
+<p style="max-width: 880px; margin: 0 auto 20px; font-size: 16px; line-height: 22px; color: var(--ink-muted);">Comprovante público: qualquer pessoa com este link pode conferir. Nenhum dado pessoal é exibido.</p>
+
+<!-- ============ NÃO ENCONTRADO ============ -->
+<sc-if value="{{isNotFound}}" hint-placeholder-val="{{false}}">
+  <div role="alert" style="max-width: 640px; margin: 24px auto; padding: 40px 24px; border-top: 3px double var(--gold-500); border-bottom: 3px double var(--gold-500); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+    <p style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-700);">Comprovante</p>
+    <h1 style="margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 32px; line-height: 38px;">Comprovante não encontrado</h1>
+    <p style="margin: 0; font-size: 18px; line-height: 27px; color: var(--ink-muted);">O link pode estar incompleto ou ter sido digitado errado. Confira com quem compartilhou.</p>
+    <a class="ag-btn ag-btn--secondary" href="Main.dc.html">Ir para a vitrine</a>
+  </div>
+</sc-if>
+
+<!-- ============ ERRO ============ -->
+<sc-if value="{{isError}}" hint-placeholder-val="{{false}}">
+  <div role="alert" style="max-width: 640px; margin: 24px auto; display: flex; flex-direction: column; align-items: flex-start; gap: 16px;">
+    <div class="ag-notice ag-notice--error" style="width: 100%; box-sizing: border-box; border-radius: 0;">
+      <span class="ag-notice__mark" aria-hidden="true">✕</span>
+      <p class="ag-notice__title">Não foi possível abrir o comprovante</p>
+      <p class="ag-notice__text">Não conseguimos conferir o comprovante agora. Tente de novo em instantes.</p>
+    </div>
+    <button class="ag-btn ag-btn--secondary" type="button" onClick="{{retry}}">Tentar de novo</button>
+  </div>
+</sc-if>
+
+<!-- ============ CARREGANDO ============ -->
+<sc-if value="{{isLoading}}" hint-placeholder-val="{{false}}">
+  <p class="sr-only" role="status">Conferindo o comprovante.</p>
+  <div class="cert" aria-hidden="true"><div class="cert__frame"><div class="cert__body">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;"><div class="skel" style="height: 14px; width: 200px;"></div><div class="skel" style="height: 40px; width: 60%;"></div></div>
+    <div class="cert__cols"><div class="skel" style="aspect-ratio: 440/540;"></div><div style="display: flex; flex-direction: column; gap: 14px;"><div class="skel" style="height: 26px;"></div><div class="skel" style="height: 26px; width: 70%;"></div><div class="skel" style="height: 44px; width: 50%;"></div><div class="skel" style="height: 26px; width: 60%;"></div></div></div>
+  </div></div></div>
+</sc-if>
+
+<!-- ============ COMPROVANTE ============ -->
+<sc-if value="{{isReady}}" hint-placeholder-val="{{true}}">
+<article class="cert" aria-labelledby="cert-title">
+  <div class="cert__frame">
+    <div class="ag-meander cert__band" style="background-color: var(--marble-100); height: 18px;"></div>
+    <div class="cert__body">
+
+      <header style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+        <p style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-700);">Ágora · Casa de leilões</p>
+        <h1 id="cert-title" style="margin: 4px 0 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(24px, 5vw, 34px); line-height: 1.15; letter-spacing: 0.04em;">Comprovante de arremate</h1>
+        <p style="margin: 6px 0 0; display: flex; align-items: center; gap: 14px; font-family: var(--font-display); font-weight: 600; font-size: clamp(36px, 8vw, 54px); line-height: 1; color: var(--gold-700);"><span aria-hidden="true" style="width: 48px; border-top: 1px solid var(--gold-500);"></span>Lote I<span aria-hidden="true" style="width: 48px; border-top: 1px solid var(--gold-500);"></span></p>
+      </header>
+
+      <div class="cert__cols">
+        <div class="niche"><div class="niche__stage"><div class="art art-square framed ag-marble" role="img" aria-label="Imagem de Natureza-morta com frutas"></div></div></div>
+        <dl class="dl">
+          <dt>Obra</dt><dd style="font-family: var(--font-serif); font-style: italic; font-weight: 500; font-size: 26px; line-height: 30px;">Natureza-morta com frutas</dd>
+          <dt>Artista</dt><dd>Escola flamenga, séc. XVII</dd>
+          <dt>Valor do arremate</dt><dd><span style="display: inline-block; font-family: var(--font-display); font-weight: 600; font-size: clamp(30px, 6vw, 40px); line-height: 1.1; border-bottom: 3px double var(--ink); padding-bottom: 2px;">R$ 9.750</span></dd>
+          <dt>Vencedor</dt><dd>Licitante #A7F2 <span style="display: block; font-size: 15px; line-height: 20px; color: var(--ink-muted);">Apelido usado neste lote</span></dd>
+          <dt>Data do arremate</dt><dd>20 de outubro de 2026, 21h00</dd>
+        </dl>
+      </div>
+
+      <!-- Assinatura -->
+      <section class="sign" aria-labelledby="sign-title" aria-live="polite">
+        <sc-if value="{{valid}}" hint-placeholder-val="{{true}}">
+          <div class="ag-seal ag-seal--intact"><div class="ag-seal__core"><span class="ag-seal__mark" aria-hidden="true">✓</span><span class="ag-seal__word">Válido</span></div></div>
+        </sc-if>
+        <sc-if value="{{invalid}}" hint-placeholder-val="{{false}}">
+          <div class="ag-seal ag-seal--tampered"><div class="ag-seal__core"><span class="ag-seal__mark" aria-hidden="true">✕</span><span class="ag-seal__word">Inválido</span></div></div>
+        </sc-if>
+        <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 10px;">
+          <h2 id="sign-title" style="margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 28px; line-height: 34px; color: {{signColor}};">{{signTitle}}</h2>
+          <p style="margin: 0; font-size: 17px; line-height: 25px; color: var(--ink-muted);">{{signText}}</p>
+          <div>
+            <span class="ag-lot__label" style="display: block; margin-bottom: 6px;">Código de verificação</span>
+            <span class="hash"><code title="9f3c2a7d1be84f06c5a9e2d7710b3c4e8a51d6f0a2c9b7e4d1f08a3e6c1a71e">9f3c2a7d…e6c1a71e</code><button type="button" onClick="{{copyHash}}">{{hashBtn}}</button></span>
+          </div>
+        </div>
+      </section>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding-top: 20px; border-top: 1px solid var(--vein);">
+        <button class="ag-btn ag-btn--secondary" type="button" onClick="{{copyLink}}">{{linkBtn}}</button>
+        <a class="ag-btn ag-btn--quiet" href="Auditoria.dc.html" style="min-height: 44px;">Auditar este lote</a>
+        <sc-if value="{{linkCopied}}" hint-placeholder-val="{{false}}"><span role="status" style="font-size: 16px; color: var(--malachite);">✓ Link do comprovante copiado</span></sc-if>
+      </div>
+    </div>
+    <div class="ag-meander cert__band cert__band--bottom" style="background-color: var(--marble-100); height: 18px;"></div>
+  </div>
+</article>
+</sc-if>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"estado":{"editor":"enum","options":["válido","inválido","carregando","não encontrado","erro"],"default":"válido","section":"Estado"},"$preview":{"width":1440,"height":1800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { retried: false, hash: false, link: false };
+  }
+  componentDidUpdate(prev) { if (prev.estado !== this.props.estado) this.setState({ retried: false, hash: false, link: false }); }
+  componentWillUnmount() { clearTimeout(this.t1); clearTimeout(this.t2); }
+  renderVals() {
+    const estado = this.state.retried ? 'válido' : (this.props.estado ?? 'válido');
+    const ok = estado === 'válido';
+    const d = new Date();
+    const hhmm = String(d.getHours()).padStart(2, '0') + 'h' + String(d.getMinutes()).padStart(2, '0');
+    return {
+      isReady: estado === 'válido' || estado === 'inválido',
+      isLoading: estado === 'carregando',
+      isNotFound: estado === 'não encontrado',
+      isError: estado === 'erro',
+      retry: () => this.setState({ retried: true }),
+      valid: ok, invalid: estado === 'inválido',
+      signTitle: ok ? 'Comprovante válido' : 'Comprovante inválido',
+      signColor: ok ? '#2c6646' : '#8c2a14',
+      signText: ok
+        ? 'Este comprovante confere com o registro do lote e com o histórico de lances. Conferido agora, às ' + hhmm + '.'
+        : 'Este comprovante não confere com o registro do lote e pode ter sido alterado. Confira a auditoria pública do lote.',
+      hashBtn: this.state.hash ? '✓ Copiado' : 'Copiar',
+      copyHash: () => { clearTimeout(this.t1); this.setState({ hash: true }); this.t1 = setTimeout(() => this.setState({ hash: false }), 2500); },
+      linkBtn: 'Copiar link',
+      linkCopied: this.state.link,
+      copyLink: () => { clearTimeout(this.t2); this.setState({ link: true }); this.t2 = setTimeout(() => this.setState({ link: false }), 2500); }
+    };
+  }
+}
+</script>
+</body>
+</html>

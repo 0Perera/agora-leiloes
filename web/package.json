@@ -12,11 +12,13 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "lint:check": "oxlint && prettier --check .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "vitest run"
   },
   "dependencies": {
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "react-router": "^7.18.4"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
@@ -26,6 +28,7 @@
     "oxlint": "^1.88.0",
     "prettier": "^3.9.10",
     "typescript": "~6.0.3",
-    "vite": "^8.3.4"
+    "vite": "^8.3.4",
+    "vitest": "^5.0.5"
   }
 }
