@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ApiError } from '../../shared/api/client';
-import { depositError } from './deposit';
+import { depositError, validateAmount } from './deposit';
 
 function validation(rule: string): ApiError {
   return new ApiError(400, {
@@ -8,6 +8,20 @@ function validation(rule: string): ApiError {
     fields: { amount: rule },
   });
 }
+
+describe('validateAmount', () => {
+  it.each([
+    ['vazio', '  ', 'Informe o valor do depósito.'],
+    ['abaixo do mínimo', '0,99', 'O depósito mínimo é R$ 1.'],
+    [
+      'acima do máximo',
+      '100.000,01',
+      'O limite por depósito simulado é R$ 100.000.',
+    ],
+  ])('recusa valor %s', (_case, text, error) => {
+    expect(validateAmount(text)).toEqual({ error });
+  });
+});
 
 describe('depositError', () => {
   it.each<[string, unknown, string]>([
