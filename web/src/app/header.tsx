@@ -1,4 +1,5 @@
 import { Link, NavLink, useNavigate } from 'react-router';
+import { WalletBadge } from '../features/wallet/wallet-badge';
 import type { Session } from './session';
 import { useSession } from './use-session';
 
@@ -52,8 +53,8 @@ function GuestActions() {
 function Account({ session }: { session: Session }) {
   const { signOut } = useSession();
   const navigate = useNavigate();
-  const roleLabel =
-    session.user.role === 'AUCTIONEER' ? 'Leiloeiro' : 'Licitante';
+  const isBidder = session.user.role === 'BIDDER';
+  const roleLabel = isBidder ? 'Licitante' : 'Leiloeiro';
 
   function leave() {
     signOut();
@@ -62,6 +63,7 @@ function Account({ session }: { session: Session }) {
 
   return (
     <>
+      {isBidder && <WalletBadge />}
       <span className="header-user">
         {roleLabel} · {session.user.name}
       </span>

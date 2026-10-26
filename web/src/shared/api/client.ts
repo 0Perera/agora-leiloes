@@ -1,8 +1,10 @@
 import type {
   ApiErrorBody,
   AuthResponse,
+  DepositRequest,
   LoginRequest,
   SignupRequest,
+  Wallet,
 } from './types';
 
 const baseUrl = import.meta.env.VITE_API_URL;
@@ -95,4 +97,9 @@ export const api = {
     request<AuthResponse>('/auth/signup', { method: 'POST', body }),
   login: (body: LoginRequest) =>
     request<AuthResponse>('/auth/login', { method: 'POST', body }),
+  wallet: () => request<Wallet>('/wallet'),
+  deposit: (amount: number) => {
+    const body: DepositRequest = { amount };
+    return request<Wallet>('/wallet/deposits', { method: 'POST', body });
+  },
 };
