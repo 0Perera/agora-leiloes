@@ -16,6 +16,7 @@ describe('DomainExceptionFilter.catch', () => {
     ['EMAIL_TAKEN', 409],
     ['INVALID_CREDENTIALS', 401],
     ['ROLE_NOT_ALLOWED', 403],
+    ['BALANCE_LIMIT_EXCEEDED', 422],
   ])('responde %s com status %i e só o código', (code, status) => {
     const { host, response } = makeHost();
 

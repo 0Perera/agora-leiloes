@@ -83,6 +83,7 @@ dto/place-bid.dto.ts
   `BID_BELOW_MINIMUM`, `INSUFFICIENT_BALANCE`, `ALREADY_WINNING`, `LOT_NOT_STARTED`, `LOT_ENDED`, `ROLE_NOT_ALLOWED`,
   `EMAIL_TAKEN`, `INVALID_CREDENTIALS` (o mesmo para e-mail inexistente e senha errada).
   `CATALOG_UNAVAILABLE` (503), `IMAGE_DOWNLOAD_FAILED` (502), `LOT_HAS_BIDS` (409).
+  `BALANCE_LIMIT_EXCEEDED` (422): depósito que levaria o saldo acima do teto do `integer`.
   O front traduz o código; o backend não devolve texto livre para essas recusas.
 - Erro de validação de DTO no formato `{ code: 'VALIDATION_FAILED', fields: { <campo>: <regra> } }`, para o front traduzir por campo.
 - Configuração só via variáveis de ambiente validadas na inicialização. Todo novo env vai para o `.env.example`.
