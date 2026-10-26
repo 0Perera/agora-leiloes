@@ -21,7 +21,7 @@ Tudo com Docker, num comando só (pré-requisito: Docker):
 docker compose up --build
 ```
 
-Front em http://localhost:5173 (mostra "API: ok"), API em http://localhost:3000, banco na 5432.
+Front em http://localhost:5173, API em http://localhost:3000, banco na 5432.
 Se alguma porta estiver ocupada: `WEB_PORT=5174 API_PORT=3001 DB_PORT=5433 docker compose up --build`.
 As migrations rodam sozinhas no boot da API.
 
@@ -61,11 +61,25 @@ _(regras que podem surpreender, uma linha cada, com o porquê)_
 
 ## Testes
 
-_(como rodar e o que cada suíte cobre)_
+```bash
+cd api && npm test   # Jest, unitários ao lado de cada arquivo (*.spec.ts)
+cd web && npm test   # Vitest
+```
+
+- **API:** regras de saldo e depósito, validação dos DTOs, hash de senha, cadastro e login, guards de token e de papel, filters de erro, `/health` e o logger que esconde parâmetros de query.
+- **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito.
 
 ## Stack e decisões
 
-_(stack e as 5 decisões principais)_. Todas as decisões e alternativas descartadas em [`docs/decisions.md`](docs/decisions.md).
+NestJS 11, TypeORM e PostgreSQL na API; React 19, Vite e React Router 7 no front; deploy no Render.
+
+- JWT no header `Authorization`, com validade de 8h e sem refresh token (D-006).
+- Dados da obra só do acervo da Cleveland, com a imagem guardada no banco ao criar o lote (D-004, D-038).
+- Cada lance roda numa transação única, com lock de linha no lote e nas carteiras (D-014).
+- A auditoria usa uma cadeia de HMAC sobre os lances, mais um selo no lote (D-012).
+- A liquidação acontece por timer em memória e também no acesso ao lote vencido, sem job periódico (D-009).
+
+Todas as decisões e alternativas descartadas em [`docs/decisions.md`](docs/decisions.md).
 
 ## Fora do escopo
 
@@ -75,4 +89,5 @@ _(o que não foi feito, uma linha cada)_
 
 ## Uso de IA
 
-_(resumo curto)_. Registro por story em [`docs/ai-log.md`](docs/ai-log.md).
+O Claude Code implementou o código e fez os commits seguindo as regras do [`CLAUDE.md`](CLAUDE.md); o Claude (app) serviu de apoio de pesquisa.
+As decisões foram minhas e estão registradas por story em [`docs/ai-log.md`](docs/ai-log.md).
