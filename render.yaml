@@ -23,6 +23,8 @@ services:
         value: "false"
       - key: WEB_ORIGIN
         sync: false
+      - key: JWT_SECRET
+        generateValue: true
 
   - type: web
     name: agora-web

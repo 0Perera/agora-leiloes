@@ -5,6 +5,7 @@ import {
   IsUrl,
   Max,
   Min,
+  MinLength,
   validateSync,
 } from 'class-validator';
 
@@ -34,6 +35,9 @@ export class Env extends DatabaseEnv {
   @Min(1)
   @Max(65535)
   PORT!: number;
+
+  @MinLength(32)
+  JWT_SECRET!: string;
 }
 
 // As mensagens citam só o nome da variável, nunca o valor (a URL do banco tem senha).

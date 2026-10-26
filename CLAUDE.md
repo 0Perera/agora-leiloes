@@ -80,8 +80,11 @@ dto/place-bid.dto.ts
 - Um módulo por domínio: `auth`, `users`, `wallets`, `catalog`, `lots`, `bids`, `settlement`, `audit`, `receipts`.
 - Controller fino: valida entrada (DTO + `class-validator`) e delega. Regra de negócio só no service.
 - Erros de negócio são exceções de domínio com código estável, mapeadas por um exception filter:
-  `BID_BELOW_MINIMUM`, `INSUFFICIENT_BALANCE`, `ALREADY_WINNING`, `LOT_NOT_STARTED`, `LOT_ENDED`, `ROLE_NOT_ALLOWED`.
+  `BID_BELOW_MINIMUM`, `INSUFFICIENT_BALANCE`, `ALREADY_WINNING`, `LOT_NOT_STARTED`, `LOT_ENDED`, `ROLE_NOT_ALLOWED`,
+  `EMAIL_TAKEN`, `INVALID_CREDENTIALS` (o mesmo para e-mail inexistente e senha errada).
+  `CATALOG_UNAVAILABLE` (503), `IMAGE_DOWNLOAD_FAILED` (502), `LOT_HAS_BIDS` (409).
   O front traduz o código; o backend não devolve texto livre para essas recusas.
+- Erro de validação de DTO no formato `{ code: 'VALIDATION_FAILED', fields: { <campo>: <regra> } }`, para o front traduzir por campo.
 - Configuração só via variáveis de ambiente validadas na inicialização. Todo novo env vai para o `.env.example`.
 - Papel (`AUCTIONEER` ou `BIDDER`) escolhido no cadastro e fixo depois. Leiloeiro não dá lance; licitante não cria lote.
 - Lote não é editável depois de criado. "Gerenciar" é: criar, cancelar sem lances e ver o resultado.
@@ -162,6 +165,7 @@ dto/place-bid.dto.ts
   Se o download falhar, o lote não é criado. Validar `content-type` de imagem e tamanho máximo.
 - Nenhuma tela de lote usa URL do CDN da Cleveland. Só a busca do painel do leiloeiro mostra imagens direto de lá.
 - `creators` costuma vir vazio em peças antigas: usar `culture` como fallback.
+- Dados da obra vêm só do acervo: o leiloeiro não edita título nem adiciona texto livre ao lote.
 
 ## Segurança e privacidade
 
@@ -226,6 +230,19 @@ Nomes de teste:
   No front, a config do template do Vite com as mesmas duas regras. Prettier para formatação.
 - Tipo desconhecido usa `unknown` com checagem, nunca `any`. `as` só quando o tipo foi garantido antes (ex.: depois de validar).
 - Função que estoura a complexidade é quebrada em funções menores, nunca silenciada com `eslint-disable`.
+
+## Comentários
+
+- Padrão é **nenhum comentário**. Nome claro e função pequena explicam o código.
+- Comentário só para o **porquê** que o código não mostra: regra do enunciado, trade-off, armadilha conhecida.
+  No máximo 2 linhas. Ex.: `// carteiras travadas em ordem de id para evitar deadlock`.
+- Quando o motivo for longo, aponte a decisão em vez de explicar: `// ver D-012`.
+- Proibido:
+  - comentário que repete o código (`// incrementa o contador`, `// retorna o usuário`);
+  - JSDoc em todo método, banners de seção (`// ===== SERVICES =====`), "Passo 1:", "Aqui vamos...";
+  - código comentado (o Git guarda o histórico);
+  - TODO sem referência a uma story.
+- Testes não têm comentários: o texto do `it` é a documentação.
 
 ## README
 
@@ -312,6 +329,10 @@ Ruins: `update`, `ajustes`, `wip`, `fix: vários bugs`, `feat: cria lances, cart
 
 - Ao concluir cada story, adicionar uma entrada em `docs/ai-log.md`:
   story, o que a IA gerou, o que foi revisado ou reescrito à mão, sugestões da IA que foram rejeitadas e por quê.
+- Na entrada, "O que revisei ou reescrevi" lista tudo o que eu decidi ou mudei durante a story, tirado da conversa:
+  casos de teste que acrescentei, perguntas que respondi, valores que defini, pedidos de correção e o motivo de cada um.
+  Uma linha por item. Nunca inventar revisão que não aconteceu.
+- "Sugestões rejeitadas" inclui tudo o que eu recusei ou mudei de uma proposta do agente.
 - O agente faz os commits seguindo a seção Commits. Push e abertura de PR só com pedido explícito.
 
 ## Comportamento esperado do agente
@@ -329,4 +350,5 @@ Ruins: `update`, `ajustes`, `wip`, `fix: vários bugs`, `feat: cria lances, cart
 - [ ] `.env.example` e README atualizados se algo mudou
 - [ ] Entrada em `docs/ai-log.md`
 - [ ] Decisões novas registradas em `docs/decisions.md`
+- [ ] Comentários revisados: só "porquê", nenhum que repete o código
 - [ ] PR aberta com descrição e checklist
