@@ -4,7 +4,6 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-// Formato que o front traduz por campo: { code: 'VALIDATION_FAILED', fields: { email: 'isEmail' } }.
 export function validationPipe(): ValidationPipe {
   return new ValidationPipe({
     whitelist: true,

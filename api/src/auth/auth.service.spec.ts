@@ -12,7 +12,6 @@ import {
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup.dto';
 
-// UsersService falso em memória: o teste exercita a regra do AuthService sem banco.
 class InMemoryUsers {
   private readonly rows: UserCredentials[] = [];
 

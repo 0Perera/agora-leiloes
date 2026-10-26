@@ -14,7 +14,6 @@ function captureConsole(run: () => void): string {
 }
 
 describe('SafeLogger', () => {
-  // Pela interface do TypeORM, que é como o DataSource chama o logger, com os parâmetros.
   const logger: Logger = new SafeLogger('all');
 
   it('loga query sem os parâmetros', () => {
