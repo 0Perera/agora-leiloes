@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { api } from '../../shared/api/client';
 import type { Wallet } from '../../shared/api/types';
-import { formatMoney } from '../../shared/lib/money';
+import { formatMoney, maskAmount } from '../../shared/lib/money';
 import { FieldError } from '../../shared/ui/field-error';
 import { depositError, validateAmount } from './deposit';
 import { useWallet } from './use-wallet';
@@ -26,7 +26,7 @@ export function DepositForm() {
   const [submitting, setSubmitting] = useState(false);
 
   function change(next: string) {
-    setValue(next);
+    setValue(maskAmount(next));
     setError('');
     setSuccess('');
   }
@@ -84,7 +84,7 @@ export function DepositForm() {
               id="dep-amount"
               className="ag-input__control"
               type="text"
-              inputMode="decimal"
+              inputMode="numeric"
               autoComplete="off"
               value={value}
               readOnly={submitting}
@@ -105,7 +105,7 @@ export function DepositForm() {
               className="chip"
               type="button"
               disabled={submitting}
-              onClick={() => change((cents / 100).toLocaleString('pt-BR'))}
+              onClick={() => change(String(cents))}
             >
               {formatMoney(cents)}
             </button>

@@ -1,5 +1,27 @@
 import { describe, expect, it } from 'vitest';
-import { formatMoney, parseAmount } from './money';
+import { formatMoney, maskAmount, parseAmount } from './money';
+
+describe('maskAmount', () => {
+  it.each([
+    ['1', '0,01'],
+    ['1000', '10,00'],
+    ['150050', '1.500,50'],
+  ])('formata %s como %s', (text, masked) => {
+    expect(maskAmount(text)).toBe(masked);
+  });
+
+  it('ignora ponto, vírgula e letras digitados', () => {
+    expect(maskAmount('1.5a0,0')).toBe('15,00');
+  });
+
+  it('descarta zeros à esquerda', () => {
+    expect(maskAmount('0001')).toBe('0,01');
+  });
+
+  it('devolve vazio quando não há dígitos', () => {
+    expect(maskAmount('abc')).toBe('');
+  });
+});
 
 describe('parseAmount', () => {
   it.each([

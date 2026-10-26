@@ -10,6 +10,18 @@ export function formatMoney(cents: number): string {
   return `R$ ${reais}`;
 }
 
+const maxDigits = 10;
+
+// máscara de maquininha: cada dígito entra pela direita, nos centavos
+export function maskAmount(text: string): string {
+  const digits = text.replace(/\D/g, '').replace(/^0+/, '').slice(0, maxDigits);
+  if (digits === '') return '';
+  return (Number(digits) / 100).toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
 export function parseAmount(text: string): number | null {
   const value = text.trim();
   if (!grouped.test(value) && !plain.test(value)) return null;
