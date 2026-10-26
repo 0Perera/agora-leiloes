@@ -341,6 +341,11 @@ Ruins: `update`, `ajustes`, `wip`, `fix: vários bugs`, `feat: cria lances, cart
 - Perguntar antes de adicionar dependência nova.
 - Diffs pequenos. Antes de dizer que terminou: lint, testes e build passando.
 - Ao propor uma solução com trade-off relevante, explicar a alternativa em uma ou duas frases.
+- Revisão: só o revisor de casos de borda. Os três revisores só nas stories 4.1, 4.2, 4.3, 4.4, 5.1, 5.2 e 5.5.
+- Correções da revisão: corrige sozinho só os achados graves (bug, segurança, regra de negócio). Os de estilo ou opcionais, lista em uma linha cada e não corrige.
+- Contexto do épico: compila uma vez por épico, salva em arquivo e reaproveita nas stories seguintes.
+- Do `epics.md`, lê só a seção da story atual.
+- No ai-log, "O que revisei" lista o que eu decidi ou mudei na conversa, sem inventar.
 
 ## Definition of Done (por story)
 
