@@ -231,6 +231,19 @@ Nomes de teste:
 - Tipo desconhecido usa `unknown` com checagem, nunca `any`. `as` só quando o tipo foi garantido antes (ex.: depois de validar).
 - Função que estoura a complexidade é quebrada em funções menores, nunca silenciada com `eslint-disable`.
 
+## Comentários
+
+- Padrão é **nenhum comentário**. Nome claro e função pequena explicam o código.
+- Comentário só para o **porquê** que o código não mostra: regra do enunciado, trade-off, armadilha conhecida.
+  No máximo 2 linhas. Ex.: `// carteiras travadas em ordem de id para evitar deadlock`.
+- Quando o motivo for longo, aponte a decisão em vez de explicar: `// ver D-012`.
+- Proibido:
+  - comentário que repete o código (`// incrementa o contador`, `// retorna o usuário`);
+  - JSDoc em todo método, banners de seção (`// ===== SERVICES =====`), "Passo 1:", "Aqui vamos...";
+  - código comentado (o Git guarda o histórico);
+  - TODO sem referência a uma story.
+- Testes não têm comentários: o texto do `it` é a documentação.
+
 ## README
 
 O README é a porta de entrada do avaliador, não a documentação inteira. O detalhe mora em `docs/`; o README resume e linka.
@@ -337,4 +350,5 @@ Ruins: `update`, `ajustes`, `wip`, `fix: vários bugs`, `feat: cria lances, cart
 - [ ] `.env.example` e README atualizados se algo mudou
 - [ ] Entrada em `docs/ai-log.md`
 - [ ] Decisões novas registradas em `docs/decisions.md`
+- [ ] Comentários revisados: só "porquê", nenhum que repete o código
 - [ ] PR aberta com descrição e checklist
