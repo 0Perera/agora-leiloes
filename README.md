@@ -57,6 +57,8 @@ _(como a técnica detecta alteração, remoção e inserção no histórico)_
 
 _(regras que podem surpreender, uma linha cada, com o porquê)_
 
+- A sessão dura 8h e não renova: token vencido no recarregamento volta a visitante; um 401 durante o uso leva para Entrar com aviso de sessão expirada (D-006).
+
 ## Testes
 
 _(como rodar e o que cada suíte cobre)_

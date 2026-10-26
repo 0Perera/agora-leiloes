@@ -472,3 +472,14 @@ Story: 2.1
 **Por quê:** simplicidade: chave curta, legível no log de queries e no banco, e sem tipo extra nas entidades que referenciam o usuário.
 **Alternativas descartadas:** UUID com `gen_random_uuid()` (nativo no PG 17, sem extensão; esconderia a contagem de usuários, mas o `id` não aparece para outros usuários: auditoria e comprovante usam alias).
 **Consequência:** o `id` é sequencial e previsível, então nenhuma rota pode usá-lo como prova de acesso; quem fala por outro usuário passa sempre pelo token. As chaves estrangeiras para `users` são `integer`.
+
+## D-047: Token da sessão no `localStorage`
+
+Status: Aceita
+Data: 2026-10-25
+Story: 2.3
+
+**Decisão:** o front guarda `{ token, user }` no `localStorage`. No boot, lê o `exp` do JWT sem chamar a API: token expirado ou ilegível volta a visitante. Qualquer 401 numa chamada que levou token também encerra a sessão.
+**Por quê:** com o JWT no header (D-006), o token precisa ficar acessível ao JavaScript; o `localStorage` faz a sessão sobreviver ao recarregamento. Conferir o `exp` localmente evita chamar `/auth/me` no boot, que travaria o app durante o cold start do Render.
+**Alternativas descartadas:** cookie httpOnly (front e API em domínios diferentes, descartado na D-006); token só em memória (recarregar a página desloga); `sessionStorage` (cada aba pede login de novo).
+**Consequência:** um XSS poderia ler o token. A mitigação é o escape padrão do React (nada de `dangerouslySetInnerHTML`) e a validade de 8h do token.
