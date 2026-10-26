@@ -26,6 +26,8 @@ services:
       DB_SSL: "false"
       WEB_ORIGIN: http://localhost:${WEB_PORT:-5173}
       PORT: "3000"
+      # Só para desenvolvimento local; no Render o valor é gerado.
+      JWT_SECRET: dev-only-jwt-secret-change-me-0123456789
     ports:
       - "${API_PORT:-3000}:3000"
     depends_on:

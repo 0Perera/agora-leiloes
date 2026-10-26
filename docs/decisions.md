@@ -461,3 +461,14 @@ Status: Aceita · Story: 6.1
 **Por quê:** o avaliador precisa ver comprovante, total recebido e a aba Encerrados no primeiro acesso, sem esperar um lote terminar. Passando pelos services, a cadeia de HMAC, o selo e a assinatura do comprovante saem válidos.
 **Alternativas descartadas:** só o lote ao vivo, com o roteiro pedindo para criar um lote curto (o avaliador espera minutos para ver a liquidação); `INSERT` direto com datas no passado (cadeia inválida, a auditoria acusaria adulteração, D-020).
 **Consequência:** o `Clock` precisa ser trocável no contexto do seed. As datas desse lote ficam no passado de verdade, como se o leilão tivesse acontecido.
+
+## D-046: `id` de usuário `integer` autoincremento
+
+Status: Aceita
+Data: 2026-10-25
+Story: 2.1
+
+**Decisão:** a chave de `users` é `integer` com autoincremento (`SERIAL`). O JWT leva o `id` como string no `sub`.
+**Por quê:** simplicidade: chave curta, legível no log de queries e no banco, e sem tipo extra nas entidades que referenciam o usuário.
+**Alternativas descartadas:** UUID com `gen_random_uuid()` (nativo no PG 17, sem extensão; esconderia a contagem de usuários, mas o `id` não aparece para outros usuários: auditoria e comprovante usam alias).
+**Consequência:** o `id` é sequencial e previsível, então nenhuma rota pode usá-lo como prova de acesso; quem fala por outro usuário passa sempre pelo token. As chaves estrangeiras para `users` são `integer`.

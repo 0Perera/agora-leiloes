@@ -71,3 +71,17 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - *Aceitar o template do Nest 12:* contrariava as decisões de testes e lint já tomadas.
+
+## Story 2.1: Cadastro e login na API
+
+**O que a IA gerou:**
+- Módulos `users` e `auth` (`POST /auth/signup`, `POST /auth/login`, `GET /auth/me`), entidade `User` e a migration `Users` gerada pelo CLI.
+- Em `common/`: `DomainException` com código, `DomainExceptionFilter`, `validationPipe()` no formato `VALIDATION_FAILED`, `AuthGuard`, `RolesGuard` e os decorators `@Auth` e `@CurrentUser`.
+- Hash de senha com `scrypt` nativo, `SafeLogger` do TypeORM sem parâmetros de query, env `JWT_SECRET` e os testes unitários aprovados na spec.
+- Correção feita pela própria IA: instalou o `@nestjs/jwt` 12, que é só ESM e quebrou o Jest, e trocou pelo 11.x, que aceita o Nest 11 e segue o D-032.
+
+**O que revisei ou reescrevi:**
+- Defini na spec os casos de teste, a senha com 8 a 128 caracteres e o `id` de usuário `integer` (D-046).
+
+**Sugestões rejeitadas e por quê:**
+- *`passport-jwt`:* três pacotes para uma estratégia só (D-040).
