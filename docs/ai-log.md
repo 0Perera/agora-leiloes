@@ -130,3 +130,30 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma: as opções recomendadas foram aceitas, com os acréscimos acima.
+
+## Story 2.4: Tela Carteira
+
+**O que a IA gerou:**
+- Tela `/wallet` em `features/wallet` a partir do canvas `Carteira.dc.html`: equação total − comprometido = disponível, lista de comprometidos no estado vazio, ficha de depósito com chips, estados de carregando e erro com "Tentar de novo".
+- Provider de carteira montado no layout só para licitante, com um `GET /wallet`, e o resumo da carteira no cabeçalho, atualizado pela resposta do depósito sem novo `GET`.
+- `formatMoney` e `parseAmount` em `shared/lib/money.ts`, validação e tradução dos erros do depósito, e os testes aprovados na spec.
+- `FieldError` e o estilo de campo inválido movidos para `shared/ui/`; tokens `--space-*` nos CSS e `App` com export nomeado.
+- Testes de `validateAmount` (vazio, abaixo do mínimo, acima do máximo), acrescentados pela IA para cobrir a matriz da spec, fora da lista aprovada.
+- Correção feita pela própria IA na revisão: digitar ou clicar num chip durante o envio apagava o valor novo; campo e chips passaram a travar enquanto o depósito está em andamento.
+
+**O que revisei e pedi para mudar:**
+- Pedi a story com o canvas `docs/design/Carteira.dc.html` como referência.
+- Pedi um commit `refactor(web)` separado com os tokens de espaçamento, o `App` com export nomeado e a remoção do `.gitkeep` (que já tinha saído na 2.3).
+- Pedi a regra no `CLAUDE.md` de nunca apagar a branch da story depois do merge.
+- Pedi a troca do título "O que revisei ou reescrevi" por "O que revisei e pedi para mudar", só com os verbos decidi, escolhi, aprovei, recusei e pedi, e a revisão das entradas antigas.
+- Decidi o mínimo de R$ 1, igual à API, com o texto "De R$ 1 a R$ 100.000".
+- Escolhi aceitar reais com centavos ("1.500,50") e pedi o `parseAmount` em `shared/lib`, para o formulário de lance reaproveitar.
+- Aprovei os testes, com os casos de `parseAmount` definidos por mim: aceita "1.500", "1500", "1.500,50" e "1500,5"; recusa texto, mais de duas casas decimais e vazio.
+- Decidi manter a spec inteira, acima do limite de tamanho.
+- Aprovei mover `FieldError` para `shared/ui/` num refactor separado, o widget de carteira no cabeçalho sem o monograma e o extrato fora da tela.
+- Pedi a atualização do README (Rodar local, Stack e decisões, Testes e Uso de IA) num commit `docs` separado.
+
+**Sugestões rejeitadas e por quê:**
+- *Mínimo de R$ 10, como no canvas:* a tela ficaria mais restrita que a API.
+- *Só reais inteiros no campo:* desperdiçaria a precisão em centavos da API.
+- *`parseAmount` dentro de `features/wallet`:* o lance vai usar o mesmo parse, então foi para `shared/lib`.
