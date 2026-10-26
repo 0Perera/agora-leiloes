@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Ágora · Painel do leiloeiro</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/agora/tokens.css">
+<link rel="stylesheet" href="ds/agora/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#f2ede3;color:#2b2520;font-family:"EB Garamond",Garamond,Georgia,serif}
+a{color:#1f4b96}a:hover{color:#2b2520}
+:focus-visible{outline:2px solid #1f4b96;outline-offset:2px}
+.ag-input:focus-within{outline:2px solid #1f4b96;outline-offset:2px}
+.ag-input.is-invalid{border-color:#b23a1f;box-shadow:inset 0 0 0 1px #b23a1f}
+.ag-btn,.ag-badge,.ag-input{border-radius:0}
+.ag-btn--quiet{min-height:44px}
+.nav-link{display:inline-flex;align-items:center;min-height:44px;box-sizing:border-box;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#2b2520;text-decoration:none;padding:0 4px;border-bottom:2px solid transparent}
+.nav-link:hover{border-bottom-color:#9a7529;color:#2b2520}
+.nav-link[aria-current="page"]{border-bottom:3px double #9a7529}
+.monogram{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background-color:#2b2520;box-shadow:inset 0 0 0 2px #2b2520,inset 0 0 0 3px #e4cd92;color:#e4cd92;font-family:Cinzel,Georgia,serif;font-weight:700;font-size:13px;letter-spacing:.06em;text-decoration:none}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skel{background-color:#dfd6c5;animation:skel 1.4s ease-in-out infinite}
+@keyframes skel{50%{opacity:.5}}
+@media (prefers-reduced-motion:reduce){.skel{animation:none}}
+
+/* cantoneiras douradas: ficha de catalogação */
+.corners{position:relative;background-color:#ebe4d7;border:1px solid #9a7529;box-shadow:inset 0 0 0 5px #ebe4d7,inset 0 0 0 6px #cfc3ab;
+  background-image:linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529);
+  background-repeat:no-repeat;
+  background-size:26px 3px,3px 26px,26px 3px,3px 26px,26px 3px,3px 26px,26px 3px,3px 26px;
+  background-position:left 10px top 10px,left 10px top 10px,right 10px top 10px,right 10px top 10px,left 10px bottom 10px,left 10px bottom 10px,right 10px bottom 10px,right 10px bottom 10px}
+
+/* tábua de totais */
+.tabula{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));border-top:3px double #9a7529;border-bottom:3px double #9a7529}
+.tabula > div{padding:20px 24px;border-left:1px solid #9a7529}
+.tabula > div:first-child{border-left:0;padding-left:0}
+@media (max-width:760px){.tabula > div{border-left:0;padding:16px 0;border-top:1px solid #cfc3ab}.tabula > div:first-child{border-top:0}}
+
+/* acervo: resultados da API */
+.result{display:flex;flex-direction:column;text-align:left;padding:0;border:1px solid #9a7529;background:#f2ede3;cursor:pointer;color:#2b2520;font:inherit}
+.result:hover{box-shadow:0 14px 24px -16px rgba(43,37,32,.45)}
+.result[aria-pressed="true"]{box-shadow:0 0 0 2px #f2ede3,0 0 0 5px #9a7529}
+.wall{position:relative;height:150px;background-color:#ebe4d7;box-shadow:inset 0 0 0 5px #ebe4d7,inset 0 0 0 6px #cfc3ab;display:flex;align-items:center;justify-content:center;padding:22px 26px;box-sizing:border-box;border-bottom:1px solid #9a7529}
+.art{box-sizing:border-box;max-width:100%;max-height:100%;background-color:#dfd6c5}
+.art-portrait{height:100%;aspect-ratio:3/4}
+.art-landscape{width:100%;aspect-ratio:4/3}
+.art-wide{width:100%;aspect-ratio:16/10}
+.art-square{height:100%;aspect-ratio:1/1}
+.framed{border:6px solid #9a7529;box-shadow:0 0 0 1px #745616,inset 0 0 0 1px #e4cd92,0 12px 16px -12px rgba(43,37,32,.55)}
+.matted{border:7px solid #f2ede3;box-shadow:0 0 0 1px #cfc3ab,0 10px 14px -10px rgba(43,37,32,.45)}
+.niche{position:relative;width:100%;aspect-ratio:440/540;background-color:#f2ede3;border:1px solid #9a7529;border-bottom:0;border-radius:999px 999px 0 0;box-shadow:inset 0 22px 30px -22px rgba(43,37,32,.30),inset 0 0 0 6px #f2ede3,inset 0 0 0 7px #cfc3ab}
+.niche__stage{position:absolute;top:24%;left:11%;right:11%;bottom:7%;display:flex;align-items:center;justify-content:center}
+
+.field-error{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:16px;line-height:22px;color:#8c2a14}
+.ctl-text{font-family:"EB Garamond",Garamond,Georgia,serif !important;font-weight:400 !important;font-size:17px !important}
+textarea.ag-input__control{height:auto;min-height:92px;padding:12px 16px;resize:vertical;line-height:24px}
+.tab{min-height:44px;padding:0 16px;border:0;border-bottom:3px solid transparent;background:transparent;cursor:pointer;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#5e5449}
+.tab[aria-pressed="true"]{border-bottom:3px double #9a7529;background-color:#ebe4d7;color:#2b2520}
+
+/* livro de lotes: tabela pautada com margem vermelha dupla */
+.ledger{border-top:1px solid #9a7529}
+.lrow{display:grid;grid-template-columns:64px minmax(220px,2.2fr) 128px 112px 160px 64px 150px 200px;gap:0 12px;align-items:center;border-bottom:1px solid #cfc3ab;min-height:76px}
+.lhead{min-height:48px;border-bottom:3px double #9a7529;background-color:#ebe4d7}
+.lhead > div{font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;line-height:14px;letter-spacing:0.08em;text-transform:uppercase;color:#5e5449}
+.c-num{align-self:stretch;display:flex;align-items:center;justify-content:flex-end;padding-right:14px;border-right:3px double #b23a1f;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:14px;letter-spacing:.06em;color:#745616}
+.lhead .c-num{color:#5e5449}
+.c-money{font-family:Cinzel,Georgia,serif;font-weight:600;font-size:16px;font-variant-numeric:tabular-nums}
+.lrow.is-cancelled .c-obra,.lrow.is-cancelled .c-money{color:#5e5449}
+.tthumb{flex:none;width:72px;height:60px;display:flex;align-items:center;justify-content:center}
+.t-portrait{height:100%;aspect-ratio:3/4}.t-landscape{width:100%;aspect-ratio:4/3}.t-wide{width:100%;aspect-ratio:16/10}.t-square{height:100%;aspect-ratio:1/1}
+.tthumb .framed{border-width:3px}.tthumb .matted{border-width:4px}
+.lrow{position:relative}
+.c-obra{position:relative}
+.stamp-cell{grid-column:span 4;display:flex;align-items:center;justify-content:center;padding:10px 0}
+.stamp{display:inline-block;transform:rotate(-5deg);padding:7px 14px 6px;border:4px double #8c2a14;background-color:rgba(251,249,244,.94);color:#8c2a14;font-family:Cinzel,Georgia,serif;font-weight:700;font-size:16px;line-height:18px;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;pointer-events:none;box-shadow:0 0 0 1px rgba(140,42,20,.25)}
+.state-text{font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#8c2a14}
+.btn-cancel{min-height:44px;padding:0 14px;border:1px solid #b23a1f;background:#f2ede3;color:#b23a1f;cursor:pointer;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase}
+.btn-cancel:hover{background:#f7e4dc}
+.lfoot{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:baseline;gap:8px 24px;padding:16px 0 0}
+.total{font-family:Cinzel,Georgia,serif;font-weight:600;font-size:26px;padding-bottom:4px;border-bottom:3px double #2b2520}
+@media (max-width:1080px){
+  .lhead{display:none}
+  .lrow{grid-template-columns:minmax(0,1fr);gap:6px;padding:16px 0 16px 18px;border-left:3px double #b23a1f;border-bottom:1px solid #9a7529;margin-bottom:12px;min-height:0}
+  .c-num{border-right:0;justify-content:flex-start;padding:0}
+  .lrow > [data-label]{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;align-items:center}
+  .lrow > [data-label]::before{content:attr(data-label);font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#5e5449}
+  .stamp-cell{grid-column:auto;justify-content:flex-start;padding:6px 0 4px 8px}
+}
+.grid2{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:40px}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+/* celular: menu em uma linha que rola para o lado, em vez de ocupar várias linhas */
+@media (max-width:760px){.nav-main{order:3;width:100%;flex-wrap:nowrap !important;overflow-x:auto;gap:0 20px !important;scrollbar-width:thin}.nav-main a{white-space:nowrap;flex:none}}
+</style>
+</helmet>
+
+<div class="ag-ground" style="min-height: 100vh; background-color: var(--marble-000); color: var(--ink); font-family: var(--font-text);">
+
+<!-- ============ CABEÇALHO (leiloeiro) ============ -->
+<header>
+  <div style="max-width: 1240px; margin: 0 auto; padding: 10px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px;">
+    <a href="Main.dc.html" aria-label="Ágora, página inicial" style="display: flex; align-items: center; gap: 12px; min-height: 44px; text-decoration: none; color: var(--ink);">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="48" rx="16" ry="16" fill="#1f4b96"></rect><rect x="5" y="5" width="24" height="48" rx="12" ry="12" fill="#f2ede3"></rect><rect x="8" y="8" width="18" height="48" rx="9" ry="9" fill="#9a7529"></rect><rect x="12" y="12" width="10" height="48" rx="5" ry="5" fill="#b23a1f"></rect></svg>
+      <span style="font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 28px; letter-spacing: 0.12em;">ÁGORA</span>
+    </a>
+    <nav class="nav-main" aria-label="Principal" style="display: flex; flex-wrap: wrap; gap: 4px 20px;">
+      <a class="nav-link" href="Main.dc.html">Vitrine</a>
+      <a class="nav-link" href="#" aria-current="page">Painel do leiloeiro</a>
+      <a class="nav-link" href="Main.dc.html#como-funciona">Como funciona</a>
+      <a class="nav-link" href="Auditoria.dc.html">Auditoria</a>
+    </nav>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span style="font-size: 15px; line-height: 20px; color: var(--ink-muted); text-align: right;">Leiloeiro<br><span style="color: var(--ink);">Casa Ágora</span></span>
+      <a class="monogram" href="#conta" aria-label="Conta do leiloeiro Casa Ágora">CA</a>
+    </div>
+  </div>
+  <div class="ag-meander" style="background-color: var(--marble-100); border-top: 1px solid var(--gold-500); border-bottom: 1px solid var(--gold-500); height: 18px;"></div>
+</header>
+
+<main style="max-width: 1240px; margin: 0 auto; padding: 40px 24px 80px; display: flex; flex-direction: column; gap: 56px;">
+
+<!-- ============ TÍTULO + TÁBUA DE TOTAIS ============ -->
+<section aria-labelledby="page-title" style="display: flex; flex-direction: column; gap: 24px;">
+  <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px;">
+    <div>
+      <p style="margin: 0 0 6px; font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-700);">Livro da casa</p>
+      <h1 id="page-title" style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(30px, 6vw, 42px); line-height: 1.1; letter-spacing: 0.03em;">Painel do leiloeiro</h1>
+      <p style="margin: 8px 0 0; font-family: var(--font-serif); font-style: italic; font-size: 20px; line-height: 26px; color: var(--ink-muted);">Lotes da Casa Ágora, do acervo ao arremate.</p>
+    </div>
+    <button class="ag-btn ag-btn--primary" type="button" onClick="{{toggleNew}}" aria-expanded="{{showNew}}" aria-controls="novo-lote">{{newLabel}}</button>
+  </div>
+
+  <sc-if value="{{lLoading}}" hint-placeholder-val="{{false}}">
+    <div class="tabula" aria-hidden="true">
+      <div><div class="skel" style="height: 12px; width: 50%;"></div><div class="skel" style="height: 40px; width: 70%; margin-top: 10px;"></div></div>
+      <div><div class="skel" style="height: 12px; width: 50%;"></div><div class="skel" style="height: 40px; width: 40%; margin-top: 10px;"></div></div>
+      <div><div class="skel" style="height: 12px; width: 50%;"></div><div class="skel" style="height: 40px; width: 40%; margin-top: 10px;"></div></div>
+      <div><div class="skel" style="height: 12px; width: 50%;"></div><div class="skel" style="height: 40px; width: 40%; margin-top: 10px;"></div></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{lShowTotals}}" hint-placeholder-val="{{true}}">
+    <div class="tabula">
+      <div>
+        <span class="ag-lot__label">Total recebido</span>
+        <span style="display: inline-block; margin-top: 6px; font-family: var(--font-display); font-weight: 600; font-size: 34px; line-height: 40px; border-bottom: 3px double var(--ink);">{{totalText}}</span>
+        <span style="display: block; margin-top: 6px; font-size: 15px; color: var(--ink-muted);">{{soldText}}</span>
+      </div>
+      <div>
+        <span class="ag-lot__label">Ao vivo</span>
+        <span style="display: block; margin-top: 6px; font-family: var(--font-display); font-weight: 600; font-size: 34px; line-height: 40px;">{{cLive}}</span>
+        <span style="display: block; margin-top: 6px; font-size: 15px; color: var(--ink-muted);">{{liveSum}} em lances agora</span>
+      </div>
+      <div>
+        <span class="ag-lot__label">Agendados</span>
+        <span style="display: block; margin-top: 6px; font-family: var(--font-display); font-weight: 600; font-size: 34px; line-height: 40px;">{{cScheduled}}</span>
+        <span style="display: block; margin-top: 6px; font-size: 15px; color: var(--ink-muted);">Próximo: 24 out, 19h</span>
+      </div>
+      <div>
+        <span class="ag-lot__label">Encerrados</span>
+        <span style="display: block; margin-top: 6px; font-family: var(--font-display); font-weight: 600; font-size: 34px; line-height: 40px;">{{cClosed}}</span>
+        <span style="display: block; margin-top: 6px; font-size: 15px; color: var(--ink-muted);">{{unsoldText}}</span>
+      </div>
+    </div>
+  </sc-if>
+</section>
+
+<sc-if value="{{showNew}}" hint-placeholder-val="{{false}}">
+<!-- ============ I. NOVO LOTE ============ -->
+<section id="novo-lote" aria-labelledby="novo-title" style="display: flex; flex-direction: column; gap: 24px;">
+  <header class="ag-section" style="text-align: left;">
+    <h2 id="novo-title" class="ag-section__title" style="font-size: 30px; line-height: 36px;">Novo lote a partir do acervo</h2>
+    <div class="ag-meander" style="max-width: 360px;"></div>
+  </header>
+
+  <!-- Passo 1: busca na API -->
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 16px;">
+      <label class="ag-field" for="q" style="flex: 1 1 320px; min-width: 0;">
+        <span class="ag-field__label">1. Buscar no acervo do museu</span>
+        <span class="ag-input {{qInputClass}}">
+          <span class="ag-input__prefix" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#745616" stroke-width="2" stroke-linecap="square"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21"></path></svg></span>
+          <input id="q" class="ag-input__control ctl-text" type="search" autocomplete="off" value="{{query}}" onChange="{{onQuery}}" aria-invalid="{{qInvalid}}" aria-describedby="q-help q-err">
+        </span>
+        <span id="q-help" class="ag-field__hint">Título, artista, técnica ou lugar. Ex.: mármore, Roma, retrato.</span>
+      </label>
+      <button class="ag-btn ag-btn--secondary" type="button" onClick="{{onSearch}}" style="margin-bottom: 28px;">Buscar</button>
+    </div>
+    <div id="q-err">
+      <sc-if value="{{qHasError}}" hint-placeholder-val="{{false}}">
+        <p class="field-error" role="alert"><span aria-hidden="true" style="font-family: var(--font-display); font-weight: 700;">✕</span><span>Digite um termo para buscar no acervo.</span></p>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{sLoading}}" hint-placeholder-val="{{false}}">
+      <p class="sr-only" role="status">Buscando no acervo.</p>
+      <div aria-hidden="true" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px;">
+        <sc-for list="{{skel6}}" as="s" hint-placeholder-count="6">
+          <div style="border: 1px solid var(--vein);"><div class="skel" style="height: 150px;"></div><div style="padding: 12px; display: flex; flex-direction: column; gap: 8px;"><div class="skel" style="height: 18px; width: 85%;"></div><div class="skel" style="height: 14px; width: 60%;"></div></div></div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{sError}}" hint-placeholder-val="{{false}}">
+      <div role="alert" style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px;">
+        <div class="ag-notice ag-notice--error" style="flex: 1 1 420px; border-radius: 0;">
+          <span class="ag-notice__mark" aria-hidden="true">✕</span>
+          <p class="ag-notice__title">O acervo do museu não respondeu</p>
+          <p class="ag-notice__text">A busca está fora do ar por enquanto. Os lotes já publicados continuam funcionando normalmente.</p>
+        </div>
+        <button class="ag-btn ag-btn--secondary" type="button" onClick="{{onSearch}}">Tentar de novo</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{sEmpty}}" hint-placeholder-val="{{false}}">
+      <div role="status" style="padding: 24px; border-top: 3px double var(--gold-500); border-bottom: 3px double var(--gold-500); text-align: center;">
+        <p style="margin: 0 0 4px; font-family: var(--font-serif); font-weight: 600; font-size: 24px;">Nenhuma obra encontrada para “{{lastQuery}}”</p>
+        <p style="margin: 0; font-size: 17px; line-height: 24px; color: var(--ink-muted);">Tente um termo mais amplo, como o nome de uma cidade, um material ou um século.</p>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{sResults}}" hint-placeholder-val="{{true}}">
+      <p style="margin: 0; font-size: 16px; color: var(--ink-muted);" role="status">{{resultsText}}</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px;">
+        <sc-for list="{{results}}" as="it" hint-placeholder-count="6">
+          <button class="result" type="button" aria-pressed="{{it.selected}}" onClick="{{it.pick}}">
+            <span class="wall"><span class="art ag-marble {{it.shape}} {{it.finish}}" role="img" aria-label="Imagem de {{it.title}}"></span></span>
+            <span style="display: flex; flex-direction: column; gap: 2px; padding: 12px 12px 14px; width: 100%; box-sizing: border-box;">
+              <span style="font-family: var(--font-serif); font-style: italic; font-weight: 500; font-size: 19px; line-height: 22px;">{{it.title}}</span>
+              <span style="font-size: 15px; line-height: 20px; color: var(--ink-muted);">{{it.artist}}</span>
+              <span style="margin-top: 6px; font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: {{it.tagColor}};">{{it.tag}}</span>
+            </span>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- Passo 2: ficha de catalogação -->
+  <sc-if value="{{hasPick}}" hint-placeholder-val="{{true}}">
+  <div class="corners" style="padding: clamp(24px, 4vw, 44px);">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 16px; margin-bottom: 24px;">
+      <h3 style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink);">2. Ficha do lote <span style="color: var(--gold-700);">{{nextNumber}}</span></h3>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px; padding-bottom: 18px; margin-bottom: 24px; border-bottom: 3px double var(--gold-500);">
+          <span class="ag-field__label">Título do lote</span>
+          <p style="margin: 0; font-family: var(--font-serif); font-style: italic; font-weight: 500; font-size: 30px; line-height: 34px; color: var(--ink);">{{pick.title}}</p>
+          <span class="ag-field__hint" style="display: flex; gap: 8px; align-items: center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5e5449" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="5" y="11" width="14" height="10"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Só leitura: título e dados da obra vêm do acervo do museu, como foram catalogados.</span>
+        </div>
+
+    <div class="grid2">
+      <!-- obra + dados do acervo -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="niche"><div class="niche__stage"><div class="art ag-marble {{pick.shape}} {{pick.finish}}" role="img" aria-label="Imagem de {{pick.title}}"></div></div></div>
+        <dl style="display: grid; grid-template-columns: minmax(96px, max-content) minmax(0, 1fr); gap: 8px 16px; margin: 0; padding-top: 16px; border-top: 3px double var(--gold-500);">
+          <dt class="ag-lot__label" style="line-height: 22px;">Artista</dt><dd style="margin: 0; font-size: 16px; line-height: 22px;">{{pick.artistName}}</dd>
+          <dt class="ag-lot__label" style="line-height: 22px;">Data</dt><dd style="margin: 0; font-size: 16px; line-height: 22px;">{{pick.date}}</dd>
+          <dt class="ag-lot__label" style="line-height: 22px;">Técnica</dt><dd style="margin: 0; font-size: 16px; line-height: 22px;">{{pick.medium}}</dd>
+          <dt class="ag-lot__label" style="line-height: 22px;">Dimensões</dt><dd style="margin: 0; font-size: 16px; line-height: 22px;">{{pick.size}}</dd>
+          <dt class="ag-lot__label" style="line-height: 22px;">Tipo</dt><dd style="margin: 0; font-size: 16px; line-height: 22px;">{{pick.tag}}</dd>
+          <dt class="ag-lot__label" style="line-height: 22px;">Nº no acervo</dt><dd style="margin: 0; font-size: 16px; line-height: 22px; font-variant-numeric: tabular-nums;">{{pick.id}}</dd>
+        </dl>
+      </div>
+
+      <!-- campos do leiloeiro -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+          <label class="ag-field" for="f-start">
+            <span class="ag-field__label">Lance inicial</span>
+            <span class="ag-input {{e.startCls}}"><span class="ag-input__prefix" aria-hidden="true">R$</span><input id="f-start" class="ag-input__control" type="text" inputmode="numeric" value="{{f.start}}" onChange="{{on.start}}" aria-invalid="{{e.startBad}}" aria-describedby="f-start-help f-start-err"></span>
+            <span id="f-start-help" class="ag-field__hint">O primeiro lance precisa ser igual ou maior.</span>
+            <span id="f-start-err"><sc-if value="{{e.startBad}}" hint-placeholder-val="{{false}}"><span class="field-error"><span aria-hidden="true">✕</span><span>{{e.start}}</span></span></sc-if></span>
+          </label>
+          <label class="ag-field" for="f-inc">
+            <span class="ag-field__label">Aumento mínimo por lance</span>
+            <span class="ag-input {{e.incCls}}"><span class="ag-input__prefix" aria-hidden="true">R$</span><input id="f-inc" class="ag-input__control" type="text" inputmode="numeric" value="{{f.inc}}" onChange="{{on.inc}}" aria-invalid="{{e.incBad}}" aria-describedby="f-inc-help f-inc-err"></span>
+            <span id="f-inc-help" class="ag-field__hint">Cada lance seguinte soma pelo menos este valor.</span>
+            <span id="f-inc-err"><sc-if value="{{e.incBad}}" hint-placeholder-val="{{false}}"><span class="field-error"><span aria-hidden="true">✕</span><span>{{e.inc}}</span></span></sc-if></span>
+          </label>
+          <label class="ag-field" for="f-open">
+            <span class="ag-field__label">Início</span>
+            <span class="ag-input {{e.openCls}}"><input id="f-open" class="ag-input__control ctl-text" type="datetime-local" value="{{f.open}}" onChange="{{on.open}}" aria-invalid="{{e.openBad}}" aria-describedby="f-open-err" style="padding-left: 16px;"></span>
+            <span id="f-open-err"><sc-if value="{{e.openBad}}" hint-placeholder-val="{{false}}"><span class="field-error"><span aria-hidden="true">✕</span><span>{{e.open}}</span></span></sc-if></span>
+          </label>
+          <label class="ag-field" for="f-close">
+            <span class="ag-field__label">Fim</span>
+            <span class="ag-input {{e.closeCls}}"><input id="f-close" class="ag-input__control ctl-text" type="datetime-local" value="{{f.close}}" onChange="{{on.close}}" aria-invalid="{{e.closeBad}}" aria-describedby="f-close-help f-close-err" style="padding-left: 16px;"></span>
+            <span id="f-close-help" class="ag-field__hint">Lances nos últimos 2 min estendem o fim em +2 min.</span>
+            <span id="f-close-err"><sc-if value="{{e.closeBad}}" hint-placeholder-val="{{false}}"><span class="field-error"><span aria-hidden="true">✕</span><span>{{e.close}}</span></span></sc-if></span>
+          </label>
+        </div>
+
+        <sc-if value="{{imgFail}}" hint-placeholder-val="{{false}}">
+          <p class="field-error" role="alert" style="padding: 10px 14px; border: 1px solid var(--cinnabar); background-color: var(--cinnabar-soft);"><span aria-hidden="true">✕</span><span><strong>O lote não foi criado.</strong> Não foi possível baixar a imagem da obra no acervo do museu. Tente de novo em instantes ou escolha outra obra.</span></p>
+        </sc-if>
+        <sc-if value="{{e.any}}" hint-placeholder-val="{{false}}">
+          <p class="field-error" role="alert" style="padding: 10px 14px; border: 1px solid var(--cinnabar); background-color: var(--cinnabar-soft);"><span aria-hidden="true">✕</span><span>{{e.summary}}</span></p>
+        </sc-if>
+        <sc-if value="{{published}}" hint-placeholder-val="{{false}}">
+          <p role="status" style="margin: 0; display: flex; gap: 8px; padding: 10px 14px; border: 1px solid var(--malachite); background-color: var(--malachite-soft); color: var(--malachite); font-size: 16px; line-height: 22px;"><span aria-hidden="true">✓</span><span>{{publishedText}}</span></p>
+        </sc-if>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 8px; border-top: 1px solid var(--vein);">
+          <button class="ag-btn ag-btn--primary" type="button" onClick="{{onPublish}}">Publicar lote</button>
+          <button class="ag-btn ag-btn--quiet" type="button" onClick="{{onReset}}" style="min-height: 44px;">Limpar ficha</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+</section>
+
+</sc-if>
+
+<!-- ============ II. LIVRO DE LOTES ============ -->
+<section aria-labelledby="livro-title" style="display: flex; flex-direction: column; gap: 20px;">
+  <header class="ag-section" style="text-align: left;">
+    <h2 id="livro-title" class="ag-section__title" style="font-size: 30px; line-height: 36px;">Livro de lotes</h2>
+    <div class="ag-meander" style="max-width: 360px;"></div>
+  </header>
+
+  <div role="group" aria-label="Filtrar lotes" style="display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--gold-500);">
+    <sc-for list="{{filters}}" as="ft" hint-placeholder-count="5">
+      <button class="tab" type="button" aria-pressed="{{ft.active}}" onClick="{{ft.pick}}">{{ft.label}} <span style="color: var(--gold-700);">{{ft.countText}}</span></button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{hasRace}}" hint-placeholder-val="{{false}}">
+    <div class="ag-notice ag-notice--info" role="alert" style="border-radius: 0;">
+      <span class="ag-notice__mark" aria-hidden="true">i</span>
+      <p class="ag-notice__title">Cancelamento recusado</p>
+      <p class="ag-notice__text">{{raceText}}</p>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{lLoading}}" hint-placeholder-val="{{false}}">
+    <p class="sr-only" role="status">Carregando o livro de lotes.</p>
+    <div aria-hidden="true" style="display: flex; flex-direction: column;">
+      <sc-for list="{{skel5}}" as="s" hint-placeholder-count="5">
+        <div style="display: flex; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--vein);"><div class="skel" style="width: 40px; height: 20px;"></div><div class="skel" style="width: 60px; height: 56px;"></div><div style="flex: 1; display: flex; flex-direction: column; gap: 8px;"><div class="skel" style="height: 18px; width: 50%;"></div><div class="skel" style="height: 14px; width: 30%;"></div></div><div class="skel" style="width: 120px; height: 24px;"></div></div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{lError}}" hint-placeholder-val="{{false}}">
+    <div role="alert" style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px;">
+      <div class="ag-notice ag-notice--error" style="flex: 1 1 420px; border-radius: 0;">
+        <span class="ag-notice__mark" aria-hidden="true">✕</span>
+        <p class="ag-notice__title">Não foi possível carregar seus lotes</p>
+        <p class="ag-notice__text">Nada foi alterado. Os lotes ao vivo seguem recebendo lances normalmente.</p>
+      </div>
+      <button class="ag-btn ag-btn--secondary" type="button" onClick="{{retryLedger}}">Tentar de novo</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{lEmpty}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="padding: 32px 24px; border-top: 3px double var(--gold-500); border-bottom: 3px double var(--gold-500); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+      <p style="margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 26px;">{{emptyTitle}}</p>
+      <p style="margin: 0; font-size: 17px; line-height: 24px; color: var(--ink-muted);">{{emptyText}}</p>
+      <button class="ag-btn ag-btn--secondary" type="button" onClick="{{openNew}}">Criar o primeiro lote</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{lRows}}" hint-placeholder-val="{{true}}">
+    <div class="ledger" role="table" aria-label="Livro de lotes">
+      <div class="lrow lhead" role="row">
+        <div class="c-num" role="columnheader">Nº</div>
+        <div role="columnheader">Obra</div>
+        <div role="columnheader">Estado</div>
+        <div role="columnheader">Lance inicial</div>
+        <div role="columnheader">Resultado</div>
+        <div role="columnheader">Lances</div>
+        <div role="columnheader">Período</div>
+        <div role="columnheader">Ação</div>
+      </div>
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+        <div class="lrow {{r.rowCls}}" role="row">
+          <div class="c-num" role="cell">{{r.n}}</div>
+          <div class="c-obra" role="cell" style="display: flex; align-items: center; gap: 14px; padding: 8px 0; min-width: 0;">
+            <span class="tthumb" aria-hidden="true"><span class="art ag-marble {{r.tshape}} {{r.finish}}"></span></span>
+            <span style="min-width: 0; display: flex; flex-direction: column;">
+              <span style="font-family: var(--font-serif); font-style: italic; font-weight: 500; font-size: 19px; line-height: 23px;">{{r.title}}</span>
+              <span style="font-size: 15px; line-height: 20px; color: var(--ink-muted);">{{r.artist}}</span>
+            </span>
+          </div>
+          <div role="cell" data-label="Estado">
+            <sc-if value="{{r.isCancelled}}" hint-placeholder-val="{{false}}"><span class="sr-only">Cancelado</span></sc-if>
+            <sc-if value="{{r.notCancelled}}" hint-placeholder-val="{{true}}"><span class="ag-badge {{r.badgeClass}}">{{r.badgeText}}</span></sc-if>
+          </div>
+          <sc-if value="{{r.isCancelled}}" hint-placeholder-val="{{false}}">
+          <div class="stamp-cell" role="cell"><span class="stamp" aria-hidden="true">Cancelado</span></div>
+          </sc-if>
+          <sc-if value="{{r.notCancelled}}" hint-placeholder-val="{{true}}">
+          <div class="c-money" role="cell" data-label="Lance inicial">{{r.start}}</div>
+          <div role="cell" data-label="{{r.resultLabel}}">
+            <span style="display: flex; flex-direction: column;">
+              <span class="c-money" style="color: {{r.resultColor}};">{{r.result}}</span>
+              <span style="font-size: 14px; line-height: 18px; color: var(--ink-muted);">{{r.resultSub}}</span>
+            </span>
+          </div>
+          <div class="c-money" role="cell" data-label="Lances">{{r.bids}}</div>
+          <div role="cell" data-label="Período" style="font-size: 15px; line-height: 20px;">{{r.when}}</div>
+          </sc-if>
+          <div role="cell" data-label="Ação" style="padding: 8px 0;">
+            <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+            <sc-if value="{{r.canCancel}}" hint-placeholder-val="{{false}}">
+              <button class="btn-cancel" type="button" onClick="{{r.askCancel}}">Cancelar lote</button>
+            </sc-if>
+            <sc-if value="{{r.confirming}}" hint-placeholder-val="{{false}}">
+              <span role="group" aria-label="Confirmar cancelamento do lote {{r.n}}" style="display: flex; flex-direction: column; gap: 6px;">
+                <span style="font-size: 15px; line-height: 20px;">Tirar o lote da vitrine?</span>
+                <span style="display: flex; flex-wrap: wrap; gap: 6px;">
+                  <button class="btn-cancel" type="button" onClick="{{r.doCancel}}" style="background-color: var(--cinnabar); color: var(--on-pigment);">Sim, cancelar</button>
+                  <button class="ag-btn ag-btn--quiet" type="button" onClick="{{r.keep}}" style="min-height: 44px; padding: 0 8px;">Manter</button>
+                </span>
+              </span>
+            </sc-if>
+            <sc-if value="{{r.hasNote}}" hint-placeholder-val="{{true}}">
+              <span style="font-size: 15px; line-height: 20px; color: var(--ink-muted);">{{r.note}}</span>
+            </sc-if>
+            <sc-if value="{{r.hasLink}}" hint-placeholder-val="{{false}}">
+              <a class="ag-btn ag-btn--quiet" href="{{r.linkHref}}" style="min-height: 44px; padding: 0;">{{r.linkText}}</a>
+            </sc-if>
+            </span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div class="lfoot">
+      <span class="ag-lot__label">Total recebido em lotes arrematados</span>
+      <span class="total">{{totalText}}</span>
+    </div>
+  </sc-if>
+</section>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"estadoBusca":{"editor":"enum","options":["resultados","carregando","vazio","erro"],"default":"resultados","section":"Estado"},"estadoLivro":{"editor":"enum","options":["com dados","carregando","vazio","erro"],"default":"com dados","section":"Estado"},"falhaImagem":{"editor":"boolean","default":false,"section":"Estado"},"$preview":{"width":1440,"height":2900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh();
+  }
+  fresh() {
+    return {
+      query: 'clássico', lastQuery: 'clássico', search: null, qError: false,
+      showNew: false, pickId: 'r2', form: null, errors: {}, published: '', imgFail: false, raced: {}, race: '',
+      created: [], cancelled: {}, confirmId: null, filter: 'all', ledgerRetried: false
+    };
+  }
+  componentDidUpdate(prev) {
+    if (prev.estadoBusca !== this.props.estadoBusca || prev.estadoLivro !== this.props.estadoLivro || prev.falhaImagem !== this.props.falhaImagem) {
+      clearTimeout(this.t);
+      this.setState({ search: null, ledgerRetried: false, imgFail: false });
+    }
+  }
+  componentWillUnmount() { clearTimeout(this.t); }
+  money(n) { return 'R$ ' + Number(n).toLocaleString('pt-BR'); }
+  roman(n) {
+    const map = [[1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'], [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']];
+    let out = '';
+    map.forEach(([v, s]) => { while (n >= v) { out += s; n -= v; } });
+    return out;
+  }
+  catalog() {
+    return [
+      { id: 'r1', title: 'Retrato de uma dama', artist: 'Escola veneziana, c. 1550', medium: 'Óleo sobre tela', size: '98 × 76 cm', tag: 'Pintura', shape: 'art-portrait', finish: 'framed', words: 'retrato pintura veneza itália óleo clássico renascimento', apiId: '#148732' },
+      { id: 'r2', title: 'Cabeça de Atena', artist: 'Grécia, séc. IV a.C.', medium: 'Mármore', size: '36 × 22 × 24 cm', tag: 'Escultura', shape: 'art-portrait', finish: 'matted', words: 'escultura mármore grécia atena clássico antiguidade', apiId: '#122405' },
+      { id: 'r3', title: 'Vista do Fórum Romano', artist: 'Escola italiana, c. 1750', medium: 'Óleo sobre tela', size: '74 × 99 cm', tag: 'Pintura', shape: 'art-landscape', finish: 'framed', words: 'paisagem roma ruínas pintura óleo clássico', apiId: '#160911' },
+      { id: 'r4', title: 'Taça de figuras vermelhas', artist: 'Ática, c. 480 a.C.', medium: 'Cerâmica', size: '12 × 31 cm', tag: 'Cerâmica', shape: 'art-square', finish: 'matted', words: 'cerâmica grécia ática taça clássico antiguidade', apiId: '#119284' },
+      { id: 'r5', title: 'Estudo de drapejamento', artist: 'Escola florentina, c. 1500', medium: 'Pena e tinta sobre papel', size: '28 × 20 cm', tag: 'Desenho', shape: 'art-portrait', finish: 'framed', words: 'desenho florença estudo papel clássico renascimento', apiId: '#153377' },
+      { id: 'r6', title: 'Áureo de Augusto', artist: 'Roma, séc. I a.C.', medium: 'Ouro', size: '2 cm de diâmetro', tag: 'Moeda', shape: 'art-square', finish: 'matted', words: 'moeda ouro roma augusto clássico antiguidade', apiId: '#131006' }
+    ];
+  }
+  baseLedger() {
+    return [
+      { key: 'VII', n: 'VII', title: 'Retrato de um jovem', artist: 'Escola florentina, c. 1520', shape: 'portrait', finish: 'framed', state: 'live', start: 8000, result: 12400, bids: 23, who: 'Licitante #C31B', when: 'até hoje, 22h40' },
+      { key: 'XII', n: 'XII', title: 'Busto de filósofo', artist: 'Roma, séc. II d.C.', shape: 'portrait', finish: 'matted', state: 'live', start: 5000, result: 8900, bids: 11, who: 'Licitante #90DE', when: 'até hoje, 22h31' },
+      { key: 'IV', n: 'IV', title: 'Ânfora de figuras negras', artist: 'Ática, c. 520 a.C.', shape: 'square', finish: 'matted', state: 'live', start: 15000, result: 21000, bids: 9, who: 'Licitante #4A11', when: 'até amanhã, 00h05' },
+      { key: 'IX', n: 'IX', title: 'Paisagem com ruínas romanas', artist: 'Escola holandesa, séc. XVII', shape: 'landscape', finish: 'framed', state: 'live', start: 5300, result: 0, bids: 0, who: '', when: 'até hoje, 23h10' },
+      { key: 'XIV', n: 'XIV', title: 'Torso de atleta', artist: 'Grécia, período helenístico', shape: 'portrait', finish: 'matted', state: 'scheduled', start: 15000, result: 0, bids: 0, who: '', when: '24 out, 19h às 21h' },
+      { key: 'XV', n: 'XV', title: 'Virgem com o Menino', artist: 'Siena, c. 1350', shape: 'portrait', finish: 'framed', state: 'scheduled', start: 30000, result: 0, bids: 0, who: '', when: '25 out, 15h às 17h' },
+      { key: 'XVI', n: 'XVI', title: 'Estudo de cabeça masculina', artist: 'Escola romana, séc. XVI', shape: 'landscape', finish: 'framed', state: 'scheduled', start: 4000, result: 0, bids: 0, who: '', when: '26 out, 20h às 22h' },
+      { key: 'XVII', n: 'XVII', title: 'Medalha comemorativa', artist: 'Itália, c. 1480', shape: 'square', finish: 'matted', state: 'cancelled', start: 2500, result: 0, bids: 0, who: '', when: 'era 27 out, 18h' },
+      { key: 'I', n: 'I', title: 'Natureza-morta com frutas', artist: 'Escola flamenga, séc. XVII', shape: 'square', finish: 'framed', state: 'closed', start: 6000, result: 9750, bids: 14, who: 'Licitante #A7F2', when: 'encerrou 20 out, 21h' },
+      { key: 'II', n: 'II', title: 'Cena mitológica', artist: 'Escola veneziana, c. 1560', shape: 'wide', finish: 'framed', state: 'closed', start: 12000, result: 18200, bids: 19, who: 'Licitante #C31B', when: 'encerrou 20 out, 22h' },
+      { key: 'III', n: 'III', title: 'Cabeça de Hermes', artist: 'Roma, séc. I d.C.', shape: 'portrait', finish: 'matted', state: 'closed', start: 7000, result: 0, bids: 0, who: '', when: 'encerrou 19 out, 21h' },
+      { key: 'V', n: 'V', title: 'Vista de ruínas antigas', artist: 'Escola italiana, séc. XVIII', shape: 'landscape', finish: 'framed', state: 'closed', start: 1200, result: 1900, bids: 6, who: 'Licitante #90DE', when: 'encerrou 18 out, 20h' }
+    ];
+  }
+  localStamp(d) {
+    const z = (x) => String(x).padStart(2, '0');
+    return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + 'T' + z(d.getHours()) + ':' + z(d.getMinutes());
+  }
+  defaultForm(item) {
+    const a = new Date(); a.setDate(a.getDate() + 1); a.setHours(19, 0, 0, 0);
+    const b = new Date(a.getTime()); b.setHours(21);
+    return { start: '', inc: '500', open: this.localStamp(a), close: this.localStamp(b) };
+  }
+  renderVals() {
+    const catalog = this.catalog();
+    const pick = catalog.find((c) => c.id === this.state.pickId) || null;
+    const form = this.state.form || (pick ? this.defaultForm(pick) : null);
+
+    // ---- busca na API ----
+    const sState = this.state.search || (this.props.estadoBusca ?? 'resultados');
+    const q = (this.state.lastQuery || '').trim().toLowerCase();
+    const found = catalog.filter((c) => !q || (c.title + ' ' + c.artist + ' ' + c.medium + ' ' + c.words).toLowerCase().indexOf(q) !== -1);
+    const onSearch = () => {
+      const term = (this.state.query || '').trim();
+      if (!term) return this.setState({ qError: true });
+      clearTimeout(this.t);
+      this.setState({ qError: false, search: 'carregando', lastQuery: term });
+      this.t = setTimeout(() => {
+        const t2 = term.toLowerCase();
+        const hits = catalog.filter((c) => (c.title + ' ' + c.artist + ' ' + c.medium + ' ' + c.words).toLowerCase().indexOf(t2) !== -1);
+        this.setState({ search: hits.length ? 'resultados' : 'vazio' });
+      }, 900);
+    };
+
+    // ---- validação da ficha ----
+    const digits = (s) => Number(String(s || '').replace(/\D/g, ''));
+    const validate = (f) => {
+      const er = {};
+      const TETO = 1000000;
+      if (!digits(f.start)) er.start = 'Informe o lance inicial, maior que zero.';
+      else if (digits(f.start) > TETO) er.start = 'O lance inicial pode ir até ' + this.money(TETO) + '.';
+      if (!digits(f.inc)) er.inc = 'Informe o aumento mínimo, maior que zero.';
+      else if (digits(f.inc) > TETO) er.inc = 'O aumento mínimo pode ir até ' + this.money(TETO) + '.';
+      else if (digits(f.start) && digits(f.inc) > digits(f.start)) er.inc = 'O aumento mínimo não pode ser maior que o lance inicial.';
+      if (!f.open) er.open = 'Informe quando o lote abre.';
+      else if (f.open < this.localStamp(new Date())) er.open = 'O início não pode estar no passado.';
+      if (!f.close) er.close = 'Informe quando o lote fecha.';
+      else if (f.open && f.close <= f.open) er.close = 'O fim precisa ser depois do início.';
+      return er;
+    };
+    const setField = (k) => (e) => {
+      const v = e.target.value;
+      const nf = Object.assign({}, form, { [k]: v });
+      const ne = Object.assign({}, this.state.errors);
+      delete ne[k];
+      this.setState({ form: nf, errors: ne, published: '', imgFail: false });
+    };
+    const usedNumbers = 17 + this.state.created.length;
+    const nextNumber = 'Lote ' + this.roman(usedNumbers + 1);
+    const fmtDate = (s) => {
+      const [d, t] = s.split('T');
+      const [y, m, day] = d.split('-');
+      const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+      return Number(day) + ' ' + months[Number(m) - 1] + ', ' + t.replace(':', 'h');
+    };
+    const onPublish = () => {
+      const er = validate(form);
+      if (Object.keys(er).length) return this.setState({ errors: er, published: '', imgFail: false });
+      if (this.props.falhaImagem) return this.setState({ errors: {}, published: '', imgFail: true });
+      const n = this.roman(usedNumbers + 1);
+      const row = { key: n, n: n, title: pick.title, artist: pick.artist, shape: pick.shape.replace('art-', ''), finish: pick.finish, state: 'scheduled', start: digits(form.start), result: 0, bids: 0, who: '', when: fmtDate(form.open) + ' às ' + form.close.split('T')[1].replace(':', 'h') };
+      this.setState({
+        created: [row].concat(this.state.created), errors: {}, form: null,
+        published: 'Lote ' + n + ' publicado. Ele aparece na vitrine como Agendado, abrindo em ' + fmtDate(form.open) + '.'
+      });
+    };
+    const er = this.state.errors;
+    const errKeys = Object.keys(er);
+    const fieldErr = (k) => ({ bad: !!er[k], msg: er[k] || '', cls: er[k] ? 'is-invalid' : '' });
+    const E = {};
+    ['start', 'inc', 'open', 'close'].forEach((k) => { const x = fieldErr(k); E[k] = x.msg; E[k + 'Bad'] = x.bad; E[k + 'Cls'] = x.cls; });
+    E.any = errKeys.length > 0;
+    E.summary = errKeys.length === 1 ? 'Corrija 1 campo para publicar o lote.' : 'Corrija ' + errKeys.length + ' campos para publicar o lote.';
+
+    // ---- livro de lotes ----
+    const lState = this.state.ledgerRetried ? 'com dados' : (this.props.estadoLivro ?? 'com dados');
+    const all = lState === 'vazio' ? [] : this.state.created.concat(this.baseLedger()).map((r) => this.state.raced[r.key] ? Object.assign({}, r, { bids: 1, result: r.start, who: 'Licitante #90DE' }) : r).map((r) => this.state.cancelled[r.key] ? Object.assign({}, r, { state: 'cancelled' }) : r);
+    const counts = { all: all.length, live: 0, scheduled: 0, closed: 0, cancelled: 0 };
+    all.forEach((r) => { counts[r.state] += 1; });
+    const sold = all.filter((r) => r.state === 'closed' && r.result > 0);
+    const total = sold.reduce((s, r) => s + r.result, 0);
+    const liveSum = all.filter((r) => r.state === 'live').reduce((s, r) => s + r.result, 0);
+    const filterDefs = [['all', 'Todos'], ['live', 'Ao vivo'], ['scheduled', 'Agendados'], ['closed', 'Encerrados'], ['cancelled', 'Cancelados']];
+    const filters = filterDefs.map(([id, label]) => ({
+      label: label,
+      countText: lState === 'com dados' || lState === 'vazio' ? '(' + counts[id] + ')' : '',
+      active: this.state.filter === id,
+      pick: () => this.setState({ filter: id, confirmId: null })
+    }));
+    const visible = all.filter((r) => this.state.filter === 'all' || r.state === this.state.filter);
+    const badge = { live: ['ag-badge--live', 'Ao vivo'], scheduled: ['ag-badge--scheduled', 'Agendado'], closed: ['ag-badge--closed', 'Encerrado'], cancelled: ['', ''] };
+    const rows = visible.map((r) => {
+      const confirming = this.state.confirmId === r.key;
+      const canCancel = (r.state === 'scheduled' || (r.state === 'live' && r.bids === 0)) && !confirming;
+      let resultLabel = 'Lance atual', result = '', resultSub = '', resultColor = '#2b2520', note = '', linkText = '', linkHref = '';
+      if (r.state === 'live') {
+        if (r.bids) { result = this.money(r.result); resultSub = 'lidera ' + r.who; }
+        else { result = 'Sem lances'; resultSub = 'mínimo ' + this.money(r.start); resultColor = '#5e5449'; }
+        note = '';
+        linkText = 'Abrir sala'; linkHref = 'Sala.dc.html';
+      } else if (r.state === 'scheduled') {
+        resultLabel = 'Resultado'; result = 'Aguardando'; resultColor = '#5e5449';
+      } else if (r.state === 'closed') {
+        resultLabel = 'Resultado';
+        if (r.result) { result = this.money(r.result); resultSub = 'arrematado por ' + r.who; linkText = 'Ver comprovante'; linkHref = 'Comprovante.dc.html'; }
+        else { result = 'Sem vencedor'; resultSub = 'fechou sem lances'; resultColor = '#5e5449'; }
+      } else {
+        resultLabel = 'Resultado'; result = ''; resultSub = 'não chegou a abrir'; note = 'Fora da vitrine.';
+      }
+      return {
+        n: r.n, title: r.title, artist: r.artist,
+        tshape: 't-' + r.shape, finish: r.finish,
+        rowCls: r.state === 'cancelled' ? 'is-cancelled' : '',
+        isCancelled: r.state === 'cancelled', notCancelled: r.state !== 'cancelled',
+        badgeClass: badge[r.state][0], badgeText: badge[r.state][1],
+        start: this.money(r.start),
+        resultLabel: resultLabel, result: result, resultSub: resultSub, resultColor: resultColor,
+        bids: r.bids ? String(r.bids) : '0',
+        when: r.when,
+        canCancel: canCancel, confirming: confirming,
+        askCancel: () => this.setState({ confirmId: r.key, race: '' }),
+        doCancel: () => r.state === 'live'
+          ? this.setState({ raced: Object.assign({}, this.state.raced, { [r.key]: true }), confirmId: null, race: 'Um lance chegou no Lote ' + r.n + ' antes do cancelamento, então o lote continua no ar.' })
+          : this.setState({ cancelled: Object.assign({}, this.state.cancelled, { [r.key]: true }), confirmId: null, race: '' }),
+        keep: () => this.setState({ confirmId: null }),
+        hasNote: !!note && !confirming, note: note,
+        hasLink: !!linkText && !confirming, linkText: linkText, linkHref: linkHref
+      };
+    });
+    const filterNames = { all: 'no livro', live: 'ao vivo', scheduled: 'agendado', closed: 'encerrado', cancelled: 'cancelado' };
+
+    return {
+      // busca
+      query: this.state.query,
+      onQuery: (e) => this.setState({ query: e.target.value, qError: false }),
+      onSearch: onSearch,
+      qHasError: this.state.qError, qInvalid: this.state.qError, qInputClass: this.state.qError ? 'is-invalid' : '',
+      sLoading: sState === 'carregando',
+      sError: sState === 'erro',
+      sEmpty: sState === 'vazio',
+      sResults: sState === 'resultados',
+      lastQuery: this.state.lastQuery,
+      resultsText: found.length + (found.length === 1 ? ' obra encontrada' : ' obras encontradas') + ' para “' + this.state.lastQuery + '”. Escolha uma para montar o lote.',
+      results: found.map((c) => ({
+        title: c.title, artist: c.artist, tag: (this.state.pickId === c.id ? '✓ Selecionada · ' : '') + c.tag,
+        tagColor: this.state.pickId === c.id ? '#1f4b96' : '#745616',
+        shape: c.shape, finish: c.finish,
+        selected: this.state.pickId === c.id,
+        pick: () => this.setState({ pickId: c.id, form: this.defaultForm(c), errors: {}, published: '' })
+      })),
+      skel6: [1, 2, 3, 4, 5, 6],
+      skel5: [1, 2, 3, 4, 5],
+
+      // ficha
+      hasPick: !!pick,
+      pick: pick ? { title: pick.title, artist: pick.artist, artistName: pick.artist.split(', ')[0], date: pick.artist.split(', ').slice(1).join(', ') || 'sem data', medium: pick.medium, size: pick.size, tag: pick.tag, id: pick.apiId, shape: pick.shape, finish: pick.finish } : {},
+      nextNumber: nextNumber,
+      f: form || {},
+      on: { start: setField('start'), inc: setField('inc'), open: setField('open'), close: setField('close') },
+      imgFail: this.state.imgFail,
+      hasRace: !!this.state.race, raceText: this.state.race,
+      showNew: this.state.showNew,
+      newLabel: this.state.showNew ? 'Fechar novo lote' : 'Novo lote',
+      toggleNew: () => this.setState({ showNew: !this.state.showNew }),
+      openNew: () => this.setState({ showNew: true }),
+      e: E,
+      onPublish: onPublish,
+      onReset: () => this.setState({ form: pick ? this.defaultForm(pick) : null, errors: {}, published: '' }),
+      published: !!this.state.published, publishedText: this.state.published,
+
+      // livro
+      lLoading: lState === 'carregando',
+      lError: lState === 'erro',
+      lEmpty: (lState === 'com dados' || lState === 'vazio') && visible.length === 0,
+      lRows: lState === 'com dados' && visible.length > 0,
+      lShowTotals: lState === 'com dados' || lState === 'vazio',
+      retryLedger: () => this.setState({ ledgerRetried: true }),
+      emptyTitle: all.length ? 'Nenhum lote ' + filterNames[this.state.filter] : 'Seu livro de lotes está vazio',
+      emptyText: all.length ? 'Escolha outro filtro ou crie um lote novo a partir do acervo.' : 'Busque uma obra no acervo do museu e publique o primeiro lote da casa.',
+      filters: filters,
+      rows: rows,
+      totalText: this.money(total),
+      soldText: sold.length === 1 ? 'em 1 lote arrematado' : 'em ' + sold.length + ' lotes arrematados',
+      cLive: String(counts.live), cScheduled: String(counts.scheduled), cClosed: String(counts.closed),
+      liveSum: this.money(liveSum),
+      unsoldText: (counts.closed - sold.length) === 1 ? '1 fechou sem lances' : (counts.closed - sold.length) + ' fecharam sem lances'
+    };
+  }
+}
+</script>
+</body>
+</html>

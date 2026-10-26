@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Ágora · Carteira</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/agora/tokens.css">
+<link rel="stylesheet" href="ds/agora/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#f2ede3;color:#2b2520;font-family:"EB Garamond",Garamond,Georgia,serif}
+a{color:#1f4b96}a:hover{color:#2b2520}
+:focus-visible{outline:2px solid #1f4b96;outline-offset:2px}
+.ag-input:focus-within{outline:2px solid #1f4b96;outline-offset:2px}
+.ag-input.is-invalid{border-color:#b23a1f;box-shadow:inset 0 0 0 1px #b23a1f}
+.ag-btn,.ag-badge,.ag-input{border-radius:0}
+.ag-btn--quiet{min-height:44px}
+.nav-link{display:inline-flex;align-items:center;min-height:44px;box-sizing:border-box;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#2b2520;text-decoration:none;padding:0 4px;border-bottom:2px solid transparent}
+.nav-link:hover{border-bottom-color:#9a7529;color:#2b2520}
+.nav-link[aria-current="page"]{border-bottom:3px double #9a7529}
+.monogram{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background-color:#2b2520;box-shadow:inset 0 0 0 2px #2b2520,inset 0 0 0 3px #e4cd92;color:#e4cd92;font-family:Cinzel,Georgia,serif;font-weight:700;font-size:13px;letter-spacing:.06em;text-decoration:none}
+.wallet-link{display:flex;align-items:center;gap:12px;min-height:44px;padding:4px 16px 4px 0;text-decoration:none;color:#2b2520;border-right:1px solid #cfc3ab}
+.wallet-link[aria-current="page"]{box-shadow:inset 0 -3px 0 -1px #9a7529}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skel{background-color:#dfd6c5;animation:skel 1.4s ease-in-out infinite}
+@keyframes skel{50%{opacity:.5}}
+@media (prefers-reduced-motion:reduce){.skel{animation:none}}
+.field-error{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:16px;line-height:22px;color:#8c2a14}
+
+/* a conta gravada: total − comprometido = disponível */
+.equation{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 28px;padding:28px 0 24px;border-top:3px double #9a7529;border-bottom:3px double #9a7529}
+.term{display:flex;flex-direction:column;gap:6px;min-width:0}
+.term__label{font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#5e5449}
+.term__value{font-family:Cinzel,Georgia,serif;font-weight:600;font-size:clamp(30px,6vw,46px);line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap}
+.term__note{font-size:15px;line-height:20px;color:#5e5449}
+.op{font-family:Cinzel,Georgia,serif;font-weight:400;font-size:clamp(28px,5vw,44px);line-height:1.1;color:#9a7529;padding-bottom:26px}
+@media (max-width:760px){.equation{flex-direction:column;align-items:stretch;gap:0}.op{display:none}.term{padding:12px 0;border-top:1px solid #cfc3ab}.term:first-child{border-top:0;padding-top:0}}
+
+/* barra proporcional, cortada em bloco, sem cantos */
+.bar{display:flex;height:10px;border:1px solid #2b2520;background-color:#9a7529}
+.bar__free{background-color:#1f4b96}
+
+/* ficha com cantoneiras */
+.corners{position:relative;background-color:#ebe4d7;border:1px solid #9a7529;box-shadow:inset 0 0 0 5px #ebe4d7,inset 0 0 0 6px #cfc3ab;
+  background-image:linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529);
+  background-repeat:no-repeat;
+  background-size:26px 3px,3px 26px,26px 3px,3px 26px,26px 3px,3px 26px,26px 3px,3px 26px;
+  background-position:left 10px top 10px,left 10px top 10px,right 10px top 10px,right 10px top 10px,left 10px bottom 10px,left 10px bottom 10px,right 10px bottom 10px,right 10px bottom 10px}
+.chip{min-height:44px;padding:0 14px;border:1px solid #9a7529;background:#f2ede3;color:#2b2520;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:13px;letter-spacing:.04em;cursor:pointer}
+.chip:hover{background:#dfd6c5}
+
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:40px;align-items:start}
+@media (max-width:960px){.cols{grid-template-columns:minmax(0,1fr)}}
+
+/* comprometido: linhas de lote */
+.hold{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:4px 16px;align-items:center;padding:14px 0;border-bottom:1px solid #cfc3ab}
+.hold__num{align-self:stretch;display:flex;align-items:center;justify-content:flex-end;padding-right:12px;border-right:3px double #b23a1f;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:14px;color:#745616}
+
+/* extrato: livro-caixa pautado */
+.tab{min-height:44px;padding:0 16px;border:0;border-bottom:3px solid transparent;background:transparent;cursor:pointer;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#5e5449}
+.tab[aria-selected="true"]{border-bottom:3px double #9a7529;background-color:#ebe4d7;color:#2b2520}
+.ledger{border-top:1px solid #9a7529}
+.lrow{display:grid;grid-template-columns:118px minmax(0,1fr) 120px 170px 150px;gap:0 16px;align-items:center;border-bottom:1px solid #cfc3ab;min-height:64px}
+.lhead{min-height:46px;border-bottom:3px double #9a7529;background-color:#ebe4d7}
+.lhead > div{font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;line-height:14px;letter-spacing:0.08em;text-transform:uppercase;color:#5e5449}
+.c-date{align-self:stretch;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding-right:14px;border-right:3px double #b23a1f;font-variant-numeric:tabular-nums;font-size:15px;line-height:19px}
+.c-money{font-family:Cinzel,Georgia,serif;font-weight:600;font-size:16px;font-variant-numeric:tabular-nums;text-align:right}
+.kind{display:inline-flex;align-items:center;gap:6px;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase}
+.lfoot{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:baseline;gap:8px 24px;padding:16px 0 0}
+.total{font-family:Cinzel,Georgia,serif;font-weight:600;font-size:24px;padding-bottom:4px;border-bottom:3px double #2b2520}
+@media (max-width:900px){
+  .lhead{display:none}
+  .lrow{grid-template-columns:minmax(0,1fr);gap:6px;padding:14px 0 14px 18px;border-left:3px double #b23a1f;border-bottom:1px solid #9a7529;margin-bottom:10px;min-height:0}
+  .c-date{border-right:0;align-items:flex-start;padding:0;flex-direction:row;gap:8px}
+  .c-money{text-align:left}
+  .lrow > [data-label]{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;align-items:center}
+  .lrow > [data-label]::before{content:attr(data-label);font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#5e5449}
+}
+/* celular: menu em uma linha que rola para o lado, em vez de ocupar várias linhas */
+@media (max-width:760px){.nav-main{order:3;width:100%;flex-wrap:nowrap !important;overflow-x:auto;gap:0 20px !important;scrollbar-width:thin}.nav-main a{white-space:nowrap;flex:none}}
+</style>
+</helmet>
+
+<div class="ag-ground" style="min-height: 100vh; background-color: var(--marble-000); color: var(--ink); font-family: var(--font-text);">
+
+<!-- ============ CABEÇALHO (licitante) ============ -->
+<header>
+  <div style="max-width: 1240px; margin: 0 auto; padding: 10px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px;">
+    <a href="Main.dc.html" aria-label="Ágora, página inicial" style="display: flex; align-items: center; gap: 12px; min-height: 44px; text-decoration: none; color: var(--ink);">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="48" rx="16" ry="16" fill="#1f4b96"></rect><rect x="5" y="5" width="24" height="48" rx="12" ry="12" fill="#f2ede3"></rect><rect x="8" y="8" width="18" height="48" rx="9" ry="9" fill="#9a7529"></rect><rect x="12" y="12" width="10" height="48" rx="5" ry="5" fill="#b23a1f"></rect></svg>
+      <span style="font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 28px; letter-spacing: 0.12em;">ÁGORA</span>
+    </a>
+    <nav class="nav-main" aria-label="Principal" style="display: flex; flex-wrap: wrap; gap: 4px 20px;">
+      <a class="nav-link" href="Main.dc.html">Vitrine</a>
+      <a class="nav-link" href="Main.dc.html#como-funciona">Como funciona</a>
+      <a class="nav-link" href="Auditoria.dc.html">Auditoria</a>
+      <a class="nav-link" href="MeusLances.dc.html">Meus lances</a>
+    </nav>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <a class="monogram" href="#conta" aria-label="Conta do Licitante #A7F2">A7</a>
+    </div>
+  </div>
+  <div class="ag-meander" style="background-color: var(--marble-100); border-top: 1px solid var(--gold-500); border-bottom: 1px solid var(--gold-500); height: 18px;"></div>
+</header>
+
+<main style="max-width: 1240px; margin: 0 auto; padding: 40px 24px 80px; display: flex; flex-direction: column; gap: 48px;">
+
+<!-- ============ TÍTULO ============ -->
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px;">
+  <div>
+    <p style="margin: 0 0 6px; font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-700);">Livro-caixa</p>
+    <h1 style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(30px, 6vw, 42px); line-height: 1.1; letter-spacing: 0.03em;">Sua carteira</h1>
+    <p style="margin: 8px 0 0; font-family: var(--font-serif); font-style: italic; font-size: 20px; line-height: 26px; color: var(--ink-muted);">Saldo simulado. Nenhum valor real é cobrado.</p>
+  </div>
+</div>
+
+<!-- ============ ESTADO: ERRO ============ -->
+<sc-if value="{{isError}}" hint-placeholder-val="{{false}}">
+  <div role="alert" style="max-width: 680px; display: flex; flex-direction: column; align-items: flex-start; gap: 16px;">
+    <div class="ag-notice ag-notice--error" style="width: 100%; box-sizing: border-box; border-radius: 0;">
+      <span class="ag-notice__mark" aria-hidden="true">✕</span>
+      <p class="ag-notice__title">Não foi possível carregar sua carteira</p>
+      <p class="ag-notice__text">Seu saldo e seus lances continuam registrados. Só a consulta falhou.</p>
+    </div>
+    <button class="ag-btn ag-btn--secondary" type="button" onClick="{{retry}}">Tentar de novo</button>
+  </div>
+</sc-if>
+
+<!-- ============ ESTADO: CARREGANDO ============ -->
+<sc-if value="{{isLoading}}" hint-placeholder-val="{{false}}">
+  <p class="sr-only" role="status">Carregando sua carteira.</p>
+  <div aria-hidden="true" style="display: flex; flex-direction: column; gap: 40px;">
+    <div class="equation">
+      <div class="term"><div class="skel" style="height: 12px; width: 110px;"></div><div class="skel" style="height: 46px; width: 220px;"></div></div>
+      <div class="term"><div class="skel" style="height: 12px; width: 110px;"></div><div class="skel" style="height: 46px; width: 220px;"></div></div>
+      <div class="term"><div class="skel" style="height: 12px; width: 110px;"></div><div class="skel" style="height: 46px; width: 220px;"></div></div>
+    </div>
+    <div class="cols">
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div class="skel" style="height: 28px; width: 40%;"></div><div class="skel" style="height: 56px;"></div><div class="skel" style="height: 56px;"></div><div class="skel" style="height: 56px;"></div></div>
+      <div class="skel" style="height: 320px;"></div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ============ ESTADO: CARTEIRA ============ -->
+<sc-if value="{{isReady}}" hint-placeholder-val="{{true}}">
+
+  <!-- A conta: total − comprometido = disponível -->
+  <section aria-labelledby="saldo-title" style="display: flex; flex-direction: column; gap: 16px;">
+    <h2 id="saldo-title" class="sr-only">Saldo</h2>
+    <div class="equation" aria-live="polite">
+      <div class="term">
+        <span class="term__label">Saldo total</span>
+        <span class="term__value">{{totalText}}</span>
+        <span class="term__note">tudo o que você depositou, menos arremates</span>
+      </div>
+      <span class="op" aria-hidden="true">−</span>
+      <div class="term">
+        <span class="term__label">Comprometido</span>
+        <span class="term__value" style="color: var(--gold-700);">{{heldText}}</span>
+        <span class="term__note">{{heldNote}}</span>
+      </div>
+      <span class="op" aria-hidden="true">=</span>
+      <div class="term">
+        <span class="term__label">Disponível para lances</span>
+        <span class="term__value" style="color: var(--ultramarine);">{{freeText}}</span>
+        <span class="term__note">o maior lance que você pode dar agora</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="cols">
+
+    <!-- Onde o saldo está comprometido + extrato -->
+    <div style="display: flex; flex-direction: column; gap: 32px; min-width: 0;">
+
+      <section aria-labelledby="hold-title" style="display: flex; flex-direction: column; gap: 8px;">
+        <h2 id="hold-title" style="margin: 0 0 4px; font-family: var(--font-serif); font-weight: 600; font-size: 28px; line-height: 34px;">Onde seu saldo está comprometido</h2>
+        <p style="margin: 0 0 8px; font-size: 16px; line-height: 22px; color: var(--ink-muted);">Enquanto você lidera um lote, o valor do lance fica reservado. Se for superado, ele volta na hora para o disponível.</p>
+        <sc-if value="{{hasHolds}}" hint-placeholder-val="{{true}}">
+          <div style="border-top: 1px solid var(--gold-500);">
+            <sc-for list="{{holds}}" as="h" hint-placeholder-count="1">
+              <div class="hold">
+                <span class="hold__num">{{h.n}}</span>
+                <span style="min-width: 0; display: flex; flex-direction: column;">
+                  <span style="font-family: var(--font-serif); font-style: italic; font-weight: 500; font-size: 20px; line-height: 24px;">{{h.title}}</span>
+                  <span style="font-size: 15px; line-height: 20px; color: var(--ink-muted);"><span style="color: var(--ultramarine); font-weight: 600;">▲ Você lidera</span> · encerra {{h.ends}}</span>
+                </span>
+                <span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+                  <span class="c-money" style="color: var(--gold-700);">{{h.amount}}</span>
+                  <a href="Sala.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 15px;">Abrir sala do lote</a>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{noHolds}}" hint-placeholder-val="{{false}}">
+          <p style="margin: 0; padding: 16px 0; border-top: 1px solid var(--gold-500); border-bottom: 1px solid var(--vein); font-size: 17px; line-height: 24px;">Nenhum valor comprometido. Todo o seu saldo está livre para lances.</p>
+        </sc-if>
+      </section>
+
+    </div>
+
+    <!-- Depósito simulado -->
+    <section id="deposito" class="corners" aria-labelledby="dep-title" style="padding: 36px 32px 32px; display: flex; flex-direction: column; gap: 18px;">
+      <div>
+        <h2 id="dep-title" style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase;">Depositar</h2>
+        <p style="margin: 6px 0 0; font-family: var(--font-serif); font-style: italic; font-size: 18px; line-height: 24px; color: var(--ink-muted);">O valor entra na hora.</p>
+      </div>
+      <div class="ag-rule"></div>
+      <label class="ag-field" for="dep-amount">
+        <span class="ag-field__label">Valor do depósito</span>
+        <span class="ag-input {{depInputClass}}" style="background-color: var(--marble-000);"><span class="ag-input__prefix" aria-hidden="true">R$</span><input id="dep-amount" class="ag-input__control" type="text" inputmode="numeric" autocomplete="off" value="{{depValue}}" onChange="{{onDepChange}}" aria-invalid="{{depInvalid}}" aria-describedby="dep-help dep-msg"></span>
+        <span id="dep-help" class="ag-field__hint">De R$ 10 a R$ 100.000 por depósito.</span>
+      </label>
+      <div role="group" aria-label="Valores sugeridos" style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <sc-for list="{{chips}}" as="c" hint-placeholder-count="3">
+          <button class="chip" type="button" onClick="{{c.pick}}">{{c.label}}</button>
+        </sc-for>
+      </div>
+      <div id="dep-msg">
+        <sc-if value="{{depHasError}}" hint-placeholder-val="{{false}}">
+          <p class="field-error" role="alert"><span aria-hidden="true" style="font-family: var(--font-display); font-weight: 700;">✕</span><span>{{depError}}</span></p>
+        </sc-if>
+        <sc-if value="{{depHasOk}}" hint-placeholder-val="{{false}}">
+          <p role="status" style="margin: 0; display: flex; gap: 8px; padding: 10px 12px; border: 1px solid var(--malachite); background-color: var(--malachite-soft); color: var(--malachite); font-size: 16px; line-height: 22px;"><span aria-hidden="true" style="font-family: var(--font-display); font-weight: 700;">✓</span><span>{{depOk}}</span></p>
+        </sc-if>
+      </div>
+      <button class="ag-btn ag-btn--primary" type="button" onClick="{{onDeposit}}" style="width: 100%; min-height: 52px;">Depositar</button>
+      <p style="margin: 0; padding-top: 14px; border-top: 1px solid var(--vein); font-size: 15px; line-height: 21px; color: var(--ink-muted);">Arremates são debitados do saldo total quando o lote encerra; lances superados nunca saem do saldo.</p>
+    </section>
+
+  </div>
+</sc-if>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"estadoCarteira":{"editor":"enum","options":["com dados","carregando","vazio","erro"],"default":"com dados","section":"Estado"},"$preview":{"width":1440,"height":2300}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh();
+  }
+  fresh() {
+    return { deposits: [], value: '', error: '', ok: '', filter: 'all', retried: false };
+  }
+  componentDidUpdate(prev) {
+    if (prev.estadoCarteira !== this.props.estadoCarteira) this.setState(this.fresh());
+  }
+  money(n) { return 'R$ ' + Number(n).toLocaleString('pt-BR'); }
+  now() {
+    const d = new Date();
+    const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    return { day: d.getDate() + ' ' + months[d.getMonth()], time: String(d.getHours()).padStart(2, '0') + 'h' + String(d.getMinutes()).padStart(2, '0') };
+  }
+  history() {
+    // do mais antigo ao mais recente; type: dep (entrada), hold (bloqueio), free (liberação), buy (débito)
+    return [
+      { day: '15 out', time: '10h12', type: 'dep', title: 'Depósito simulado', sub: 'Entrada na carteira', amount: 20000 },
+      { day: '18 out', time: '19h40', type: 'dep', title: 'Depósito simulado', sub: 'Entrada na carteira', amount: 22150 },
+      { day: '20 out', time: '20h58', type: 'hold', title: 'Lance no Lote I', sub: 'Natureza-morta com frutas', amount: 9750 },
+      { day: '20 out', time: '21h00', type: 'buy', title: 'Arremate do Lote I', sub: 'Natureza-morta com frutas · comprovante gerado', amount: 9750 },
+      { day: '23 out', time: '21h57', type: 'hold', title: 'Lance no Lote VII', sub: 'Retrato de um jovem', amount: 11900 },
+      { day: '23 out', time: '21h58', type: 'free', title: 'Superado no Lote VII', sub: 'Valor devolvido ao disponível', amount: 11900 },
+      { day: '23 out', time: '21h59', type: 'hold', title: 'Lance no Lote VII', sub: 'Retrato de um jovem', amount: 12400 }
+    ];
+  }
+  renderVals() {
+    const estado = this.state.retried ? 'com dados' : (this.props.estadoCarteira ?? 'com dados');
+    const empty = estado === 'vazio';
+    const base = empty ? [] : this.history();
+    const all = base.concat(this.state.deposits);
+
+    // percorre o livro calculando total e disponível
+    let total = 0, free = 0;
+    const withAfter = all.map((m) => {
+      if (m.type === 'dep') { total += m.amount; free += m.amount; }
+      if (m.type === 'hold') { free -= m.amount; }
+      if (m.type === 'free') { free += m.amount; }
+      if (m.type === 'buy') { total -= m.amount; }
+      return Object.assign({}, m, { after: free });
+    });
+    const held = total - free;
+    const holds = empty ? [] : [{ n: 'VII', title: 'Retrato de um jovem', ends: 'hoje, 22h40', amount: this.money(12400) }];
+
+    const look = {
+      dep: { kind: 'Entrada', mark: '+', color: '#2c6646', sign: '+ ' },
+      hold: { kind: 'Reservado', mark: '◆', color: '#745616', sign: '' },
+      free: { kind: 'Liberado', mark: '↺', color: '#1f4b96', sign: '' },
+      buy: { kind: 'Débito', mark: '−', color: '#8c2a14', sign: '− ' }
+    };
+    const groupOf = { dep: 'dep', hold: 'bid', free: 'bid', buy: 'buy' };
+    const counts = { all: withAfter.length, dep: 0, bid: 0, buy: 0 };
+    withAfter.forEach((m) => { counts[groupOf[m.type]] += 1; });
+    const visible = withAfter.filter((m) => this.state.filter === 'all' || groupOf[m.type] === this.state.filter).slice().reverse();
+
+    const digits = (s) => Number(String(s || '').replace(/\D/g, ''));
+    const onDeposit = () => {
+      const v = digits(this.state.value);
+      if (!v) return this.setState({ error: 'Informe o valor do depósito.', ok: '' });
+      if (v < 10) return this.setState({ error: 'O depósito mínimo é R$ 10.', ok: '' });
+      if (v > 100000) return this.setState({ error: 'O limite por depósito simulado é R$ 100.000.', ok: '' });
+      const t = this.now();
+      this.setState({
+        deposits: this.state.deposits.concat([{ day: t.day, time: t.time, type: 'dep', title: 'Depósito simulado', sub: 'Entrada na carteira', amount: v }]),
+        value: '', error: '', ok: 'Depósito de ' + this.money(v) + ' confirmado. Novo saldo total: ' + this.money(total + v) + '. Disponível para lances: ' + this.money(free + v) + '.'
+      });
+    };
+
+    const pct = total > 0 ? Math.round(100 * free / total) : 100;
+    const emptyMsg = withAfter.length === 0
+      ? { t: 'Você ainda não fez depósitos', x: 'Deposite um valor simulado ao lado para começar a dar lances.' }
+      : { t: 'Nenhuma movimentação deste tipo', x: 'Escolha outro filtro para ver o restante do extrato.' };
+
+    return {
+      isError: estado === 'erro',
+      isLoading: estado === 'carregando',
+      isReady: estado === 'com dados' || estado === 'vazio',
+      retry: () => this.setState({ retried: true }),
+
+      totalText: this.money(total),
+      heldText: this.money(held),
+      freeText: this.money(free),
+      heldNote: held > 0 ? 'reservado em ' + holds.length + (holds.length === 1 ? ' lote que você lidera' : ' lotes que você lidera') : 'nada reservado agora',
+      freePct: pct,
+      heldPct: 100 - pct,
+
+      hasHolds: holds.length > 0,
+      noHolds: holds.length === 0,
+      holds: holds,
+
+      filters: [['all', 'Todos'], ['dep', 'Depósitos'], ['bid', 'Lances'], ['buy', 'Arremates']].map(([id, label]) => ({
+        label: label, count: counts[id], active: this.state.filter === id,
+        pick: () => this.setState({ filter: id })
+      })),
+      hasMoves: visible.length > 0,
+      noMoves: visible.length === 0,
+      emptyTitle: emptyMsg.t, emptyText: emptyMsg.x,
+      moves: visible.map((m) => ({
+        day: m.day, time: m.time, title: m.title, sub: m.sub,
+        kind: look[m.type].kind, mark: look[m.type].mark, kindColor: look[m.type].color,
+        amount: look[m.type].sign + this.money(m.amount),
+        after: this.money(m.after)
+      })),
+
+      depValue: this.state.value,
+      onDepChange: (e) => this.setState({ value: e.target.value, error: '', ok: '' }),
+      onDeposit: onDeposit,
+      depHasError: !!this.state.error, depError: this.state.error,
+      depHasOk: !!this.state.ok, depOk: this.state.ok,
+      depInvalid: !!this.state.error,
+      depInputClass: this.state.error ? 'is-invalid' : '',
+      chips: [500, 1000, 5000].map((v) => ({ label: this.money(v), pick: () => this.setState({ value: v.toLocaleString('pt-BR'), error: '', ok: '' }) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

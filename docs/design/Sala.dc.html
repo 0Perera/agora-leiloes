@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Ágora · Sala do lote ao vivo</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/agora/tokens.css">
+<link rel="stylesheet" href="ds/agora/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#f2ede3;color:#2b2520;font-family:"EB Garamond",Garamond,Georgia,serif}
+a{color:#1f4b96}a:hover{color:#2b2520}
+:focus-visible{outline:2px solid #1f4b96;outline-offset:2px}
+.on-dark :focus-visible{outline-color:#e4cd92}
+.ag-input:focus-within{outline:2px solid #1f4b96;outline-offset:2px}
+.ag-input.is-invalid{border-color:#b23a1f;box-shadow:inset 0 0 0 1px #b23a1f}
+.ag-btn--quiet{min-height:44px}
+.nav-back{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:14px;letter-spacing:0.08em;text-transform:uppercase;color:#2b2520;text-decoration:none}
+.nav-back:hover{text-decoration:underline;text-underline-offset:4px}
+.monogram{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background-color:#2b2520;box-shadow:inset 0 0 0 2px #2b2520,inset 0 0 0 3px #e4cd92;color:#e4cd92;font-family:Cinzel,Georgia,serif;font-weight:700;font-size:13px;letter-spacing:.06em;text-decoration:none}
+.niche{position:relative;width:100%;max-width:520px;aspect-ratio:440/540;margin:0 auto;background-color:#ebe4d7;border:1px solid #9a7529;border-bottom:0;border-radius:999px 999px 0 0;box-shadow:inset 0 22px 30px -22px rgba(43,37,32,.30),inset 0 0 0 6px #ebe4d7,inset 0 0 0 7px #cfc3ab}
+.niche__stage{position:absolute;top:24%;left:11%;right:11%;bottom:7%;display:flex;align-items:center;justify-content:center}
+.art{box-sizing:border-box;max-width:100%;max-height:100%;background-color:#dfd6c5}
+.art-portrait{height:100%;aspect-ratio:3/4}
+.framed{border:7px solid #9a7529;box-shadow:0 0 0 1px #745616,inset 0 0 0 1px #e4cd92,0 14px 18px -12px rgba(43,37,32,.55)}
+.room{display:grid;gap:28px 56px;grid-template-columns:minmax(0,1fr) minmax(0,480px);grid-template-areas:"art head" "art summary" "art status" "art form" "info history";align-items:start}
+.a-head{grid-area:head}.a-summary{grid-area:summary}.a-status{grid-area:status}.a-form{grid-area:form}.a-history{grid-area:history}.a-art{grid-area:art}.a-info{grid-area:info}
+.thumb{display:none}
+@media (max-width:880px){
+  .room{grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "summary" "status" "form" "history" "art" "info";gap:20px}
+  .thumb{display:block;flex:none}
+}
+.summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;padding:20px 22px;background-color:#f2ede3;border:1px solid #9a7529;box-shadow:inset 0 0 0 4px #f2ede3,inset 0 0 0 5px #cfc3ab}
+.price{display:block;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:clamp(34px,8vw,44px);line-height:1.1;color:#2b2520;font-variant-numeric:tabular-nums}
+.chip{min-height:44px;padding:0 14px;border:1px solid #9a7529;border-radius:2px;background:#f2ede3;color:#2b2520;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:13px;letter-spacing:.04em;cursor:pointer}
+.chip:hover{background:#ebe4d7}
+.msg{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:16px;line-height:22px}
+.msg--error{color:#8c2a14}.msg--info{color:#1f4b96}.msg--ok{color:#2c6646}
+.msg__mark{font-family:Cinzel,Georgia,serif;font-weight:700;flex:none;width:14px}
+.hist{list-style:none;margin:0;padding:0;border-top:1px solid #9a7529}
+.hist li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:6px 16px;padding:10px 12px;border-bottom:1px solid #cfc3ab}
+.hist .me{background-color:#e2e9f5}
+.dl{display:grid;grid-template-columns:minmax(110px,max-content) minmax(0,1fr);gap:10px 20px;margin:0}
+.dl dt{font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;line-height:24px;letter-spacing:0.08em;text-transform:uppercase;color:#5e5449}
+.dl dd{margin:0;font-size:17px;line-height:24px}
+.skel{background-color:#dfd6c5;animation:skel 1.4s ease-in-out infinite}
+@keyframes skel{50%{opacity:.5}}
+@media (prefers-reduced-motion:reduce){.skel{animation:none}}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.wallet-scroll{display:flex;align-items:center;min-height:44px;text-decoration:none;color:#2b2520;filter:drop-shadow(0 2px 2px rgba(43,37,32,.22));transition:transform .15s ease,filter .15s ease}
+.wallet-scroll:hover{color:#2b2520;transform:scale(1.04);filter:drop-shadow(0 6px 6px rgba(43,37,32,.30))}
+.wallet-scroll:active{transform:scale(1.01)}
+.wallet-scroll:focus-visible{outline:2px solid #1f4b96;outline-offset:6px}
+@media (prefers-reduced-motion:reduce){.wallet-scroll{transition:none}.wallet-scroll:hover{transform:none}}
+.ws-roll{position:relative;align-self:stretch;width:8px;flex:none;margin:-3px 0;background:linear-gradient(90deg,#745616,#e4cd92 45%,#9a7529 70%,#745616);box-shadow:0 0 0 1px #745616}
+.ws-roll::before,.ws-roll::after{content:"";position:absolute;left:-2px;right:-2px;height:3px;background-color:#2b2520}
+.ws-roll::before{top:-3px}.ws-roll::after{bottom:-3px}
+.ws-sheet{display:flex;align-items:center;gap:8px;padding:3px 10px 3px 6px;background-color:#fffaf0;border-top:1px solid #cfc3ab;border-bottom:1px solid #cfc3ab;box-shadow:inset 6px 0 6px -6px rgba(43,37,32,.35),inset -6px 0 6px -6px rgba(43,37,32,.35)}
+.ws-coin{flex:none}
+.ws-rows{display:grid;grid-template-columns:auto auto;column-gap:10px;align-items:baseline}
+.ws-lbl{font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;line-height:15px;letter-spacing:.05em;text-transform:uppercase;color:#5e5449;white-space:nowrap}
+.ws-free,.ws-held{justify-self:end;font-family:Cinzel,Georgia,serif;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ws-free{font-size:15px;line-height:17px;color:#1f4b96}
+.ws-held{font-size:13px;line-height:15px;color:#745616}
+.ws-gauge{grid-column:1 / -1;position:relative;display:flex;height:3px;margin:2px 7px 1px;border-top:1px solid #745616;border-bottom:1px solid #745616;background:repeating-linear-gradient(135deg,#fffaf0 0 2px,#9a7529 2px 3.2px)}
+.ws-gauge span{background-color:#1f4b96}
+.ws-gauge::before,.ws-gauge::after{content:"";position:absolute;top:50%;width:6px;height:6px;background-color:#745616;transform:translateY(-50%) rotate(45deg)}
+.ws-gauge::before{left:-8px}.ws-gauge::after{right:-8px}
+@media (max-width:760px){.ws-sheet{padding:3px 8px 3px 5px;gap:6px}.ws-coin{width:32px;height:32px}.ws-rows{column-gap:8px}.ws-lbl{letter-spacing:.03em}.ws-free{font-size:14px;line-height:17px}.ws-held{font-size:13px;line-height:15px}}
+</style>
+</helmet>
+
+<div class="ag-ground" style="min-height: 100vh; background-color: var(--marble-000); color: var(--ink); font-family: var(--font-text);">
+
+<!-- ============ CABEÇALHO ============ -->
+<header>
+  <div style="max-width: 1240px; margin: 0 auto; padding: 10px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px;">
+      <a href="Main.dc.html" aria-label="Ágora, página inicial" style="display: flex; align-items: center; gap: 12px; min-height: 44px; text-decoration: none; color: var(--ink);">
+        <svg width="42" height="42" viewBox="0 0 34 34" aria-hidden="true" style="width: clamp(34px, 1.2vw + 24px, 42px); height: auto;"><rect x="1" y="1" width="32" height="48" rx="16" ry="16" fill="#1f4b96"></rect><rect x="5" y="5" width="24" height="48" rx="12" ry="12" fill="#f2ede3"></rect><rect x="8" y="8" width="18" height="48" rx="9" ry="9" fill="#9a7529"></rect><rect x="12" y="12" width="10" height="48" rx="5" ry="5" fill="#b23a1f"></rect></svg>
+        <span style="font-family: var(--font-display); font-weight: 600; font-size: clamp(24px, 1.6vw + 10px, 32px); line-height: 1.1; letter-spacing: 0.12em;">ÁGORA</span>
+      </a>
+      <a class="nav-back" href="Main.dc.html"><span aria-hidden="true">←</span> Vitrine</a>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
+      <sc-if value="{{isBidder}}" hint-placeholder-val="{{true}}">
+      <a class="wallet-scroll" href="Carteira.dc.html" aria-label="Carteira: {{walletAvail}} disponíveis, {{walletHeld}} em lances">
+        <span class="ws-roll" aria-hidden="true"></span>
+        <span class="ws-sheet">
+          <svg class="ws-coin" width="34" height="34" viewBox="7 7 34 34" aria-hidden="true"><circle cx="24" cy="24" r="17" fill="#9a7529"></circle><circle cx="24" cy="24" r="16.4" fill="none" stroke="#745616" stroke-width=".8" stroke-dasharray="1 1.3"></circle><circle cx="24" cy="24" r="14" fill="none" stroke="#e4cd92" stroke-width="1" stroke-dasharray="1.4 2"></circle><circle cx="24" cy="24" r="11" fill="#745616"></circle><path d="M15.5 17 A11 11 0 0 1 31 14.5" fill="none" stroke="#e4cd92" stroke-opacity=".35" stroke-width="2"></path><text x="24" y="28" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-size="11" font-weight="700" fill="#e4cd92">R$</text></svg>
+          <span class="ws-rows">
+            <span class="ws-lbl">Disponível</span><span class="ws-free">{{walletAvail}}</span>
+            <span class="ws-gauge" aria-hidden="true"><span style="width: {{walletPct}}%;"></span></span>
+            <span class="ws-lbl">Em lances</span><span class="ws-held">{{walletHeld}}</span>
+          </span>
+        </span>
+        <span class="ws-roll" aria-hidden="true"></span>
+      </a>
+      <a class="monogram" href="#conta" aria-label="Conta do Licitante #A7F2">A7</a>
+      </sc-if>
+      <sc-if value="{{isVisitor}}" hint-placeholder-val="{{false}}">
+        <a class="ag-btn ag-btn--secondary" href="Entrar.dc.html" style="min-height: 44px; border-radius: 0;">Entrar</a>
+        <a class="ag-btn ag-btn--primary" href="Entrar.dc.html" style="min-height: 44px; border-radius: 0;">Criar conta</a>
+      </sc-if>
+      <sc-if value="{{isAuctioneer}}" hint-placeholder-val="{{false}}">
+        <a class="nav-back" href="Painel.dc.html">Painel do leiloeiro</a>
+        <a class="monogram" href="#conta" aria-label="Conta do leiloeiro Casa Ágora">CA</a>
+      </sc-if>
+    </div>
+  </div>
+  <div class="ag-meander" style="background-color: var(--marble-100); border-top: 1px solid var(--gold-500); border-bottom: 1px solid var(--gold-500); height: 18px;"></div>
+</header>
+
+<main style="max-width: 1240px; margin: 0 auto; padding: 32px 24px 72px;">
+
+<!-- ============ ESTADO: LOTE INEXISTENTE OU CANCELADO ============ -->
+<sc-if value="{{isNotFound}}" hint-placeholder-val="{{false}}">
+  <div role="alert" style="max-width: 640px; margin: 48px auto; padding: 40px 24px; border-top: 3px double var(--gold-500); border-bottom: 3px double var(--gold-500); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+    <p style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-700);">Sala do lote</p>
+    <h1 style="margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 32px; line-height: 38px;">Lote não encontrado</h1>
+    <p style="margin: 0; font-size: 18px; line-height: 27px; color: var(--ink-muted);">Este lote não existe ou foi cancelado pelo leiloeiro antes de receber lances.</p>
+    <a class="ag-btn ag-btn--secondary" href="Main.dc.html" style="border-radius: 0;">Voltar à vitrine</a>
+  </div>
+</sc-if>
+
+<!-- ============ ESTADO: ERRO ============ -->
+<sc-if value="{{isError}}" hint-placeholder-val="{{false}}">
+  <div role="alert" style="max-width: 640px; margin: 48px auto; display: flex; flex-direction: column; align-items: flex-start; gap: 16px;">
+    <div class="ag-notice ag-notice--error" style="width: 100%; box-sizing: border-box;">
+      <span class="ag-notice__mark" aria-hidden="true">✕</span>
+      <p class="ag-notice__title">Não foi possível abrir a sala do Lote VII</p>
+      <p class="ag-notice__text">Não conseguimos abrir a sala agora. Nenhum lance seu foi enviado ou perdido.</p>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+      <button class="ag-btn ag-btn--secondary" type="button" onClick="{{retry}}">Tentar de novo</button>
+      <a class="ag-btn ag-btn--quiet" href="Main.dc.html" style="min-height: 44px;">Voltar à vitrine</a>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ============ ESTADO: CARREGANDO ============ -->
+<sc-if value="{{isLoading}}" hint-placeholder-val="{{false}}">
+  <p class="sr-only" role="status">Carregando a sala do lote.</p>
+  <div class="room" aria-hidden="true">
+    <div class="a-head" style="display: flex; flex-direction: column; gap: 12px;">
+      <div class="skel" style="height: 24px; width: 40%;"></div>
+      <div class="skel" style="height: 44px; width: 90%;"></div>
+      <div class="skel" style="height: 20px; width: 60%;"></div>
+    </div>
+    <div class="a-summary skel" style="height: 132px;"></div>
+    <div class="a-form" style="display: flex; flex-direction: column; gap: 12px;">
+      <div class="skel" style="height: 14px; width: 30%;"></div>
+      <div class="skel" style="height: 48px;"></div>
+      <div class="skel" style="height: 48px; width: 50%;"></div>
+    </div>
+    <div class="a-history" style="display: flex; flex-direction: column; gap: 8px;">
+      <div class="skel" style="height: 28px; width: 50%;"></div>
+      <div class="skel" style="height: 44px;"></div>
+      <div class="skel" style="height: 44px;"></div>
+      <div class="skel" style="height: 44px;"></div>
+    </div>
+    <div class="a-art"><div class="niche"><div class="niche__stage"><div class="skel" style="width: 75%; height: 100%;"></div></div></div></div>
+  </div>
+</sc-if>
+
+<!-- ============ ESTADO: SALA ============ -->
+<sc-if value="{{isReady}}" hint-placeholder-val="{{true}}">
+<div class="room">
+
+  <!-- Cabeçalho do lote -->
+  <div class="a-head" style="display: flex; gap: 16px; align-items: flex-start;">
+    <div class="thumb" aria-hidden="true" style="width: 64px; height: 84px; padding: 0;">
+      <div class="art art-portrait framed ag-marble" style="height: 84px; border-width: 4px;"></div>
+    </div>
+    <div style="min-width: 0; display: flex; flex-direction: column; gap: 8px;">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+        <sc-if value="{{isOpen}}" hint-placeholder-val="{{true}}"><span class="ag-badge ag-badge--live">Ao vivo</span></sc-if>
+        <sc-if value="{{notStarted}}" hint-placeholder-val="{{false}}"><span class="ag-badge ag-badge--scheduled">Agendado</span></sc-if>
+        <sc-if value="{{isClosed}}" hint-placeholder-val="{{false}}"><span class="ag-badge ag-badge--closed">Encerrado</span></sc-if>
+        <span style="font-family: var(--font-display); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-700);">Lote VII</span>
+      </div>
+      <h1 style="margin: 0; font-family: var(--font-serif); font-style: italic; font-weight: 500; font-size: clamp(32px, 7vw, 46px); line-height: 1.05; overflow-wrap: break-word;">Retrato de um jovem</h1>
+      <p style="margin: 0; font-size: 17px; line-height: 24px; color: var(--ink-muted);">Escola florentina, c. 1520 · óleo sobre madeira</p>
+    </div>
+  </div>
+
+  <!-- 1. Lance atual e contagem -->
+  <section class="a-summary summary" aria-label="Lance atual e tempo restante">
+    <div>
+      <span class="ag-lot__label">{{priceLabel}}</span>
+      <span class="price" aria-live="polite">{{currentText}}</span>
+      <span style="display: block; margin-top: 4px; font-size: 15px; line-height: 20px; color: var(--ink-muted);">{{priceSub}}</span>
+    </div>
+    <sc-if value="{{showCountdown}}" hint-placeholder-val="{{true}}">
+    <div class="ag-countdown {{countClass}}">
+      <div class="ag-countdown__units">
+        <div class="ag-countdown__unit"><span class="ag-countdown__value" style="min-width: 60px; font-size: 30px; line-height: 34px; padding: 8px 6px 6px;">{{mm}}</span><span class="ag-countdown__label">Min</span></div>
+        <span class="ag-countdown__sep" style="padding-top: 8px;">:</span>
+        <div class="ag-countdown__unit"><span class="ag-countdown__value" style="min-width: 60px; font-size: 30px; line-height: 34px; padding: 8px 6px 6px;">{{ss}}</span><span class="ag-countdown__label">Seg</span></div>
+      </div>
+      <p style="margin: 0; max-width: 220px; text-align: center; font-family: var(--font-serif); font-style: italic; font-size: 16px; line-height: 20px; color: {{noteColor}};">{{countNote}}</p>
+    </div>
+    </sc-if>
+    <sc-if value="{{notStarted}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; gap: 4px; padding-left: 20px; border-left: 3px double var(--gold-500);">
+        <span class="ag-lot__label">Abre em</span>
+        <span style="font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 32px;">{{opensText}}</span>
+        <span style="font-family: var(--font-serif); font-style: italic; font-size: 16px; line-height: 20px; color: var(--ink-muted);">Os lances só são aceitos a partir daí.</span>
+      </div>
+    </sc-if>
+  </section>
+
+  <!-- 2. Ganhando / superado -->
+  <div class="a-status">
+    <sc-if value="{{stWinning}}" hint-placeholder-val="{{false}}">
+      <div class="ag-bidstatus ag-bidstatus--winning" role="status">
+        <span class="ag-bidstatus__mark" aria-hidden="true">▲</span>
+        <div><p class="ag-bidstatus__title">Você está ganhando</p><p class="ag-bidstatus__text">O valor fica reservado na sua carteira enquanto você liderar.</p></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{stOutbid}}" hint-placeholder-val="{{false}}">
+      <div class="ag-bidstatus ag-bidstatus--outbid" role="status">
+        <span class="ag-bidstatus__mark" aria-hidden="true">▼</span>
+        <div><p class="ag-bidstatus__title">Você foi superado</p><p class="ag-bidstatus__text">Para cobrir, ofereça ao menos {{minText}}.</p></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{stWon}}" hint-placeholder-val="{{false}}">
+      <div class="ag-bidstatus ag-bidstatus--winning" role="status">
+        <span class="ag-bidstatus__mark" aria-hidden="true">✓</span>
+        <div><p class="ag-bidstatus__title">Você arrematou este lote</p><p class="ag-bidstatus__text">{{currentText}} foram debitados da sua carteira. <a href="Comprovante.dc.html" style="color: var(--on-pigment); text-underline-offset: 3px;">Ver comprovante</a></p></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{stLost}}" hint-placeholder-val="{{false}}">
+      <div role="status" style="display: flex; gap: 14px; align-items: center; padding: 16px 20px; border: 1px solid var(--ink-muted); background-color: var(--marble-200);">
+        <span aria-hidden="true" style="font-family: var(--font-display); font-weight: 700; font-size: 16px;">◆</span>
+        <p style="margin: 0; font-size: 17px; line-height: 24px;"><strong style="font-family: var(--font-display); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase;">Lote encerrado.</strong> {{lostText}}</p>
+      </div>
+    </sc-if>
+    <sc-if value="{{stScheduled}}" hint-placeholder-val="{{false}}">
+      <p style="margin: 0; font-size: 17px; line-height: 24px;">Este lote ainda não começou. Abre em {{opensText}}.</p>
+    </sc-if>
+    <sc-if value="{{stNone}}" hint-placeholder-val="{{false}}">
+      <p style="margin: 0; font-size: 17px; line-height: 24px; color: var(--ink-muted);">Você ainda não deu lance neste lote.</p>
+    </sc-if>
+  </div>
+
+  <!-- 3. Campo de lance -->
+  <section class="a-form" aria-label="Dar lance" style="display: flex; flex-direction: column; gap: 12px;">
+    <sc-if value="{{isVisitor}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; gap: 14px; padding: 22px; border: 1px solid var(--gold-500); background-color: var(--marble-100); box-shadow: inset 0 0 0 4px var(--marble-100), inset 0 0 0 5px var(--vein);">
+        <p style="margin: 0; font-size: 18px; line-height: 26px;">Você pode acompanhar este lote ao vivo. Para dar lance, entre com uma conta de licitante.</p>
+        <a class="ag-btn ag-btn--primary" href="Entrar.dc.html" style="width: 100%; min-height: 52px; box-sizing: border-box; border-radius: 0;">Entrar para dar lance</a>
+      </div>
+    </sc-if>
+    <sc-if value="{{isAuctioneer}}" hint-placeholder-val="{{false}}">
+      <p style="margin: 0; padding: 16px 20px; border: 1px solid var(--vein); background-color: var(--marble-100); font-size: 17px; line-height: 24px; color: var(--ink-muted);">Leiloeiros acompanham os lotes, mas não dão lances.</p>
+    </sc-if>
+    <sc-if value="{{isBidder}}" hint-placeholder-val="{{true}}">
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+    <label class="ag-field" for="bid-input">
+      <span id="bid-label" class="ag-field__label">Seu lance</span>
+      <span class="ag-input {{inputClass}}"><span class="ag-input__prefix" aria-hidden="true">R$</span><input id="bid-input" class="ag-input__control" type="text" inputmode="numeric" autocomplete="off" value="{{bidValue}}" onChange="{{onBidChange}}" aria-invalid="{{bidInvalid}}" aria-describedby="bid-help bid-msg"></span>
+      <span id="bid-help" class="ag-field__hint">{{helpText}}</span>
+    </label>
+    <div role="group" aria-labelledby="chips-label" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+      <span id="chips-label" class="ag-field__hint" style="margin-right: 4px;">Preencher com:</span>
+      <sc-for list="{{chips}}" as="c" hint-placeholder-count="3">
+        <button class="chip" type="button" onClick="{{c.pick}}">{{c.label}}</button>
+      </sc-for>
+    </div>
+    <div id="bid-msg">
+      <sc-if value="{{hasError}}" hint-placeholder-val="{{false}}">
+        <p class="msg msg--error" role="alert"><span class="msg__mark" aria-hidden="true">✕</span><span><strong>{{errorTitle}}</strong> {{errorText}}</span></p>
+      </sc-if>
+      <sc-if value="{{hasInfo}}" hint-placeholder-val="{{false}}">
+        <p class="msg msg--info" role="status"><span class="msg__mark" aria-hidden="true">i</span><span><strong>{{infoTitle}}</strong> {{infoText}}</span></p>
+      </sc-if>
+      <sc-if value="{{hasOk}}" hint-placeholder-val="{{false}}">
+        <p class="msg msg--ok" role="status"><span class="msg__mark" aria-hidden="true">✓</span><span>{{okText}}</span></p>
+      </sc-if>
+    </div>
+    <button class="ag-btn ag-btn--primary" type="button" onClick="{{onBid}}" style="min-height: 52px; width: 100%;">Dar lance</button>
+    </div>
+    </sc-if>
+  </section>
+
+  <!-- 4. Histórico -->
+  <section class="a-history" aria-labelledby="hist-title" style="display: flex; flex-direction: column; gap: 12px;">
+    <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px;">
+      <h2 id="hist-title" style="margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 26px; line-height: 32px;">Histórico de lances <span style="font-family: var(--font-text); font-weight: 400; font-size: 17px; color: var(--ink-muted);">{{bidCountText}}</span></h2>
+      <a class="ag-btn ag-btn--quiet" href="Auditoria.dc.html" style="min-height: 44px; padding: 0;">Auditar este lote</a>
+    </div>
+    <sc-if value="{{hasBids}}" hint-placeholder-val="{{true}}">
+      <ol class="hist">
+        <sc-for list="{{rows}}" as="r" hint-placeholder-count="5">
+          <li class="{{r.cls}}">
+            <span style="min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px;">
+              <span style="font-size: 17px; line-height: 22px; color: {{r.whoColor}}; font-weight: {{r.whoWeight}};">{{r.who}}</span>
+              <sc-if value="{{r.leads}}" hint-placeholder-val="{{false}}"><span style="font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink);">▲ Lidera</span></sc-if>
+            </span>
+            <span style="font-family: var(--font-display); font-weight: 600; font-size: 17px; font-variant-numeric: tabular-nums;">{{r.amount}}</span>
+            <span style="font-size: 15px; color: var(--ink-muted); font-variant-numeric: tabular-nums;">{{r.time}}</span>
+          </li>
+        </sc-for>
+      </ol>
+    </sc-if>
+    <sc-if value="{{noBids}}" hint-placeholder-val="{{false}}">
+      <div style="padding: 20px; border-top: 1px solid var(--gold-500); border-bottom: 1px solid var(--vein); text-align: center;">
+        <p style="margin: 0 0 4px; font-family: var(--font-serif); font-weight: 600; font-size: 22px;">Ainda não há lances</p>
+        <p style="margin: 0; font-size: 17px; line-height: 24px; color: var(--ink-muted);">O primeiro lance precisa ser de pelo menos {{minText}}. Seja o primeiro.</p>
+      </div>
+    </sc-if>
+    <p style="margin: 0; font-size: 14px; line-height: 20px; color: var(--ink-muted);">Os participantes aparecem só por apelido. Todo lance fica registrado e pode ser conferido na auditoria pública.</p>
+  </section>
+
+  <!-- Obra -->
+  <figure class="a-art" style="margin: 0; display: flex; flex-direction: column; align-items: center;">
+    <div class="niche">
+      <div class="niche__stage">
+        <div class="art art-portrait framed ag-marble" role="img" aria-label="Imagem de Retrato de um jovem" style="display: flex; align-items: flex-end; justify-content: center; padding-bottom: 14px;">
+          <span style="font-family: var(--font-serif); font-style: italic; font-size: 15px; color: var(--ink-muted);">[Imagem da obra]</span>
+        </div>
+      </div>
+    </div>
+  </figure>
+
+  <!-- Sobre a obra e o lote -->
+  <section class="a-info" aria-labelledby="info-title" style="display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 520px; justify-self: center;">
+    <h2 id="info-title" style="margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 26px; line-height: 32px;">Sobre a obra e o lote</h2>
+    <div class="ag-rule"></div>
+    <dl class="dl">
+      <dt>Artista</dt><dd>Escola florentina</dd>
+      <dt>Data</dt><dd>c. 1520</dd>
+      <dt>Técnica</dt><dd>Óleo sobre madeira</dd>
+      <dt>Dimensões</dt><dd>62 × 47 cm</dd>
+      <dt>Lance inicial</dt><dd>R$ 8.000</dd>
+      <dt>Aumento mínimo</dt><dd>R$ 500</dd>
+      <dt>Início</dt><dd>23 out, 20h00</dd>
+      <dt>Fim previsto</dt><dd>{{endText}}</dd>
+    </dl>
+  </section>
+
+</div>
+</sc-if>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"perfil":{"editor":"enum","options":["licitante","visitante","leiloeiro"],"default":"licitante","section":"Estado"},"estadoSala":{"editor":"enum","options":["ao vivo","sem lances","carregando","erro","não encontrado"],"default":"ao vivo","section":"Estado"},"situacao":{"editor":"enum","options":["superado","ganhando","sem lance meu"],"default":"superado","section":"Estado"},"tempo":{"editor":"enum","options":["14 min","ultimos 2 min","encerrado","ainda não começou"],"default":"14 min","section":"Estado"},"$preview":{"width":1440,"height":1900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh();
+  }
+  fresh() {
+    return { bids: null, elapsed: 0, extra: 0, extended: false, value: '', error: null, info: null, ok: '', retried: false };
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => this.setState({ elapsed: this.state.elapsed + 1 }), 1000);
+  }
+  componentDidUpdate(prev) {
+    if (prev.estadoSala !== this.props.estadoSala || prev.situacao !== this.props.situacao || prev.tempo !== this.props.tempo || prev.perfil !== this.props.perfil) {
+      clearTimeout(this.rival);
+      this.setState(this.fresh());
+    }
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    clearTimeout(this.rival);
+  }
+  money(n) { return 'R$ ' + Number(n).toLocaleString('pt-BR'); }
+  clock() {
+    const d = new Date();
+    return [d.getHours(), d.getMinutes(), d.getSeconds()].map((x) => String(x).padStart(2, '0')).join(':');
+  }
+  initialBids() {
+    const estado = this.props.estadoSala ?? 'ao vivo';
+    if (estado === 'sem lances' || (this.props.tempo ?? '') === 'ainda não começou') return [];
+    const sit = (this.props.perfil ?? 'licitante') === 'licitante' ? (this.props.situacao ?? 'superado') : 'sem lance meu';
+    if (sit === 'ganhando') return [
+      { who: 'Você', amount: 12400, time: '21:58:12' },
+      { who: 'Licitante #C31B', amount: 11900, time: '21:57:40' },
+      { who: 'Licitante #90DE', amount: 11400, time: '21:51:03' },
+      { who: 'Você', amount: 10900, time: '21:49:55' },
+      { who: 'Licitante #C31B', amount: 10400, time: '21:42:18' }
+    ];
+    if (sit === 'superado') return [
+      { who: 'Licitante #C31B', amount: 12400, time: '21:58:12' },
+      { who: 'Você', amount: 11900, time: '21:57:40' },
+      { who: 'Licitante #90DE', amount: 11400, time: '21:51:03' },
+      { who: 'Você', amount: 10900, time: '21:49:55' },
+      { who: 'Licitante #C31B', amount: 10400, time: '21:42:18' }
+    ];
+    return [
+      { who: 'Licitante #C31B', amount: 12400, time: '21:58:12' },
+      { who: 'Licitante #90DE', amount: 11900, time: '21:57:40' },
+      { who: 'Licitante #C31B', amount: 11400, time: '21:51:03' }
+    ];
+  }
+  renderVals() {
+    const START = 8000, INC = 500, BALANCE = 20000;
+    const estado = this.state.retried ? 'ao vivo' : (this.props.estadoSala ?? 'ao vivo');
+    const tempo = this.props.tempo ?? '14 min';
+    const perfil = this.props.perfil ?? 'licitante';
+    const isBidder = perfil === 'licitante';
+    const notStarted = tempo === 'ainda não começou';
+    const OPENS = '25 out, 19h00';
+    const base = tempo === 'encerrado' ? 0 : (tempo === 'ultimos 2 min' ? 95 : 842);
+    const left = notStarted ? 0 : Math.max(0, base + this.state.extra - this.state.elapsed);
+    const open = left > 0;
+    const closed = !notStarted && !open;
+
+    const bids = this.state.bids ?? this.initialBids();
+    const top = bids[0];
+    const iLead = !!top && top.who === 'Você';
+    const iBid = bids.some((b) => b.who === 'Você');
+    const current = top ? top.amount : START;
+    const min = top ? current + INC : START;
+    const committed = iLead ? current : 0;
+    const available = BALANCE - committed;
+
+    const tryBid = () => {
+      const raw = String(this.state.value || '');
+      const amount = Number(raw.replace(/\D/g, ''));
+      const clear = { error: null, info: null, ok: '' };
+      // LOT_NOT_STARTED, LOT_ENDED, ALREADY_WINNING, BID_BELOW_MINIMUM, INSUFFICIENT_BALANCE
+      if (notStarted) return this.setState(Object.assign(clear, { error: { t: 'Este lote ainda não começou.', x: 'Abre em ' + OPENS + '.' } }));
+      if (!open) return this.setState(Object.assign(clear, { error: { t: 'Este lote não aceita mais lances.', x: '' } }));
+      if (iLead) return this.setState(Object.assign(clear, { info: { t: 'Você já está ganhando.', x: 'Aguarde ser superado para cobrir.' } }));
+      if (!amount) return this.setState(Object.assign(clear, { error: { t: 'Informe o valor do lance.', x: 'O mínimo agora é ' + this.money(min) + '.' } }));
+      if (amount < min) return this.setState(Object.assign(clear, { error: { t: 'Lance abaixo do mínimo.', x: 'O mínimo agora é ' + this.money(min) + '.' } }));
+      if (amount > available) return this.setState(Object.assign(clear, { error: { t: 'Saldo insuficiente.', x: 'Seu disponível é ' + this.money(available) + '.' } }));
+      const nb = [{ who: 'Você', amount: amount, time: this.clock() }].concat(bids);
+      const extend = left < 120;
+      this.setState(Object.assign(clear, {
+        bids: nb, value: '',
+        extra: this.state.extra + (extend ? 120 : 0),
+        extended: extend || this.state.extended,
+        ok: 'Lance de ' + this.money(amount) + ' aceito.' + (extend ? ' O fim do lote foi prorrogado em +2 min.' : '')
+      }));
+      clearTimeout(this.rival);
+      this.rival = setTimeout(() => {
+        const cur = this.state.bids;
+        if (!cur || cur[0].who !== 'Você') return;
+        this.setState({ bids: [{ who: 'Licitante #C31B', amount: cur[0].amount + INC, time: this.clock() }].concat(cur), ok: '' });
+      }, 9000);
+    };
+
+    const err = this.state.error, info = this.state.info;
+    const mm = String(Math.floor(left / 60)).padStart(2, '0');
+    const ss = String(left % 60).padStart(2, '0');
+
+    let countNote = 'Lances nos últimos 2 minutos estendem o fim em +2 min.';
+    let noteColor = '#5e5449';
+    if (closed) { countNote = 'Lote encerrado.'; }
+    else if (this.state.extended) { countNote = 'Prorrogado em +2 min pelo último lance.'; noteColor = '#8c2a14'; }
+    else if (left < 120) { countNote = 'Últimos minutos: um lance agora estende o fim em +2 min.'; noteColor = '#8c2a14'; }
+
+    const endMin = 22 * 60 + 40 + Math.round(this.state.extra / 60);
+    const endText = 'hoje, ' + Math.floor(endMin / 60) + 'h' + String(endMin % 60).padStart(2, '0') + (this.state.extra ? ' (prorrogado)' : '');
+
+    return {
+      isError: estado === 'erro',
+      isLoading: estado === 'carregando',
+      isReady: estado === 'ao vivo' || estado === 'sem lances',
+      isNotFound: estado === 'não encontrado',
+      isBidder: isBidder, isVisitor: perfil === 'visitante', isAuctioneer: perfil === 'leiloeiro',
+      notStarted: notStarted, showCountdown: !notStarted, opensText: OPENS,
+      stScheduled: notStarted,
+      retry: () => this.setState({ retried: true }),
+
+      isOpen: open,
+      isClosed: closed,
+      priceLabel: top ? (open ? 'Lance atual' : 'Lance vencedor') : 'Lance inicial',
+      currentText: this.money(current),
+      priceSub: top ? (iLead ? 'Seu lance · ' : top.who + ' · ') + bids.length + (bids.length === 1 ? ' lance' : ' lances') : 'Nenhum lance ainda',
+      minText: this.money(min),
+      mm: mm, ss: ss,
+      countClass: open && left < 120 ? 'ag-countdown--urgent' : '',
+      countNote: countNote, noteColor: noteColor,
+      endText: endText,
+
+      stWinning: isBidder && open && iLead,
+      stOutbid: isBidder && open && !iLead && iBid,
+      stNone: isBidder && open && !iBid,
+      stWon: isBidder && closed && iLead,
+      stLost: closed && !(isBidder && iLead),
+      lostText: top ? (iBid ? 'Outro licitante arrematou por ' + this.money(current) + '. Seu saldo está todo disponível.' : 'Arrematado por ' + this.money(current) + '.') : 'O lote fechou sem lances.',
+
+      bidValue: this.state.value,
+      onBidChange: (e) => this.setState({ value: e.target.value, error: null, info: null, ok: '' }),
+      onBid: tryBid,
+      helpText: 'Mínimo: ' + this.money(min) + '. Você tem ' + this.money(available) + ' disponíveis.',
+      hasCommitted: committed > 0,
+      chips: [min, min + INC, min + 2 * INC].map((v) => ({ label: this.money(v), pick: () => this.setState({ value: v.toLocaleString('pt-BR'), error: null, info: null, ok: '' }) })),
+      hasError: !!err, errorTitle: err ? err.t : '', errorText: err ? err.x : '',
+      hasInfo: !!info, infoTitle: info ? info.t : '', infoText: info ? info.x : '',
+      hasOk: !!this.state.ok, okText: this.state.ok,
+      bidInvalid: !!err,
+      inputClass: err ? 'is-invalid' : '',
+
+      hasBids: bids.length > 0,
+      noBids: bids.length === 0,
+      bidCountText: bids.length ? '(' + bids.length + ')' : '',
+      rows: bids.map((b, i) => ({
+        who: b.who, amount: this.money(b.amount), time: b.time,
+        leads: i === 0,
+        cls: b.who === 'Você' ? 'me' : '',
+        whoColor: b.who === 'Você' ? '#1f4b96' : '#2b2520',
+        whoWeight: b.who === 'Você' ? 600 : 400
+      })),
+
+      walletAvail: this.money(available),
+      walletPct: Math.round(100 * available / BALANCE),
+      walletHeld: committed > 0 ? this.money(committed) : 'nada'
+    };
+  }
+}
+</script>
+</body>
+</html>

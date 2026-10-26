@@ -1,0 +1,42 @@
+/* Ágora — generated from tokens.json */
+:root, [data-theme="light"] {
+  --marble-000: #f2ede3;
+  --marble-100: #ebe4d7;
+  --marble-200: #dfd6c5;
+  --vein: #cfc3ab;
+  --ink: #2b2520;
+  --ink-muted: #5e5449;
+  --gold-300: #e4cd92;
+  --gold-500: #9a7529;
+  --gold-700: #745616;
+  --cinnabar: #b23a1f;
+  --cinnabar-deep: #8c2a14;
+  --cinnabar-soft: #f7e4dc;
+  --ultramarine: #1f4b96;
+  --ultramarine-soft: #e2e9f5;
+  --malachite: #2c6646;
+  --malachite-soft: #e1eee5;
+  --on-pigment: #fffaf0;
+  --focus: var(--ultramarine);
+  --shadow-relief: 0 1px 0 #ffffff, 0 14px 28px -16px rgba(43, 37, 32, 0.38);
+  --shadow-carved: inset 0 1px 3px rgba(43, 37, 32, 0.2), inset 0 -1px 0 #ffffff;
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+  --radius-0: 0;
+  --radius-sm: 0;
+  --radius-arch: 999px;
+  --radius-round: 50%;
+  --border-hairline: 1px;
+  --border-frame: 3px;
+  --font-display: Cinzel, "Trajan Pro", Georgia, serif;
+  --font-serif: "Cormorant Garamond", Garamond, Georgia, serif;
+  --font-text: "EB Garamond", Garamond, Georgia, serif;
+}

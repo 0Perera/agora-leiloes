@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Ágora · Entrar e Criar conta</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/agora/tokens.css">
+<link rel="stylesheet" href="ds/agora/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#f2ede3;color:#2b2520;font-family:"EB Garamond",Garamond,Georgia,serif}
+a{color:#1f4b96}a:hover{color:#2b2520}
+:focus-visible{outline:2px solid #1f4b96;outline-offset:2px}
+.on-dark :focus-visible{outline-color:#e4cd92}
+.ag-input:focus-within{outline:2px solid #1f4b96;outline-offset:2px}
+.ag-input.is-invalid{border-color:#b23a1f;box-shadow:inset 0 0 0 1px #b23a1f}
+.ag-btn,.ag-badge,.ag-input{border-radius:0}
+.ag-btn--quiet{min-height:44px}
+.nav-link{display:inline-flex;align-items:center;min-height:44px;box-sizing:border-box;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#2b2520;text-decoration:none;padding:0 4px;border-bottom:2px solid transparent}
+.nav-link:hover{border-bottom-color:#9a7529;color:#2b2520}
+.field-error{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:16px;line-height:22px;color:#8c2a14}
+.ctl-text{font-family:"EB Garamond",Garamond,Georgia,serif !important;font-weight:400 !important;font-size:18px !important;padding-left:16px !important}
+.corners{position:relative;background-color:#ebe4d7;border:1px solid #9a7529;box-shadow:inset 0 0 0 5px #ebe4d7,inset 0 0 0 6px #cfc3ab;
+  background-image:linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529),linear-gradient(#9a7529,#9a7529);
+  background-repeat:no-repeat;background-size:26px 3px,3px 26px,26px 3px,3px 26px,26px 3px,3px 26px,26px 3px,3px 26px;
+  background-position:left 10px top 10px,left 10px top 10px,right 10px top 10px,right 10px top 10px,left 10px bottom 10px,left 10px bottom 10px,right 10px bottom 10px,right 10px bottom 10px}
+.tab{flex:1;min-height:48px;padding:0 16px;border:0;border-bottom:3px solid transparent;background:transparent;cursor:pointer;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#5e5449}
+.tab[aria-pressed="true"]{border-bottom:3px double #9a7529;background-color:#f2ede3;color:#2b2520}
+.role-tile{position:relative;display:flex;gap:14px;align-items:flex-start;padding:16px 16px 16px 14px;border:1px solid #9a7529;background-color:#f2ede3;cursor:pointer}
+.role-tile:focus-within{outline:2px solid #1f4b96;outline-offset:2px}
+.role-tile.is-on{border:3px double #745616;padding:14px 14px 14px 12px;background-color:#f7f3ea}
+.role-num{flex:none;width:36px;padding-top:2px;border-right:3px double #b23a1f;font-family:Cinzel,Georgia,serif;font-weight:600;font-size:18px;color:#745616}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.split{display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);gap:0;align-items:stretch;min-height:760px}
+.portal-list{display:flex}
+@media (max-width:900px){.split{grid-template-columns:minmax(0,1fr);min-height:0}.portal{padding:32px 24px !important}.portal-arch{display:none !important}.portal-list{display:none}}
+/* celular: menu em uma linha que rola para o lado, em vez de ocupar várias linhas */
+@media (max-width:760px){.nav-main{order:3;width:100%;flex-wrap:nowrap !important;overflow-x:auto;gap:0 20px !important;scrollbar-width:thin}.nav-main a{white-space:nowrap;flex:none}}
+</style>
+</helmet>
+
+<div class="ag-ground" style="min-height: 100vh; background-color: var(--marble-000); color: var(--ink); font-family: var(--font-text);">
+
+<!-- ============ CABEÇALHO (visitante) ============ -->
+<header>
+  <div style="max-width: 1240px; margin: 0 auto; padding: 10px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px;">
+    <a href="Main.dc.html" aria-label="Ágora, página inicial" style="display: flex; align-items: center; gap: 12px; min-height: 44px; text-decoration: none; color: var(--ink);">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="48" rx="16" ry="16" fill="#1f4b96"></rect><rect x="5" y="5" width="24" height="48" rx="12" ry="12" fill="#f2ede3"></rect><rect x="8" y="8" width="18" height="48" rx="9" ry="9" fill="#9a7529"></rect><rect x="12" y="12" width="10" height="48" rx="5" ry="5" fill="#b23a1f"></rect></svg>
+      <span style="font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 28px; letter-spacing: 0.12em;">ÁGORA</span>
+    </a>
+    <nav class="nav-main" aria-label="Principal" style="display: flex; flex-wrap: wrap; gap: 4px 20px;">
+      <a class="nav-link" href="Main.dc.html">Vitrine</a>
+      <a class="nav-link" href="Main.dc.html#como-funciona">Como funciona</a>
+      <a class="nav-link" href="Auditoria.dc.html">Auditoria</a>
+    </nav>
+  </div>
+  <div class="ag-meander" style="background-color: var(--marble-100); border-top: 1px solid var(--gold-500); border-bottom: 1px solid var(--gold-500); height: 18px;"></div>
+</header>
+
+<main style="max-width: 1240px; margin: 0 auto; padding: 40px 24px 72px;">
+<div class="split">
+
+  <!-- Portal: faixa escura com arcos -->
+  <section class="portal on-dark" aria-label="Sobre a Ágora" style="position: relative; overflow: hidden; padding: 48px 44px; background-color: var(--ink); color: var(--on-pigment); display: flex; flex-direction: column; justify-content: space-between; gap: 32px; box-shadow: inset 0 0 0 6px var(--ink), inset 0 0 0 7px var(--gold-300);">
+    <div>
+      <p style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-300);">Casa de leilões de arte clássica</p>
+      <p style="margin: 12px 0 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(34px, 6vw, 52px); line-height: 1; letter-spacing: 0.1em;">ÁGORA</p>
+      <p style="margin: 14px 0 0; max-width: 380px; font-family: var(--font-serif); font-style: italic; font-size: 21px; line-height: 28px; color: var(--marble-200);">Como na praça de Atenas: tudo à vista, e qualquer pessoa pode conferir.</p>
+    </div>
+    <svg class="portal-arch" viewBox="0 0 280 230" width="280" height="230" aria-hidden="true" style="display: block; align-self: center;">
+      <rect x="10" y="10" width="260" height="400" rx="130" ry="130" fill="none" stroke="#e4cd92" stroke-width="2"></rect>
+      <rect x="34" y="34" width="212" height="400" rx="106" ry="106" fill="none" stroke="#e4cd92" stroke-width="1"></rect>
+      <rect x="58" y="58" width="164" height="400" rx="82" ry="82" fill="#1f4b96"></rect>
+      <rect x="82" y="82" width="116" height="400" rx="58" ry="58" fill="#9a7529"></rect>
+      <rect x="106" y="106" width="68" height="400" rx="34" ry="34" fill="#b23a1f"></rect>
+    </svg>
+    <ol class="portal-list" style="margin: 0; padding: 0; list-style: none; flex-direction: column; gap: 14px; border-top: 1px solid #5a4f45; padding-top: 22px;">
+      <li style="display: flex; gap: 14px;"><span style="flex: none; width: 30px; font-family: var(--font-display); font-weight: 600; color: var(--gold-300);">1</span><span style="font-size: 17px; line-height: 24px; color: var(--marble-200);">Licitantes depositam saldo simulado e dão lances ao vivo.</span></li>
+      <li style="display: flex; gap: 14px;"><span style="flex: none; width: 30px; font-family: var(--font-display); font-weight: 600; color: var(--gold-300);">2</span><span style="font-size: 17px; line-height: 24px; color: var(--marble-200);">Leiloeiros publicam lotes com obras do acervo do museu.</span></li>
+      <li style="display: flex; gap: 14px;"><span style="flex: none; width: 30px; font-family: var(--font-display); font-weight: 600; color: var(--gold-300);">3</span><span style="font-size: 17px; line-height: 24px; color: var(--marble-200);">Todo lote tem auditoria pública, sem precisar de conta.</span></li>
+    </ol>
+  </section>
+
+  <!-- Ficha: entrar / criar conta -->
+  <section class="corners" aria-label="Acesso" style="padding: clamp(24px, 4vw, 48px); display: flex; flex-direction: column; gap: 24px;">
+    <div role="group" aria-label="Escolha entre entrar e criar conta" style="display: flex; border-bottom: 1px solid var(--gold-500);">
+      <button class="tab" type="button" aria-pressed="{{isLogin}}" onClick="{{goLogin}}">Entrar</button>
+      <button class="tab" type="button" aria-pressed="{{isSignup}}" onClick="{{goSignup}}">Criar conta</button>
+    </div>
+
+    <!-- ===== Entrar ===== -->
+    <sc-if value="{{isLogin}}" hint-placeholder-val="{{true}}">
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div>
+          <h1 style="margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 32px; line-height: 38px;">Bem-vindo de volta</h1>
+          <p style="margin: 6px 0 0; font-size: 17px; line-height: 24px; color: var(--ink-muted);">Entre com o e-mail e a senha da sua conta.</p>
+        </div>
+        <sc-if value="{{loginFail}}" hint-placeholder-val="{{false}}">
+          <div class="ag-notice ag-notice--error" role="alert" style="border-radius: 0;">
+            <span class="ag-notice__mark" aria-hidden="true">✕</span>
+            <p class="ag-notice__title">Não foi possível entrar</p>
+            <p class="ag-notice__text">E-mail ou senha incorretos. Confira e tente de novo.</p>
+          </div>
+        </sc-if>
+        <label class="ag-field" for="l-email">
+          <span class="ag-field__label">E-mail</span>
+          <span class="ag-input {{le.emailCls}}"><input id="l-email" class="ag-input__control ctl-text" type="email" autocomplete="email" value="{{l.email}}" onChange="{{on.lEmail}}" aria-invalid="{{le.emailBad}}" aria-describedby="l-email-err"></span>
+          <span id="l-email-err"><sc-if value="{{le.emailBad}}" hint-placeholder-val="{{false}}"><span class="field-error"><span aria-hidden="true">✕</span><span>{{le.email}}</span></span></sc-if></span>
+        </label>
+        <label class="ag-field" for="l-pass">
+          <span class="ag-field__label">Senha</span>
+          <span class="ag-input {{le.passCls}}"><input id="l-pass" class="ag-input__control ctl-text" type="{{pwType}}" autocomplete="current-password" value="{{l.pass}}" onChange="{{on.lPass}}" aria-invalid="{{le.passBad}}" aria-describedby="l-pass-err"><button type="button" onClick="{{togglePw}}" aria-pressed="{{pwShown}}" style="min-height: 44px; min-width: 76px; margin-right: 2px; border: 0; border-left: 1px solid var(--vein); background: transparent; cursor: pointer; font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-700);">{{pwLabel}}</button></span>
+          <span id="l-pass-err"><sc-if value="{{le.passBad}}" hint-placeholder-val="{{false}}"><span class="field-error"><span aria-hidden="true">✕</span><span>{{le.pass}}</span></span></sc-if></span>
+        </label>
+        <sc-if value="{{loginOk}}" hint-placeholder-val="{{false}}">
+          <p role="status" style="margin: 0; display: flex; gap: 8px; padding: 10px 14px; border: 1px solid var(--malachite); background-color: var(--malachite-soft); color: var(--malachite); font-size: 16px; line-height: 22px;"><span aria-hidden="true">✓</span><span>{{loginOkText}} <a href="{{loginHref}}" style="color: var(--malachite);">Continuar</a></span></p>
+        </sc-if>
+        <button class="ag-btn ag-btn--primary" type="button" onClick="{{onLogin}}" style="width: 100%; min-height: 52px;">Entrar</button>
+        <p style="margin: 0; padding-top: 16px; border-top: 1px solid var(--vein); font-size: 17px; line-height: 24px;">Ainda não tem conta? <button type="button" onClick="{{goSignup}}" style="min-height: 44px; padding: 0 4px; border: 0; background: transparent; cursor: pointer; font: inherit; color: var(--ultramarine); text-decoration: underline; text-underline-offset: 4px;">Criar conta</button></p>
+      </div>
+    </sc-if>
+
+    <!-- ===== Criar conta ===== -->
+    <sc-if value="{{isSignup}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div>
+          <h1 style="margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 32px; line-height: 38px;">Criar conta</h1>
+          <p style="margin: 6px 0 0; font-size: 17px; line-height: 24px; color: var(--ink-muted);">Nos leilões, os outros participantes só veem um apelido. Seu nome e seu e-mail ficam só com a casa.</p>
+        </div>
+
+        <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 10px;" aria-describedby="role-note role-err">
+          <legend class="ag-field__label" style="margin-bottom: 10px;">Como você vai usar a Ágora</legend>
+          <sc-for list="{{roles}}" as="rl" hint-placeholder-count="2">
+            <label class="role-tile {{rl.cls}}">
+              <input class="sr-only" type="radio" name="papel" value="{{rl.id}}" checked="{{rl.on}}" onChange="{{rl.pick}}">
+              <span class="role-num" aria-hidden="true">{{rl.num}}</span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                <span style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px;">
+                  <span style="font-family: var(--font-display); font-weight: 600; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase;">{{rl.title}}</span>
+                  <sc-if value="{{rl.on}}" hint-placeholder-val="{{false}}"><span style="font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ultramarine);">✓ Escolhido</span></sc-if>
+                </span>
+                <span style="font-size: 17px; line-height: 23px;">{{rl.text}}</span>
+              </span>
+            </label>
+          </sc-for>
+          <span id="role-note" class="ag-field__hint">O papel não pode ser trocado depois.</span>
+          <span id="role-err"><sc-if value="{{se.roleBad}}" hint-placeholder-val="{{false}}"><span class="field-error"><span aria-hidden="true">✕</span><span>{{se.role}}</span></span></sc-if></span>
+        </fieldset>
+
+        <label class="ag-field" for="s-name">
+          <span class="ag-field__label">Nome</span>
+          <span class="ag-input {{se.nameCls}}"><input id="s-name" class="ag-input__control ctl-text" type="text" autocomplete="name" value="{{s.name}}" onChange="{{on.sName}}" aria-invalid="{{se.nameBad}}" aria-describedby="s-name-err"></span>
+          <span id="s-name-err"><sc-if value="{{se.nameBad}}" hint-placeholder-val="{{false}}"><span class="field-error"><span aria-hidden="true">✕</span><span>{{se.name}}</span></span></sc-if></span>
+        </label>
+        <label class="ag-field" for="s-email">
+          <span class="ag-field__label">E-mail</span>
+          <span class="ag-input {{se.emailCls}}"><input id="s-email" class="ag-input__control ctl-text" type="email" autocomplete="email" value="{{s.email}}" onChange="{{on.sEmail}}" aria-invalid="{{se.emailBad}}" aria-describedby="s-email-err"></span>
+          <span id="s-email-err"><sc-if value="{{se.emailBad}}" hint-placeholder-val="{{false}}"><span class="field-error"><span aria-hidden="true">✕</span><span>{{se.email}}</span></span></sc-if></span>
+        </label>
+        <label class="ag-field" for="s-pass">
+          <span class="ag-field__label">Senha</span>
+          <span class="ag-input {{se.passCls}}"><input id="s-pass" class="ag-input__control ctl-text" type="{{pwType}}" autocomplete="new-password" value="{{s.pass}}" onChange="{{on.sPass}}" aria-invalid="{{se.passBad}}" aria-describedby="s-pass-help s-pass-err"><button type="button" onClick="{{togglePw}}" aria-pressed="{{pwShown}}" style="min-height: 44px; min-width: 76px; margin-right: 2px; border: 0; border-left: 1px solid var(--vein); background: transparent; cursor: pointer; font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-700);">{{pwLabel}}</button></span>
+          <span id="s-pass-help" class="ag-field__hint">Pelo menos 8 caracteres.</span>
+          <span id="s-pass-err"><sc-if value="{{se.passBad}}" hint-placeholder-val="{{false}}"><span class="field-error"><span aria-hidden="true">✕</span><span>{{se.pass}}</span></span></sc-if></span>
+        </label>
+
+        <sc-if value="{{signupOk}}" hint-placeholder-val="{{false}}">
+          <p role="status" style="margin: 0; display: flex; gap: 8px; padding: 10px 14px; border: 1px solid var(--malachite); background-color: var(--malachite-soft); color: var(--malachite); font-size: 16px; line-height: 22px;"><span aria-hidden="true">✓</span><span>{{signupOkText}} <a href="{{signupHref}}" style="color: var(--malachite);">Continuar</a></span></p>
+        </sc-if>
+        <button class="ag-btn ag-btn--primary" type="button" onClick="{{onSignup}}" style="width: 100%; min-height: 52px;">Criar conta</button>
+        <p style="margin: 0; padding-top: 16px; border-top: 1px solid var(--vein); font-size: 17px; line-height: 24px;">Já tem conta? <button type="button" onClick="{{goLogin}}" style="min-height: 44px; padding: 0 4px; border: 0; background: transparent; cursor: pointer; font: inherit; color: var(--ultramarine); text-decoration: underline; text-underline-offset: 4px;">Entrar</button></p>
+      </div>
+    </sc-if>
+  </section>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"modo":{"editor":"enum","options":["entrar","criar conta"],"default":"entrar","section":"Estado"},"$preview":{"width":1440,"height":1300}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh();
+  }
+  fresh() {
+    return {
+      tab: null, pw: false,
+      l: { email: '', pass: '' }, le: {}, loginFail: false, loginOk: '',
+      s: { name: '', email: '', pass: '', role: '' }, se: {}, signupOk: ''
+    };
+  }
+  componentDidUpdate(prev) {
+    if (prev.modo !== this.props.modo) this.setState(this.fresh());
+  }
+  renderVals() {
+    const tab = this.state.tab || ((this.props.modo ?? 'entrar') === 'criar conta' ? 'signup' : 'login');
+    const emailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+    const pack = (er, keys) => {
+      const o = {};
+      keys.forEach((k) => { o[k] = er[k] || ''; o[k + 'Bad'] = !!er[k]; o[k + 'Cls'] = er[k] ? 'is-invalid' : ''; });
+      return o;
+    };
+    const setL = (k) => (e) => { const l = Object.assign({}, this.state.l, { [k]: e.target.value }); const le = Object.assign({}, this.state.le); delete le[k]; this.setState({ l: l, le: le, loginFail: false, loginOk: '' }); };
+    const setS = (k) => (e) => { const s = Object.assign({}, this.state.s, { [k]: e.target.value }); const se = Object.assign({}, this.state.se); delete se[k]; this.setState({ s: s, se: se, signupOk: '' }); };
+
+    // Simulação: senha "agora123" entra; e-mail com "leiloeiro" entra como leiloeiro.
+    const onLogin = () => {
+      const l = this.state.l, er = {};
+      if (!l.email.trim()) er.email = 'Informe seu e-mail.';
+      else if (!emailOk(l.email)) er.email = 'Este e-mail não parece válido. Ex.: nome@dominio.com';
+      if (!l.pass) er.pass = 'Informe sua senha.';
+      if (Object.keys(er).length) return this.setState({ le: er, loginFail: false, loginOk: '' });
+      if (l.pass !== 'agora123') return this.setState({ le: {}, loginFail: true, loginOk: '' });
+      const auctioneer = l.email.toLowerCase().indexOf('leiloeiro') !== -1;
+      this.setState({ le: {}, loginFail: false, loginOk: auctioneer ? 'Pronto. Você entrou como leiloeiro e vai para o painel.' : 'Pronto. Você entrou como licitante e vai para a vitrine.', loginHref: auctioneer ? 'Painel.dc.html' : 'Main.dc.html' });
+    };
+    // Simulação: "ana@exemplo.com" já está cadastrado.
+    const onSignup = () => {
+      const s = this.state.s, er = {};
+      if (!s.role) er.role = 'Escolha se você vai participar como licitante ou leiloeiro.';
+      if (!s.name.trim()) er.name = 'Informe seu nome.';
+      if (!s.email.trim()) er.email = 'Informe seu e-mail.';
+      else if (!emailOk(s.email)) er.email = 'Este e-mail não parece válido. Ex.: nome@dominio.com';
+      else if (s.email.trim().toLowerCase() === 'ana@exemplo.com') er.email = 'Este e-mail já está cadastrado. Entre com ele ou use outro.';
+      if (!s.pass) er.pass = 'Crie uma senha.';
+      else if (s.pass.length < 8) er.pass = 'A senha precisa ter pelo menos 8 caracteres.';
+      if (Object.keys(er).length) return this.setState({ se: er, signupOk: '' });
+      const auctioneer = s.role === 'leiloeiro';
+      this.setState({ se: {}, signupOk: auctioneer ? 'Conta de leiloeiro criada. Você vai para o painel.' : 'Conta de licitante criada. Você vai para a vitrine.', signupHref: auctioneer ? 'Painel.dc.html' : 'Main.dc.html' });
+    };
+
+    const roles = [
+      { id: 'licitante', num: '1', title: 'Licitante', text: 'Deposita saldo simulado, dá lances ao vivo e arremata obras.' },
+      { id: 'leiloeiro', num: '2', title: 'Leiloeiro', text: 'Busca obras no acervo do museu e publica lotes. Não dá lances.' }
+    ].map((r) => ({
+      id: r.id, num: r.num, title: r.title, text: r.text,
+      on: this.state.s.role === r.id,
+      cls: this.state.s.role === r.id ? 'is-on' : '',
+      pick: () => { const se = Object.assign({}, this.state.se); delete se.role; this.setState({ s: Object.assign({}, this.state.s, { role: r.id }), se: se, signupOk: '' }); }
+    }));
+
+    return {
+      isLogin: tab === 'login', isSignup: tab === 'signup',
+      goLogin: () => this.setState({ tab: 'login' }),
+      goSignup: () => this.setState({ tab: 'signup' }),
+      pwType: this.state.pw ? 'text' : 'password',
+      pwShown: this.state.pw,
+      pwLabel: this.state.pw ? 'Ocultar' : 'Mostrar',
+      togglePw: () => this.setState({ pw: !this.state.pw }),
+      l: this.state.l, s: this.state.s,
+      le: pack(this.state.le, ['email', 'pass']),
+      se: pack(this.state.se, ['name', 'email', 'pass', 'role']),
+      on: { lEmail: setL('email'), lPass: setL('pass'), sName: setS('name'), sEmail: setS('email'), sPass: setS('pass') },
+      onLogin: onLogin, onSignup: onSignup,
+      loginFail: this.state.loginFail,
+      loginOk: !!this.state.loginOk, loginOkText: this.state.loginOk, loginHref: this.state.loginHref || 'Main.dc.html',
+      signupOk: !!this.state.signupOk, signupOkText: this.state.signupOk, signupHref: this.state.signupHref || 'Main.dc.html',
+      roles: roles
+    };
+  }
+}
+</script>
+</body>
+</html>
