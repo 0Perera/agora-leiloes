@@ -1,10 +1,10 @@
 # Uso de IA
 
-Registro de onde e como usei IA no projeto, o que revisei ou mudei e o que rejeitei. Uma entrada por story, mais esta de planejamento.
+Registro de onde e como usei IA no projeto, o que revisei e pedi para mudar e o que rejeitei. Uma entrada por story, mais esta de planejamento.
 
 ## Ferramentas
 
-- **Claude (app):** planejamento, pesquisa de APIs e hospedagem, comparação de alternativas, redação do `CLAUDE.md` e do `docs/decisions.md`.
+- **Claude (app):** apoio de pesquisa e consulta durante o planejamento e na revisão das propostas do agente, junto com buscas no Google e na documentação oficial. As decisões registradas em "O que revisei e pedi para mudar" foram minhas.
 - **Claude Code:** implementação e commits. Todo commit feito por ele leva o trailer `Co-Authored-By`, então dá para ver no histórico do Git o que passou pela IA.
 
 ## Modelo de entrada
@@ -13,7 +13,7 @@ Registro de onde e como usei IA no projeto, o que revisei ou mudei e o que rejei
 ## Story X.Y: título
 
 **O que a IA gerou:**
-**O que revisei ou reescrevi:**
+**O que revisei e pedi para mudar:**
 **Sugestões rejeitadas e por quê:**
 ```
 
@@ -30,15 +30,15 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Análise do enunciado em busca de armadilhas de arquitetura (cota do Neon com cron, seed quebrando a cadeia de HMAC, `EventSource` sem header, rewrite do SPA, entre outras).
 - Rascunho do `CLAUDE.md`, do `docs/decisions.md` e do workflow que valida o título da PR.
 
-**O que revisei ou mudei:**
-- No começo, a IA saiu definindo stack e cronograma inteiros. Parei e passei a decidir item por item. A única coisa fixa desde o início era o NestJS.
-- O tema começou como cartas de TCG. Pedi que a IA me mostrasse qual API pública era mais confiável para realizar o projeto. Com base na comparação, escolhi a do Cleveland Museum of Art e mudei o tema para obras de arte.
-- Corrigi a direção visual: arte clássica europeia (mármore, estátuas, museus clássicos), e não contemporânea.
-- Testei a API da Cleveland na minha máquina. A checagem da IA pela web devolvia resposta em cache e não servia como prova. Duas chamadas travaram; rodei um loop de diagnóstico, e todas voltaram 200 em menos de 1s.
-- Perguntei se TDD valia o custo em tokens e tempo. Ficou TDD só nas regras críticas.
-- Achei que o alias no SSE parecia gambiarra e pedi a comparação com WebSocket. Mantive o SSE por causa do prazo, sabendo o que perderia.
-- Exigi que as imagens fossem baixadas e guardadas, porque o enunciado pede que tudo funcione com a API fora do ar.
-- Troquei o Neon pelo Postgres do Render. A IA tinha recomendado o Neon porque o free do Render expira em 30 dias, mas o Elite Dev avalia em até 4 dias após a entrega. Vou recriar o banco no dia da entrega, para os 30 dias cobrirem o processo inteiro.
+**O que revisei e pedi para mudar:**
+- No começo, a IA saiu definindo stack e cronograma inteiros. Pedi para parar e decidi item por item. A única coisa fixa desde o início era o NestJS.
+- O tema começou como cartas de TCG. Pedi que a IA me mostrasse qual API pública era mais confiável para realizar o projeto. Com base na comparação, escolhi a do Cleveland Museum of Art e decidi mudar o tema para obras de arte.
+- Pedi outra direção visual: arte clássica europeia (mármore, estátuas, museus clássicos), e não contemporânea.
+- Decidi testar a API da Cleveland na minha máquina, porque a checagem da IA pela web devolvia resposta em cache e não servia como prova. Duas chamadas travaram; num loop de diagnóstico, todas voltaram 200 em menos de 1s.
+- Pedi uma avaliação do custo do TDD em tokens e tempo e decidi usá-lo só nas regras críticas.
+- Como o alias no SSE me pareceu gambiarra, pedi a comparação com WebSocket. Decidi manter o SSE por causa do prazo, sabendo o que perderia.
+- Pedi que as imagens fossem baixadas e guardadas, porque o enunciado pede que tudo funcione com a API fora do ar.
+- Escolhi o Postgres do Render em vez do Neon. A IA tinha recomendado o Neon porque o free do Render expira em 30 dias, mas o Elite Dev avalia em até 4 dias após a entrega. Decidi recriar o banco no dia da entrega, para os 30 dias cobrirem o processo inteiro.
 - Pedi o `decisions.md` e este log.
 
 **Sugestões rejeitadas e por quê:**
@@ -59,14 +59,14 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Workflow de CI com os jobs `api`, `web` e `readme`, e os commits da story.
 - Seção "Rodar local" do README, o `render.yaml`, os Dockerfiles e o compose completo, e as entradas D-031 a D-035.
 
-**O que revisei ou reescrevi:**
+**O que revisei e pedi para mudar:**
 - Decidi rodar as migrations no boot (`migrationsRun`) em vez de no start command (D-031).
-- O Nest CLI atual gerou Vitest, oxlint e ESM. Mandei fixar o CLI 11 e instalar só versões das libs `@nestjs/*` compatíveis com o Nest 11, conferindo o `peerDependencies` antes do commit (D-032).
-- Fiz o commit inicial direto na `main`; daí em diante, branch por story.
-- O template do Vite também trocou ESLint por oxlint. Mantive o oxlint, com as mesmas duas regras da API (D-033).
+- O Nest CLI atual gerou Vitest, oxlint e ESM. Pedi para fixar o CLI 11 e instalar só versões das libs `@nestjs/*` compatíveis com o Nest 11, conferindo o `peerDependencies` antes do commit (D-032).
+- Decidi fazer o commit inicial direto na `main` e, daí em diante, uma branch por story.
+- O template do Vite também trocou ESLint por oxlint. Decidi manter o oxlint, com as mesmas duas regras da API (D-033).
 - Pedi o deploy via Blueprint, ainda no plano free, na região Virginia (D-034). A IA conferiu os campos do `render.yaml` na documentação do Render (`staticPublishPath` relativo ao `rootDir`, sintaxe de `routes`).
 - Pedi para trazer o compose completo (D-030) para esta story. A IA avisou que estava fora do escopo escrito; decidi incluir, com o front em nginx (D-035).
-- Na revisão final pedida por mim, a IA achou um bug que ela mesma tinha introduzido: o ajuste do `tsconfig` para o TS 6 tirou o cache incremental da `dist` e quebrou o `start:dev`. Corrigido, com um segundo build no CI para pegar a regressão.
+- Pedi uma revisão final, e nela a IA achou um bug que ela mesma tinha introduzido: o ajuste do `tsconfig` para o TS 6 tirou o cache incremental da `dist` e quebrou o `start:dev`. A IA corrigiu e pôs um segundo build no CI para pegar a regressão.
 - Pedi Prettier no front, com a mesma config da API, e `strictPropertyInitialization` ligado, para ficar coerente com o `!` exigido nas entidades.
 
 **Sugestões rejeitadas e por quê:**
@@ -80,12 +80,12 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Hash de senha com `scrypt` nativo, `SafeLogger` do TypeORM sem parâmetros de query, env `JWT_SECRET` e os testes unitários aprovados na spec.
 - Correção feita pela própria IA: instalou o `@nestjs/jwt` 12, que é só ESM e quebrou o Jest, e trocou pelo 11.x, que aceita o Nest 11 e segue o D-032.
 
-**O que revisei ou reescrevi:**
-- Defini os casos de teste antes da implementação e acrescentei o do e-mail normalizado para minúsculas: sem isso, "Ana@x.com" e "ana@x.com" virariam duas contas e o login falharia por capitalização.
-- Exigi que o erro de login fosse o mesmo para e-mail inexistente e senha errada (`INVALID_CREDENTIALS`), para a API não revelar quais e-mails têm conta.
-- Defini o formato dos erros de validação (`VALIDATION_FAILED` com o campo e a regra), para o front traduzir cada campo.
+**O que revisei e pedi para mudar:**
+- Decidi os casos de teste antes da implementação e pedi um a mais, o do e-mail normalizado para minúsculas: sem isso, "Ana@x.com" e "ana@x.com" virariam duas contas e o login falharia por capitalização.
+- Pedi que o erro de login fosse o mesmo para e-mail inexistente e senha errada (`INVALID_CREDENTIALS`), para a API não revelar quais e-mails têm conta.
+- Decidi o formato dos erros de validação (`VALIDATION_FAILED` com o campo e a regra), para o front traduzir cada campo.
 - Escolhi o `scrypt` nativo do Node em vez de `bcrypt`, para não depender de compilação nativa dentro do Docker.
-- Defini senha de 8 a 128 caracteres e `id` de usuário inteiro (D-046).
+- Decidi senha de 8 a 128 caracteres e `id` de usuário inteiro (D-046).
 
 **Sugestões rejeitadas e por quê:**
 - *`passport-jwt`:* três pacotes para uma estratégia só (D-040).
@@ -98,12 +98,12 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Cadastro gravando usuário e carteira na mesma transação, e os testes unitários aprovados na spec.
 - Correção feita pela própria IA: a primeira migration gerada tinha o `UNIQUE (user_id)` duplicado (coluna `unique` mais o do `OneToOne`) e um `ON DELETE CASCADE` que a spec não pedia; tirou os dois e gerou de novo.
 
-**O que revisei ou reescrevi:**
+**O que revisei e pedi para mudar:**
 - Pedi para registrar no `CLAUDE.md` as regras de execução: só o revisor de casos de borda fora das stories críticas, correção automática só de achado grave, contexto do épico reaproveitado, leitura só da seção da story no `epics.md` e "O que revisei" sem invenção.
 - Decidi o código do depósito acima do teto: `BALANCE_LIMIT_EXCEEDED`, com status 422 para seguir o padrão das recusas de lance (D-043), e pedi que entrasse no `CLAUDE.md`.
-- Acrescentei um caso de teste: depósito não altera o comprometido (com R$ 500 comprometidos, depositar R$ 100 aumenta o disponível em R$ 100).
+- Pedi um caso de teste a mais: depósito não altera o comprometido (com R$ 500 comprometidos, depositar R$ 100 aumenta o disponível em R$ 100).
 - Aprovei o `POST /wallet/deposits` com 201 devolvendo a carteira inteira.
-- Confirmei que não há extrato de movimentações e pedi a linha em "Fora do escopo" no README.
+- Decidi que não há extrato de movimentações e pedi a linha em "Fora do escopo" no README.
 
 **Sugestões rejeitadas e por quê:**
 - *Teto do saldo com status 400:* troquei para 422, o mesmo das recusas de lance (D-043); 400 fica só para `VALIDATION_FAILED`.
@@ -118,15 +118,15 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Vitrine e painel do leiloeiro provisórios, `vitest` com os testes aprovados na spec e o passo `npm test` no job `web` do CI.
 - Correção feita pela própria IA na revisão: o aviso de sessão expirada dependia do state da navegação e podia se perder no redirecionamento da guarda (e reaparecer ao recarregar); passou para um estado em memória no provider de sessão.
 
-**O que revisei ou reescrevi:**
-- Defini o canvas `docs/design/Entrar.dc.html` como referência e pedi a cópia de `tokens.css` e `bundle.css` para `web/src/shared/ui/`, reescrevendo em React sem o runtime nem a simulação do canvas.
+**O que revisei e pedi para mudar:**
+- Escolhi o canvas `docs/design/Entrar.dc.html` como referência e pedi a cópia de `tokens.css` e `bundle.css` para `web/src/shared/ui/` e a reescrita em React, sem o runtime nem a simulação do canvas.
 - Escolhi um `/dashboard` mínimo protegido por papel para o leiloeiro até a story 3.5.
 - Pedi o botão "Sair" no cabeçalho para licitante e leiloeiro.
 - Aprovei o `vitest` como devDependency com os casos propostos e pedi o `npm test` no job `web` do CI.
 - Pedi para registrar o token no `localStorage` no `decisions.md`, com o trade-off (XSS; cookie httpOnly descartado pela D-006; mitigado pelo escape do React e pela validade de 8h) (D-047).
-- Acrescentei: usuário logado que abre `/login` ou `/signup` vai para a página do seu papel.
-- Acrescentei: 401 que encerra a sessão leva para `/login` com o aviso "Sua sessão expirou, entre de novo".
-- Mantive a spec inteira, acima do limite de tamanho, em vez de dividir.
+- Pedi que o usuário logado que abre `/login` ou `/signup` vá para a página do seu papel.
+- Pedi que o 401 que encerra a sessão leve para `/login` com o aviso "Sua sessão expirou, entre de novo".
+- Decidi manter a spec inteira, acima do limite de tamanho, em vez de dividir.
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma: as opções recomendadas foram aceitas, com os acréscimos acima.

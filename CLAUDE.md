@@ -287,6 +287,7 @@ Proibido no README:
 - Uma branch por story: `story/<epic>-<story>-<slug>` (ex.: `story/2-3-place-bid`). Nunca commitar direto na `main`.
 - Uma PR por story, com: o que mudou, como testar, checklist dos critérios de aceite da story.
 - Merge sempre por **squash**: o título da PR vira o commit na `main`, então segue o mesmo formato dos commits.
+- Depois do merge, a branch da story nunca é apagada, nem local nem no GitHub.
 - GitHub Actions roda lint, testes e build e valida o título da PR. PR só entra na `main` com o CI verde.
 
 ## Commits (feitos pelo agente)
@@ -329,10 +330,12 @@ Ruins: `update`, `ajustes`, `wip`, `fix: vários bugs`, `feat: cria lances, cart
 ## Uso de IA
 
 - Ao concluir cada story, adicionar uma entrada em `docs/ai-log.md`:
-  story, o que a IA gerou, o que foi revisado ou reescrito à mão, sugestões da IA que foram rejeitadas e por quê.
-- Na entrada, "O que revisei ou reescrevi" lista tudo o que eu decidi ou mudei durante a story, tirado da conversa:
-  casos de teste que acrescentei, perguntas que respondi, valores que defini, pedidos de correção e o motivo de cada um.
+  story, o que a IA gerou, o que revisei e pedi para mudar, sugestões da IA que foram rejeitadas e por quê.
+- Na entrada, "O que revisei e pedi para mudar" lista tudo o que eu decidi ou pedi durante a story, tirado da conversa:
+  casos de teste que pedi, perguntas que respondi, valores que defini, pedidos de correção e o motivo de cada um.
   Uma linha por item. Nunca inventar revisão que não aconteceu.
+- Nessa seção, só verbos do que eu fiz: decidi, escolhi, aprovei, recusei, pedi. Nunca "reescrevi", "acrescentei",
+  "corrigi" ou "implementei": eu não escrevo código à mão, eu peço e o agente faz ("Pedi um caso de teste a mais").
 - "Sugestões rejeitadas" inclui tudo o que eu recusei ou mudei de uma proposta do agente.
 - O agente faz os commits seguindo a seção Commits. Push e abertura de PR só com pedido explícito.
 
@@ -346,7 +349,7 @@ Ruins: `update`, `ajustes`, `wip`, `fix: vários bugs`, `feat: cria lances, cart
 - Correções da revisão: corrige sozinho só os achados graves (bug, segurança, regra de negócio). Os de estilo ou opcionais, lista em uma linha cada e não corrige.
 - Contexto do épico: compila uma vez por épico, salva em arquivo e reaproveita nas stories seguintes.
 - Do `epics.md`, lê só a seção da story atual.
-- No ai-log, "O que revisei" lista o que eu decidi ou mudei na conversa, sem inventar.
+- No ai-log, "O que revisei e pedi para mudar" lista o que eu decidi ou pedi na conversa, sem inventar.
 
 ## Definition of Done (por story)
 
