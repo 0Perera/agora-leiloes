@@ -6,12 +6,10 @@ function expire() {
   void router.navigate('/login', { replace: true });
 }
 
-function App() {
+export function App() {
   return (
     <SessionProvider onExpire={expire}>
       <RouterProvider router={router} />
     </SessionProvider>
   );
 }
-
-export default App;

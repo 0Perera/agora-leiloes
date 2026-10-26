@@ -8,11 +8,11 @@
 .auth-portal {
   position: relative;
   overflow: hidden;
-  padding: 48px 44px;
+  padding: var(--space-7) 44px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 32px;
+  gap: var(--space-6);
   background-color: var(--ink);
   color: var(--on-pigment);
   box-shadow:
@@ -31,7 +31,7 @@
 }
 
 .portal-name {
-  margin: 12px 0 0;
+  margin: var(--space-3) 0 0;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: clamp(34px, 6vw, 52px);
@@ -85,10 +85,10 @@
 
 .auth-card {
   position: relative;
-  padding: clamp(24px, 4vw, 48px);
+  padding: clamp(var(--space-5), 4vw, var(--space-7));
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-5);
   background-color: var(--marble-100);
   border: 1px solid var(--gold-500);
   box-shadow:
@@ -135,7 +135,7 @@
   align-items: center;
   justify-content: center;
   min-height: 48px;
-  padding: 0 16px;
+  padding: 0 var(--space-4);
   border-bottom: 3px solid transparent;
   font-family: var(--font-display);
   font-weight: 600;
@@ -164,7 +164,7 @@
 }
 
 .ag-input .auth-control {
-  padding-left: 16px;
+  padding-left: var(--space-4);
   font-family: var(--font-text);
   font-weight: 400;
   font-size: 18px;
@@ -181,7 +181,7 @@
 
 .field-error {
   display: flex;
-  gap: 8px;
+  gap: var(--space-2);
   align-items: flex-start;
   margin: 0;
   font-size: 16px;
@@ -212,7 +212,7 @@
 
 .auth-switch {
   margin: 0;
-  padding-top: 16px;
+  padding-top: var(--space-4);
   border-top: 1px solid var(--vein);
   font-size: 17px;
   line-height: 24px;
@@ -222,7 +222,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding: 0 4px;
+  padding: 0 var(--space-1);
   text-underline-offset: 4px;
 }
 
@@ -246,7 +246,7 @@
   display: flex;
   gap: 14px;
   align-items: flex-start;
-  padding: 16px 16px 16px 14px;
+  padding: var(--space-4) var(--space-4) var(--space-4) 14px;
   border: 1px solid var(--gold-500);
   background-color: var(--marble-000);
   cursor: pointer;
@@ -259,7 +259,7 @@
 
 .role-tile.is-on {
   border: 3px double var(--gold-700);
-  padding: 14px 14px 14px 12px;
+  padding: 14px 14px 14px var(--space-3);
   background-color: #f7f3ea;
 }
 
@@ -287,7 +287,7 @@
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 4px 12px;
+  gap: var(--space-1) var(--space-3);
 }
 
 .role-title {
@@ -319,7 +319,7 @@
   }
 
   .auth-portal {
-    padding: 32px 24px;
+    padding: var(--space-6) var(--space-5);
   }
 
   .portal-arch,
@@ -330,6 +330,6 @@
 
 @media (max-width: 420px) {
   .auth-tab {
-    padding: 0 8px;
+    padding: 0 var(--space-2);
   }
 }
