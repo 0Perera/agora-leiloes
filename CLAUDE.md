@@ -316,6 +316,10 @@ Ruins: `update`, `ajustes`, `wip`, `fix: vários bugs`, `feat: cria lances, cart
 
 - Ao concluir cada story, adicionar uma entrada em `docs/ai-log.md`:
   story, o que a IA gerou, o que foi revisado ou reescrito à mão, sugestões da IA que foram rejeitadas e por quê.
+- Na entrada, "O que revisei ou reescrevi" lista tudo o que eu decidi ou mudei durante a story, tirado da conversa:
+  casos de teste que acrescentei, perguntas que respondi, valores que defini, pedidos de correção e o motivo de cada um.
+  Uma linha por item. Nunca inventar revisão que não aconteceu.
+- "Sugestões rejeitadas" inclui tudo o que eu recusei ou mudei de uma proposta do agente.
 - O agente faz os commits seguindo a seção Commits. Push e abertura de PR só com pedido explícito.
 
 ## Comportamento esperado do agente
