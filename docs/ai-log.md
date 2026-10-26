@@ -139,6 +139,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - `formatMoney` e `parseAmount` em `shared/lib/money.ts`, validação e tradução dos erros do depósito, e os testes aprovados na spec.
 - `FieldError` e o estilo de campo inválido movidos para `shared/ui/`; tokens `--space-*` nos CSS e `App` com export nomeado.
 - Testes de `validateAmount` (vazio, abaixo do mínimo, acima do máximo), acrescentados pela IA para cobrir a matriz da spec, fora da lista aprovada.
+- Máscara de moeda no campo (`maskAmount` em `shared/lib/money.ts`), com testes: só dígitos, que entram pela direita nos centavos.
 - Correção feita pela própria IA na revisão: digitar ou clicar num chip durante o envio apagava o valor novo; campo e chips passaram a travar enquanto o depósito está em andamento.
 
 **O que revisei e pedi para mudar:**
@@ -151,6 +152,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Aprovei os testes, com os casos de `parseAmount` definidos por mim: aceita "1.500", "1500", "1.500,50" e "1500,5"; recusa texto, mais de duas casas decimais e vazio.
 - Decidi manter a spec inteira, acima do limite de tamanho.
 - Aprovei mover `FieldError` para `shared/ui/` num refactor separado, o widget de carteira no cabeçalho sem o monograma e o extrato fora da tela.
+- Pedi uma máscara de moeda no campo de depósito, para ninguém digitar ponto e vírgula à mão: a formatação aparece sozinha conforme os dígitos entram.
 - Pedi a atualização do README (Rodar local, Stack e decisões, Testes e Uso de IA) num commit `docs` separado.
 
 **Sugestões rejeitadas e por quê:**

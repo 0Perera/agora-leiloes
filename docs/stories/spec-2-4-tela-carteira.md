@@ -88,6 +88,8 @@ context:
 
 ## Implementation Notes
 
+- Depois da revisão, a pedido do usuário: o campo usa `maskAmount` (máscara de maquininha, só dígitos, centavos pela direita). O `parseAmount` continua lendo o valor mascarado; o achado #4 da triagem deixa de ser alcançável pelo campo.
+
 ## Spec Change Log
 
 ## Review Triage Log
