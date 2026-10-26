@@ -69,6 +69,8 @@ _(stack e as 5 decisões principais)_. Todas as decisões e alternativas descart
 
 _(o que não foi feito, uma linha cada)_
 
+- A carteira não tem extrato de movimentações: mostra só saldo, comprometido e disponível.
+
 ## Uso de IA
 
 _(resumo curto)_. Registro por story em [`docs/ai-log.md`](docs/ai-log.md).

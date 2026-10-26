@@ -11,6 +11,7 @@ const STATUS: Record<DomainCode, HttpStatus> = {
   EMAIL_TAKEN: HttpStatus.CONFLICT,
   INVALID_CREDENTIALS: HttpStatus.UNAUTHORIZED,
   ROLE_NOT_ALLOWED: HttpStatus.FORBIDDEN,
+  BALANCE_LIMIT_EXCEEDED: HttpStatus.UNPROCESSABLE_ENTITY,
 };
 
 @Catch(DomainException)

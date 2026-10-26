@@ -1,6 +1,9 @@
 // Códigos estáveis das recusas de negócio. O front traduz o código; a API não devolve texto livre.
 export type DomainCode =
-  'EMAIL_TAKEN' | 'INVALID_CREDENTIALS' | 'ROLE_NOT_ALLOWED';
+  | 'EMAIL_TAKEN'
+  | 'INVALID_CREDENTIALS'
+  | 'ROLE_NOT_ALLOWED'
+  | 'BALANCE_LIMIT_EXCEEDED';
 
 export class DomainException extends Error {
   constructor(readonly code: DomainCode) {
