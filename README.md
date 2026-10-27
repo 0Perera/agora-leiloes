@@ -86,6 +86,7 @@ Todas as decisões e alternativas descartadas em [`docs/decisions.md`](docs/deci
 _(o que não foi feito, uma linha cada)_
 
 - A carteira não tem extrato de movimentações: mostra só saldo, comprometido e disponível.
+- O depósito é simulado, sem meio de pagamento (Pix, cartão).
 
 ## Uso de IA
 
