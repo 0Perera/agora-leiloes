@@ -10,6 +10,7 @@
 - source_spec: `docs/stories/spec-3-3-vitrine-destaque-e-detalhe-do-lote-na-api.md`
   summary: testes de integração da vitrine para a story 4.4 (Testcontainers): lote cancelado fora de GET /lots, /lots/featured e /lots/:id; counts das três abas com q aplicado; ordem de cada aba.
   evidence: pedido do usuário na aprovação da 3.3; hoje a story só tem testes unitários, e a infraestrutura de Testcontainers entra na 4.4.
+  status: feito na 4.4 (`spec-4-4-testcontainers-ci-e-lances-simultaneos.md`).
 - source_spec: `docs/stories/spec-3-3-vitrine-destaque-e-detalhe-do-lote-na-api.md`
   summary: comportamento conhecido aceito: em GET /lots, itens e counts saem de duas queries e podem divergir por instantes se um lote é criado, cancelado ou muda de status entre elas.
   evidence: achado da revisão da 3.3; o próximo GET corrige, e alinhar exigiria transação REPEATABLE READ ou COUNT(*) OVER (). O usuário aceitou como está.
@@ -52,6 +53,7 @@
 - source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
   summary: na 4.4, teste HTTP de `POST /lots/:id/bids` com 403 `ROLE_NOT_ALLOWED` para leiloeiro e 401 sem token.
   evidence: achado da revisão da 4.3; trocar ou remover o `@Auth('BIDDER')` da rota deixa a suíte verde, e o repo cobre a borda HTTP com Testcontainers a partir da 4.4.
+  status: feito na 4.4 (`spec-4-4-testcontainers-ci-e-lances-simultaneos.md`).
 
 - source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
   summary: na 4.6, traduzir `LOT_INTEGRITY_FAILED` (409) na sala do lote.
@@ -60,6 +62,15 @@
 - source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
   summary: na 6.2, reescrever as entradas antigas do `docs/ai-log.md` no estilo novo: frases curtas, português corrente, detalhe técnico só quando for indispensável.
   evidence: pedido do usuário na 4.3, junto com o "Resumo" do topo do ai-log e a regra nova no CLAUDE.md.
+
+## Revisão final (antes da 6.2)
+
+- source_spec: `docs/stories/spec-4-4-testcontainers-ci-e-lances-simultaneos.md`
+  summary: unificar o CSS duplicado entre telas como componentes em `shared/ui` (`Skeleton`, `ErrorState`, `Tabs`): esqueleto de carregamento (painel, sala, vitrine, carteira), estado de erro com "Tentar de novo" (as mesmas quatro) e abas (painel, login, vitrine), hoje reescritos com o prefixo de cada tela.
+  evidence: pedido do usuário na aprovação da 4.4.
+- source_spec: `docs/stories/spec-4-4-testcontainers-ci-e-lances-simultaneos.md`
+  summary: padrão único de chamada à API no front: hoje algumas telas usam hook (`use-dashboard`, `use-wallet`) e outras chamam a API direto no componente (`lot-form`, `catalog-search`, `ledger`, `deposit-form`); escolher um padrão e aplicar em todas.
+  evidence: pedido do usuário na aprovação da 4.4.
 
 ## Polimento visual
 

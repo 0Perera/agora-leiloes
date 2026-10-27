@@ -26,6 +26,23 @@ jobs:
       - name: Build repetido gera dist/main.js
         run: npm run build && test -f dist/main.js
 
+  # Postgres real via Testcontainers, no Docker do próprio runner.
+  api-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+      - run: npm ci
+      - run: npm run test:e2e
+
   web:
     runs-on: ubuntu-latest
     defaults:

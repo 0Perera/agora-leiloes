@@ -615,3 +615,25 @@ Story: 4.3
 **Por quê:** sem a conferência, quem apagasse lances do fim da cadeia direto no banco veria o próximo lance reusar o `seq` e reassinar o selo, e a auditoria passaria a mostrar o lote como íntegro: a evidência da remoção sumiria.
 **Alternativas descartadas:** deixar a detecção só para a auditoria da 5.5 (o próximo lance apagaria a evidência antes de alguém abrir a auditoria); gravar o lance e só registrar a divergência (o selo novo continuaria cobrindo a cadeia adulterada).
 **Consequência:** lote com a cadeia adulterada para de aceitar lances até alguém investigar; lote antigo, sem selo, também. Não custa query a mais: usa o lote travado e o último lance já lidos.
+
+## D-060: Catálogo falso nos testes e2e
+
+Status: Aceita
+Data: 2026-10-27
+Story: 4.4
+
+**Decisão:** a app dos testes e2e troca o `CatalogService` por um falso, que devolve a peça (com título configurável por `artworkId`) e uma imagem fixa. Os lotes continuam sendo criados por `POST /lots`.
+**Por quê:** o e2e prova lances, concorrência e vitrine contra um Postgres real; depender da Cleveland deixaria o CI instável e lento por um motivo alheio ao que está sendo testado. O download real e a validação da imagem já têm teste unitário desde a 3.2.
+**Alternativas descartadas:** chamar a Cleveland de verdade (rede no CI, peça que pode mudar ou sumir); servidor HTTP falso imitando a Cleveland (mais código de teste para cobrir o que os unitários já cobrem); `INSERT` direto em `lots` (pularia o selo vazio e o fluxo do leiloeiro, D-045).
+**Consequência:** o e2e não detecta mudança no formato da resposta da Cleveland; isso fica com os testes do mapeamento.
+
+## D-061: Um container Postgres por execução do e2e, suítes em série
+
+Status: Aceita
+Data: 2026-10-27
+Story: 4.4
+
+**Decisão:** o `globalSetup` do Jest sobe um único `postgres:17` com Testcontainers e exporta as variáveis de ambiente; o `globalTeardown` derruba. As suítes rodam em série (`--runInBand`), cada uma sobe a própria app (migrations no boot) e começa com `TRUNCATE ... RESTART IDENTITY CASCADE` de todas as tabelas, menos a de migrations.
+**Por quê:** um container só custa um boot do Postgres por execução, e as suítes em série não disputam o mesmo banco. O `TRUNCATE` deixa cada suíte independente da ordem.
+**Alternativas descartadas:** um container por suíte (vários segundos a mais por suíte, sem ganho de isolamento real); um banco por suíte no mesmo container (mais código de setup para paralelizar três suítes curtas); transação com rollback por teste (o teste de concorrência precisa de várias conexões vendo os commits umas das outras).
+**Consequência:** suíte nova começa com `reset()`. Rodar as suítes em paralelo exigiria um banco por suíte.

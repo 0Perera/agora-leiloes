@@ -35,6 +35,7 @@ cd web && cp .env.example .env && npm ci && npm run dev         # outro terminal
 ```
 
 A API não sobe se faltar variável de ambiente, e a mensagem diz qual.
+Os testes de integração (`npm run test:e2e`) sobem o próprio Postgres e também exigem Docker.
 
 Migrations (em `api/`):
 
@@ -75,14 +76,16 @@ _(regras que podem surpreender, uma linha cada, com o porquê)_
 ## Testes
 
 ```bash
-cd api && npm test   # Jest, unitários ao lado de cada arquivo (*.spec.ts)
-cd web && npm test   # Vitest
+cd api && npm test           # Jest, unitários ao lado de cada arquivo (*.spec.ts)
+cd api && npm run test:e2e   # integração em api/test, contra Postgres real (exige Docker)
+cd web && npm test           # Vitest
 ```
 
 - **API:** regras de saldo e depósito, validação dos DTOs, hash de senha, cadastro e login, guards de token e de papel, filters de erro, `/health` e o logger que esconde parâmetros de query.
 - **Catálogo:** mapeamento da peça da Cleveland (artista com fallback para `culture`, descarte de peça sem imagem), cache da busca com TTL, falha da Cleveland virando `CATALOG_UNAVAILABLE` sem entrar no cache e download da imagem (só JPEG, PNG ou WebP, até 5 MB contados nos bytes lidos).
 - **Lotes:** datas de início e fim, peça já em lote ativo, limites de lance inicial e incremento, falha da imagem sem gravar lote, cadeia do destaque (maior lance, fim mais próximo, próximo agendado), filtros da vitrine e do painel, resumo do painel sem lotes e cancelamento (encerrado, com lance, lote alheio e trava da linha).
 - **Lances:** ordem das recusas, mínimo, saldo, anti-sniping, cadeia de HMAC, selo e alias; no serviço, ordem dos locks, hora lida depois do lock, encadeamento do `seq` e do hash, atualização do lote, movimento do comprometido, resposta do lance e recusa quando o selo do lote não confere.
+- **Integração (e2e):** Postgres 17 de verdade via Testcontainers e a API inteira por HTTP, com relógio de teste e catálogo falso. Lance aceito, recusado, de leiloeiro e sem token, saldo devolvido ao superado e prorrogação nos últimos 2 min; 10 lances simultâneos parados no mesmo lock (cadeia, selo, `seq`, lote e carteiras íntegros) dois lances do mesmo mínimo e o mesmo licitante em dois lotes com saldo para um lance só; destaque, cancelamento, contagens e ordem das abas da vitrine.
 - **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito, rótulos e nota do resumo da sala do lote, id inválido na rota da sala, nova busca na virada de estado e tradução do tipo da obra.
 
 ## Stack e decisões
