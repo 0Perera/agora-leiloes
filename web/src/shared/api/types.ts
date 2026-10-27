@@ -73,6 +73,51 @@ export type CreatedLot = {
   endsAt: string;
 };
 
+export type LotStatus = 'live' | 'scheduled' | 'ended';
+
+export type LotCard = {
+  id: number;
+  number: number;
+  title: string;
+  artist: string;
+  startingBid: number;
+  currentBid: number | null;
+  startsAt: string;
+  endsAt: string;
+  status: LotStatus;
+};
+
+export type LotShowcase = {
+  items: LotCard[];
+  page: number;
+  pageSize: number;
+  total: number;
+  counts: Record<LotStatus, number>;
+};
+
+export type LotDetail = {
+  id: number;
+  number: number;
+  artworkId: number;
+  accessionNumber: string;
+  title: string;
+  artist: string;
+  date: string;
+  type: string;
+  technique: string;
+  measurements: string;
+  description: string | null;
+  department: string;
+  startingBid: number;
+  increment: number;
+  startsAt: string;
+  endsAt: string;
+  status: LotStatus;
+  currentBid: number | null;
+  bidCount: number;
+  serverTime: string;
+};
+
 export type ApiErrorBody = {
   code?: string;
   fields?: Record<string, string>;

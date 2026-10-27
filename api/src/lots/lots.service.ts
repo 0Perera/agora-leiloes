@@ -4,18 +4,83 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, EntityManager, MoreThan, Repository } from 'typeorm';
+import {
+  DataSource,
+  EntityManager,
+  FindOptionsOrder,
+  FindOptionsWhere,
+  IsNull,
+  LessThanOrEqual,
+  MoreThan,
+  Not,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import type { ArtworkDetail } from '../catalog/artwork.mapper';
 import { CatalogService } from '../catalog/catalog.service';
 import type { ImageFile } from '../catalog/cleveland.client';
 import { Clock } from '../common/clock';
 import { CreateLotDto } from './dto/create-lot.dto';
+import { ListLotsQueryDto } from './dto/list-lots-query.dto';
+import {
+  LotCardDto,
+  LotStatus,
+  toLotCard,
+  type CardFields,
+} from './dto/lot-card.dto';
+import { LotDetailDto, toLotDetail } from './dto/lot-detail.dto';
 import type { CreatedLot } from './dto/lot-response.dto';
+import { LotCountsDto, LotShowcaseDto } from './dto/lot-showcase.dto';
 import { LotImage } from './lot-image.entity';
 import { Lot } from './lot.entity';
 import { assertAvailable, scheduleErrors } from './lot.rules';
 
-const MAX_ID = 2_147_483_647;
+const PAGE_SIZE = 12;
+
+const STATUS_SQL = `CASE WHEN :now < lot.startsAt THEN 'scheduled' WHEN :now < lot.endsAt THEN 'live' ELSE 'ended' END`;
+
+const STATUS_WHERE: Record<LotStatus, string> = {
+  scheduled: ':now < lot.startsAt',
+  live: 'lot.startsAt <= :now AND :now < lot.endsAt',
+  ended: 'lot.endsAt <= :now',
+};
+
+const STATUS_ORDER: Record<LotStatus, [string, 'ASC' | 'DESC']> = {
+  live: ['lot.endsAt', 'ASC'],
+  scheduled: ['lot.startsAt', 'ASC'],
+  ended: ['lot.endsAt', 'DESC'],
+};
+
+const CARD_COLUMNS = [
+  'id',
+  'number',
+  'title',
+  'artist',
+  'startingBid',
+  'currentBid',
+  'startsAt',
+  'endsAt',
+] as const;
+
+const DETAIL_COLUMNS = [
+  ...CARD_COLUMNS,
+  'artworkId',
+  'accessionNumber',
+  'date',
+  'type',
+  'technique',
+  'measurements',
+  'description',
+  'department',
+  'increment',
+  'bidCount',
+] as const;
+
+type Candidate = {
+  status: LotStatus;
+  where: FindOptionsWhere<Lot>;
+  order: FindOptionsOrder<Lot>;
+};
 
 type Conditions = Pick<
   Lot,
@@ -29,7 +94,54 @@ export class LotsService {
     private readonly catalog: CatalogService,
     private readonly clock: Clock,
     @InjectRepository(LotImage) private readonly images: Repository<LotImage>,
+    @InjectRepository(Lot) private readonly lots: Repository<Lot>,
   ) {}
+
+  async list(query: ListLotsQueryDto): Promise<LotShowcaseDto> {
+    const now = this.clock.now();
+    const [order, direction] = STATUS_ORDER[query.status];
+    const { entities, raw } = await this.search(now, query)
+      .select(CARD_COLUMNS.map((column) => `lot.${column}`))
+      .addSelect(STATUS_SQL, 'status')
+      .andWhere(STATUS_WHERE[query.status])
+      .orderBy(order, direction)
+      .addOrderBy('lot.number', 'ASC')
+      .offset((query.page - 1) * PAGE_SIZE)
+      .limit(PAGE_SIZE)
+      .getRawAndEntities<{ status: LotStatus }>();
+    const counts = await this.counts(now, query);
+    return {
+      items: entities.map((lot, index) => toLotCard(lot, raw[index].status)),
+      page: query.page,
+      pageSize: PAGE_SIZE,
+      total: counts[query.status],
+      counts,
+    };
+  }
+
+  // Cadeia do destaque (D-037): para no primeiro achado, então são no máximo 3 queries.
+  async featured(): Promise<LotCardDto | null> {
+    for (const candidate of featuredChain(this.clock.now())) {
+      const lot: CardFields | null = await this.lots.findOne({
+        select: [...CARD_COLUMNS],
+        where: { ...candidate.where, cancelledAt: IsNull() },
+        order: candidate.order,
+      });
+      if (lot) return toLotCard(lot, candidate.status);
+    }
+    return null;
+  }
+
+  async find(id: number): Promise<LotDetailDto> {
+    const now = this.clock.now();
+    const { entities, raw } = await this.visible(now)
+      .select(DETAIL_COLUMNS.map((column) => `lot.${column}`))
+      .addSelect(STATUS_SQL, 'status')
+      .andWhere('lot.id = :id', { id })
+      .getRawAndEntities<{ status: LotStatus }>();
+    if (entities.length === 0) throw new NotFoundException();
+    return toLotDetail(entities[0], raw[0].status, now);
+  }
 
   async create(auctioneerId: number, dto: CreateLotDto): Promise<CreatedLot> {
     const conditions = toConditions(dto);
@@ -47,15 +159,50 @@ export class LotsService {
   }
 
   async image(id: number): Promise<ImageFile> {
-    if (!Number.isInteger(id) || id < 1 || id > MAX_ID) {
-      throw new NotFoundException();
-    }
     const image = await this.images.findOne({
       select: { contentType: true, bytes: true },
       where: { lotId: id },
     });
     if (!image) throw new NotFoundException();
     return { contentType: image.contentType, bytes: image.bytes };
+  }
+
+  private async counts(
+    now: Date,
+    query: ListLotsQueryDto,
+  ): Promise<LotCountsDto> {
+    const row = await this.search(now, query)
+      .select(`COUNT(*) FILTER (WHERE ${STATUS_WHERE.live})::int`, 'live')
+      .addSelect(
+        `COUNT(*) FILTER (WHERE ${STATUS_WHERE.scheduled})::int`,
+        'scheduled',
+      )
+      .addSelect(`COUNT(*) FILTER (WHERE ${STATUS_WHERE.ended})::int`, 'ended')
+      .getRawOne<LotCountsDto>();
+    return row ?? { live: 0, scheduled: 0, ended: 0 };
+  }
+
+  private search(now: Date, query: ListLotsQueryDto): SelectQueryBuilder<Lot> {
+    const builder = this.visible(now);
+    if (query.q) {
+      builder.andWhere(
+        '(lot.title ILIKE :pattern OR lot.artist ILIKE :pattern)',
+        {
+          pattern: `%${escapeLike(query.q)}%`,
+        },
+      );
+    }
+    if (query.number !== undefined) {
+      builder.andWhere('lot.number = :number', { number: query.number });
+    }
+    return builder;
+  }
+
+  private visible(now: Date): SelectQueryBuilder<Lot> {
+    return this.lots
+      .createQueryBuilder('lot')
+      .where('lot.cancelledAt IS NULL')
+      .setParameter('now', now);
   }
 
   private async insert(
@@ -95,6 +242,28 @@ export class LotsService {
     });
     return { id, number: generated, ...snapshot, ...conditions };
   }
+}
+
+function featuredChain(now: Date): Candidate[] {
+  const live = { startsAt: LessThanOrEqual(now), endsAt: MoreThan(now) };
+  return [
+    {
+      status: 'live',
+      where: { ...live, currentBid: Not(IsNull()) },
+      order: { currentBid: 'DESC', endsAt: 'ASC', number: 'ASC' },
+    },
+    { status: 'live', where: live, order: { endsAt: 'ASC', number: 'ASC' } },
+    {
+      status: 'scheduled',
+      where: { startsAt: MoreThan(now) },
+      order: { startsAt: 'ASC', number: 'ASC' },
+    },
+  ];
+}
+
+// O termo da busca é literal: curingas do LIKE digitados pelo usuário não valem como curinga.
+function escapeLike(term: string): string {
+  return term.replace(/[\\%_]/g, '\\$&');
 }
 
 function toConditions(dto: CreateLotDto): Conditions {

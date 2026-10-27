@@ -1,9 +1,11 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, IsNull, Repository } from 'typeorm';
 import type { ArtworkDetail } from '../catalog/artwork.mapper';
 import { CatalogService } from '../catalog/catalog.service';
 import { DomainException } from '../common/domain.exception';
 import { CreateLotDto } from './dto/create-lot.dto';
+import type { CardFields } from './dto/lot-card.dto';
 import { LotImage } from './lot-image.entity';
+import { Lot } from './lot.entity';
 import { LotsService } from './lots.service';
 
 const NOW = new Date('2026-10-26T12:00:00Z');
@@ -46,11 +48,82 @@ describe('LotsService.create', () => {
       catalog as unknown as CatalogService,
       { now: () => NOW },
       {} as Repository<LotImage>,
+      {} as Repository<Lot>,
     );
 
     await expect(service.create(1, makeDto())).rejects.toThrow(
       new DomainException('IMAGE_DOWNLOAD_FAILED'),
     );
     expect(dataSource.transaction).not.toHaveBeenCalled();
+  });
+});
+
+function makeLot(override: Partial<CardFields> = {}): CardFields {
+  return {
+    id: 1,
+    number: 7,
+    title: 'Portrait of a Lady',
+    artist: 'Rembrandt van Rijn',
+    startingBid: 100_000,
+    currentBid: null,
+    startsAt: new Date('2026-10-26T10:00:00Z'),
+    endsAt: new Date('2026-10-27T10:00:00Z'),
+    ...override,
+  };
+}
+
+function makeFeatured(...results: (CardFields | null)[]) {
+  const findOne = jest.fn();
+  for (const result of results) findOne.mockResolvedValueOnce(result);
+  const service = new LotsService(
+    {} as DataSource,
+    {} as CatalogService,
+    { now: () => NOW },
+    {} as Repository<LotImage>,
+    { findOne } as unknown as Repository<Lot>,
+  );
+  return { service, findOne };
+}
+
+describe('LotsService.featured', () => {
+  it('devolve o ao vivo com maior lance, desempatando por fim mais próximo e depois por número', async () => {
+    const lot = makeLot({ currentBid: 150_000 });
+    const { service, findOne } = makeFeatured(lot);
+
+    expect(await service.featured()).toEqual({ ...lot, status: 'live' });
+    expect(findOne).toHaveBeenCalledTimes(1);
+    expect(findOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ cancelledAt: IsNull() }) as unknown,
+        order: { currentBid: 'DESC', endsAt: 'ASC', number: 'ASC' },
+      }),
+    );
+  });
+
+  it('sem ao vivo com lance, devolve o ao vivo que encerra primeiro', async () => {
+    const lot = makeLot();
+    const { service, findOne } = makeFeatured(null, lot);
+
+    expect(await service.featured()).toEqual({ ...lot, status: 'live' });
+    expect(findOne).toHaveBeenLastCalledWith(
+      expect.objectContaining({ order: { endsAt: 'ASC', number: 'ASC' } }),
+    );
+  });
+
+  it('sem ao vivo, devolve o próximo agendado', async () => {
+    const lot = makeLot({ startsAt: new Date('2026-10-28T10:00:00Z') });
+    const { service, findOne } = makeFeatured(null, null, lot);
+
+    expect(await service.featured()).toEqual({ ...lot, status: 'scheduled' });
+    expect(findOne).toHaveBeenLastCalledWith(
+      expect.objectContaining({ order: { startsAt: 'ASC', number: 'ASC' } }),
+    );
+  });
+
+  it('sem lote, devolve nulo', async () => {
+    const { service, findOne } = makeFeatured(null, null, null);
+
+    expect(await service.featured()).toBeNull();
+    expect(findOne).toHaveBeenCalledTimes(3);
   });
 });

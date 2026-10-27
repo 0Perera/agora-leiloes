@@ -87,6 +87,7 @@ export class Lot {
   settledAt!: Date | null;
 
   // Cópia para exibição e ordenação; dinheiro e vencedor saem sempre da tabela de lances.
+  @Index('lots_current_bid')
   @Column({ name: 'current_bid', type: 'integer', nullable: true })
   currentBid!: number | null;
 
