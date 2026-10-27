@@ -101,3 +101,7 @@
 - source_spec: `docs/stories/spec-5-2-liquidacao-e-comprovante-assinado-na-api.md`
   summary: na 5.3, se o timer chamar a liquidação por um caminho sem o lock do lote, cobrir com teste o `ignoreDuplicate` (violação de `receipts_lot_id` termina sem erro e sem evento).
   evidence: achado da revisão da 5.2 (maybe-false, seria medium); hoje o `FOR UPDATE` no lote serializa as liquidações e a segunda sempre vê `settled_at`, então o caminho não é alcançado.
+
+- source_spec: `docs/stories/spec-5-3-timer-de-liquidacao-em-memoria.md`
+  summary: na 6.1, o script do seed chama `app.close()` no final, inclusive em caso de erro (`try/finally`), e avalia trocar o `SettlementTimer` por um falso no contexto do seed, como no e2e.
+  evidence: o seed sobe a aplicação e, com ela, o `SettlementTimer`; sem `app.close()`, o processo fica pendurado no timer do lote ao vivo de ~30 dias. Com o timer ligado, ele pode liquidar no meio da criação dos dados com o `Clock` deslocado (D-045).
