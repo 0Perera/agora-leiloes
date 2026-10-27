@@ -54,6 +54,25 @@ export type CatalogSearch = {
   total: number;
 };
 
+export type CreateLotRequest = {
+  artworkId: number;
+  startingBid: number;
+  increment: number;
+  startsAt: string;
+  endsAt: string;
+};
+
+export type CreatedLot = {
+  id: number;
+  number: number;
+  title: string;
+  artist: string;
+  startingBid: number;
+  increment: number;
+  startsAt: string;
+  endsAt: string;
+};
+
 export type ApiErrorBody = {
   code?: string;
   fields?: Record<string, string>;
