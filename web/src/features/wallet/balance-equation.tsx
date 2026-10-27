@@ -1,12 +1,8 @@
 import { formatMoney } from '../../shared/lib/money';
 import type { Wallet } from '../../shared/api/types';
+import { heldNote } from './holds';
 
 export function BalanceEquation({ wallet }: { wallet: Wallet }) {
-  const heldNote =
-    wallet.committed > 0
-      ? 'reservado nos lotes que você lidera'
-      : 'nada reservado agora';
-
   return (
     <section className="wallet-balance" aria-labelledby="saldo-title">
       <h2 id="saldo-title" className="sr-only">
@@ -30,7 +26,7 @@ export function BalanceEquation({ wallet }: { wallet: Wallet }) {
           <span className="wallet-term-value wallet-term-value--held">
             {formatMoney(wallet.committed)}
           </span>
-          <span className="wallet-term-note">{heldNote}</span>
+          <span className="wallet-term-note">{heldNote(wallet.lotsTotal)}</span>
         </div>
         <span className="wallet-op" aria-hidden="true">
           =
