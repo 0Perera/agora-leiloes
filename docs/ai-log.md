@@ -405,6 +405,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi registrar no `deploy-notes.md` que o segredo nunca muda depois do seed e que, no dia da entrega, o banco é recriado mantendo o segredo.
 - Pedi registrar para a 4.3 que o `created_at` do lance vem do `Clock` da aplicação, nunca do `now()` do banco, porque o Postgres guarda microssegundos e o hash usa milissegundos.
 - Depois da revisão, aprovei os casos 14, 15 e 16: alias diferente por licitante no mesmo lote, hash conferido contra um valor conhecido e env válida sem o valor do segredo na mensagem de erro.
+- Pedi registrar o formato da serialização como decisão (D-056), com o caso 15 como o teste que o fixa, e tipar o prefixo do `sign()` com os quatro contextos.
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta story.
