@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import type { CommittedLot, Wallet } from '../../shared/api/types';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel, toRoman } from '../../shared/lib/roman';
+import { LoadError } from '../../shared/ui/load-error';
 import { BalanceEquation } from './balance-equation';
 import { DepositForm } from './deposit-form';
 import { holdNote, moreLots } from './holds';
@@ -21,7 +22,13 @@ export function WalletPage() {
           Saldo simulado. Nenhum valor real é cobrado.
         </p>
       </div>
-      {state.status === 'error' && <LoadError onRetry={state.reload} />}
+      {state.status === 'error' && (
+        <LoadError
+          title="Não foi possível carregar sua carteira"
+          text="Seu saldo e seus lances continuam registrados. Só a consulta falhou."
+          onRetry={state.reload}
+        />
+      )}
       {state.status === 'loading' && <Loading />}
       {state.status === 'ready' && (
         <>
@@ -103,31 +110,6 @@ function HoldRow({ lot, now }: { lot: CommittedLot; now: number }) {
         </Link>
       </span>
     </li>
-  );
-}
-
-function LoadError({ onRetry }: { onRetry: () => void }) {
-  return (
-    <div className="wallet-error" role="alert">
-      <div className="ag-notice ag-notice--error">
-        <span className="ag-notice__mark" aria-hidden="true">
-          ✕
-        </span>
-        <p className="ag-notice__title">
-          Não foi possível carregar sua carteira
-        </p>
-        <p className="ag-notice__text">
-          Seu saldo e seus lances continuam registrados. Só a consulta falhou.
-        </p>
-      </div>
-      <button
-        className="ag-btn ag-btn--secondary"
-        type="button"
-        onClick={onRetry}
-      >
-        Tentar de novo
-      </button>
-    </div>
   );
 }
 
