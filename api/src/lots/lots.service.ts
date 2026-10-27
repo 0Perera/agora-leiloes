@@ -32,18 +32,11 @@ import { LotDetailDto, toLotDetail } from './dto/lot-detail.dto';
 import type { CreatedLot } from './dto/lot-response.dto';
 import { LotCountsDto, LotShowcaseDto } from './dto/lot-showcase.dto';
 import { LotImage } from './lot-image.entity';
+import { STATUS_SQL, STATUS_WHERE } from './lot-status';
 import { Lot } from './lot.entity';
 import { assertAvailable, scheduleErrors } from './lot.rules';
 
 const PAGE_SIZE = 12;
-
-const STATUS_SQL = `CASE WHEN :now < lot.startsAt THEN 'scheduled' WHEN :now < lot.endsAt THEN 'live' ELSE 'ended' END`;
-
-const STATUS_WHERE: Record<LotStatus, string> = {
-  scheduled: ':now < lot.startsAt',
-  live: 'lot.startsAt <= :now AND :now < lot.endsAt',
-  ended: 'lot.endsAt <= :now',
-};
 
 const STATUS_ORDER: Record<LotStatus, [string, 'ASC' | 'DESC']> = {
   live: ['lot.endsAt', 'ASC'],
