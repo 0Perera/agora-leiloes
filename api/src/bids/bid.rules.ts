@@ -37,7 +37,6 @@ export function decide(state: BidState): BidDecision {
   return refuse(state) ?? accept(state);
 }
 
-// O valor cheio do novo lance fica comprometido e o do líder anterior volta inteiro.
 function accept(state: BidState): Acceptance {
   const { last, userId, amount } = state;
   const release = last && { userId: last.userId, amount: last.amount };
