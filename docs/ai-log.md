@@ -187,6 +187,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi que `find(id)` aceite peça dos dois departamentos e recuse as de fora.
 - Pedi a D-050 com o motivo (a Cleveland não aceita dois departamentos na mesma chamada) e a linha em "Comportamentos esperados" do README.
 - Decidi que a tela com o seletor de departamento fica para a 3.5.
+- Decidi manter Monet fora da busca (o departamento dele é o de arte moderna, fora do tema) e pedi "portrait" como exemplo de busca no lugar de "monet".
+- Aprovei testes automáticos do DTO para termo vazio e página inválida; 401/403 ficam com os testes dos guards.
+- Decidi não corrigir os achados opcionais da revisão: buscas simultâneas duplicadas, espaços internos no termo e `total` contando peças descartadas.
 
 **Sugestões rejeitadas e por quê:**
 - *Só European Painting and Sculpture, sem seletor:* troquei por um seletor com Greek and Roman Art, porque estátuas e mármore fazem parte do tema.

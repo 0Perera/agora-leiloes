@@ -36,7 +36,7 @@ context:
 
 | Scenario | Input / State | Expected Output / Behavior | Error Handling |
 |----------|--------------|---------------------------|----------------|
-| Busca ok | leiloeiro, `q=monet&page=1` (sem `department`) | 200 `{ items, page, pageSize: 12, total }` em European Painting and Sculpture; item `{ id, title, artist, date, type, technique, imageUrl }` | N/A |
+| Busca ok | leiloeiro, `q=portrait&page=1` (sem `department`) | 200 `{ items, page, pageSize: 12, total }` em European Painting and Sculpture; item `{ id, title, artist, date, type, technique, imageUrl }` | N/A |
 | Outro departamento | `department=Greek and Roman Art` | uma chamada à Cleveland com esse departamento | N/A |
 | Departamento inválido | `department=Prints` | 400 `VALIDATION_FAILED` com `fields.department` | pipe global existente |
 | Sem resultado | termo sem peças | 200 com `items: []`, `total: 0` | N/A |
@@ -86,7 +86,7 @@ context:
 - `cd web && npm run lint && npm test && npm run build` -- expected: verde (só tipos mudaram).
 
 **Manual checks:**
-- Com a API no ar: `curl` de `/catalog/search?q=monet` com token de leiloeiro (200), de licitante (403), sem token (401); segunda chamada sem query nova no log; `CLEVELAND_API_URL` apontando para porta fechada → 503.
+- Com a API no ar: `curl` de `/catalog/search?q=portrait` com token de leiloeiro (200), de licitante (403), sem token (401); segunda chamada sem query nova no log; `CLEVELAND_API_URL` apontando para porta fechada → 503.
 
 ## Implementation Notes
 
