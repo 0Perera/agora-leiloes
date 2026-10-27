@@ -1,8 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Repository } from 'typeorm';
+import { Bid } from '../bids/bid.entity';
+import { CommittedLotDto } from './dto/committed-lot.dto';
+import { CommittedLots } from './dto/wallet-response.dto';
 import { deposit, WalletState } from './wallet.rules';
 import { Wallet } from './wallet.entity';
+
+const COMMITTED_LIMIT = 20;
 
 @Injectable()
 export class WalletsService {
@@ -23,6 +28,37 @@ export class WalletsService {
     });
     if (!wallet) throw new NotFoundException();
     return { balance: wallet.balance, committed: wallet.committed };
+  }
+
+  // Comprometido é do líder: lote cujo último lance é dele e que ainda não foi liquidado.
+  async committedLots(userId: number): Promise<CommittedLots> {
+    const rows = await this.dataSource
+      .getRepository(Bid)
+      .createQueryBuilder('bid')
+      .innerJoin('bid.lot', 'lot')
+      .select('lot.id', 'id')
+      .addSelect('lot.number', 'number')
+      .addSelect('lot.title', 'title')
+      .addSelect('bid.amount', 'amount')
+      .addSelect('COUNT(*) OVER()::int', 'total')
+      .where('bid.userId = :userId', { userId })
+      .andWhere('lot.settledAt IS NULL')
+      .andWhere(
+        'NOT EXISTS (SELECT 1 FROM bids later WHERE later.lot_id = bid.lot_id AND later.seq > bid.seq)',
+      )
+      .orderBy('lot.endsAt', 'ASC')
+      .addOrderBy('lot.id', 'ASC')
+      .limit(COMMITTED_LIMIT)
+      .getRawMany<{ total: number } & CommittedLotDto>();
+    return {
+      lots: rows.map(({ id, number, title, amount }) => ({
+        id,
+        number,
+        title,
+        amount,
+      })),
+      total: rows[0]?.total ?? 0,
+    };
   }
 
   deposit(userId: number, amount: number): Promise<WalletState> {
