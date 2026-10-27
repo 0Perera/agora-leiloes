@@ -1,6 +1,13 @@
 import type {
   ApiErrorBody,
   AuthResponse,
+  BookFilter,
+  CatalogDepartment,
+  CatalogSearch,
+  CreatedLot,
+  CreateLotRequest,
+  DashboardBook,
+  DashboardSummary,
   DepositRequest,
   LoginRequest,
   SignupRequest,
@@ -45,6 +52,7 @@ async function request<T>(path: string, options: Options = {}): Promise<T> {
     if (response.status === 401 && sentToken) onUnauthorized();
     throw new ApiError(response.status, await readError(response));
   }
+  if (response.status === 204) return undefined as T;
   return (await response.json()) as T;
 }
 
@@ -102,4 +110,21 @@ export const api = {
     const body: DepositRequest = { amount };
     return request<Wallet>('/wallet/deposits', { method: 'POST', body });
   },
+  catalogSearch: (q: string, department: CatalogDepartment, page: number) => {
+    const query = new URLSearchParams({ q, department, page: String(page) });
+    return request<CatalogSearch>(`/catalog/search?${query}`);
+  },
+  createLot: (body: CreateLotRequest) =>
+    request<CreatedLot>('/lots', { method: 'POST', body }),
+  cancelLot: (id: number) =>
+    request<void>(`/lots/${id}/cancel`, { method: 'POST' }),
+  dashboardLots: (status: BookFilter, page: number) => {
+    const query = new URLSearchParams({ status, page: String(page) });
+    return request<DashboardBook>(`/dashboard/lots?${query}`);
+  },
+  dashboardSummary: () => request<DashboardSummary>('/dashboard/summary'),
 };
+
+export function lotImageUrl(id: number): string {
+  return `${baseUrl}/lots/${id}/image`;
+}
