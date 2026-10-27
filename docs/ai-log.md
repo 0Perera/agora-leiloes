@@ -592,13 +592,13 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **O que revisei e pedi para mudar:**
 - Pedi que a liquidação conferisse o selo do lote antes de mover saldo e, com selo inválido, não liquidasse e só registrasse o motivo no log (virou a D-064).
-- Pedi a mesma ordem de travas do lance: primeiro o lote, depois as carteiras em ordem.
-- Pedi que uma falha na liquidação nunca derrubasse a página do lote.
-- Pedi que a data da liquidação viesse do relógio do servidor, lida depois da trava, e entrasse na assinatura no formato da D-056.
+- Pedi a mesma ordem de travas do lance, a data da liquidação lida do relógio do servidor depois da trava, e que uma falha na liquidação nunca derrubasse a página do lote.
 - Pedi o link do comprovante aleatório, nunca derivado do número do lote, e o aviso de encerramento só depois de gravar, com apelido e valor.
 - Aprovei os 5 casos de teste da assinatura e pedi um sexto, conferindo com uma assinatura montada à mão, para fixar o formato.
 - Pedi três testes com banco real: dois acessos simultâneos liquidando uma vez só, cobrança pelo último lance mesmo com o lance atual alterado no banco, e selo inválido sem liquidar.
-- Pedi os três revisores, por ser uma story crítica.
+- Na revisão, aprovei três testes novos: falha na liquidação sem derrubar a página, uma query só fora do lote vencido, e os acessos que não liquidam.
+- Pedi que o link do comprovante fosse entregue pelo id do vencedor, gravado no comprovante, com um teste de dois licitantes de mesmo apelido.
+- Pedi para juntar o cálculo do selo num lugar só, registrar no README as duas limitações aceitas e deixar os demais ajustes de estilo como estavam.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma nesta etapa.
+- Reconhecer o vencedor comparando apelidos: recusei, porque dois licitantes do mesmo lote podem ter o mesmo apelido e o link iria para a pessoa errada.

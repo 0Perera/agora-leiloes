@@ -107,6 +107,8 @@ E2e (`api/test/settlement.e2e-spec.ts`, Testcontainers da 4.4):
 - O e2e do selo apaga o único lance: apagando o último de dois, o `CHECK` da carteira revertia a transação e o teste passava sem a conferência.
 - Depois da revisão: asserções de `result` e `me.receiptToken` na resposta do GET que liquida, rival que deu lance no teste do token, e D-064 (bloqueio pelo selo), citada no README e no service.
 
+- Depois da apresentação, a pedido do usuário: `expectedSeal` em `audit/chain.ts` usado por lance e liquidação (sem a checagem de selo nulo redundante); `receipts.winner_user_id` (migration `ReceiptsWinner`, fora da resposta e da assinatura) e token entregue por id, com teste unitário que falhava com a comparação por alias; testes aprovados: falha na liquidação sem derrubar o GET (saldo do leiloeiro no teto), uma query fora do lote vencido, e acessos que não liquidam; limitações no README.
+
 ## Spec Change Log
 
 ## Review Triage Log
