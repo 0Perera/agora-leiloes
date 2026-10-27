@@ -505,3 +505,14 @@ Story: 2.4
 **Por quê:** com dinheiro, não se mostra saldo que a API ainda não confirmou; se o depósito falhar, a tela nunca exibiu um valor errado.
 **Alternativas descartadas:** atualização otimista (resposta instantânea, mas exige desfazer o valor exibido quando a API recusa).
 **Consequência:** o botão fica em "Depositando…" até a resposta; no cold start do Render isso pode levar até 1 min.
+
+## D-050: Busca no acervo por departamento escolhido
+
+Status: Aceita
+Data: 2026-10-26
+Story: 3.1
+
+**Decisão:** a busca no acervo recebe um departamento, com duas opções: European Painting and Sculpture (padrão) e Greek and Roman Art. Cada busca faz uma chamada à Cleveland, só nesse departamento.
+**Por quê:** a Cleveland não aceita dois departamentos na mesma chamada (vírgula, `|` e `;` devolvem zero resultados; parâmetro repetido usa só o último; `department[]` é ignorado). Escolher o departamento mantém o tema da casa e a paginação exata da Cleveland.
+**Alternativas descartadas:** acervo inteiro (foge do tema de arte clássica europeia); duas chamadas juntando os resultados (dobra a latência e o risco de timeout, e a paginação e o total combinados ficam inexatos).
+**Consequência:** a tela do leiloeiro (3.5) precisa de um seletor de departamento. A criação de lote aceita peça de qualquer um dos dois departamentos; peça de outro departamento é tratada como inexistente.

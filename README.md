@@ -58,6 +58,7 @@ _(como a técnica detecta alteração, remoção e inserção no histórico)_
 _(regras que podem surpreender, uma linha cada, com o porquê)_
 
 - A sessão dura 8h e não renova: token vencido no recarregamento volta a visitante; um 401 durante o uso leva para Entrar com aviso de sessão expirada (D-006).
+- A busca no acervo mostra só pintura e escultura europeia ou arte grega e romana, um departamento por vez (tema da casa, D-050), e só peças com imagem.
 
 ## Testes
 
@@ -67,6 +68,7 @@ cd web && npm test   # Vitest
 ```
 
 - **API:** regras de saldo e depósito, validação dos DTOs, hash de senha, cadastro e login, guards de token e de papel, filters de erro, `/health` e o logger que esconde parâmetros de query.
+- **Catálogo:** mapeamento da peça da Cleveland (artista com fallback para `culture`, descarte de peça sem imagem), cache da busca com TTL e falha da Cleveland virando `CATALOG_UNAVAILABLE` sem entrar no cache.
 - **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito.
 
 ## Stack e decisões
