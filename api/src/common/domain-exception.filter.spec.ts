@@ -30,4 +30,18 @@ describe('DomainExceptionFilter.catch', () => {
     expect(response.status).toHaveBeenCalledWith(status);
     expect(response.json).toHaveBeenCalledWith({ code });
   });
+
+  it.each<[DomainCode, Record<string, unknown>]>([
+    ['LOT_NOT_STARTED', { startsAt: new Date('2026-10-28T12:00:00Z') }],
+    ['ALREADY_WINNING', {}],
+    ['BID_BELOW_MINIMUM', { minimum: 105_000 }],
+    ['INSUFFICIENT_BALANCE', { available: 50_000 }],
+  ])('responde a recusa de lance %s com 422 e o detalhe', (code, detail) => {
+    const { host, response } = makeHost();
+
+    new DomainExceptionFilter().catch(new DomainException(code, detail), host);
+
+    expect(response.status).toHaveBeenCalledWith(422);
+    expect(response.json).toHaveBeenCalledWith({ code, ...detail });
+  });
 });
