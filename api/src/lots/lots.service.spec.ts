@@ -180,10 +180,7 @@ describe('LotsService.featured', () => {
   });
 });
 
-function makeCancel(
-  lot: Pick<Lot, 'id' | 'endsAt' | 'bidCount'> | null,
-  hasBids = false,
-) {
+function makeCancel(lot: Pick<Lot, 'id' | 'endsAt'> | null, hasBids = false) {
   const repository = {
     findOne: jest.fn().mockResolvedValue(lot),
     update: jest.fn().mockResolvedValue(undefined),
@@ -220,11 +217,7 @@ describe('LotsService.cancel', () => {
   });
 
   it('não grava cancelled_at quando o lote tem lance', async () => {
-    const lot = {
-      id: 1,
-      endsAt: new Date('2026-10-27T12:00:00Z'),
-      bidCount: 1,
-    };
+    const lot = { id: 1, endsAt: new Date('2026-10-27T12:00:00Z') };
     const { service, repository } = makeCancel(lot, true);
 
     await expect(service.cancel(2, 1)).rejects.toThrow(
@@ -275,11 +268,7 @@ describe('LotsService.cancel', () => {
   });
 
   it('cancela lote agendado sem lances e grava cancelled_at com o now do Clock', async () => {
-    const lot = {
-      id: 1,
-      endsAt: new Date('2026-10-28T12:00:00Z'),
-      bidCount: 0,
-    };
+    const lot = { id: 1, endsAt: new Date('2026-10-28T12:00:00Z') };
     const { service, repository } = makeCancel(lot);
 
     await service.cancel(2, 1);
