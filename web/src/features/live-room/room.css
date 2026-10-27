@@ -110,6 +110,21 @@
   overflow-wrap: anywhere;
 }
 
+/* fica no topo enquanto a página rola: o formulário pode estar longe no celular */
+.room-connection {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0 0 var(--space-4);
+  padding: 10px var(--space-4);
+  background-color: var(--cinnabar-soft);
+  color: var(--cinnabar-deep);
+  border: 1px solid var(--cinnabar);
+  font-size: 16px;
+  line-height: 22px;
+  text-align: center;
+}
+
 /* resumo: lance e contagem */
 .room-summary {
   display: flex;

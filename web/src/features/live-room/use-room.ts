@@ -99,13 +99,13 @@ export function useRoom(id: number) {
 
   useTurn(id, room, setRoom);
   const streaming = room.status === 'ready' && room.lot.status !== 'ended';
-  useStream(id, streaming, {
+  const connection = useStream(id, streaming, {
     onBid: placed,
     onSync: sync,
     onMissing: missing,
   });
 
-  return { room, retry, placed, missing };
+  return { room, connection, retry, placed, missing };
 }
 
 // o status vem sempre da API: na virada de agendado ou ao vivo, refaz o GET sem esqueleto

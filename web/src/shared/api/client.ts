@@ -164,13 +164,14 @@ export const api = {
 type StreamHandlers = {
   onBid: (bid: BidEvent) => void;
   onOpen: () => void;
+  onLost: () => void;
   onDrop: () => void;
 };
 
 const reopenDelay = 3000;
 
-// o EventSource reconecta sozinho, mas desiste se a resposta vier sem status 200;
-// onDrop deixa a sala conferir o lote (cancelado responde 404) antes de reabrir
+// o EventSource desiste se a resposta vier sem status 200 (o Firefox, já na primeira
+// reconexão que falha); onDrop deixa a sala conferir o lote (cancelado dá 404) antes de reabrir
 export function openLotStream(
   id: number,
   handlers: StreamHandlers,
@@ -187,7 +188,9 @@ export function openLotStream(
       if (bid) handlers.onBid(bid);
     });
     source.addEventListener('error', () => {
-      if (closed || source?.readyState !== EventSource.CLOSED) return;
+      if (closed) return;
+      handlers.onLost();
+      if (source?.readyState !== EventSource.CLOSED) return;
       handlers.onDrop();
       timer = setTimeout(connect, reopenDelay);
     });

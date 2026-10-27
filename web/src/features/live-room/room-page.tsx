@@ -12,11 +12,18 @@ export function RoomPage() {
 }
 
 function LotRoom({ id }: { id: number }) {
-  const { room, retry, placed, missing } = useRoom(id);
+  const { room, connection, retry, placed, missing } = useRoom(id);
   if (room.status === 'loading') return <RoomSkeleton />;
   if (room.status === 'missing') return <RoomMissing />;
   if (room.status === 'error') return <RoomError onRetry={retry} />;
-  return <RoomView room={room} onPlaced={placed} onMissing={missing} />;
+  return (
+    <RoomView
+      room={room}
+      connection={connection}
+      onPlaced={placed}
+      onMissing={missing}
+    />
+  );
 }
 
 function RoomSkeleton() {

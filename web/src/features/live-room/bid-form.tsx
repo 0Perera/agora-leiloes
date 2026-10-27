@@ -11,11 +11,12 @@ import { minimumOf, shortcuts } from './room-bids';
 
 type Props = {
   lot: LotDetail;
+  offline: boolean;
   onPlaced: (bid: BidEvent) => void;
   onMissing: () => void;
 };
 
-export function BidForm({ lot, onPlaced, onMissing }: Props) {
+export function BidForm({ lot, offline, onPlaced, onMissing }: Props) {
   const input = useRef<HTMLInputElement>(null);
   const sending = useRef(false);
   const [value, setValue] = useState('');
@@ -36,7 +37,7 @@ export function BidForm({ lot, onPlaced, onMissing }: Props) {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (sending.current) return;
+    if (sending.current || offline) return;
     const amount = parseAmount(value);
     if (amount === null || amount < 1) return fail(emptyAmount);
     sending.current = true;
@@ -108,7 +109,7 @@ export function BidForm({ lot, onPlaced, onMissing }: Props) {
       <button
         className="ag-btn ag-btn--primary room-bid__submit"
         type="submit"
-        disabled={submitting}
+        disabled={submitting || offline}
       >
         {submitting ? 'Enviando…' : 'Dar lance'}
       </button>

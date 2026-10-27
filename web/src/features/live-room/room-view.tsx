@@ -10,10 +10,12 @@ import { BidForm } from './bid-form';
 import { RoomHistory } from './room-history';
 import { RoomOpening, RoomSituation } from './room-status';
 import { RoomSummary } from './room-timing';
+import type { Connection } from './connection';
 import type { ReadyRoom } from './use-room';
 
 type Props = {
   room: ReadyRoom;
+  connection: Connection;
   onPlaced: (bid: BidEvent) => void;
   onMissing: () => void;
 };
@@ -26,43 +28,56 @@ const badges = {
   ended: { className: 'ag-badge ag-badge--closed', text: 'Encerrado' },
 };
 
-export function RoomView({ room, onPlaced, onMissing }: Props) {
+export function RoomView({ room, connection, onPlaced, onMissing }: Props) {
   const { lot } = room;
   const viewer = useViewer(lot);
   const open = lot.status !== 'ended';
+  const offline = connection === 'lost';
 
   return (
-    <div className={layoutOf(lot, viewer)}>
-      <RoomHead lot={lot} />
-      <RoomSummary lot={lot} offset={room.offset} extended={room.extended} />
-      <RoomStatus lot={lot} viewer={viewer} room={room} />
-      {open && (
-        <section className="room__form" aria-label="Dar lance">
-          {viewer === 'bidder' && (
-            <BidForm lot={lot} onPlaced={onPlaced} onMissing={onMissing} />
-          )}
-          {viewer === 'visitor' && <VisitorBox />}
-          {viewer === 'auctioneer' && (
-            <p className="room-aside">
-              Leiloeiros acompanham os lotes, mas não dão lances.
-            </p>
-          )}
-        </section>
+    <>
+      {offline && (
+        <p className="room-connection" role="status">
+          Conexão perdida. Reconectando…
+        </p>
       )}
-      <RoomHistory lot={lot} bids={room.bids} total={room.total} />
-      <figure className="room__art">
-        <div className="room-niche">
-          <div className="room-niche__stage">
-            <img
-              className="room-niche__image"
-              src={lotImageUrl(lot.id)}
-              alt={`Imagem de ${lot.title}`}
-            />
+      <div className={layoutOf(lot, viewer)}>
+        <RoomHead lot={lot} />
+        <RoomSummary lot={lot} offset={room.offset} extended={room.extended} />
+        <RoomStatus lot={lot} viewer={viewer} room={room} />
+        {open && (
+          <section className="room__form" aria-label="Dar lance">
+            {viewer === 'bidder' && (
+              <BidForm
+                lot={lot}
+                offline={offline}
+                onPlaced={onPlaced}
+                onMissing={onMissing}
+              />
+            )}
+            {viewer === 'visitor' && <VisitorBox />}
+            {viewer === 'auctioneer' && (
+              <p className="room-aside">
+                Leiloeiros acompanham os lotes, mas não dão lances.
+              </p>
+            )}
+          </section>
+        )}
+        <RoomHistory lot={lot} bids={room.bids} total={room.total} />
+        <figure className="room__art">
+          <div className="room-niche">
+            <div className="room-niche__stage">
+              <img
+                className="room-niche__image"
+                src={lotImageUrl(lot.id)}
+                alt={`Imagem de ${lot.title}`}
+              />
+            </div>
           </div>
-        </div>
-      </figure>
-      <RoomInfo lot={lot} extended={room.extended} />
-    </div>
+        </figure>
+        <RoomInfo lot={lot} extended={room.extended} />
+      </div>
+    </>
   );
 }
 
