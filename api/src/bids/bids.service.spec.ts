@@ -5,6 +5,7 @@ import { forLot } from '../audit/alias';
 import { GENESIS, hashBid, sealLot } from '../audit/chain';
 import { DomainCode, DomainException } from '../common/domain.exception';
 import { Env } from '../config/env.validation';
+import { LotEventsService } from '../lots/lot-events.service';
 import { Lot } from '../lots/lot.entity';
 import { Wallet } from '../wallets/wallet.entity';
 import { Bid } from './bid.entity';
@@ -69,6 +70,7 @@ function makeService(
     lot?: LotRow | null;
     last?: LastBid | null;
     wallets?: WalletRow[];
+    commit?: () => Promise<void>;
   } = {},
 ) {
   const { last = null, wallets = [makeWallet()] } = state;
@@ -94,16 +96,31 @@ function makeService(
   const manager = {
     getRepository: (entity: unknown) => repositories.get(entity),
   };
+  const commit = jest.fn(state.commit ?? (() => Promise.resolve()));
   const dataSource = {
-    transaction: (fn: (manager: unknown) => Promise<unknown>) => fn(manager),
+    transaction: async (fn: (manager: unknown) => Promise<unknown>) => {
+      const result = await fn(manager);
+      await commit();
+      return result;
+    },
   };
   const clock = { now: jest.fn(() => NOW) };
+  const events = { publish: jest.fn() };
   const service = new BidsService(
     dataSource as unknown as DataSource,
     clock,
+    events as unknown as LotEventsService,
     config,
   );
-  return { service, lots, bids, wallets: walletRepository, clock };
+  return {
+    service,
+    lots,
+    bids,
+    wallets: walletRepository,
+    clock,
+    events,
+    commit,
+  };
 }
 
 describe('BidsService.place', () => {
@@ -339,5 +356,34 @@ describe('BidsService.place', () => {
     expect(bids.insert).toHaveBeenCalledWith(
       expect.objectContaining({ seq: 4, amount: 125_000 }),
     );
+  });
+
+  it('emite depois que a transação termina', async () => {
+    const { service, events, commit } = makeService();
+
+    const bid = await service.place(10, 1, 100_000);
+
+    expect(events.publish).toHaveBeenCalledWith(1, bid);
+    expect(commit.mock.invocationCallOrder[0]).toBeLessThan(
+      events.publish.mock.invocationCallOrder[0],
+    );
+  });
+
+  it('não emite em lance recusado', async () => {
+    const { service, events } = makeService();
+
+    await expect(service.place(10, 1, 50_000)).rejects.toThrow(DomainException);
+    expect(events.publish).not.toHaveBeenCalled();
+  });
+
+  it('não emite quando a transação falha', async () => {
+    const { service, events } = makeService({
+      commit: () => Promise.reject(new Error('commit failed')),
+    });
+
+    await expect(service.place(10, 1, 100_000)).rejects.toThrow(
+      'commit failed',
+    );
+    expect(events.publish).not.toHaveBeenCalled();
   });
 });
