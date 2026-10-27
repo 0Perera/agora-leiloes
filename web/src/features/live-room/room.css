@@ -179,12 +179,9 @@
   padding-top: 8px;
 }
 
-/* a nota ocupa só a largura dos quadrinhos, sem alargar a contagem */
 .room-note {
-  margin: 0;
-  width: 0;
-  min-width: 100%;
-  text-align: center;
+  margin: var(--space-2) 0 0;
+  text-wrap: balance;
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 16px;
@@ -627,6 +624,11 @@
 }
 
 @media (max-width: 479px) {
+  /* o rótulo vai para a linha de cima, para os três atalhos caberem juntos */
+  .room-shortcuts > .ag-field__hint {
+    flex-basis: 100%;
+  }
+
   .room-summary {
     flex-direction: column;
     align-items: flex-start;
