@@ -34,14 +34,9 @@ export function RoomView({ lot, offset }: Props) {
   );
 }
 
-function bylineOf(lot: LotDetail): string {
-  const author = [lot.artist, lot.date].filter(Boolean).join(', ');
-  return [author, lot.technique].filter(Boolean).join(' · ');
-}
-
 function RoomHead({ lot }: { lot: LotDetail }) {
   const badge = badges[lot.status];
-  const byline = bylineOf(lot);
+  const byline = [lot.artist, lot.date].filter(Boolean).join(', ');
 
   return (
     <div className="room__head">
