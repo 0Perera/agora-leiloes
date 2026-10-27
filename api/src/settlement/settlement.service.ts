@@ -49,7 +49,7 @@ export class SettlementService {
       const last = await lastBid(manager, lotId);
       const decision = decide({ lot, last, now });
       if (!decision.settle) return null;
-      // Selo divergente é evidência de adulteração: nada se move (D-059).
+      // Selo divergente é evidência de adulteração: nada se move (D-064).
       if (lot.seal === null || lot.seal !== this.seal(lotId, last)) {
         this.logger.warn(`lot ${lotId} not settled: seal mismatch`);
         return null;

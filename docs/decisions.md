@@ -659,3 +659,14 @@ Story: 4.5
 **Por quê:** a lista é um resumo dentro da carteira, limitado na prática pelo saldo do licitante; um teto com o total mantém a resposta pequena sem levar paginação para a tela da Carteira. 20 é o mesmo tamanho de página do histórico.
 **Alternativas descartadas:** sem teto (resposta sem limite, contra a regra); `?page=` no `/wallet` (paginação na Carteira por um caso raro).
 **Consequência:** com mais de 20 lotes, a Carteira (4.7) mostra os 20 primeiros e o total; ver todos exigiria uma rota própria.
+
+## D-064: Liquidação bloqueada quando o selo do lote não confere
+
+Status: Aceita
+Data: 2026-10-27
+Story: 5.2
+
+**Decisão:** selo divergente ou nulo não liquida: nada é gravado, o log registra só o id do lote, e o lote fica encerrado e não liquidado.
+**Por quê:** apagar o último lance direto no banco faria cobrar o penúltimo licitante, cujo comprometido já foi liberado.
+**Alternativas descartadas:** liquidar mesmo assim e deixar a detecção para a auditoria (cobraria a pessoa errada).
+**Consequência:** o comprometido do vencedor fica preso, e cada acesso tenta de novo e loga, até alguém investigar.
