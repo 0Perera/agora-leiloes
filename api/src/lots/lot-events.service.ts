@@ -1,6 +1,7 @@
 import { Injectable, MessageEvent } from '@nestjs/common';
 import { interval, map, merge, Observable } from 'rxjs';
 import { BidEventDto, toBidEvent } from './dto/bid-event.dto';
+import { SettledEventDto, toSettledEvent } from './dto/settled-event.dto';
 
 export const HEARTBEAT_MS = 25_000;
 
@@ -12,8 +13,11 @@ export class LotEventsService {
   private readonly subscribers = new Map<number, Set<Subscriber>>();
 
   publish(lotId: number, bid: BidEventDto): void {
-    const event = { type: 'bid', data: toBidEvent(bid) };
-    this.subscribers.get(lotId)?.forEach((send) => send(event));
+    this.send(lotId, { type: 'bid', data: toBidEvent(bid) });
+  }
+
+  settled(lotId: number, result: SettledEventDto): void {
+    this.send(lotId, { type: 'settled', data: toSettledEvent(result) });
   }
 
   stream(lotId: number): Observable<MessageEvent> {
@@ -31,6 +35,10 @@ export class LotEventsService {
 
   listeners(lotId: number): number {
     return this.subscribers.get(lotId)?.size ?? 0;
+  }
+
+  private send(lotId: number, event: MessageEvent): void {
+    this.subscribers.get(lotId)?.forEach((send) => send(event));
   }
 
   private add(lotId: number, send: Subscriber): void {

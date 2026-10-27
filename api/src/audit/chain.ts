@@ -50,3 +50,16 @@ export function sealLot(secret: string, seal: LotSeal): string {
     seal.lastHash ?? GENESIS,
   ]);
 }
+
+// Selo que o lote deveria ter com o último lance lido; lance e liquidação conferem antes de gravar.
+export function expectedSeal(
+  secret: string,
+  lotId: number,
+  last: { seq: number; hash: string } | null,
+): string {
+  return sealLot(secret, {
+    lotId,
+    count: last?.seq ?? 0,
+    lastHash: last?.hash ?? null,
+  });
+}

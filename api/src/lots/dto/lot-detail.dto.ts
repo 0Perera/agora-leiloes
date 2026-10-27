@@ -26,6 +26,14 @@ export type DetailFields = Pick<
 export class LotViewerDto {
   alias!: string;
   hasBid!: boolean;
+  // Só para o vencedor: o link do comprovante não é exibido aos demais.
+  receiptToken?: string;
+}
+
+// Alias e valor nulos: lote liquidado sem lances.
+export class LotResultDto {
+  alias!: string | null;
+  amount!: number | null;
 }
 
 export class LotDetailDto {
@@ -49,14 +57,17 @@ export class LotDetailDto {
   currentBid!: number | null;
   bidCount!: number;
   serverTime!: string;
+  result!: LotResultDto | null;
   me?: LotViewerDto;
 }
+
+export type DetailExtras = { result: LotResultDto | null; me?: LotViewerDto };
 
 export function toLotDetail(
   lot: DetailFields,
   status: LotStatus,
   now: Date,
-  me?: LotViewerDto,
+  { result, me }: DetailExtras,
 ): LotDetailDto {
   const detail: LotDetailDto = {
     id: lot.id,
@@ -79,6 +90,7 @@ export function toLotDetail(
     currentBid: lot.currentBid,
     bidCount: lot.bidCount,
     serverTime: now.toISOString(),
+    result,
   };
   if (me) detail.me = me;
   return detail;

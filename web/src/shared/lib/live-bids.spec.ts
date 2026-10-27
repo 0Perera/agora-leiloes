@@ -28,6 +28,7 @@ function makeLot(override: Partial<LotDetail> = {}): LotDetail {
     currentBid: 850_000,
     bidCount: 2,
     serverTime: '2026-10-27T20:00:00.000Z',
+    result: null,
     me: { alias: 'Licitante AAAAAA', hasBid: false },
     ...override,
   };

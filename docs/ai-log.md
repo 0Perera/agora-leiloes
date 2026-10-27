@@ -579,3 +579,26 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Pedi para juntar os quatro testes de movimentos num só: a comparação da lista inteira, sugerida pelo Claude (app), tinha deixado os quatro idênticos.
+
+## Story 5.2: Liquidação e comprovante assinado na API
+
+**O que a IA gerou:**
+- A liquidação numa transação: trava o lote, confere o selo, move os saldos, grava o comprovante assinado e marca o lote como liquidado.
+- A assinatura do comprovante e a verificação dela, escritas depois dos 6 casos de teste, em dois pares de commits de teste e implementação.
+- A tabela de comprovantes, com um comprovante por lote e um link aleatório e único.
+- O gatilho no acesso ao lote: lote vencido é liquidado ao ser aberto, e a resposta traz o resultado; o link do comprovante vai só para o vencedor.
+- O aviso de encerramento no tempo real, só com o apelido do vencedor e o valor.
+- Seis testes de integração com banco real, três deles avisados como extras (lote sem lances, link só para o vencedor, aviso no tempo real).
+
+**O que revisei e pedi para mudar:**
+- Pedi que a liquidação conferisse o selo do lote antes de mover saldo e, com selo inválido, não liquidasse e só registrasse o motivo no log (virou a D-064).
+- Pedi a mesma ordem de travas do lance, a data da liquidação lida do relógio do servidor depois da trava, e que uma falha na liquidação nunca derrubasse a página do lote.
+- Pedi o link do comprovante aleatório, nunca derivado do número do lote, e o aviso de encerramento só depois de gravar, com apelido e valor.
+- Aprovei os 5 casos de teste da assinatura e pedi um sexto, conferindo com uma assinatura montada à mão, para fixar o formato.
+- Pedi três testes com banco real: dois acessos simultâneos liquidando uma vez só, cobrança pelo último lance mesmo com o lance atual alterado no banco, e selo inválido sem liquidar.
+- Na revisão, aprovei três testes novos: falha na liquidação sem derrubar a página, uma query só fora do lote vencido, e os acessos que não liquidam.
+- Pedi que o link do comprovante fosse entregue pelo id do vencedor, gravado no comprovante, com um teste de dois licitantes de mesmo apelido.
+- Pedi para juntar o cálculo do selo num lugar só, registrar no README as duas limitações aceitas e deixar os demais ajustes de estilo como estavam.
+
+**Sugestões rejeitadas e por quê:**
+- Reconhecer o vencedor comparando apelidos: recusei, porque dois licitantes do mesmo lote podem ter o mesmo apelido e o link iria para a pessoa errada.

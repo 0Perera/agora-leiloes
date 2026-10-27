@@ -1,14 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DataSource, EntityManager, In, IsNull } from 'typeorm';
+import { DataSource, EntityManager, IsNull } from 'typeorm';
 import { forLot } from '../audit/alias';
-import { GENESIS, hashBid, sealLot } from '../audit/chain';
+import { expectedSeal, GENESIS, hashBid, sealLot } from '../audit/chain';
 import { Clock } from '../common/clock';
 import { DomainException } from '../common/domain.exception';
 import { Env } from '../config/env.validation';
 import { LotEventsService } from '../lots/lot-events.service';
 import { Lot } from '../lots/lot.entity';
 import { Wallet } from '../wallets/wallet.entity';
+import { lockWallets, walletOf } from '../wallets/wallet.lock';
 import {
   BidHistoryDto,
   HistoryRow,
@@ -101,7 +102,7 @@ export class BidsService {
       const last = await lastBid(manager, lotId);
       // Sem isso, apagar lances do fim e dar um lance novo reassinaria o selo,
       // apagando a evidência da remoção (D-059).
-      if (lot.seal !== this.seal(lotId, last)) {
+      if (lot.seal !== expectedSeal(this.secret, lotId, last)) {
         throw new DomainException('LOT_INTEGRITY_FAILED');
       }
       const wallets = await lockWallets(manager, [userId, last?.userId]);
@@ -139,14 +140,6 @@ export class BidsService {
         createdAt: now,
         endsAt: decision.endsAt,
       };
-    });
-  }
-
-  private seal(lotId: number, last: LastBid | null): string {
-    return sealLot(this.secret, {
-      lotId,
-      count: last?.seq ?? 0,
-      lastHash: last?.hash ?? null,
     });
   }
 
@@ -193,26 +186,6 @@ function lastBid(manager: EntityManager, lotId: number) {
     where: { lotId },
     order: { seq: 'DESC' },
   });
-}
-
-// Uma query com ORDER BY id: o Postgres trava as linhas nessa ordem, sem deadlock.
-function lockWallets(
-  manager: EntityManager,
-  userIds: (number | undefined)[],
-): Promise<Wallet[]> {
-  const ids = [...new Set(userIds)].filter((id) => id !== undefined);
-  return manager.getRepository(Wallet).find({
-    select: { id: true, userId: true, balance: true, committed: true },
-    where: { userId: In(ids) },
-    order: { id: 'ASC' },
-    lock: { mode: 'pessimistic_write' },
-  });
-}
-
-function walletOf(wallets: Wallet[], userId: number): Wallet {
-  const wallet = wallets.find((candidate) => candidate.userId === userId);
-  if (!wallet) throw new Error('wallet missing');
-  return wallet;
 }
 
 function available(wallets: Wallet[], userId: number): number {

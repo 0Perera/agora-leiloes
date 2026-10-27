@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -8,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   DataSource,
   EntityManager,
+  QueryFailedError,
   FindOptionsOrder,
   FindOptionsWhere,
   IsNull,
@@ -26,6 +28,8 @@ import type { ImageFile } from '../catalog/cleveland.client';
 import type { AuthUser } from '../common/auth.guard';
 import { Clock } from '../common/clock';
 import { Env } from '../config/env.validation';
+import { Receipt } from '../receipts/receipt.entity';
+import { SettlementService } from '../settlement/settlement.service';
 import { CreateLotDto } from './dto/create-lot.dto';
 import { ListLotsQueryDto } from './dto/list-lots-query.dto';
 import {
@@ -34,7 +38,12 @@ import {
   toLotCard,
   type CardFields,
 } from './dto/lot-card.dto';
-import { LotDetailDto, toLotDetail } from './dto/lot-detail.dto';
+import {
+  LotDetailDto,
+  LotResultDto,
+  LotViewerDto,
+  toLotDetail,
+} from './dto/lot-detail.dto';
 import type { CreatedLot } from './dto/lot-response.dto';
 import { LotCountsDto, LotShowcaseDto } from './dto/lot-showcase.dto';
 import { LotImage } from './lot-image.entity';
@@ -83,6 +92,20 @@ const DETAIL_COLUMNS = [
 const HAS_BID_SQL =
   'EXISTS (SELECT 1 FROM bids bid WHERE bid.user_id = :bidderId AND bid.lot_id = lot.id)';
 
+type DetailRaw = {
+  status: LotStatus;
+  hasBid: boolean;
+  receiptAlias: string | null;
+  receiptAmount: number | null;
+  receiptToken: string | null;
+  receiptWinnerId: number | null;
+};
+
+type DetailRow = {
+  lot: Lot;
+  raw: DetailRaw;
+};
+
 type Candidate = {
   status: LotStatus;
   where: FindOptionsWhere<Lot>;
@@ -96,6 +119,7 @@ type Conditions = Pick<
 
 @Injectable()
 export class LotsService {
+  private readonly logger = new Logger(LotsService.name);
   private readonly secret: string;
 
   constructor(
@@ -105,6 +129,7 @@ export class LotsService {
     @InjectRepository(LotImage) private readonly images: Repository<LotImage>,
     @InjectRepository(Lot) private readonly lots: Repository<Lot>,
     config: ConfigService<Env, true>,
+    private readonly settlement: SettlementService,
   ) {
     this.secret = config.get('BID_HMAC_SECRET', { infer: true });
   }
@@ -148,22 +173,16 @@ export class LotsService {
   async find(id: number, viewer?: AuthUser): Promise<LotDetailDto> {
     const now = this.clock.now();
     const bidderId = viewer?.role === 'BIDDER' ? viewer.id : null;
-    const { entities, raw } = await this.visible(now)
-      .select(DETAIL_COLUMNS.map((column) => `lot.${column}`))
-      .addSelect(STATUS_SQL, 'status')
-      .addSelect(HAS_BID_SQL, 'hasBid')
-      .andWhere('lot.id = :id', { id })
-      .setParameter('bidderId', bidderId)
-      .getRawAndEntities<{ status: LotStatus; hasBid: boolean }>();
-    if (entities.length === 0) throw new NotFoundException();
+    let row = await this.detail(id, bidderId, now);
+    // Gatilho por acesso: com a API dormindo no Render, o timer não basta.
+    if (row.raw.status === 'ended' && row.lot.settledAt === null) {
+      await this.trySettle(id);
+      row = await this.detail(id, bidderId, now);
+    }
+    const result = toResult(row);
     const me =
-      bidderId === null
-        ? undefined
-        : {
-            alias: forLot(this.secret, bidderId, id),
-            hasBid: raw[0].hasBid,
-          };
-    return toLotDetail(entities[0], raw[0].status, now, me);
+      bidderId === null ? undefined : this.viewer(id, bidderId, row.raw);
+    return toLotDetail(row.lot, row.raw.status, now, { result, me });
   }
 
   async assertExists(id: number): Promise<void> {
@@ -215,6 +234,46 @@ export class LotsService {
     });
     if (!image) throw new NotFoundException();
     return { contentType: image.contentType, bytes: image.bytes };
+  }
+
+  private async detail(
+    id: number,
+    bidderId: number | null,
+    now: Date,
+  ): Promise<DetailRow> {
+    const { entities, raw } = await this.visible(now)
+      .select([...DETAIL_COLUMNS, 'settledAt'].map((column) => `lot.${column}`))
+      .addSelect(STATUS_SQL, 'status')
+      .addSelect(HAS_BID_SQL, 'hasBid')
+      .leftJoin(Receipt, 'receipt', 'receipt.lotId = lot.id')
+      .addSelect('receipt.alias', 'receiptAlias')
+      .addSelect('receipt.amount', 'receiptAmount')
+      .addSelect('receipt.token', 'receiptToken')
+      .addSelect('receipt.winnerUserId', 'receiptWinnerId')
+      .andWhere('lot.id = :id', { id })
+      .setParameter('bidderId', bidderId)
+      .getRawAndEntities<DetailRaw>();
+    if (entities.length === 0) throw new NotFoundException();
+    return { lot: entities[0], raw: raw[0] };
+  }
+
+  // A liquidação nunca derruba o GET: o erro vai para o log e a resposta sai sem ela.
+  private async trySettle(id: number): Promise<void> {
+    try {
+      await this.settlement.settle(id);
+    } catch (error) {
+      this.logger.error(`lot ${id} not settled: ${failure(error)}`);
+    }
+  }
+
+  // Vencedor pelo id, nunca pelo alias: dois licitantes podem colidir nos 30 bits do alias.
+  private viewer(id: number, bidderId: number, raw: DetailRaw): LotViewerDto {
+    const alias = forLot(this.secret, bidderId, id);
+    const me: LotViewerDto = { alias, hasBid: raw.hasBid };
+    if (raw.receiptToken && raw.receiptWinnerId === bidderId) {
+      me.receiptToken = raw.receiptToken;
+    }
+    return me;
   }
 
   private async counts(
@@ -349,4 +408,18 @@ function toSnapshot(artwork: ArtworkDetail) {
 
 function invalid(fields: Record<string, string>): BadRequestException {
   return new BadRequestException({ code: 'VALIDATION_FAILED', fields });
+}
+
+function toResult({ lot, raw }: DetailRow): LotResultDto | null {
+  if (lot.settledAt === null) return null;
+  return { alias: raw.receiptAlias, amount: raw.receiptAmount };
+}
+
+// Só a mensagem do driver: a exceção inteira traria os parâmetros da query.
+function failure(error: unknown): string {
+  if (error instanceof QueryFailedError) {
+    const driverError: unknown = error.driverError;
+    return driverError instanceof Error ? driverError.message : 'unknown';
+  }
+  return error instanceof Error ? error.message : 'unknown';
 }
