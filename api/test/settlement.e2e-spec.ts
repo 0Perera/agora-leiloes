@@ -206,3 +206,60 @@ describe('liquidação pelo acesso ao lote', () => {
     ]);
   });
 });
+
+describe('acesso que não liquida o lote', () => {
+  it('falha na liquidação não derruba o acesso ao lote', async () => {
+    await api.bid(bidder, lotId, STARTING_BID).expect(201);
+    await api.db.query(
+      'UPDATE wallets SET balance = 2147483647 WHERE user_id = $1',
+      [auctioneer.id],
+    );
+    const before = await wallets();
+    end();
+
+    const response = await detail().expect(200);
+
+    expect((response.body as Detail).result).toBeNull();
+    expect(await settledAt()).toBeNull();
+    expect(await receipts()).toEqual([]);
+    expect(await wallets()).toEqual(before);
+  });
+
+  it('lote cancelado e vencido não é liquidado', async () => {
+    await request(api.server)
+      .post(`/lots/${lotId}/cancel`)
+      .auth(auctioneer.token, { type: 'bearer' })
+      .expect(204);
+    end();
+
+    await detail().expect(404);
+
+    expect(await settledAt()).toBeNull();
+  });
+
+  it('lote ainda não terminado não é liquidado', async () => {
+    await api.bid(bidder, lotId, STARTING_BID).expect(201);
+    api.clock.set(new Date(at(60).getTime() - 1));
+
+    const response = await detail().expect(200);
+
+    expect((response.body as Detail).result).toBeNull();
+    expect(await settledAt()).toBeNull();
+    expect(await receipts()).toEqual([]);
+  });
+
+  it('segundo acesso não grava outro comprovante nem emite outro evento', async () => {
+    await api.bid(bidder, lotId, STARTING_BID).expect(201);
+    const settled = jest.spyOn(api.app.get(LotEventsService), 'settled');
+    end();
+    await detail().expect(200);
+    const first = await settledAt();
+
+    await detail().expect(200);
+
+    expect(settled).toHaveBeenCalledTimes(1);
+    expect(await receipts()).toHaveLength(1);
+    expect(await settledAt()).toEqual(first);
+    settled.mockRestore();
+  });
+});
