@@ -74,6 +74,38 @@ describe('POST /lots/:id/bids', () => {
     });
   });
 
+  it('devolve o comprometido do licitante superado', async () => {
+    const rival = await test.signup('BIDDER');
+    await test.deposit(rival, 1_000_000);
+    await test.bid(bidder, lotId, STARTING_BID).expect(201);
+    await test.bid(rival, lotId, STARTING_BID + INCREMENT).expect(201);
+
+    const wallets = await test.db.query<
+      { userId: number; committed: number }[]
+    >(
+      `SELECT user_id AS "userId", committed FROM wallets
+       WHERE user_id = ANY($1) ORDER BY user_id`,
+      [[bidder.id, rival.id]],
+    );
+
+    expect(wallets).toEqual([
+      { userId: bidder.id, committed: 0 },
+      { userId: rival.id, committed: STARTING_BID + INCREMENT },
+    ]);
+  });
+
+  it('lance nos últimos 2 min prorroga o fim em 2 min', async () => {
+    test.clock.set(new Date(endsAt.getTime() - 60_000));
+    await test.bid(bidder, lotId, STARTING_BID).expect(201);
+
+    const [lot] = await test.db.query<{ endsAt: Date }[]>(
+      'SELECT ends_at AS "endsAt" FROM lots WHERE id = $1',
+      [lotId],
+    );
+
+    expect(lot.endsAt).toEqual(new Date(endsAt.getTime() + 2 * 60_000));
+  });
+
   it('responde 403 ROLE_NOT_ALLOWED ao leiloeiro', async () => {
     const response = await test.bid(auctioneer, lotId, STARTING_BID);
 
