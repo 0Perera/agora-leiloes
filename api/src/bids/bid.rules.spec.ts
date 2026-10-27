@@ -4,6 +4,7 @@ const NOW = new Date('2026-10-26T12:00:00Z');
 const MINUTE = 60 * 1000;
 const HOUR = 60 * MINUTE;
 const BIDDER = 1;
+const RIVAL = 2;
 
 function at(offsetMs: number): Date {
   return new Date(NOW.getTime() + offsetMs);
@@ -69,6 +70,35 @@ describe('BidRules.decide', () => {
         code: 'LOT_NOT_STARTED',
         startsAt,
       });
+    });
+  });
+
+  describe('líder', () => {
+    it('recusa lance de quem já lidera', () => {
+      const bid = makeBid({
+        last: { userId: BIDDER, amount: 10_000 },
+        amount: 11_000,
+      });
+
+      expect(decide(bid)).toEqual({ accepted: false, code: 'ALREADY_WINNING' });
+    });
+
+    it('aceita lance de quem foi superado', () => {
+      const bid = makeBid({
+        last: { userId: RIVAL, amount: 10_000 },
+        amount: 11_000,
+      });
+
+      expect(decide(bid).accepted).toBe(true);
+    });
+
+    it('recusa por liderança antes de checar o valor', () => {
+      const bid = makeBid({
+        last: { userId: BIDDER, amount: 10_000 },
+        amount: 10_500,
+      });
+
+      expect(decide(bid)).toEqual({ accepted: false, code: 'ALREADY_WINNING' });
     });
   });
 });
