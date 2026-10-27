@@ -26,4 +26,16 @@ describe('validateEnv', () => {
 
     expect(() => validateEnv(Env, config)).toThrow(/BID_HMAC_SECRET/);
   });
+
+  it('aceita BID_HMAC_SECRET com 32 caracteres', () => {
+    expect(() => validateEnv(Env, makeConfig())).not.toThrow();
+  });
+
+  it('não cita o valor do segredo na mensagem de erro', () => {
+    const secret = 'leak-check-secret-31-characters';
+    const config = makeConfig({ BID_HMAC_SECRET: secret });
+
+    expect(() => validateEnv(Env, config)).toThrow(Error);
+    expect(() => validateEnv(Env, config)).not.toThrow(secret);
+  });
 });
