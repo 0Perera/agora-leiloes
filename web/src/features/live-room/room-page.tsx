@@ -12,11 +12,11 @@ export function RoomPage() {
 }
 
 function LotRoom({ id }: { id: number }) {
-  const { room, retry } = useRoom(id);
+  const { room, retry, placed, missing } = useRoom(id);
   if (room.status === 'loading') return <RoomSkeleton />;
   if (room.status === 'missing') return <RoomMissing />;
   if (room.status === 'error') return <RoomError onRetry={retry} />;
-  return <RoomView lot={room.lot} offset={room.offset} />;
+  return <RoomView room={room} onPlaced={placed} onMissing={missing} />;
 }
 
 function RoomSkeleton() {

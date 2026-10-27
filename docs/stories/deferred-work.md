@@ -58,6 +58,11 @@
 - source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
   summary: na 4.6, traduzir `LOT_INTEGRITY_FAILED` (409) na sala do lote.
   evidence: decisão do usuário na revisão da 4.3 (D-059); o lance passa a ser recusado quando o selo do lote não confere com a cadeia.
+  status: feito na 4.6 (`spec-4-6-tela-sala-do-lote-ao-vivo-lances-e-tempo-real.md`).
+
+- source_spec: `docs/stories/spec-4-6-tela-sala-do-lote-ao-vivo-lances-e-tempo-real.md`
+  summary: na 5.8, link "Auditar este lote" no cabeçalho do histórico da sala, como no canvas `Sala.dc.html`.
+  evidence: a tela de auditoria do lote só existe a partir da 5.8; decisão do usuário na spec da 4.6.
 
 - source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
   summary: na 6.2, reescrever as entradas antigas do `docs/ai-log.md` no estilo novo: frases curtas, português corrente, detalhe técnico só quando for indispensável.

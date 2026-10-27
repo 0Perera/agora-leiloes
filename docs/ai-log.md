@@ -508,3 +508,23 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Recusei a paginação do histórico por faixa de `seq` a partir da contagem copiada no lote: dependeria dessa cópia (D-042) e quebraria com buracos na sequência; pedi `ORDER BY seq DESC` com `LIMIT` e `OFFSET`.
+
+## Story 4.6: Tela Sala do lote ao vivo (lances e tempo real)
+
+**O que a IA gerou:**
+- `me.hasBid` no detalhe do lote, calculado na mesma query, com teste unitário e um caso e2e.
+- Esqueleto e erro com "Tentar de novo" movidos para `shared/ui`, usados pela página inicial, pelo painel e pela sala.
+- Client da API com lance, histórico, detalhe das recusas e o stream, que reabre sozinho se o navegador desistir da conexão.
+- Sala completa: situação do licitante, formulário com atalhos e recusas traduzidas, histórico ao vivo e nota de prorrogação.
+- Lances do POST, do stream e da reconexão unidos pelo `seq`, sem duplicar e sem dado antigo sobrescrever o novo.
+- Carteira relida em segundo plano quando a situação muda, sem o resumo do cabeçalho piscar.
+- Os casos de teste aprovados, README e `deferred-work.md`.
+
+**O que revisei e pedi para mudar:**
+- Decidi a regra da situação: ganhando pelo último lance, superado só para quem já deu lance no lote.
+- Decidi que o detalhe do lote informa se o licitante já deu lance, na mesma query, em vez de a sala procurar no histórico.
+- Decidi manter no celular a ordem da 3.7, com a obra primeiro, em vez da ordem do canvas.
+- Decidi deixar o link para a auditoria do lote para a 5.8.
+- Aprovei os casos de teste da story.
+
+**Sugestões rejeitadas e por quê:**

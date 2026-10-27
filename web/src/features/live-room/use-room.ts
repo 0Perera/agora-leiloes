@@ -1,14 +1,23 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, api } from '../../shared/api/client';
-import type { LotDetail } from '../../shared/api/types';
+import type { BidEvent, BidHistory, LotDetail } from '../../shared/api/types';
 import { clockOffset } from '../../shared/lib/countdown';
+import { mergeBid, mergeRoom } from './room-bids';
+import type { LiveRoom } from './room-bids';
 import { retryTurn } from './room-summary';
+import { useStream } from './use-stream';
+
+export type ReadyRoom = LiveRoom & { status: 'ready'; offset: number };
 
 export type Room =
   | { status: 'loading' }
   | { status: 'missing' }
   | { status: 'error' }
-  | { status: 'ready'; lot: LotDetail; offset: number };
+  | ReadyRoom;
+
+type SetRoom = (update: (current: Room) => Room) => void;
+
+const noHistory = { items: [], total: 0 };
 
 // acima de ~24,8 dias o setTimeout dispara na hora; ninguém deixa a sala aberta tanto tempo
 const maxDelay = 2_147_483_647;
@@ -16,12 +25,33 @@ const maxDelay = 2_147_483_647;
 const turnMargin = 500;
 const retryDelay = 2000;
 
-function toReady(lot: LotDetail): Room {
+function toReady(lot: LotDetail, history: BidHistory): Room {
   return {
     status: 'ready',
     lot,
     offset: clockOffset(lot.serverTime, Date.now()),
+    bids: history.items,
+    total: history.total,
+    extended: false,
   };
+}
+
+function synced(
+  current: Room,
+  lot: LotDetail,
+  history: Pick<BidHistory, 'items' | 'total'> = noHistory,
+): Room {
+  if (current.status !== 'ready') return current;
+  return {
+    ...mergeRoom(current, lot, history),
+    status: 'ready',
+    offset: clockOffset(lot.serverTime, Date.now()),
+  };
+}
+
+function withBid(current: Room, bid: BidEvent): Room {
+  if (current.status !== 'ready') return current;
+  return { ...current, ...mergeBid(current, bid) };
 }
 
 function failure(caught: unknown): Room {
@@ -42,8 +72,8 @@ export function useRoom(id: number) {
 
   useEffect(() => {
     let active = true;
-    api.lot(id).then(
-      (lot) => active && setRoom(toReady(lot)),
+    Promise.all([api.lot(id), api.lotBids(id, 1)]).then(
+      ([lot, history]) => active && setRoom(toReady(lot, history)),
       (caught: unknown) => active && setRoom(failure(caught)),
     );
     return () => {
@@ -56,13 +86,30 @@ export function useRoom(id: number) {
     setAttempt((current) => current + 1);
   }, []);
 
-  useTurn(id, room, setRoom);
+  const placed = useCallback(
+    (bid: BidEvent) => setRoom((current) => withBid(current, bid)),
+    [],
+  );
+  const sync = useCallback(
+    (lot: LotDetail, history: BidHistory) =>
+      setRoom((current) => synced(current, lot, history)),
+    [],
+  );
+  const missing = useCallback(() => setRoom({ status: 'missing' }), []);
 
-  return { room, retry };
+  useTurn(id, room, setRoom);
+  const streaming = room.status === 'ready' && room.lot.status !== 'ended';
+  useStream(id, streaming, {
+    onBid: placed,
+    onSync: sync,
+    onMissing: missing,
+  });
+
+  return { room, retry, placed, missing };
 }
 
 // o status vem sempre da API: na virada de agendado ou ao vivo, refaz o GET sem esqueleto
-function useTurn(id: number, room: Room, setRoom: (room: Room) => void) {
+function useTurn(id: number, room: Room, setRoom: SetRoom) {
   const turn = turnOf(room);
   const status = room.status === 'ready' ? room.lot.status : null;
   const offset = room.status === 'ready' ? room.offset : 0;
@@ -83,12 +130,12 @@ function useTurn(id: number, room: Room, setRoom: (room: Room) => void) {
             timer = setTimeout(() => check(retries + 1), retryDelay);
             return;
           }
-          setRoom(toReady(lot));
+          setRoom((current) => synced(current, lot));
         },
         (caught: unknown) => {
           // lote cancelado com a página aberta; outro erro mantém a tela
           const missing = caught instanceof ApiError && caught.status === 404;
-          if (active && missing) setRoom({ status: 'missing' });
+          if (active && missing) setRoom(() => ({ status: 'missing' }));
         },
       );
     };

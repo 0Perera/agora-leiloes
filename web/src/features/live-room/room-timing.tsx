@@ -5,9 +5,9 @@ import { formatMoney } from '../../shared/lib/money';
 import { countNote, summaryOf } from './room-summary';
 import { useNow } from './use-room';
 
-type Props = { lot: LotDetail; offset: number };
+type Props = { lot: LotDetail; offset: number; extended: boolean };
 
-export function RoomSummary({ lot, offset }: Props) {
+export function RoomSummary({ lot, offset, extended }: Props) {
   const summary = summaryOf(lot);
 
   return (
@@ -17,13 +17,15 @@ export function RoomSummary({ lot, offset }: Props) {
     >
       <div>
         <span className="ag-lot__label">{summary.label}</span>
-        <span className="room-price">{formatMoney(summary.amount)}</span>
+        <span className="room-price" aria-live="polite">
+          {formatMoney(summary.amount)}
+        </span>
         <span className="room-bids">{summary.bids}</span>
       </div>
       {lot.status === 'scheduled' ? (
         <RoomOpens startsAt={lot.startsAt} />
       ) : (
-        <RoomCountdown lot={lot} offset={offset} />
+        <RoomCountdown lot={lot} offset={offset} extended={extended} />
       )}
     </section>
   );
@@ -41,12 +43,12 @@ function RoomOpens({ startsAt }: { startsAt: string }) {
   );
 }
 
-function RoomCountdown({ lot, offset }: Props) {
+function RoomCountdown({ lot, offset, extended }: Props) {
   const ended = lot.status === 'ended';
   const now = useNow(!ended);
   const seconds = ended ? 0 : secondsLeft(lot.endsAt, now, offset);
   const { first, second, inHours } = splitLeft(seconds);
-  const note = countNote(ended, seconds);
+  const note = countNote(ended, seconds, extended);
   const urgent = note.urgent ? ' ag-countdown--urgent' : '';
 
   return (

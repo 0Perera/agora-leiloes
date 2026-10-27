@@ -32,8 +32,14 @@ function bidsOf(lot: SummaryLot): string {
   return lot.status === 'ended' ? 'Sem lances' : 'Nenhum lance ainda';
 }
 
-export function countNote(ended: boolean, seconds: number): CountNote {
+export function countNote(
+  ended: boolean,
+  seconds: number,
+  extended = false,
+): CountNote {
   if (ended) return { text: 'Lote encerrado.', urgent: false };
+  if (extended)
+    return { text: 'Prorrogado em +2 min pelo último lance.', urgent: true };
   if (seconds < urgentSeconds) {
     return {
       text: 'Últimos minutos: um lance agora estende o fim em +2 min.',

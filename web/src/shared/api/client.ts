@@ -1,6 +1,8 @@
 import type {
   ApiErrorBody,
   AuthResponse,
+  BidEvent,
+  BidHistory,
   BookFilter,
   CatalogDepartment,
   CatalogSearch,
@@ -15,6 +17,8 @@ import type {
   LotFilter,
   LotShowcase,
   LotStatus,
+  PlaceBidRequest,
+  PlacedBid,
   SignupRequest,
   Wallet,
   WalletBalance,
@@ -26,12 +30,18 @@ export class ApiError extends Error {
   readonly status: number;
   readonly code?: string;
   readonly fields?: Record<string, string>;
+  readonly minimum?: number;
+  readonly available?: number;
+  readonly startsAt?: string;
 
   constructor(status: number, body: ApiErrorBody = {}) {
     super(body.code ?? `HTTP ${status}`);
     this.status = status;
     this.code = body.code;
     this.fields = body.fields;
+    this.minimum = body.minimum;
+    this.available = body.available;
+    this.startsAt = body.startsAt;
   }
 }
 
@@ -91,10 +101,16 @@ async function readError(response: Response): Promise<ApiErrorBody> {
 
 function toErrorBody(value: unknown): ApiErrorBody {
   if (typeof value !== 'object' || value === null) return {};
-  const { code, fields } = value as Record<string, unknown>;
+  const { code, fields, minimum, available, startsAt } = value as Record<
+    string,
+    unknown
+  >;
   return {
     code: typeof code === 'string' ? code : undefined,
     fields: isStringRecord(fields) ? fields : undefined,
+    minimum: typeof minimum === 'number' ? minimum : undefined,
+    available: typeof available === 'number' ? available : undefined,
+    startsAt: typeof startsAt === 'string' ? startsAt : undefined,
   };
 }
 
@@ -137,7 +153,75 @@ export const api = {
   },
   featured: () => request<LotCard | undefined>('/lots/featured'),
   lot: (id: number) => request<LotDetail>(`/lots/${id}`),
+  lotBids: (id: number, page: number) =>
+    request<BidHistory>(`/lots/${id}/bids?page=${page}`),
+  placeBid: (id: number, amount: number) => {
+    const body: PlaceBidRequest = { amount };
+    return request<PlacedBid>(`/lots/${id}/bids`, { method: 'POST', body });
+  },
 };
+
+type StreamHandlers = {
+  onBid: (bid: BidEvent) => void;
+  onOpen: () => void;
+};
+
+const reopenDelay = 3000;
+
+// o EventSource reconecta sozinho, mas desiste se a resposta vier sem status 200
+export function openLotStream(
+  id: number,
+  handlers: StreamHandlers,
+): () => void {
+  let source: EventSource | null = null;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let closed = false;
+
+  const connect = () => {
+    source = new EventSource(`${baseUrl}/lots/${id}/stream`);
+    source.addEventListener('open', handlers.onOpen);
+    source.addEventListener('bid', (event) => {
+      const bid = parseBidEvent(event.data);
+      if (bid) handlers.onBid(bid);
+    });
+    source.addEventListener('error', () => {
+      if (closed || source?.readyState !== EventSource.CLOSED) return;
+      timer = setTimeout(connect, reopenDelay);
+    });
+  };
+
+  connect();
+  return () => {
+    closed = true;
+    clearTimeout(timer);
+    source?.close();
+  };
+}
+
+function parseBidEvent(data: unknown): BidEvent | null {
+  if (typeof data !== 'string') return null;
+  try {
+    const value: unknown = JSON.parse(data);
+    return isBidEvent(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function isBidEvent(value: unknown): value is BidEvent {
+  if (typeof value !== 'object' || value === null) return false;
+  const { seq, amount, alias, createdAt, endsAt } = value as Record<
+    string,
+    unknown
+  >;
+  return (
+    Number.isInteger(seq) &&
+    Number.isInteger(amount) &&
+    typeof alias === 'string' &&
+    typeof createdAt === 'string' &&
+    typeof endsAt === 'string'
+  );
+}
 
 export function lotImageUrl(id: number): string {
   return `${baseUrl}/lots/${id}/image`;
