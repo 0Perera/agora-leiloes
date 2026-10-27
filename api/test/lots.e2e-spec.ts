@@ -97,6 +97,7 @@ describe('vitrine', () => {
 
     const list = await showcase({ status: 'scheduled' });
     expect(list.items).toEqual([]);
+    expect(list.counts.scheduled).toBe(0);
     expect((await featured()).status).toBe(204);
     await request(test.server).get(`/lots/${lotId}`).expect(404);
   });
