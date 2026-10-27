@@ -22,6 +22,7 @@ describe('DomainExceptionFilter.catch', () => {
     ['ARTWORK_ALREADY_LISTED', 409],
     ['LOT_HAS_BIDS', 409],
     ['LOT_ENDED', 422],
+    ['LOT_INTEGRITY_FAILED', 409],
   ])('responde %s com status %i e só o código', (code, status) => {
     const { host, response } = makeHost();
 

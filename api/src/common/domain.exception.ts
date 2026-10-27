@@ -12,7 +12,8 @@ export type DomainCode =
   | 'LOT_NOT_STARTED'
   | 'ALREADY_WINNING'
   | 'BID_BELOW_MINIMUM'
-  | 'INSUFFICIENT_BALANCE';
+  | 'INSUFFICIENT_BALANCE'
+  | 'LOT_INTEGRITY_FAILED';
 
 export class DomainException extends Error {
   constructor(

@@ -45,6 +45,11 @@ export class BidsService {
       // Lida depois do lock: lance que esperou na fila é julgado na hora em que entrou.
       const now = this.clock.now();
       const last = await lastBid(manager, lotId);
+      // Sem isso, apagar lances do fim e dar um lance novo reassinaria o selo,
+      // apagando a evidência da remoção (D-059).
+      if (lot.seal !== this.seal(lotId, last)) {
+        throw new DomainException('LOT_INTEGRITY_FAILED');
+      }
       const wallets = await lockWallets(manager, [userId, last?.userId]);
       const decision = decide({
         lot,
@@ -83,6 +88,14 @@ export class BidsService {
     });
   }
 
+  private seal(lotId: number, last: LastBid | null): string {
+    return sealLot(this.secret, {
+      lotId,
+      count: last?.seq ?? 0,
+      lastHash: last?.hash ?? null,
+    });
+  }
+
   private async record(
     manager: EntityManager,
     { lot, last, userId, amount, now }: Placement,
@@ -111,6 +124,7 @@ async function lockLot(manager: EntityManager, id: number) {
       endsAt: true,
       startingBid: true,
       increment: true,
+      seal: true,
     },
     where: { id, cancelledAt: IsNull() },
     lock: { mode: 'pessimistic_write' },
