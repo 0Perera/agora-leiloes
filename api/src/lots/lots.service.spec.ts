@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { DataSource, IsNull, Repository } from 'typeorm';
+import { forLot } from '../audit/alias';
 import { GENESIS, sealLot } from '../audit/chain';
 import { Bid } from '../bids/bid.entity';
 import type { ArtworkDetail } from '../catalog/artwork.mapper';
@@ -285,8 +286,33 @@ describe('LotsService.cancel', () => {
   });
 });
 
-function makeFind(hasBid: boolean) {
-  const lot = { ...makeLot(), increment: 5_000, bidCount: 0 };
+type FindRow = {
+  hasBid: boolean;
+  status: 'live' | 'ended';
+  settledAt: Date | null;
+  receiptAlias: string | null;
+  receiptAmount: number | null;
+  receiptToken: string | null;
+  receiptWinnerId: number | null;
+};
+
+function makeFind(override: Partial<FindRow> = {}) {
+  const row: FindRow = {
+    hasBid: false,
+    status: 'live',
+    settledAt: null,
+    receiptAlias: null,
+    receiptAmount: null,
+    receiptToken: null,
+    receiptWinnerId: null,
+    ...override,
+  };
+  const lot = {
+    ...makeLot(),
+    increment: 5_000,
+    bidCount: 0,
+    settledAt: row.settledAt,
+  };
   const builder = {
     where: () => builder,
     setParameter: () => builder,
@@ -296,10 +322,11 @@ function makeFind(hasBid: boolean) {
     leftJoin: () => builder,
     getRawAndEntities: jest.fn().mockResolvedValue({
       entities: [lot],
-      raw: [{ status: 'live', hasBid }],
+      raw: [row],
     }),
   };
   const lots = { createQueryBuilder: () => builder };
+  const settle = jest.fn();
   const service = new LotsService(
     {} as DataSource,
     {} as CatalogService,
@@ -307,14 +334,14 @@ function makeFind(hasBid: boolean) {
     {} as Repository<LotImage>,
     lots as unknown as Repository<Lot>,
     config,
-    {} as SettlementService,
+    { settle } as unknown as SettlementService,
   );
-  return { service, builder };
+  return { service, builder, settle };
 }
 
 describe('LotsService.find', () => {
   it('licitante com lance no lote recebe hasBid verdadeiro', async () => {
-    const { service } = makeFind(true);
+    const { service } = makeFind({ hasBid: true });
 
     const detail = await service.find(1, { id: 3, role: 'BIDDER' });
 
@@ -322,10 +349,27 @@ describe('LotsService.find', () => {
   });
 
   it('licitante sem lance no lote recebe hasBid falso', async () => {
-    const { service } = makeFind(false);
+    const { service } = makeFind({ hasBid: false });
 
     const detail = await service.find(1, { id: 3, role: 'BIDDER' });
 
     expect(detail.me?.hasBid).toBe(false);
+  });
+
+  it('entrega o token só ao vencedor, mesmo com outro licitante de mesmo alias', async () => {
+    const { service } = makeFind({
+      status: 'ended',
+      settledAt: NOW,
+      receiptAlias: forLot('test-secret', 4, 1),
+      receiptAmount: 150_000,
+      receiptToken: 'token-do-vencedor',
+      receiptWinnerId: 3,
+    });
+
+    const winner = await service.find(1, { id: 3, role: 'BIDDER' });
+    const rival = await service.find(1, { id: 4, role: 'BIDDER' });
+
+    expect(winner.me?.receiptToken).toBe('token-do-vencedor');
+    expect(rival.me).not.toHaveProperty('receiptToken');
   });
 });

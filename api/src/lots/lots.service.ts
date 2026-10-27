@@ -98,6 +98,7 @@ type DetailRaw = {
   receiptAlias: string | null;
   receiptAmount: number | null;
   receiptToken: string | null;
+  receiptWinnerId: number | null;
 };
 
 type DetailRow = {
@@ -248,6 +249,7 @@ export class LotsService {
       .addSelect('receipt.alias', 'receiptAlias')
       .addSelect('receipt.amount', 'receiptAmount')
       .addSelect('receipt.token', 'receiptToken')
+      .addSelect('receipt.winnerUserId', 'receiptWinnerId')
       .andWhere('lot.id = :id', { id })
       .setParameter('bidderId', bidderId)
       .getRawAndEntities<DetailRaw>();
@@ -264,11 +266,11 @@ export class LotsService {
     }
   }
 
-  // Vencedor reconhecido pelo alias, sem query: colisão de 30 bits no mesmo lote é desprezível.
+  // Vencedor pelo id, nunca pelo alias: dois licitantes podem colidir nos 30 bits do alias.
   private viewer(id: number, bidderId: number, raw: DetailRaw): LotViewerDto {
     const alias = forLot(this.secret, bidderId, id);
     const me: LotViewerDto = { alias, hasBid: raw.hasBid };
-    if (raw.receiptToken && raw.receiptAlias === alias) {
+    if (raw.receiptToken && raw.receiptWinnerId === bidderId) {
       me.receiptToken = raw.receiptToken;
     }
     return me;
