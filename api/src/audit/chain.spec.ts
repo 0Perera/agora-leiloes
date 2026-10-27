@@ -1,6 +1,6 @@
 import { createHmac } from 'node:crypto';
 
-import { BidLink, GENESIS, hashBid, sealLot } from './chain';
+import { BidLink, GENESIS, hashBid, LotSeal, sealLot } from './chain';
 
 const SECRET = 'test-secret-with-at-least-32-chars!';
 
@@ -14,6 +14,10 @@ function makeBid(override: Partial<BidLink> = {}): BidLink {
     prevHash: 'a'.repeat(64),
     ...override,
   };
+}
+
+function makeSeal(override: Partial<LotSeal> = {}): LotSeal {
+  return { lotId: 7, count: 3, lastHash: 'a'.repeat(64), ...override };
 }
 
 describe('chain.hashBid', () => {
@@ -56,9 +60,11 @@ describe('chain.hashBid', () => {
 
   it('não coincide com um selo de mesmo conteúdo', () => {
     const bid = makeBid();
-    const rest = `${bid.seq}|${bid.userId}|${bid.amount}|${bid.createdAt.toISOString()}|${bid.prevHash}`;
+    const rest = `${bid.userId}|${bid.amount}|${bid.createdAt.toISOString()}|${bid.prevHash}`;
 
-    expect(hashBid(SECRET, bid)).not.toBe(sealLot(SECRET, bid.lotId, rest));
+    expect(hashBid(SECRET, bid)).not.toBe(
+      sealLot(SECRET, { lotId: bid.lotId, count: bid.seq, lastHash: rest }),
+    );
   });
 
   it('muda o hash quando dígitos passam de um campo para o vizinho', () => {
@@ -70,20 +76,34 @@ describe('chain.hashBid', () => {
 
 describe('chain.sealLot', () => {
   it('muda o selo quando muda a contagem de lances', () => {
-    expect(sealLot(SECRET, 3, 'a'.repeat(64))).not.toBe(
-      sealLot(SECRET, 2, 'a'.repeat(64)),
+    expect(sealLot(SECRET, makeSeal({ count: 2 }))).not.toBe(
+      sealLot(SECRET, makeSeal()),
     );
   });
 
   it('muda o selo quando muda o último hash', () => {
-    expect(sealLot(SECRET, 3, 'a'.repeat(64))).not.toBe(
-      sealLot(SECRET, 3, 'b'.repeat(64)),
+    expect(sealLot(SECRET, makeSeal({ lastHash: 'b'.repeat(64) }))).not.toBe(
+      sealLot(SECRET, makeSeal()),
     );
   });
 
   it('selo de lote sem lances usa contagem zero e o hash genesis', () => {
-    expect(sealLot(SECRET, 0, null)).toBe(
-      createHmac('sha256', SECRET).update(`seal:0|${GENESIS}`).digest('hex'),
+    expect(sealLot(SECRET, makeSeal({ count: 0, lastHash: null }))).toBe(
+      createHmac('sha256', SECRET).update(`seal:7|0|${GENESIS}`).digest('hex'),
+    );
+  });
+
+  it('selos de lotes diferentes sem lances não coincidem', () => {
+    const empty = { count: 0, lastHash: null };
+
+    expect(sealLot(SECRET, makeSeal({ ...empty, lotId: 8 }))).not.toBe(
+      sealLot(SECRET, makeSeal(empty)),
+    );
+  });
+
+  it('muda o selo quando muda o lotId', () => {
+    expect(sealLot(SECRET, makeSeal({ lotId: 8 }))).not.toBe(
+      sealLot(SECRET, makeSeal()),
     );
   });
 });
