@@ -406,6 +406,10 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi registrar para a 4.3 que o `created_at` do lance vem do `Clock` da aplicação, nunca do `now()` do banco, porque o Postgres guarda microssegundos e o hash usa milissegundos.
 - Depois da revisão, aprovei os casos 14, 15 e 16: alias diferente por licitante no mesmo lote, hash conferido contra um valor conhecido e env válida sem o valor do segredo na mensagem de erro.
 - Pedi registrar o formato da serialização como decisão (D-056), com o caso 15 como o teste que o fixa, e tipar o prefixo do `sign()` com os quatro contextos.
+- Pedi incluir o `lotId` no selo, com os casos 17 (selos de lotes vazios diferentes não coincidem) e 18 (selo muda com o `lotId`) em TDD.
+
+**Erro da IA que peguei:**
+- O selo sem o `lotId` deixava todos os lotes sem lances com o mesmo selo: quem apagasse todos os lances de um lote poderia copiar o selo de outro lote vazio e a auditoria mostraria o lote como íntegro.
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta story.

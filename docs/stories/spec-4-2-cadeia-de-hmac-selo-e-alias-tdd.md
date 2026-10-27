@@ -22,7 +22,7 @@ context:
 
 **Always:**
 - Serialização canônica: `<prefixo>:` + campos em ordem fixa separados por `|`; data em `toISOString()` (UTC, milissegundos); valor inteiro. HMAC-SHA256 em hex.
-- `bid:` cobre `lotId|seq|userId|amount|createdAt|prevHash`; `seal:` cobre `count|lastHash`; `alias:` cobre `userId|lotId`.
+- `bid:` cobre `lotId|seq|userId|amount|createdAt|prevHash`; `seal:` cobre `lotId|count|lastHash`; `alias:` cobre `userId|lotId`.
 - Primeiro lance encadeia na constante `GENESIS`; lote sem lances sela com contagem 0 e `GENESIS`.
 - Alias = `"Licitante "` + 6 primeiros caracteres em base32 (RFC 4648, `A-Z2-7`) do HMAC `alias:` (D-044).
 - Casos 1 a 8 e 12 em TDD: commit `test(audit)` vermelho antes do `feat(audit)` (D-055). Casos 9 a 11 e 13: teste depois.
@@ -46,6 +46,8 @@ context:
 6. muda o selo quando muda a contagem de lances
 7. muda o selo quando muda o último hash
 8. selo de lote sem lances usa contagem zero e o hash genesis
+17. selos de lotes diferentes sem lances não coincidem
+18. muda o selo quando muda o lotId
 
 `describe('alias.forLot')`:
 9. gera o mesmo alias para o mesmo licitante no mesmo lote
@@ -92,11 +94,11 @@ context:
 ```ts
 export const GENESIS = '0'.repeat(64);
 hashBid(secret, { lotId, seq, userId, amount, createdAt, prevHash: string | null }): string
-sealLot(secret, count: number, lastHash: string | null): string
+sealLot(secret, { lotId, count, lastHash: string | null }): string
 forLot(secret, userId, lotId): string   // "Licitante K7QX2M"
 ```
 
-`null` vira `GENESIS`, para o chamador não repetir a constante. O caso 5 monta um selo com `count = lotId` e `lastHash` igual ao restante do payload do lance, então o conteúdo depois do prefixo é idêntico: só o prefixo separa. Base32 de 6 caracteres usa os 30 primeiros bits do HMAC (encoder de ~6 linhas no próprio `alias.ts`).
+`null` vira `GENESIS`, para o chamador não repetir a constante. O caso 5 monta um selo com `lotId` e `count = seq` e `lastHash` igual ao restante do payload do lance, então o conteúdo depois do prefixo é idêntico: só o prefixo separa. Base32 de 6 caracteres usa os 30 primeiros bits do HMAC (encoder de ~6 linhas no próprio `alias.ts`).
 
 `render.yaml` com `generateValue: true` só gera valor quando a variável ainda não existe; com o valor criado à mão antes do merge, o sync não o substitui.
 
@@ -111,6 +113,7 @@ forLot(secret, userId, lotId): string   // "Licitante K7QX2M"
 - Dois pares `test(audit)` → `feat(audit)`: `hashBid` (1-4, 12) e `sealLot` (5-8). O caso 5 foi para o segundo par porque compara com `sealLot`.
 - `sign(secret, prefix, fields)` exportado de `chain.ts` e reaproveitado por `alias.ts` (e pelo comprovante no épico 5).
 - Depois da revisão: casos 14 (alias por licitante), 15 (hash com valor conhecido) e 16 (env válida e sem vazar o valor), aprovados pelo usuário; cópia do segredo fora do Render no `deploy-notes.md`; regra do genesis para a 5.5 no `deferred-work.md`.
+- Correção pedida pelo usuário antes do merge: `lotId` no selo (sem ele, lotes vazios tinham selos iguais). `sealLot` passou a receber `{ lotId, count, lastHash }`, para os casos 17 e 18 ficarem vermelhos pelo motivo certo no commit `test` (o Jest não checa tipos, e com argumentos posicionais eles passavam por acaso). D-056 atualizada.
 - `env.validation.spec.ts` importa `reflect-metadata` por causa dos decorators do class-validator.
 
 ## Spec Change Log
