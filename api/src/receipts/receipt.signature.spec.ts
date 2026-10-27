@@ -1,7 +1,7 @@
 import { createHmac } from 'node:crypto';
 
 import { sign as signFields } from '../audit/chain';
-import { ReceiptFields, sign } from './receipt.signature';
+import { ReceiptFields, sign, verify } from './receipt.signature';
 
 const SECRET = 'test-secret-with-at-least-32-chars!';
 
@@ -61,4 +61,21 @@ describe('receiptSignature.sign', () => {
         .digest('hex'),
     );
   });
+});
+
+describe('receiptSignature.verify', () => {
+  it('aceita comprovante intacto', () => {
+    const receipt = makeReceipt();
+
+    expect(verify(SECRET, receipt, sign(SECRET, receipt))).toBe(true);
+  });
+
+  it.each(CHANGES)(
+    'recusa comprovante com o campo %s alterado',
+    (_field, override) => {
+      const signature = sign(SECRET, makeReceipt());
+
+      expect(verify(SECRET, makeReceipt(override), signature)).toBe(false);
+    },
+  );
 });
