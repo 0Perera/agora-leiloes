@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'node:crypto';
 import { DataSource, EntityManager, QueryFailedError } from 'typeorm';
 import { forLot } from '../audit/alias';
-import { sealLot } from '../audit/chain';
+import { expectedSeal } from '../audit/chain';
 import { Bid } from '../bids/bid.entity';
 import { Clock } from '../common/clock';
 import { Env } from '../config/env.validation';
@@ -50,7 +50,7 @@ export class SettlementService {
       const decision = decide({ lot, last, now });
       if (!decision.settle) return null;
       // Selo divergente é evidência de adulteração: nada se move (D-064).
-      if (lot.seal === null || lot.seal !== this.seal(lotId, last)) {
+      if (lot.seal !== expectedSeal(this.secret, lotId, last)) {
         this.logger.warn(`lot ${lotId} not settled: seal mismatch`);
         return null;
       }
@@ -83,14 +83,6 @@ export class SettlementService {
       signature: sign(this.secret, receipt),
     });
     return { alias: receipt.alias, amount: receipt.amount };
-  }
-
-  private seal(lotId: number, last: LastBid | null): string {
-    return sealLot(this.secret, {
-      lotId,
-      count: last?.seq ?? 0,
-      lastHash: last?.hash ?? null,
-    });
   }
 }
 

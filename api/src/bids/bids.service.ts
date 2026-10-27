@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DataSource, EntityManager, IsNull } from 'typeorm';
 import { forLot } from '../audit/alias';
-import { GENESIS, hashBid, sealLot } from '../audit/chain';
+import { expectedSeal, GENESIS, hashBid, sealLot } from '../audit/chain';
 import { Clock } from '../common/clock';
 import { DomainException } from '../common/domain.exception';
 import { Env } from '../config/env.validation';
@@ -102,7 +102,7 @@ export class BidsService {
       const last = await lastBid(manager, lotId);
       // Sem isso, apagar lances do fim e dar um lance novo reassinaria o selo,
       // apagando a evidência da remoção (D-059).
-      if (lot.seal !== this.seal(lotId, last)) {
+      if (lot.seal !== expectedSeal(this.secret, lotId, last)) {
         throw new DomainException('LOT_INTEGRITY_FAILED');
       }
       const wallets = await lockWallets(manager, [userId, last?.userId]);
@@ -140,14 +140,6 @@ export class BidsService {
         createdAt: now,
         endsAt: decision.endsAt,
       };
-    });
-  }
-
-  private seal(lotId: number, last: LastBid | null): string {
-    return sealLot(this.secret, {
-      lotId,
-      count: last?.seq ?? 0,
-      lastHash: last?.hash ?? null,
     });
   }
 
