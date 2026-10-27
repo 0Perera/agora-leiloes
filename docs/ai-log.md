@@ -558,3 +558,18 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - Mudei a proposta da data de fim na Carteira: o lote já vencido e ainda não liquidado mostra "Você arrematou · aguardando liquidação" em vez da data.
 - Mudei a proposta de um item novo no `deferred-work.md` para a virada de status do destaque: pedi um item só, junto com o achado da 3.6.
+
+## Story 5.1: Regras de liquidação (TDD)
+
+**O que a IA gerou:**
+- A regra pura que decide o que acontece com um lote vencido: não liquidar (com o motivo), fechar sem vencedor ou liquidar.
+- Os 15 casos aprovados, escritos antes do código, em dois pares de commits de teste e implementação.
+- Os movimentos de cada carteira como variações: débito e liberação do comprometido do vencedor, crédito do leiloeiro.
+- A pendência da 5.2 no `deferred-work.md`: conferir o selo do lote antes de mover saldo.
+
+**O que revisei e pedi para mudar:**
+- Aprovei os 15 casos de teste da story.
+- Pedi que a regra recebesse o leiloeiro do lote, para o caso do crédito no saldo dele.
+- Decidi a ordem dos motivos para não liquidar: cancelado, depois já liquidado, depois ainda não terminou, com dois casos fixando essa ordem.
+
+**Sugestões rejeitadas e por quê:**
