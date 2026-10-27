@@ -14,12 +14,15 @@ import { LotImage } from './lot-image.entity';
 import { Lot } from './lot.entity';
 import { LotsService } from './lots.service';
 import { SettlementService } from '../settlement/settlement.service';
+import { SettlementTimer } from '../settlement/settlement.timer';
 
 const NOW = new Date('2026-10-26T12:00:00Z');
 
 const config = {
   get: () => 'test-secret',
 } as unknown as ConfigService<Env, true>;
+
+const timer = { refresh: jest.fn() } as unknown as SettlementTimer;
 
 function makeArtwork(): ArtworkDetail {
   return {
@@ -62,6 +65,7 @@ describe('LotsService.create', () => {
       {} as Repository<Lot>,
       config,
       {} as SettlementService,
+      timer,
     );
 
     await expect(service.create(1, makeDto())).rejects.toThrow(
@@ -100,6 +104,7 @@ describe('LotsService.create', () => {
       {} as Repository<Lot>,
       config,
       {} as SettlementService,
+      timer,
     );
 
     await service.create(1, makeDto());
@@ -138,6 +143,7 @@ function makeFeatured(...results: (CardFields | null)[]) {
     { findOne } as unknown as Repository<Lot>,
     config,
     {} as SettlementService,
+    timer,
   );
   return { service, findOne };
 }
@@ -205,6 +211,7 @@ function makeCancel(lot: Pick<Lot, 'id' | 'endsAt'> | null, hasBids = false) {
     {} as Repository<Lot>,
     config,
     {} as SettlementService,
+    timer,
   );
   return { service, repository, bids };
 }
@@ -335,6 +342,7 @@ function makeFind(override: Partial<FindRow> = {}) {
     lots as unknown as Repository<Lot>,
     config,
     { settle } as unknown as SettlementService,
+    timer,
   );
   return { service, builder, settle };
 }

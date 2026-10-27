@@ -319,4 +319,12 @@ describe('SettlementTimer.refresh', () => {
 
     expect(api.timer.refreshes).toBe(before + 1);
   });
+
+  it('é chamado depois da criação de um lote', async () => {
+    const before = api.timer.refreshes;
+
+    await api.createLot(auctioneer, { startsAt: BASE, endsAt: at(30) });
+
+    expect(api.timer.refreshes).toBe(before + 1);
+  });
 });
