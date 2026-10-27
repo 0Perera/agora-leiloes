@@ -42,7 +42,8 @@ então qualquer mudança nelas é feita no dashboard. `DATABASE_URL` vem do banc
 - Roda **da máquina local**, apontando para a External Database URL do Render:
   `DATABASE_URL=<External Database URL> DB_SSL=true BID_HMAC_SECRET=<mesmo do Render> npm run seed`
 - O segredo de HMAC tem que ser **exatamente o mesmo** configurado no Render. Com um segredo diferente, os lances do seed ficam com hash inválido e a auditoria acusa adulteração.
-- Pelo mesmo motivo, trocar o segredo no Render depois do seed invalida toda a cadeia já gravada.
+- O segredo **nunca muda depois do seed**: trocar invalida todas as assinaturas gravadas (lances, selos, aliases e comprovantes) e a auditoria passa a acusar adulteração em todos os lotes.
+- `BID_HMAC_SECRET` está no `render.yaml` com `generateValue: true`, que só gera valor quando a variável ainda não existe. Criada à mão no dashboard antes do merge da 4.2, o sync do Blueprint não a substitui.
 
 ## Armadilhas de configuração
 
@@ -80,7 +81,7 @@ Front (Render Static Site, valores usados no build):
 
 O Postgres free expira 30 dias após a criação. Recriar na entrega faz os 30 dias cobrirem o processo seletivo inteiro.
 
-1. Apagar o Postgres atual no Render.
+1. Apagar o Postgres atual no Render. Só o banco: o `BID_HMAC_SECRET` da API continua o mesmo.
 2. Rodar um sync manual do Blueprint: ele recria o `agora-db` (mesma região e versão) e o `fromDatabase` liga a nova URL interna à API.
 3. Conferir na API se `DATABASE_URL` aponta para o banco novo; se não, atualizar com a nova Internal Database URL. O redeploy roda as migrations no start.
 4. Conferir nos logs que as migrations rodaram e que `/health` responde.

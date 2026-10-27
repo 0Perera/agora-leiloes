@@ -33,6 +33,10 @@
   summary: na 4.3, ligar os códigos de recusa da regra (`BidDecision`) ao `DomainCode`, para um código renomeado ou digitado errado não compilar.
   evidence: achado da revisão da 4.1; hoje o tipo da recusa repete os códigos como literais soltos. Pedido do usuário.
 
+- source_spec: `docs/stories/spec-4-2-cadeia-de-hmac-selo-e-alias-tdd.md`
+  summary: na 4.3, o `created_at` do lance vem do `Clock` da aplicação e é gravado explicitamente, nunca do `now()` do banco.
+  evidence: o Postgres guarda microssegundos e o hash usa `toISOString()` com milissegundos; com `now()`, a verificação da cadeia falharia em todo lance. Pedido do usuário.
+
 ## Polimento visual
 
 - source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`
