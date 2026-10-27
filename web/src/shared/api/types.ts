@@ -35,8 +35,7 @@ export type DepositRequest = {
 };
 
 export type CatalogDepartment =
-  | 'European Painting and Sculpture'
-  | 'Greek and Roman Art';
+  'European Painting and Sculpture' | 'Greek and Roman Art';
 
 export type Artwork = {
   id: number;
