@@ -2,6 +2,33 @@
 
 Registro de onde e como usei IA no projeto, o que revisei e pedi para mudar e o que rejeitei. Uma entrada por story, mais esta de planejamento.
 
+## Resumo
+
+Este projeto foi feito com ajuda de inteligência artificial, com papéis separados:
+
+- **Eu decido:** as regras do leilão, o que entra e o que fica de fora, como cada tela funciona e quando uma parte está pronta.
+- **O Claude Code implementa:** escreve o código, os testes e a documentação, e registra cada mudança no histórico do projeto.
+- **O Claude app pesquisa e revisa:** ajuda a entender o desafio, compara alternativas e dá uma segunda opinião sobre o que o Claude Code propõe.
+
+Cada parte do sistema passou por três passos:
+
+1. **Plano:** o Claude Code escreve um plano curto, com a lista de testes. Eu respondo as dúvidas e aprovo ou peço mudanças.
+2. **Implementação:** o Claude Code escreve o código e os testes. Depois, revisores independentes procuram falhas, e eu decido o que é corrigido.
+3. **Conferência:** testo no navegador, em telas de vários tamanhos, e só então decido se a parte entra na versão principal.
+
+Alguns erros da ferramenta que corrigi:
+
+- Afirmou que, num lance de última hora, o comum era o leilão acabar dois minutos depois do lance. Pedi para conferir: não há um padrão único, e a casa de leilões citada no próprio desafio soma os dois minutos ao horário de término. Ficou assim.
+- Sugeriu permitir a mesma obra em vários leilões ao mesmo tempo. Recusei, porque a casa venderia a mesma peça duas vezes.
+- Sugeriu decidir se um leilão pode ser cancelado por um contador de lances que não é protegido contra adulteração. Recusei: alguém com acesso ao banco poderia zerar o contador e cancelar um leilão disputado.
+- A proteção do histórico dava o mesmo selo a todos os leilões sem lances, e quem apagasse os lances de um deles poderia copiar o selo de outro. Pedi a correção, com testes.
+
+O que não deleguei:
+
+- As regras do negócio e a escolha entre alternativas.
+- A lista de testes de cada parte.
+- A conferência das telas e a decisão de publicar cada parte.
+
 ## Ferramentas
 
 - **Claude (app):** apoio de pesquisa e consulta durante o planejamento e na revisão das propostas do agente, junto com buscas no Google e na documentação oficial. Parte dos ajustes pedidos nas revisões veio de sugestões dele, que conferi contra as decisões antes de pedir; algumas recusei. As decisões registradas em "O que revisei e pedi para mudar" foram minhas.

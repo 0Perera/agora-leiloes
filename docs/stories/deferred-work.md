@@ -57,6 +57,10 @@
   summary: na 4.6, traduzir `LOT_INTEGRITY_FAILED` (409) na sala do lote.
   evidence: decisão do usuário na revisão da 4.3 (D-059); o lance passa a ser recusado quando o selo do lote não confere com a cadeia.
 
+- source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
+  summary: na 6.2, reescrever as entradas antigas do `docs/ai-log.md` no estilo novo: frases curtas, português corrente, detalhe técnico só quando for indispensável.
+  evidence: pedido do usuário na 4.3, junto com o "Resumo" do topo do ai-log e a regra nova no CLAUDE.md.
+
 ## Polimento visual
 
 - source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`
