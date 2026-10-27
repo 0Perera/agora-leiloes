@@ -235,17 +235,6 @@
 }
 
 /* estados */
-.room-skel {
-  background-color: var(--marble-200);
-  animation: room-skel 1.4s ease-in-out infinite;
-}
-
-@keyframes room-skel {
-  50% {
-    opacity: 0.5;
-  }
-}
-
 .room-skel-head {
   gap: var(--space-3);
 }
@@ -307,34 +296,8 @@
   color: var(--ink-muted);
 }
 
-.room-error {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-4);
-  max-width: 640px;
-  margin: 48px auto;
-}
-
-.room-error .ag-notice {
-  box-sizing: border-box;
-  width: 100%;
-}
-
-.room-error__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-}
-
-.room-error__back {
+.room-back {
   min-height: 44px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .room-skel {
-    animation: none;
-  }
 }
 
 /* empilhado, a obra vem antes e o arco cabe na tela com o título perto */

@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router';
+import { LoadError } from '../../shared/ui/load-error';
 import { parseLotId } from './room-summary';
 import { RoomView } from './room-view';
 import { useRoom } from './use-room';
@@ -26,15 +27,15 @@ function RoomSkeleton() {
       </p>
       <div className="room" aria-hidden="true">
         <div className="room__head room-skel-head">
-          <div className="room-skel room-skel--label" />
-          <div className="room-skel room-skel--title" />
-          <div className="room-skel room-skel--line" />
+          <div className="skel room-skel--label" />
+          <div className="skel room-skel--title" />
+          <div className="skel room-skel--line" />
         </div>
-        <div className="room__summary room-skel room-skel--summary" />
+        <div className="room__summary skel room-skel--summary" />
         <div className="room__art">
           <div className="room-niche">
             <div className="room-niche__stage">
-              <div className="room-skel room-skel--art" />
+              <div className="skel room-skel--art" />
             </div>
           </div>
         </div>
@@ -61,30 +62,15 @@ function RoomMissing() {
 
 function RoomError({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="room-error" role="alert">
-      <div className="ag-notice ag-notice--error">
-        <span className="ag-notice__mark" aria-hidden="true">
-          ✕
-        </span>
-        <p className="ag-notice__title">
-          Não foi possível abrir a sala do lote
-        </p>
-        <p className="ag-notice__text">
-          Não foi possível carregar o lote. Verifique a conexão e tente de novo.
-        </p>
-      </div>
-      <div className="room-error__actions">
-        <button
-          className="ag-btn ag-btn--secondary"
-          type="button"
-          onClick={onRetry}
-        >
-          Tentar de novo
-        </button>
-        <Link className="ag-btn ag-btn--quiet room-error__back" to="/">
-          Voltar à vitrine
-        </Link>
-      </div>
-    </div>
+    <LoadError
+      title="Não foi possível abrir a sala do lote"
+      text="Não foi possível carregar o lote. Verifique a conexão e tente de novo."
+      onRetry={onRetry}
+      centered
+    >
+      <Link className="ag-btn ag-btn--quiet room-back" to="/">
+        Voltar à vitrine
+      </Link>
+    </LoadError>
   );
 }

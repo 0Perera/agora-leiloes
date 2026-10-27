@@ -5,6 +5,7 @@ import { secondsLeft, splitLeft } from '../../shared/lib/countdown';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel } from '../../shared/lib/roman';
+import { LoadError } from '../../shared/ui/load-error';
 import type { Featured as FeaturedState } from './use-featured';
 
 const urgentSeconds = 120;
@@ -175,27 +176,11 @@ function FeaturedSkeleton() {
 function FeaturedError({ onRetry }: { onRetry: () => void }) {
   return (
     <section className="home-hero home-hero--error">
-      <div className="home-error" role="alert">
-        <div className="ag-notice ag-notice--error">
-          <span className="ag-notice__mark" aria-hidden="true">
-            ✕
-          </span>
-          <p className="ag-notice__title">
-            Não foi possível carregar o lote em destaque
-          </p>
-          <p className="ag-notice__text">
-            Algo deu errado ao buscar o destaque. A vitrine abaixo continua
-            disponível.
-          </p>
-        </div>
-        <button
-          className="ag-btn ag-btn--secondary"
-          type="button"
-          onClick={onRetry}
-        >
-          Tentar de novo
-        </button>
-      </div>
+      <LoadError
+        title="Não foi possível carregar o lote em destaque"
+        text="Algo deu errado ao buscar o destaque. A vitrine abaixo continua disponível."
+        onRetry={onRetry}
+      />
     </section>
   );
 }

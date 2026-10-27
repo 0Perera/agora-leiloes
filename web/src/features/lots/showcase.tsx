@@ -1,4 +1,5 @@
 import type { LotShowcase, LotStatus } from '../../shared/api/types';
+import { LoadError } from '../../shared/ui/load-error';
 import { Pager } from '../../shared/ui/pager';
 import { LotCard } from './lot-card';
 import { useShowcase } from './use-showcase';
@@ -192,25 +193,12 @@ function ShowcaseSkeleton() {
 
 function ShowcaseError({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="home-error home-error--centered" role="alert">
-      <div className="ag-notice ag-notice--error">
-        <span className="ag-notice__mark" aria-hidden="true">
-          ✕
-        </span>
-        <p className="ag-notice__title">Não foi possível carregar a vitrine</p>
-        <p className="ag-notice__text">
-          Algo deu errado ao buscar os lotes. Seus lances e seu saldo não foram
-          afetados.
-        </p>
-      </div>
-      <button
-        className="ag-btn ag-btn--secondary"
-        type="button"
-        onClick={onRetry}
-      >
-        Tentar de novo
-      </button>
-    </div>
+    <LoadError
+      title="Não foi possível carregar a vitrine"
+      text="Algo deu errado ao buscar os lotes. Seus lances e seu saldo não foram afetados."
+      onRetry={onRetry}
+      centered
+    />
   );
 }
 

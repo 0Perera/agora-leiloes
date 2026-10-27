@@ -8,6 +8,7 @@ import type {
   CatalogSearch as SearchPage,
 } from '../../shared/api/types';
 import { FieldError } from '../../shared/ui/field-error';
+import { LoadError } from '../../shared/ui/load-error';
 import { DepartmentPicker } from './department-picker';
 import { departments } from './departments';
 import { Pager } from '../../shared/ui/pager';
@@ -119,25 +120,11 @@ function SearchState({ search, selected, onPick, onRun }: StateProps) {
   if (search.status === 'loading') return <ResultsSkeleton />;
   if (search.status === 'error')
     return (
-      <div className="panel-error panel-error--row" role="alert">
-        <div className="ag-notice ag-notice--error">
-          <span className="ag-notice__mark" aria-hidden="true">
-            ✕
-          </span>
-          <p className="ag-notice__title">O acervo do museu não respondeu</p>
-          <p className="ag-notice__text">
-            A busca está fora do ar por enquanto. Os lotes já publicados
-            continuam funcionando normalmente.
-          </p>
-        </div>
-        <button
-          className="ag-btn ag-btn--secondary"
-          type="button"
-          onClick={() => void onRun(search.query)}
-        >
-          Tentar de novo
-        </button>
-      </div>
+      <LoadError
+        title="O acervo do museu não respondeu"
+        text="A busca está fora do ar por enquanto. Os lotes já publicados continuam funcionando normalmente."
+        onRetry={() => void onRun(search.query)}
+      />
     );
   const { query, result } = search;
   if (result.total === 0)
