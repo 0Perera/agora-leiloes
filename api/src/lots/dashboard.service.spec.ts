@@ -11,6 +11,7 @@ function makeService(row: unknown) {
     setParameter: jest.fn().mockReturnThis(),
     select: jest.fn().mockReturnThis(),
     addSelect: jest.fn().mockReturnThis(),
+    leftJoin: jest.fn().mockReturnThis(),
     getRawOne: jest.fn().mockResolvedValue(row),
   };
   const lots = { createQueryBuilder: () => builder };
@@ -29,12 +30,14 @@ describe('DashboardService.summary', () => {
       nextStartsAt: null,
       endedCount: 0,
       withoutBids: 0,
+      received: null,
     });
 
     expect(await service.summary(1)).toEqual({
       live: { count: 0, currentBidTotal: 0 },
       scheduled: { count: 0, nextStartsAt: null },
       ended: { count: 0, withoutBids: 0 },
+      received: 0,
     });
   });
 });

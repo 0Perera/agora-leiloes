@@ -17,4 +17,6 @@ export class DashboardSummaryDto {
   live!: LiveSummaryDto;
   scheduled!: ScheduledSummaryDto;
   ended!: EndedSummaryDto;
+  // Soma dos comprovantes dos lotes do leiloeiro, não o saldo da carteira (D-039).
+  received!: number;
 }
