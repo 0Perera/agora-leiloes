@@ -553,4 +553,5 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Decidi deixar a virada de status do destaque com a página aberta para depois, num item só do `deferred-work.md` junto com o achado da revisão da 3.6.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma.
+- Mudei a proposta da data de fim na Carteira: o lote já vencido e ainda não liquidado mostra "Você arrematou · aguardando liquidação" em vez da data.
+- Mudei a proposta de um item novo no `deferred-work.md` para a virada de status do destaque: pedi um item só, junto com o achado da 3.6.
