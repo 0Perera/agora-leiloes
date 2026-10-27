@@ -463,3 +463,23 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta story.
+
+## Story 4.4: Testcontainers, CI e lances simultâneos
+
+**O que a IA gerou:**
+- `setup(app)` extraído do `main.ts`, para a app de teste usar o mesmo pipe e os mesmos filters de produção.
+- Infraestrutura do e2e: um Postgres 17 por execução (Testcontainers), app inteira com relógio de teste, catálogo falso e pool de 20 conexões, e tabelas limpas no começo de cada suíte.
+- Barreira do teste de concorrência: uma conexão segura a linha do lote, os lances ficam na fila e o teste só solta quando vê todos parados no lock.
+- As três suítes com os 22 casos aprovados: lances, lances simultâneos e vitrine.
+- Job `api-e2e` no CI e atualização do README.
+
+**O que revisei e pedi para mudar:**
+- Decidi usar um catálogo falso nos testes, devolvendo a peça e a imagem, sem chamar a Cleveland (D-060).
+- Decidi um container só para a execução inteira, com suítes em série e tabelas limpas no começo de cada uma (D-061).
+- Decidi que eu mesmo incluo o `api-e2e` na proteção da `main`, depois do primeiro run verde.
+- Pedi a extração do `setup(app)` num commit separado.
+- Aprovei os casos 1 a 22.
+- Pedi registrar no `deferred-work.md` a unificação do CSS repetido entre telas e um padrão único de chamada à API no front.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma nesta story.
