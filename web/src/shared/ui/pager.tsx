@@ -1,4 +1,6 @@
-// a API do acervo e a do livro aceitam no máximo a página 100
+import './pager.css';
+
+// as listagens paginadas da API aceitam no máximo a página 100
 const maxPage = 100;
 
 type Props = {
@@ -14,7 +16,7 @@ export function Pager({ page, pageSize, total, label, onTurn }: Props) {
   const pages = Math.min(Math.ceil(total / pageSize), maxPage);
 
   return (
-    <nav className="panel-pager" aria-label={label}>
+    <nav className="pager" aria-label={label}>
       <button
         className="ag-btn ag-btn--secondary"
         type="button"
@@ -23,7 +25,7 @@ export function Pager({ page, pageSize, total, label, onTurn }: Props) {
       >
         Anterior
       </button>
-      <span className="panel-muted">
+      <span className="pager__status">
         Página {page} de {pages}
       </span>
       <button
