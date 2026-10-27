@@ -19,6 +19,7 @@
 - source_spec: `docs/stories/spec-3-4-painel-do-leiloeiro-na-api.md`
   summary: na story 4.3, trocar a checagem "tem lance" do cancelamento (POST /lots/:id/cancel) de `bid_count > 0` para `EXISTS` na tabela `bids`, depois do lock do lote.
   evidence: decisão do usuário na aprovação da 3.4; `bid_count` é só cache de exibição (D-042) e a tabela `bids` ainda não existe.
+  status: feito na 4.3 (`spec-4-3-dar-lance-na-api.md`).
 
 - source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`
   summary: na 3.7, adicionar a ação "Abrir sala" na coluna Ação do livro de lotes do painel.
@@ -28,18 +29,37 @@
 - source_spec: `docs/stories/spec-4-1-regras-de-lance-saldo-comprometido-e-anti-sniping-tdd.md`
   summary: na 4.3, teste de serviço em que o licitante superado volta a dar lance e compromete o valor cheio do novo lance (o compromisso anterior já foi liberado quando ele foi superado).
   evidence: achado da revisão da 4.1; a regra pura não recebe o lance anterior do licitante, então o caso 19 não distingue valor cheio de diferença. Pedido do usuário.
+  status: feito na 4.3 (`spec-4-3-dar-lance-na-api.md`).
 
 - source_spec: `docs/stories/spec-4-1-regras-de-lance-saldo-comprometido-e-anti-sniping-tdd.md`
   summary: na 4.3, ligar os códigos de recusa da regra (`BidDecision`) ao `DomainCode`, para um código renomeado ou digitado errado não compilar.
   evidence: achado da revisão da 4.1; hoje o tipo da recusa repete os códigos como literais soltos. Pedido do usuário.
+  status: feito na 4.3 (`spec-4-3-dar-lance-na-api.md`).
 
 - source_spec: `docs/stories/spec-4-2-cadeia-de-hmac-selo-e-alias-tdd.md`
   summary: na 4.3, o `created_at` do lance vem do `Clock` da aplicação e é gravado explicitamente, nunca do `now()` do banco.
   evidence: o Postgres guarda microssegundos e o hash usa `toISOString()` com milissegundos; com `now()`, a verificação da cadeia falharia em todo lance. Pedido do usuário.
+  status: feito na 4.3 (`spec-4-3-dar-lance-na-api.md`).
 
 - source_spec: `docs/stories/spec-4-2-cadeia-de-hmac-selo-e-alias-tdd.md`
   summary: na 5.5, o verificador aceita `GENESIS` como `prev_hash` só no primeiro lance (`seq` 1) e exige, em todos os outros, `prev_hash` igual ao hash do lance anterior.
   evidence: achado da revisão da 4.2; `hashBid` trata `null` e `GENESIS` igual e não confere o `seq`, então essa checagem fica com o verificador.
+
+- source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
+  summary: na 5.5, selo nulo em `lots.seal` conta como lote não íntegro.
+  evidence: decisão do usuário na 4.3 (D-058); o selo vazio é gravado na criação do lote, então selo nulo só existe em lote criado antes da migration da 4.3, e em produção o banco é recriado na entrega.
+
+- source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
+  summary: na 4.4, teste HTTP de `POST /lots/:id/bids` com 403 `ROLE_NOT_ALLOWED` para leiloeiro e 401 sem token.
+  evidence: achado da revisão da 4.3; trocar ou remover o `@Auth('BIDDER')` da rota deixa a suíte verde, e o repo cobre a borda HTTP com Testcontainers a partir da 4.4.
+
+- source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
+  summary: na 4.6, traduzir `LOT_INTEGRITY_FAILED` (409) na sala do lote.
+  evidence: decisão do usuário na revisão da 4.3 (D-059); o lance passa a ser recusado quando o selo do lote não confere com a cadeia.
+
+- source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
+  summary: na 6.2, reescrever as entradas antigas do `docs/ai-log.md` no estilo novo: frases curtas, português corrente, detalhe técnico só quando for indispensável.
+  evidence: pedido do usuário na 4.3, junto com o "Resumo" do topo do ai-log e a regra nova no CLAUDE.md.
 
 ## Polimento visual
 

@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   DataSource,
@@ -16,10 +17,13 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
+import { GENESIS, sealLot } from '../audit/chain';
+import { Bid } from '../bids/bid.entity';
 import type { ArtworkDetail } from '../catalog/artwork.mapper';
 import { CatalogService } from '../catalog/catalog.service';
 import type { ImageFile } from '../catalog/cleveland.client';
 import { Clock } from '../common/clock';
+import { Env } from '../config/env.validation';
 import { CreateLotDto } from './dto/create-lot.dto';
 import { ListLotsQueryDto } from './dto/list-lots-query.dto';
 import {
@@ -86,13 +90,18 @@ type Conditions = Pick<
 
 @Injectable()
 export class LotsService {
+  private readonly secret: string;
+
   constructor(
     private readonly dataSource: DataSource,
     private readonly catalog: CatalogService,
     private readonly clock: Clock,
     @InjectRepository(LotImage) private readonly images: Repository<LotImage>,
     @InjectRepository(Lot) private readonly lots: Repository<Lot>,
-  ) {}
+    config: ConfigService<Env, true>,
+  ) {
+    this.secret = config.get('BID_HMAC_SECRET', { infer: true });
+  }
 
   async list(query: ListLotsQueryDto): Promise<LotShowcaseDto> {
     const now = this.clock.now();
@@ -160,13 +169,17 @@ export class LotsService {
     await this.dataSource.transaction(async (manager) => {
       const lots = manager.getRepository(Lot);
       const lot = await lots.findOne({
-        select: { id: true, endsAt: true, bidCount: true },
+        select: { id: true, endsAt: true },
         where: { id, auctioneerId, cancelledAt: IsNull() },
         lock: { mode: 'pessimistic_write' },
       });
       if (!lot) throw new NotFoundException();
+      // Depois do lock: um lance que chegou antes já está em bids, e bid_count é só exibição.
+      const hasBids = await manager
+        .getRepository(Bid)
+        .exists({ where: { lotId: id } });
       const now = this.clock.now();
-      assertCancellable(lot, now);
+      assertCancellable({ endsAt: lot.endsAt, hasBids }, now);
       await lots.update({ id }, { cancelledAt: now });
     });
   }
@@ -247,6 +260,13 @@ export class LotsService {
     const id = Number(result.identifiers[0].id);
     const generated: unknown = result.generatedMaps[0]?.number;
     if (typeof generated !== 'number') throw new Error('lot number missing');
+    // Selo vazio desde a criação: selo nulo só existe em lote anterior à 4.3 (D-058).
+    const seal = sealLot(this.secret, {
+      lotId: id,
+      count: 0,
+      lastHash: GENESIS,
+    });
+    await lots.update({ id }, { seal });
 
     await manager.getRepository(LotImage).insert({
       lotId: id,

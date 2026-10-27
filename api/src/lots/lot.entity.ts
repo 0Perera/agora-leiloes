@@ -94,6 +94,10 @@ export class Lot {
   @Column({ name: 'bid_count', type: 'integer', default: 0 })
   bidCount!: number;
 
+  // Nulo só em lote criado antes do selo existir (D-058).
+  @Column({ type: 'varchar', length: 64, nullable: true })
+  seal!: string | null;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;
 }

@@ -2,6 +2,33 @@
 
 Registro de onde e como usei IA no projeto, o que revisei e pedi para mudar e o que rejeitei. Uma entrada por story, mais esta de planejamento.
 
+## Resumo
+
+Este projeto foi feito com ajuda de inteligência artificial, com papéis separados:
+
+- **Eu decido:** as regras do leilão, o que entra e o que fica de fora, como cada tela funciona e quando uma parte está pronta.
+- **O Claude Code implementa:** escreve o código, os testes e a documentação, e registra cada mudança no histórico do projeto.
+- **O Claude app pesquisa e revisa:** ajuda a entender o desafio, compara alternativas e dá uma segunda opinião sobre o que o Claude Code propõe.
+
+Cada parte do sistema passou por três passos:
+
+1. **Plano:** o Claude Code escreve um plano curto, com a lista de testes. Eu respondo as dúvidas e aprovo ou peço mudanças.
+2. **Implementação:** o Claude Code escreve o código e os testes. Depois, revisores independentes procuram falhas, e eu decido o que é corrigido.
+3. **Conferência:** testo no navegador, em telas de vários tamanhos, e só então decido se a parte entra na versão principal.
+
+Alguns erros da ferramenta que corrigi:
+
+- Afirmou que, num lance de última hora, o comum era o leilão acabar dois minutos depois do lance. Pedi para conferir: não há um padrão único, e a casa de leilões citada no próprio desafio soma os dois minutos ao horário de término. Ficou assim.
+- Sugeriu permitir a mesma obra em vários leilões ao mesmo tempo. Recusei, porque a casa venderia a mesma peça duas vezes.
+- Sugeriu decidir se um leilão pode ser cancelado por um contador de lances que não é protegido contra adulteração. Recusei: alguém com acesso ao banco poderia zerar o contador e cancelar um leilão disputado.
+- A proteção do histórico dava o mesmo selo a todos os leilões sem lances, e quem apagasse os lances de um deles poderia copiar o selo de outro. Pedi a correção, com testes.
+
+O que não deleguei:
+
+- As regras do negócio e a escolha entre alternativas.
+- A lista de testes de cada parte.
+- A conferência das telas e a decisão de publicar cada parte.
+
 ## Ferramentas
 
 - **Claude (app):** apoio de pesquisa e consulta durante o planejamento e na revisão das propostas do agente, junto com buscas no Google e na documentação oficial. Parte dos ajustes pedidos nas revisões veio de sugestões dele, que conferi contra as decisões antes de pedir; algumas recusei. As decisões registradas em "O que revisei e pedi para mudar" foram minhas.
@@ -410,6 +437,29 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Erro da IA que peguei:**
 - O selo sem o `lotId` deixava todos os lotes sem lances com o mesmo selo: quem apagasse todos os lances de um lote poderia copiar o selo de outro lote vazio e a auditoria mostraria o lote como íntegro.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma nesta story.
+
+## Story 4.3: Dar lance na API
+
+**O que a IA gerou:**
+- `POST /lots/:id/bids` (`@Auth('BIDDER')`, `LotIdPipe`, `PlaceBidDto`) e `BidsService.place`: lock do lote, hora do `Clock` lida depois do lock, último lance por `seq DESC` e carteiras travadas numa query com `ORDER BY id`, tudo só com o `manager`.
+- Ligação de `decide()`, `hashBid()`, `sealLot()` e `forLot()`: lance gravado com o `seq` seguinte, `prev_hash` (`GENESIS` no primeiro) e `created_at` do `Clock`; lote atualizado num `UPDATE` (selo, lance atual, contagem, fim); comprometido liberado do líder anterior e comprometido no novo lance.
+- Entidade `Bid` e migration com FKs, `CHECK (seq >= 1 AND amount > 0)`, `UNIQUE (lot_id, seq)` e a coluna `lots.seal`.
+- `DomainException` com detalhe, quatro códigos novos (422) no filter e códigos da `Refusal` amarrados ao `DomainCode`.
+- Cancelamento com `EXISTS` em `bids` depois do lock e selo vazio gravado na criação do lote.
+- Os 14 casos aprovados, tipos `PlaceBidRequest`/`PlacedBid` no front e os campos de detalhe no `ApiErrorBody`.
+- Depois da revisão: conferência do selo antes de gravar o lance (`LOT_INTEGRITY_FAILED`, 409) em TDD, seis casos novos e os dois ajustes de estilo.
+
+**O que revisei e pedi para mudar:**
+- Decidi manter só o `UNIQUE (lot_id, seq)`, sem índice separado em `lot_id`, como desvio consciente do critério (D-057).
+- Decidi gravar o selo vazio na criação do lote e tratar selo nulo como não íntegro na 5.5 (D-058).
+- Aprovei os casos 1 a 14 e pedi que o caso 8 conferisse os quatro campos do lote (`seal`, `current_bid`, `bid_count`, `ends_at`).
+- Aprovei os seis casos sugeridos pela revisão: selo vazio na criação, resposta do lance, `EXISTS` depois do lock, `bid_count` sem lances em `bids`, recusas sem gravação e DTO com valor ausente, zero e válido.
+- Decidi tratar já na 4.3 o lance dado depois de lances apagados do fim: recusar com 409 `LOT_INTEGRITY_FAILED` quando o selo não confere, inclusive nulo, sem query a mais e em TDD (D-059).
+- Pedi registrar no `deferred-work.md` a tradução de `LOT_INTEGRITY_FAILED` na sala, para a 4.6.
+- Pedi corrigir os dois ajustes de estilo: o `code` depois do detalhe no filter e o `bidCount` fora do helper de cancelamento.
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta story.

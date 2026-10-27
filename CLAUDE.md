@@ -344,6 +344,8 @@ Ruins: `update`, `ajustes`, `wip`, `fix: vários bugs`, `feat: cria lances, cart
 - Nessa seção, só verbos do que eu fiz: decidi, escolhi, aprovei, recusei, pedi. Nunca "reescrevi", "acrescentei",
   "corrigi" ou "implementei": eu não escrevo código à mão, eu peço e o agente faz ("Pedi um caso de teste a mais").
 - "Sugestões rejeitadas" inclui tudo o que eu recusei ou mudei de uma proposta do agente.
+- Entradas novas em frases curtas, em português corrente, com detalhe técnico só quando for indispensável.
+- A seção "Resumo" do topo é para quem não é técnico: linguagem simples, no máximo 30 linhas, sem nomes de arquivo, códigos de erro ou siglas.
 - O agente faz os commits seguindo a seção Commits. Push e abertura de PR só com pedido explícito.
 
 ## Comportamento esperado do agente

@@ -1,3 +1,5 @@
+import type { DomainCode } from '../common/domain.exception';
+
 const SNIPING_WINDOW_MS = 2 * 60 * 1000;
 
 export type BidLot = {
@@ -18,11 +20,13 @@ export type BidState = {
   now: Date;
 };
 
-type Refusal =
-  | { accepted: false; code: 'LOT_NOT_STARTED'; startsAt: Date }
-  | { accepted: false; code: 'LOT_ENDED' | 'ALREADY_WINNING' }
-  | { accepted: false; code: 'BID_BELOW_MINIMUM'; minimum: number }
-  | { accepted: false; code: 'INSUFFICIENT_BALANCE'; available: number };
+type Code<C extends DomainCode> = Extract<DomainCode, C>;
+
+export type Refusal =
+  | { accepted: false; code: Code<'LOT_NOT_STARTED'>; startsAt: Date }
+  | { accepted: false; code: Code<'LOT_ENDED' | 'ALREADY_WINNING'> }
+  | { accepted: false; code: Code<'BID_BELOW_MINIMUM'>; minimum: number }
+  | { accepted: false; code: Code<'INSUFFICIENT_BALANCE'>; available: number };
 
 type Acceptance = {
   accepted: true;

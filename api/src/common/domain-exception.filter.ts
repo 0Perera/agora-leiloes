@@ -17,12 +17,18 @@ const STATUS: Record<DomainCode, HttpStatus> = {
   ARTWORK_ALREADY_LISTED: HttpStatus.CONFLICT,
   LOT_HAS_BIDS: HttpStatus.CONFLICT,
   LOT_ENDED: HttpStatus.UNPROCESSABLE_ENTITY,
+  LOT_NOT_STARTED: HttpStatus.UNPROCESSABLE_ENTITY,
+  ALREADY_WINNING: HttpStatus.UNPROCESSABLE_ENTITY,
+  BID_BELOW_MINIMUM: HttpStatus.UNPROCESSABLE_ENTITY,
+  INSUFFICIENT_BALANCE: HttpStatus.UNPROCESSABLE_ENTITY,
+  LOT_INTEGRITY_FAILED: HttpStatus.CONFLICT,
 };
 
 @Catch(DomainException)
 export class DomainExceptionFilter implements ExceptionFilter<DomainException> {
   catch(exception: DomainException, host: ArgumentsHost): void {
     const response = host.switchToHttp().getResponse<Response>();
-    response.status(STATUS[exception.code]).json({ code: exception.code });
+    const { code, detail } = exception;
+    response.status(STATUS[code]).json({ ...detail, code });
   }
 }

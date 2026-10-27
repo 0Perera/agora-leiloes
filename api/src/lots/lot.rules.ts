@@ -5,7 +5,7 @@ export const START_TOLERANCE_MS = 60_000;
 
 export type Schedule = { startsAt: Date; endsAt: Date };
 export type ListedLot = { cancelledAt: Date | null; endsAt: Date };
-export type CancelState = { endsAt: Date; bidCount: number };
+export type CancelState = { endsAt: Date; hasBids: boolean };
 
 export function scheduleErrors(
   { startsAt, endsAt }: Schedule,
@@ -36,5 +36,5 @@ export function assertCancellable(lot: CancelState, now: Date): void {
   if (now.getTime() >= lot.endsAt.getTime()) {
     throw new DomainException('LOT_ENDED');
   }
-  if (lot.bidCount > 0) throw new DomainException('LOT_HAS_BIDS');
+  if (lot.hasBids) throw new DomainException('LOT_HAS_BIDS');
 }
