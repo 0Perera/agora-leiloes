@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, api } from '../../shared/api/client';
 import type { LotDetail } from '../../shared/api/types';
 import { clockOffset } from '../../shared/lib/countdown';
+import { retryTurn } from './room-summary';
 
 export type Room =
   | { status: 'loading' }
@@ -13,6 +14,7 @@ export type Room =
 const maxDelay = 2_147_483_647;
 // folga para o servidor já ver o lote no novo estado quando o GET chegar
 const turnMargin = 500;
+const retryDelay = 2000;
 
 function toReady(lot: LotDetail): Room {
   return {
@@ -59,28 +61,42 @@ export function useRoom(id: number) {
   return { room, retry };
 }
 
-// o status vem sempre da API: na virada de agendado ou ao vivo, refaz o GET uma vez, sem esqueleto
+// o status vem sempre da API: na virada de agendado ou ao vivo, refaz o GET sem esqueleto
 function useTurn(id: number, room: Room, setRoom: (room: Room) => void) {
   const turn = turnOf(room);
+  const status = room.status === 'ready' ? room.lot.status : null;
   const offset = room.status === 'ready' ? room.offset : 0;
   const fetched = useRef<number | null>(null);
 
   useEffect(() => {
-    if (turn === null || fetched.current === turn) return;
+    if (turn === null || status === null || fetched.current === turn) return;
     const delay = turn - (Date.now() + offset) + turnMargin;
     if (delay > maxDelay) return;
     let active = true;
-    const timer = setTimeout(
+    let timer: ReturnType<typeof setTimeout>;
+
+    const check = (retries: number) => {
+      api.lot(id).then(
+        (lot) => {
+          if (!active) return;
+          if (retryTurn(status, lot.status, retries)) {
+            timer = setTimeout(() => check(retries + 1), retryDelay);
+            return;
+          }
+          setRoom(toReady(lot));
+        },
+        (caught: unknown) => {
+          // lote cancelado com a página aberta; outro erro mantém a tela
+          const missing = caught instanceof ApiError && caught.status === 404;
+          if (active && missing) setRoom({ status: 'missing' });
+        },
+      );
+    };
+
+    timer = setTimeout(
       () => {
         fetched.current = turn;
-        api.lot(id).then(
-          (lot) => active && setRoom(toReady(lot)),
-          (caught: unknown) => {
-            // lote cancelado com a página aberta; outro erro mantém a tela
-            const missing = caught instanceof ApiError && caught.status === 404;
-            if (active && missing) setRoom({ status: 'missing' });
-          },
-        );
+        check(0);
       },
       Math.max(0, delay),
     );
@@ -88,7 +104,7 @@ function useTurn(id: number, room: Room, setRoom: (room: Room) => void) {
       active = false;
       clearTimeout(timer);
     };
-  }, [id, turn, offset, setRoom]);
+  }, [id, turn, status, offset, setRoom]);
 }
 
 export function useNow(active: boolean): number {

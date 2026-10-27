@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { LotDetail } from '../../shared/api/types';
-import { countNote, parseLotId, summaryOf } from './room-summary';
+import { countNote, parseLotId, retryTurn, summaryOf } from './room-summary';
 
 type SummaryLot = Pick<
   LotDetail,
@@ -48,5 +48,12 @@ describe('countNote', () => {
 describe('parseLotId', () => {
   it('não transforma id não numérico em busca na API', () => {
     expect(parseLotId('abc')).toBeNull();
+  });
+});
+
+describe('retryTurn', () => {
+  it('repete a busca no máximo 3 vezes enquanto o status não muda', () => {
+    const retries = [0, 1, 2, 3].map((done) => retryTurn('live', 'live', done));
+    expect(retries).toEqual([true, true, true, false]);
   });
 });

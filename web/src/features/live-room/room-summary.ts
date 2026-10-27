@@ -10,6 +10,7 @@ export type Summary = { label: string; amount: number; bids: string };
 export type CountNote = { text: string; urgent: boolean };
 
 const urgentSeconds = 120;
+const maxTurnRetries = 3;
 const maxId = 2_147_483_647;
 
 export function summaryOf(lot: SummaryLot): Summary {
@@ -50,4 +51,13 @@ export function parseLotId(param: string | undefined): number | null {
   if (param === undefined || !/^[1-9]\d*$/.test(param)) return null;
   const id = Number(param);
   return id <= maxId ? id : null;
+}
+
+// o relógio do servidor pode virar o status um pouco depois da contagem zerar
+export function retryTurn(
+  before: LotDetail['status'],
+  after: LotDetail['status'],
+  retries: number,
+): boolean {
+  return after === before && retries < maxTurnRetries;
 }
