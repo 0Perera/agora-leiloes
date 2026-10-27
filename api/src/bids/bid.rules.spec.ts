@@ -71,6 +71,25 @@ describe('BidRules.decide', () => {
         startsAt,
       });
     });
+
+    it('recusa por status antes de checar a liderança', () => {
+      const bid = makeBid({
+        lot: makeLot({ endsAt: at(-MINUTE) }),
+        last: { userId: BIDDER, amount: 10_000 },
+        amount: 11_000,
+      });
+
+      expect(decide(bid)).toEqual({ accepted: false, code: 'LOT_ENDED' });
+    });
+
+    it('recusa por status antes de checar o valor', () => {
+      const bid = makeBid({
+        lot: makeLot({ endsAt: at(-MINUTE) }),
+        amount: 9_000,
+      });
+
+      expect(decide(bid)).toEqual({ accepted: false, code: 'LOT_ENDED' });
+    });
   });
 
   describe('líder', () => {
