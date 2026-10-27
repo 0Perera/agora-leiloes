@@ -11,6 +11,7 @@ import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel } from '../../shared/lib/roman';
 import { BidForm } from './bid-form';
+import { olderPage } from './room-bids';
 import { RoomHistory } from './room-history';
 import { RoomOpening, RoomSituation } from './room-status';
 import { RoomSummary } from './room-timing';
@@ -22,6 +23,7 @@ type Props = {
   connection: Connection;
   onPlaced: (bid: BidEvent) => void;
   onMissing: () => void;
+  onOlder: (page: number) => Promise<void>;
 };
 
 type Viewer = 'visitor' | 'auctioneer' | 'bidder';
@@ -32,11 +34,19 @@ const badges = {
   ended: { className: 'ag-badge ag-badge--closed', text: 'Encerrado' },
 };
 
-export function RoomView({ room, connection, onPlaced, onMissing }: Props) {
+export function RoomView({
+  room,
+  connection,
+  onPlaced,
+  onMissing,
+  onOlder,
+}: Props) {
   const { lot } = room;
   const viewer = useViewer(lot);
   const open = lot.status !== 'ended';
   const offline = connection === 'lost';
+  const page = olderPage(room);
+  const older = page === null ? null : () => onOlder(page);
 
   return (
     <>
@@ -45,34 +55,7 @@ export function RoomView({ room, connection, onPlaced, onMissing }: Props) {
           Conexão perdida. Reconectando…
         </p>
       )}
-      <div className={layoutOf(lot, viewer)}>
-        <RoomHead lot={lot} />
-        <RoomSummary
-          lot={lot}
-          offset={room.offset}
-          extended={room.extended}
-          leader={leaderOf(lot, room.bids[0])}
-        />
-        <RoomStatus lot={lot} viewer={viewer} room={room} />
-        {open && (
-          <section className="room__form" aria-label="Dar lance">
-            {viewer === 'bidder' && (
-              <BidForm
-                lot={lot}
-                offline={offline}
-                onPlaced={onPlaced}
-                onMissing={onMissing}
-              />
-            )}
-            {viewer === 'visitor' && <VisitorBox />}
-            {viewer === 'auctioneer' && (
-              <p className="room-aside">
-                Leiloeiros acompanham os lotes, mas não dão lances.
-              </p>
-            )}
-          </section>
-        )}
-        <RoomHistory lot={lot} bids={room.bids} total={room.total} />
+      <div className="room">
         <figure className="room__art">
           <div className="room-niche">
             <div className="room-niche__stage">
@@ -84,6 +67,40 @@ export function RoomView({ room, connection, onPlaced, onMissing }: Props) {
             </div>
           </div>
         </figure>
+        <div className="room__main">
+          <RoomHead lot={lot} />
+          <RoomSummary
+            lot={lot}
+            offset={room.offset}
+            extended={room.extended}
+            leader={leaderOf(lot, room.bids[0])}
+          />
+          <RoomStatus lot={lot} viewer={viewer} room={room} />
+          {open && (
+            <section className="room__form" aria-label="Dar lance">
+              {viewer === 'bidder' && (
+                <BidForm
+                  lot={lot}
+                  offline={offline}
+                  onPlaced={onPlaced}
+                  onMissing={onMissing}
+                />
+              )}
+              {viewer === 'visitor' && <VisitorBox />}
+              {viewer === 'auctioneer' && (
+                <p className="room-aside">
+                  Leiloeiros acompanham os lotes, mas não dão lances.
+                </p>
+              )}
+            </section>
+          )}
+          <RoomHistory
+            lot={lot}
+            bids={room.bids}
+            total={room.total}
+            older={older}
+          />
+        </div>
         <RoomInfo lot={lot} extended={room.extended} />
       </div>
     </>
@@ -103,13 +120,6 @@ function useViewer(lot: LotDetail): Viewer {
   if (session?.user.role === 'AUCTIONEER') return 'auctioneer';
   if (session?.user.role === 'BIDDER' && lot.me) return 'bidder';
   return 'visitor';
-}
-
-// sem bloco de situação, a área sai do grid para não sobrar espaço vazio
-function layoutOf(lot: LotDetail, viewer: Viewer): string {
-  if (lot.status === 'ended') return 'room room--closed';
-  if (lot.status === 'live' && viewer !== 'bidder') return 'room room--watch';
-  return 'room';
 }
 
 function RoomStatus({

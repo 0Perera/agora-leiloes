@@ -12,7 +12,7 @@ export function RoomPage() {
 }
 
 function LotRoom({ id }: { id: number }) {
-  const { room, connection, retry, placed, missing } = useRoom(id);
+  const { room, connection, retry, placed, missing, older } = useRoom(id);
   if (room.status === 'loading') return <RoomSkeleton />;
   if (room.status === 'missing') return <RoomMissing />;
   if (room.status === 'error') return <RoomError onRetry={retry} />;
@@ -22,6 +22,7 @@ function LotRoom({ id }: { id: number }) {
       connection={connection}
       onPlaced={placed}
       onMissing={missing}
+      onOlder={older}
     />
   );
 }
@@ -33,18 +34,20 @@ function RoomSkeleton() {
         Carregando a sala do lote.
       </p>
       <div className="room" aria-hidden="true">
-        <div className="room__head room-skel-head">
-          <div className="skel room-skel--label" />
-          <div className="skel room-skel--title" />
-          <div className="skel room-skel--line" />
-        </div>
-        <div className="room__summary skel room-skel--summary" />
         <div className="room__art">
           <div className="room-niche">
             <div className="room-niche__stage">
               <div className="skel room-skel--art" />
             </div>
           </div>
+        </div>
+        <div className="room__main">
+          <div className="room__head room-skel-head">
+            <div className="skel room-skel--label" />
+            <div className="skel room-skel--title" />
+            <div className="skel room-skel--line" />
+          </div>
+          <div className="skel room-skel--summary" />
         </div>
       </div>
     </>

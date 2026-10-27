@@ -16,6 +16,10 @@ export type Situation = 'winning' | 'outbid' | 'none';
 
 type Pricing = Pick<LotDetail, 'currentBid' | 'startingBid' | 'increment'>;
 
+const pageSize = 20;
+// as listagens paginadas da API aceitam no máximo a página 100
+const maxPage = 100;
+
 // o maior seq conhecido manda: seq é contínuo a partir de 1, então bidCount é o último seq
 export function mergeBid(room: LiveRoom, bid: BidEvent): LiveRoom {
   if (room.bids.some((item) => item.seq === bid.seq)) return room;
@@ -60,6 +64,27 @@ export function mergeRoom(
     bids: unite(room.bids, history.items),
     total: Math.max(room.total, history.total),
     extended: room.extended || later(next.endsAt, current.endsAt),
+  };
+}
+
+// o seq é contínuo a partir de 1: enquanto o menor carregado passa de 1, há lances anteriores.
+// A página parte do lance mais novo conhecido; a sobreposição com o que já está na tela some no unite
+export function olderPage(room: Pick<LiveRoom, 'lot' | 'bids'>): number | null {
+  const oldest = room.bids.at(-1);
+  if (!oldest || oldest.seq <= 1) return null;
+  const newer = room.lot.bidCount - (oldest.seq - 1);
+  const page = Math.floor(newer / pageSize) + 1;
+  return page <= maxPage ? page : null;
+}
+
+export function appendPage(
+  room: LiveRoom,
+  history: Pick<BidHistory, 'items' | 'total'>,
+): LiveRoom {
+  return {
+    ...room,
+    bids: unite(room.bids, history.items),
+    total: Math.max(room.total, history.total),
   };
 }
 

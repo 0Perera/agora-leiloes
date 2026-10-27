@@ -1,45 +1,28 @@
+/* duas colunas: obra e "Sobre a obra" à esquerda; o resto da sala numa coluna à direita */
 .room {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
   grid-template-areas:
-    'art head'
-    'art summary'
-    'art status'
-    'art form'
-    'info history';
-  grid-template-rows: auto auto auto 1fr auto;
+    'art main'
+    'info main';
+  grid-template-rows: auto 1fr;
   gap: 28px 56px;
   align-items: start;
 }
 
-.room--watch {
-  grid-template-areas:
-    'art head'
-    'art summary'
-    'art form'
-    'info history';
-  grid-template-rows: auto auto 1fr auto;
-}
-
-.room--closed {
-  grid-template-areas:
-    'art head'
-    'art summary'
-    'art history'
-    'art info';
-  grid-template-rows: auto auto auto 1fr;
+.room__main {
+  grid-area: main;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
 .room__head {
-  grid-area: head;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-}
-
-.room__summary {
-  grid-area: summary;
 }
 
 .room__art {
@@ -57,17 +40,14 @@
 }
 
 .room__status {
-  grid-area: status;
   min-width: 0;
 }
 
 .room__form {
-  grid-area: form;
   min-width: 0;
 }
 
 .room__history {
-  grid-area: history;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -503,6 +483,24 @@
   color: var(--ink-muted);
 }
 
+.room-history__more {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.room-history__more .ag-btn {
+  min-height: 44px;
+}
+
+.room-history__more-error {
+  margin: 0;
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--cinnabar-deep);
+}
+
 .room-history__note {
   margin: 0;
   font-size: 14px;
@@ -589,33 +587,14 @@
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       'art'
-      'head'
-      'summary'
-      'status'
-      'form'
-      'history'
+      'main'
       'info';
     grid-template-rows: none;
     gap: 20px;
   }
 
-  .room--watch {
-    grid-template-areas:
-      'art'
-      'head'
-      'summary'
-      'form'
-      'history'
-      'info';
-  }
-
-  .room--closed {
-    grid-template-areas:
-      'art'
-      'head'
-      'summary'
-      'history'
-      'info';
+  .room__main {
+    gap: 20px;
   }
 
   .room-niche {

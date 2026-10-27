@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, api } from '../../shared/api/client';
 import type { BidEvent, BidHistory, LotDetail } from '../../shared/api/types';
 import { clockOffset } from '../../shared/lib/countdown';
-import { mergeBid, mergeRoom } from './room-bids';
+import { appendPage, mergeBid, mergeRoom } from './room-bids';
 import type { LiveRoom } from './room-bids';
 import { retryTurn } from './room-summary';
 import { useStream } from './use-stream';
@@ -96,6 +96,19 @@ export function useRoom(id: number) {
     [],
   );
   const missing = useCallback(() => setRoom({ status: 'missing' }), []);
+  const older = useCallback(
+    (page: number) =>
+      api
+        .lotBids(id, page)
+        .then((history) =>
+          setRoom((current) =>
+            current.status === 'ready'
+              ? { ...current, ...appendPage(current, history) }
+              : current,
+          ),
+        ),
+    [id],
+  );
 
   useTurn(id, room, setRoom);
   const streaming = room.status === 'ready' && room.lot.status !== 'ended';
@@ -105,7 +118,7 @@ export function useRoom(id: number) {
     onMissing: missing,
   });
 
-  return { room, connection, retry, placed, missing };
+  return { room, connection, retry, placed, missing, older };
 }
 
 // o status vem sempre da API: na virada de agendado ou ao vivo, refaz o GET sem esqueleto

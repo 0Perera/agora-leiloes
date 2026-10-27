@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { BidHistoryItem, LotDetail } from '../../shared/api/types';
 import { formatMoney } from '../../shared/lib/money';
 
@@ -5,6 +6,7 @@ type Props = {
   lot: LotDetail;
   bids: BidHistoryItem[];
   total: number;
+  older: (() => Promise<void>) | null;
 };
 
 const timeFormat = new Intl.DateTimeFormat('pt-BR', {
@@ -14,7 +16,7 @@ const timeFormat = new Intl.DateTimeFormat('pt-BR', {
   hourCycle: 'h23',
 });
 
-export function RoomHistory({ lot, bids, total }: Props) {
+export function RoomHistory({ lot, bids, total, older }: Props) {
   return (
     <section className="room__history" aria-labelledby="room-history-title">
       <h2 id="room-history-title" className="room-subtitle">
@@ -35,11 +37,47 @@ export function RoomHistory({ lot, bids, total }: Props) {
       ) : (
         <HistoryEmpty lot={lot} />
       )}
+      {older && <OlderButton load={older} />}
       <p className="room-history__note">
         Os participantes aparecem só por apelido. Todo lance fica registrado e
         pode ser conferido na auditoria pública.
       </p>
     </section>
+  );
+}
+
+function OlderButton({ load }: { load: () => Promise<void> }) {
+  const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  function click() {
+    setLoading(true);
+    setFailed(false);
+    load().then(
+      () => setLoading(false),
+      () => {
+        setLoading(false);
+        setFailed(true);
+      },
+    );
+  }
+
+  return (
+    <div className="room-history__more">
+      <button
+        className="ag-btn ag-btn--secondary"
+        type="button"
+        disabled={loading}
+        onClick={click}
+      >
+        {loading ? 'Carregando…' : 'Ver lances anteriores'}
+      </button>
+      {failed && (
+        <p className="room-history__more-error" role="alert">
+          Não foi possível carregar os lances anteriores. Tente de novo.
+        </p>
+      )}
+    </div>
   );
 }
 
