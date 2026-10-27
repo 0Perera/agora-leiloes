@@ -23,6 +23,16 @@ describe('ListLotsQueryDto', () => {
     });
   });
 
+  it.each(['1e3', '0x10', ' 7'])(
+    'recusa número que não é só dígitos (%p)',
+    async (number) => {
+      expect(await validate({ number })).toEqual({
+        code: 'VALIDATION_FAILED',
+        fields: { number: 'isInt' },
+      });
+    },
+  );
+
   it('recusa status fora da lista', async () => {
     expect(await validate({ status: 'cancelled' })).toEqual({
       code: 'VALIDATION_FAILED',

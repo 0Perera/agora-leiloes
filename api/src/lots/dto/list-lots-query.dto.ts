@@ -12,6 +12,13 @@ import { LOT_STATUSES, type LotStatus } from './lot-card.dto';
 
 const MAX_NUMBER = 2_147_483_647;
 
+// Só dígitos: o Number aceitaria "1e3", "0x10" e " 7" como outro número de lote.
+function digits({ value }: { value: unknown }): unknown {
+  return typeof value === 'string' && /^\d+$/.test(value)
+    ? Number(value)
+    : value;
+}
+
 function trim({ value }: { value: unknown }): unknown {
   return typeof value === 'string' ? value.trim() : value;
 }
@@ -28,7 +35,7 @@ export class ListLotsQueryDto {
   q?: string;
 
   @IsOptional()
-  @Type(() => Number)
+  @Transform(digits)
   @IsInt()
   @Min(1)
   @Max(MAX_NUMBER)
