@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type { Wallet } from '../../shared/api/types';
+import type { Wallet, WalletBalance } from '../../shared/api/types';
 
 export type WalletState =
   | { status: 'loading' }
@@ -8,7 +8,7 @@ export type WalletState =
 
 export type WalletValue = WalletState & {
   reload: () => void;
-  update: (wallet: Wallet) => void;
+  update: (balance: WalletBalance) => void;
 };
 
 export const WalletContext = createContext<WalletValue | null>(null);

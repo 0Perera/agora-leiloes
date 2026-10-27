@@ -4,15 +4,19 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  MessageEvent,
   Param,
   Post,
   Query,
   Res,
+  Sse,
   StreamableFile,
+  UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
+import { Observable } from 'rxjs';
 import { Auth } from '../common/auth.decorator';
-import type { AuthUser } from '../common/auth.guard';
+import { OptionalAuthGuard, type AuthUser } from '../common/auth.guard';
 import { CurrentUser } from '../common/current-user.decorator';
 import { CreateLotDto } from './dto/create-lot.dto';
 import { ListLotsQueryDto } from './dto/list-lots-query.dto';
@@ -20,12 +24,16 @@ import { LotCardDto } from './dto/lot-card.dto';
 import { LotDetailDto } from './dto/lot-detail.dto';
 import { LotResponseDto, toLotResponse } from './dto/lot-response.dto';
 import { LotShowcaseDto } from './dto/lot-showcase.dto';
+import { LotEventsService } from './lot-events.service';
 import { LotIdPipe } from './lot-id.pipe';
 import { LotsService } from './lots.service';
 
 @Controller('lots')
 export class LotsController {
-  constructor(private readonly lots: LotsService) {}
+  constructor(
+    private readonly lots: LotsService,
+    private readonly events: LotEventsService,
+  ) {}
 
   @Post()
   @Auth('AUCTIONEER')
@@ -52,9 +60,22 @@ export class LotsController {
     return undefined;
   }
 
+  // Público e sem guard: o mesmo stream por lote para todos, só com dado público.
+  @Sse(':id/stream')
+  async stream(
+    @Param('id', LotIdPipe) id: number,
+  ): Promise<Observable<MessageEvent>> {
+    await this.lots.assertExists(id);
+    return this.events.stream(id);
+  }
+
   @Get(':id')
-  find(@Param('id', LotIdPipe) id: number): Promise<LotDetailDto> {
-    return this.lots.find(id);
+  @UseGuards(OptionalAuthGuard)
+  find(
+    @Param('id', LotIdPipe) id: number,
+    @CurrentUser() viewer?: AuthUser,
+  ): Promise<LotDetailDto> {
+    return this.lots.find(id, viewer);
   }
 
   @Post(':id/cancel')

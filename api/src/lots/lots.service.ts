@@ -17,11 +17,13 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
+import { forLot } from '../audit/alias';
 import { GENESIS, sealLot } from '../audit/chain';
 import { Bid } from '../bids/bid.entity';
 import type { ArtworkDetail } from '../catalog/artwork.mapper';
 import { CatalogService } from '../catalog/catalog.service';
 import type { ImageFile } from '../catalog/cleveland.client';
+import type { AuthUser } from '../common/auth.guard';
 import { Clock } from '../common/clock';
 import { Env } from '../config/env.validation';
 import { CreateLotDto } from './dto/create-lot.dto';
@@ -138,7 +140,8 @@ export class LotsService {
     return null;
   }
 
-  async find(id: number): Promise<LotDetailDto> {
+  // Só licitante recebe me: leiloeiro não dá lance, então não tem alias no lote.
+  async find(id: number, viewer?: AuthUser): Promise<LotDetailDto> {
     const now = this.clock.now();
     const { entities, raw } = await this.visible(now)
       .select(DETAIL_COLUMNS.map((column) => `lot.${column}`))
@@ -146,7 +149,18 @@ export class LotsService {
       .andWhere('lot.id = :id', { id })
       .getRawAndEntities<{ status: LotStatus }>();
     if (entities.length === 0) throw new NotFoundException();
-    return toLotDetail(entities[0], raw[0].status, now);
+    const me =
+      viewer?.role === 'BIDDER'
+        ? { alias: forLot(this.secret, viewer.id, id) }
+        : undefined;
+    return toLotDetail(entities[0], raw[0].status, now, me);
+  }
+
+  async assertExists(id: number): Promise<void> {
+    const exists = await this.lots.exists({
+      where: { id, cancelledAt: IsNull() },
+    });
+    if (!exists) throw new NotFoundException();
   }
 
   async create(auctioneerId: number, dto: CreateLotDto): Promise<CreatedLot> {

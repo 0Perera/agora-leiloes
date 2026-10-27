@@ -1,10 +1,10 @@
 import { join } from 'node:path';
-import { DataSourceOptions } from 'typeorm';
+import type { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { DatabaseEnv } from '../config/env.validation';
 import { SafeLogger } from './safe.logger';
 
 // Compartilhado entre a aplicação e o CLI de migrations (data-source.ts).
-export function databaseOptions(env: DatabaseEnv): DataSourceOptions {
+export function databaseOptions(env: DatabaseEnv): PostgresConnectionOptions {
   return {
     type: 'postgres',
     url: env.DATABASE_URL,

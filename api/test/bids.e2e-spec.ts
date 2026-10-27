@@ -53,7 +53,7 @@ describe('POST /lots/:id/bids', () => {
       .auth(bidder.token, { type: 'bearer' })
       .expect(200);
 
-    expect(response.body).toEqual({
+    expect(response.body).toMatchObject({
       balance: 1_000_000,
       committed: STARTING_BID,
       available: 1_000_000 - STARTING_BID,

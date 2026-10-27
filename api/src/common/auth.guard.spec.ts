@@ -1,6 +1,6 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthGuard, AuthRequest } from './auth.guard';
+import { AuthGuard, AuthRequest, OptionalAuthGuard } from './auth.guard';
 
 const jwt = new JwtService({ secret: 'test-secret-with-at-least-32-chars!!' });
 
@@ -41,5 +41,32 @@ describe('AuthGuard.canActivate', () => {
 
     await expect(guard.canActivate(context)).resolves.toBe(true);
     expect(request.user).toEqual({ id: 7, role: 'AUCTIONEER' });
+  });
+});
+
+describe('OptionalAuthGuard.canActivate', () => {
+  const guard = new OptionalAuthGuard(jwt);
+
+  it('deixa passar sem usuário quando não há header', async () => {
+    const { context, request } = makeContext();
+
+    await expect(guard.canActivate(context)).resolves.toBe(true);
+    expect(request.user).toBeUndefined();
+  });
+
+  it('recusa token inválido', async () => {
+    const { context } = makeContext('Bearer token-adulterado');
+
+    await expect(guard.canActivate(context)).rejects.toThrow(
+      UnauthorizedException,
+    );
+  });
+
+  it('define o usuário com token válido', async () => {
+    const token = await jwt.signAsync({ sub: '7', role: 'BIDDER' });
+    const { context, request } = makeContext(`Bearer ${token}`);
+
+    await expect(guard.canActivate(context)).resolves.toBe(true);
+    expect(request.user).toEqual({ id: 7, role: 'BIDDER' });
   });
 });

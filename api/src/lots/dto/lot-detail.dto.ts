@@ -23,6 +23,10 @@ export type DetailFields = Pick<
   | 'bidCount'
 >;
 
+export class LotViewerDto {
+  alias!: string;
+}
+
 export class LotDetailDto {
   id!: number;
   number!: number;
@@ -44,14 +48,16 @@ export class LotDetailDto {
   currentBid!: number | null;
   bidCount!: number;
   serverTime!: string;
+  me?: LotViewerDto;
 }
 
 export function toLotDetail(
   lot: DetailFields,
   status: LotStatus,
   now: Date,
+  me?: LotViewerDto,
 ): LotDetailDto {
-  return {
+  const detail: LotDetailDto = {
     id: lot.id,
     number: lot.number,
     artworkId: lot.artworkId,
@@ -73,4 +79,6 @@ export function toLotDetail(
     bidCount: lot.bidCount,
     serverTime: now.toISOString(),
   };
+  if (me) detail.me = me;
+  return detail;
 }

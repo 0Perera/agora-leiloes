@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { api } from '../../shared/api/client';
-import type { Wallet } from '../../shared/api/types';
+import type { WalletBalance } from '../../shared/api/types';
 import { WalletContext } from './use-wallet';
 import type { WalletState } from './use-wallet';
 
@@ -25,8 +25,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     setAttempt((current) => current + 1);
   }, []);
 
-  const update = useCallback((wallet: Wallet) => {
-    setState({ status: 'ready', wallet });
+  // O depósito devolve só o saldo: os lotes comprometidos continuam os da última leitura.
+  const update = useCallback((balance: WalletBalance) => {
+    setState((current) =>
+      current.status === 'ready'
+        ? { status: 'ready', wallet: { ...current.wallet, ...balance } }
+        : current,
+    );
   }, []);
 
   const value = useMemo(
