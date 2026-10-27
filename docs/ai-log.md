@@ -389,3 +389,20 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta story.
+
+## Story 4.2: Cadeia de HMAC, selo e alias (TDD)
+
+**O que a IA gerou:**
+- Funções puras em `api/src/audit/`: `hashBid` e `sealLot` em `chain.ts` e `forLot` em `alias.ts`, recebendo o segredo por parâmetro, só com `node:crypto`.
+- Serialização canônica com prefixo de domínio (`bid:`, `seal:`, `alias:`), campos separados por `|`, data em milissegundos UTC e `GENESIS` no lugar do hash anterior ausente.
+- Encoder de base32 (RFC 4648) dos 30 primeiros bits do HMAC para o alias.
+- Casos 1 a 8 e 12 em dois pares de commits `test(audit)` (vermelho) e `feat(audit)` (verde); o caso 5 foi para o segundo par porque compara com o selo.
+- Env `BID_HMAC_SECRET` obrigatória com 32 caracteres ou mais, no `.env.example`, no compose e no `render.yaml`, com o teste do caso 13.
+
+**O que revisei e pedi para mudar:**
+- Aprovei os 13 casos de teste da story, incluindo o de dígitos que passam de um campo para o vizinho.
+- Pedi registrar no `deploy-notes.md` que o segredo nunca muda depois do seed e que, no dia da entrega, o banco é recriado mantendo o segredo.
+- Pedi registrar para a 4.3 que o `created_at` do lance vem do `Clock` da aplicação, nunca do `now()` do banco, porque o Postgres guarda microssegundos e o hash usa milissegundos.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma nesta story.
