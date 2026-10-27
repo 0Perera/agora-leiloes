@@ -573,6 +573,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Decidi a ordem dos motivos para não liquidar: cancelado, depois já liquidado, depois ainda não terminou.
 - Pedi dois casos a mais: lote cancelado e já vencido, e lote já liquidado e já vencido.
 - Pedi que a 5.2 confira o selo do lote antes de mover saldo, porque apagar o último lance direto no banco mudaria quem paga.
+- Na revisão, aprovei um caso 16 (lote cancelado e já liquidado responde cancelado), porque nenhum teste fixava essa parte da ordem.
+- Pedi que o caso do fim prorrogado conferisse um instante antes e o instante exato, e que os casos de movimentos comparassem a lista inteira, para falhar com um movimento a mais.
+- Decidi deixar como estão os outros achados de estilo da revisão.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma.
+- Mudei os testes de movimentos propostos: em vez de buscar o movimento de cada carteira, comparam a lista inteira, porque um movimento a mais passaria despercebido.

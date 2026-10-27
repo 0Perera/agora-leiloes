@@ -30,7 +30,7 @@ context:
 - Spec: `describe('decide')` (mesma forma aprovada na 4.1) com um `describe` aninhado por grupo; factories `makeLot()`, `makeState()`; tempos relativos a um `NOW` fixo.
 - TDD em pares de commits por grupo: `test(settlement)` com os `it` falhando, depois `feat(settlement)` que os faz passar (D-055).
 
-**Never:** endpoint, service, entidade, migration, TypeORM ou mock de repository; comprovante, assinatura ou conferência do selo (5.2); timer (5.3); casos além dos 15 aprovados; dependência nova.
+**Never:** endpoint, service, entidade, migration, TypeORM ou mock de repository; comprovante, assinatura ou conferência do selo (5.2); timer (5.3); casos além dos 16 aprovados; dependência nova.
 
 ## I/O & Edge-Case Matrix
 
@@ -45,6 +45,7 @@ Casos aprovados (`it` em português, um por caso):
 | 5 | quando liquidar | `cancelledAt` preenchido | motivo cancelado |
 | 14 | quando liquidar | cancelado e vencido | motivo cancelado |
 | 15 | quando liquidar | já liquidado e vencido | motivo já liquidado |
+| 16 | quando liquidar | cancelado e já liquidado | motivo cancelado (aprovado na revisão) |
 | 6 | resultado | vencido, `last = null` | fecha sem vencedor |
 | 7 | resultado | vencido, `last = null` | nenhum movimento |
 | 8 | resultado | vencido com `last` | vencedor = `last.userId` |
@@ -94,6 +95,7 @@ Sem lance: `{ settle: true, winner: null, moves: [] }`. O caso 13 fica garantido
 
 - Commits em dois pares TDD (`09ff047`/`8170284`, `ed0ad96`/`5a819e8`) e docs em `038d90a`. O primeiro `feat` devolve só `{ settle: true }`, para o segundo `test` nascer vermelho.
 - `last` e `winner` reaproveitam o tipo `Movement` da `bid.rules.ts`.
+- Depois da revisão, a pedido do usuário: caso 16 (commit `test` que nasce verde; falha com as checagens invertidas), caso 3 conferido 1 ms antes do fim prorrogado e casos de movimentos comparando a lista inteira.
 - Ajustes de documentação depois da revisão: contrato no `epic-5-context.md`, evidência da pendência do selo e ai-log.
 
 ## Spec Change Log
