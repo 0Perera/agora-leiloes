@@ -3,10 +3,10 @@ import { toArtwork } from './artwork.mapper';
 function makeRaw(override: Record<string, unknown> = {}): unknown {
   return {
     id: 135382,
-    title: 'Water Lilies',
-    creators: [{ description: 'Claude Monet (French, 1840–1926)' }],
-    culture: ['France, 19th century'],
-    creation_date: 'c. 1915–1926',
+    title: 'Portrait of a Lady',
+    creators: [{ description: 'Rembrandt van Rijn (Dutch, 1606–1669)' }],
+    culture: ['Netherlands, 17th century'],
+    creation_date: '1632',
     type: 'Painting',
     technique: 'oil on canvas',
     images: { web: { url: 'https://openaccess-cdn.clevelandart.org/x.jpg' } },
@@ -17,13 +17,13 @@ function makeRaw(override: Record<string, unknown> = {}): unknown {
 describe('toArtwork', () => {
   it('usa creators[0].description como artista', () => {
     expect(toArtwork(makeRaw())?.artist).toBe(
-      'Claude Monet (French, 1840–1926)',
+      'Rembrandt van Rijn (Dutch, 1606–1669)',
     );
   });
 
   it('usa culture como artista quando não há creators', () => {
     expect(toArtwork(makeRaw({ creators: [] }))?.artist).toBe(
-      'France, 19th century',
+      'Netherlands, 17th century',
     );
   });
 

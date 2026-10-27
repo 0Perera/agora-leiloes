@@ -17,7 +17,7 @@ class FakeCleveland {
       data: [
         {
           id: 1,
-          title: 'Water Lilies',
+          title: 'Portrait of a Lady',
           images: { web: { url: 'https://cdn.example/x.jpg' } },
         },
       ],
@@ -31,7 +31,7 @@ class FakeCleveland {
 
 function makeSearch(override: Partial<CatalogSearch> = {}): CatalogSearch {
   return {
-    q: 'monet',
+    q: 'portrait',
     department: 'European Painting and Sculpture',
     page: 1,
     ...override,
@@ -53,9 +53,9 @@ describe('CatalogService.search', () => {
   it('responde busca repetida dentro do TTL pelo cache', async () => {
     const { service, client, clock } = makeService();
 
-    await service.search(makeSearch({ q: 'monet' }));
+    await service.search(makeSearch({ q: 'portrait' }));
     clock.now = TTL_MS - 1;
-    await service.search(makeSearch({ q: '  MONET ' }));
+    await service.search(makeSearch({ q: '  PORTRAIT ' }));
 
     expect(client.calls).toHaveLength(1);
   });
