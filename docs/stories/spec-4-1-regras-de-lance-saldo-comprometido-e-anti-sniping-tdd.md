@@ -75,6 +75,7 @@ Casos aprovados (cada um é um `it`, nesta redação):
 ## Implementation Notes
 
 - Seis pares `test(bids)` → `feat(bids)`; conferido commit a commit que cada `test` fica vermelho e cada `feat` verde.
+- Ajustes pedidos depois da revisão: caso 23 encadeia duas chamadas, caso 24 confere o código, comentário de `accept` removido, `describe('decide')`; dois itens para a 4.3 em `deferred-work.md`.
 - `makeBid()` monta a tentativa inteira (`BidState`); o último lance entra como objeto literal no override.
 
 ## Spec Change Log

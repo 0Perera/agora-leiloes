@@ -25,6 +25,14 @@
   evidence: a rota `/lots/:id` só existe a partir da 3.7; o usuário pediu para registrar aqui.
   status: feito na 3.7 (`spec-3-7-tela-sala-do-lote-ao-vivo-leitura.md`).
 
+- source_spec: `docs/stories/spec-4-1-regras-de-lance-saldo-comprometido-e-anti-sniping-tdd.md`
+  summary: na 4.3, teste de serviço em que o licitante superado volta a dar lance e compromete o valor cheio do novo lance (o compromisso anterior já foi liberado quando ele foi superado).
+  evidence: achado da revisão da 4.1; a regra pura não recebe o lance anterior do licitante, então o caso 19 não distingue valor cheio de diferença. Pedido do usuário.
+
+- source_spec: `docs/stories/spec-4-1-regras-de-lance-saldo-comprometido-e-anti-sniping-tdd.md`
+  summary: na 4.3, ligar os códigos de recusa da regra (`BidDecision`) ao `DomainCode`, para um código renomeado ou digitado errado não compilar.
+  evidence: achado da revisão da 4.1; hoje o tipo da recusa repete os códigos como literais soltos. Pedido do usuário.
+
 ## Polimento visual
 
 - source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`

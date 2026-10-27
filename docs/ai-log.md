@@ -383,6 +383,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **O que a IA gerou:**
 - Função pura `decide` em `api/src/bids/bid.rules.ts`: recebe lote, último lance, licitante, disponível, valor e `now` e devolve aceite (novo `endsAt`, valor a comprometer e valor a liberar) ou recusa (código e detalhe), como união discriminada para a 4.3 mapear sem `as`.
+- Escolha de devolver a recusa como valor, em vez de lançar exceção; a 4.3 converte em exceção de domínio.
 - Checagens em funções pequenas, na ordem status do lote, líder, valor e saldo; a primeira que falha decide. Início inclusivo e fim exclusivo, como o `STATUS_SQL`.
 - Anti-sniping somando 2 min ao fim atual quando faltam 2 min ou menos (D-011); recusa nunca prorroga.
 - Contexto do épico 4 (`docs/stories/epic-4-context.md`) e a spec da story.
@@ -397,6 +398,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi para marcar a 3.7 como concluída e compilar o contexto do épico 4 uma vez, para as próximas stories.
 - Aprovei a spec já com os casos aprovados, sem parada para revisão.
 - Aprovei dois casos a mais sugeridos na revisão: recusa por status antes de checar a liderança e antes de checar o valor, porque inverter a ordem no código não quebrava nenhum teste.
+- Pedi, antes do push: o caso 23 encadeando duas chamadas para provar o acúmulo; o caso 24 conferindo o código da recusa; apagar o comentário em `accept` que repetia o código; renomear o `describe` para `decide`, como nos outros specs de regra.
+- Pedi registrar para a 4.3 o teste de serviço do licitante superado que volta com o valor cheio (o caso 19 não prova isso na regra pura) e a ligação dos códigos de recusa ao `DomainCode`.
+- Pedi que a escolha de devolver a recusa em vez de lançar ficasse em "O que a IA gerou", porque não foi decisão minha.
 - Pedi registrar os commits de teste vermelhos como decisão (D-055), citando que o squash merge (D-021) mantém a `main` sem commit vermelho e que eles servem de evidência do TDD (D-019), e atualizar a regra de atomicidade do CLAUDE.md com a exceção.
 
 **Sugestões rejeitadas e por quê:**
