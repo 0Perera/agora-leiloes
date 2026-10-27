@@ -19,15 +19,35 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<AuthRequest>();
-    const token = bearerToken(request);
-    if (!token) throw new UnauthorizedException();
-    try {
-      const payload = await this.jwt.verifyAsync<TokenPayload>(token);
-      request.user = { id: Number(payload.sub), role: payload.role };
-    } catch {
-      throw new UnauthorizedException();
-    }
+    request.user = await authenticate(this.jwt, request);
     return true;
+  }
+}
+
+// Visitante passa sem usuário; quem manda Authorization precisa mandar um token válido.
+@Injectable()
+export class OptionalAuthGuard implements CanActivate {
+  constructor(private readonly jwt: JwtService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest<AuthRequest>();
+    if (request.headers.authorization === undefined) return true;
+    request.user = await authenticate(this.jwt, request);
+    return true;
+  }
+}
+
+async function authenticate(
+  jwt: JwtService,
+  request: Request,
+): Promise<AuthUser> {
+  const token = bearerToken(request);
+  if (!token) throw new UnauthorizedException();
+  try {
+    const payload = await jwt.verifyAsync<TokenPayload>(token);
+    return { id: Number(payload.sub), role: payload.role };
+  } catch {
+    throw new UnauthorizedException();
   }
 }
 
