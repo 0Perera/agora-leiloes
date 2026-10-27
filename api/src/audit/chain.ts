@@ -35,11 +35,18 @@ export function hashBid(secret: string, bid: BidLink): string {
   ]);
 }
 
-// Contagem + último hash detecta lance removido do final da cadeia.
-export function sealLot(
-  secret: string,
-  count: number,
-  lastHash: string | null,
-): string {
-  return sign(secret, 'seal', [count, lastHash ?? GENESIS]);
+export type LotSeal = {
+  lotId: number;
+  count: number;
+  lastHash: string | null;
+};
+
+// Contagem + último hash detecta lance removido do final; o lotId impede
+// copiar o selo de outro lote (D-056).
+export function sealLot(secret: string, seal: LotSeal): string {
+  return sign(secret, 'seal', [
+    seal.lotId,
+    seal.count,
+    seal.lastHash ?? GENESIS,
+  ]);
 }
