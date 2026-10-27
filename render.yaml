@@ -25,6 +25,8 @@ services:
         sync: false
       - key: JWT_SECRET
         generateValue: true
+      - key: CLEVELAND_API_URL
+        value: https://openaccess-api.clevelandart.org/api
 
   - type: web
     name: agora-web

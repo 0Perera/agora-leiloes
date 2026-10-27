@@ -34,6 +34,26 @@ export type DepositRequest = {
   amount: number;
 };
 
+export type CatalogDepartment =
+  'European Painting and Sculpture' | 'Greek and Roman Art';
+
+export type Artwork = {
+  id: number;
+  title: string;
+  artist: string;
+  date: string;
+  type: string;
+  technique: string;
+  imageUrl: string;
+};
+
+export type CatalogSearch = {
+  items: Artwork[];
+  page: number;
+  pageSize: number;
+  total: number;
+};
+
 export type ApiErrorBody = {
   code?: string;
   fields?: Record<string, string>;

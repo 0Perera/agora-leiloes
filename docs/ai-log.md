@@ -169,3 +169,28 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - *Valores inteiros sem ",00":* troquei por duas casas sempre, para bater com o campo (D-048).
 - *Confirmação repetindo saldo total e disponível:* troquei por uma mensagem curta, porque a tela já mostra os valores.
 - *`parseAmount` dentro de `features/wallet`:* o lance vai usar o mesmo parse, então foi para `shared/lib`.
+
+## Story 3.1: Busca no acervo da Cleveland
+
+**O que a IA gerou:**
+- Módulo `catalog`: `ClevelandClient` com `fetch` nativo, timeout de 5s, `fields` explícitos e `has_image=1`; mapeamento puro de `unknown` para `Artwork` e `ArtworkDetail`; cache em memória com TTL de 10 min, limite de 500 entradas e `now` injetado.
+- `CatalogService.search` (cache por departamento, termo normalizado e página) e `CatalogService.find(id)` para a 3.2, sem cache, devolvendo `null` para 404 ou peça de outro departamento.
+- `GET /catalog/search` só para leiloeiro, com `q`, `department` e `page` validados; código `CATALOG_UNAVAILABLE` (503); env `CLEVELAND_API_URL` na validação, no `.env.example`, no compose e no `render.yaml`.
+- Tipos `Artwork` e `CatalogSearch` no front, D-050 e linhas do README.
+- Testes aprovados na spec: mapeamento do artista e descarte sem imagem, cache e falha no service, departamento fora da lista no DTO. O caso de `culture` em lista virou dois `it` (primeiro item; lista vazia), por causa da regra de uma regra por `it`.
+
+**O que revisei e pedi para mudar:**
+- Escolhi restringir a busca ao tema da casa e pedi para checar se a Cleveland aceita mais de um departamento na mesma chamada, para incluir Greek and Roman Art.
+- Aprovei os 8 casos de teste propostos e pedi um a mais: `culture` vem como lista, então o fallback usa o primeiro item, e lista vazia conta como ausente.
+- Decidi manter a spec inteira acima do teto de tokens e pedi que, daqui em diante, só se pergunte quando der para dividir em entregas independentes.
+- Pedi um parâmetro `department` com duas opções validadas (European Painting and Sculpture como padrão, Greek and Roman Art), uma chamada por busca, e departamento fora da lista recusado com `VALIDATION_FAILED`, com teste.
+- Pedi que `find(id)` aceite peça dos dois departamentos e recuse as de fora.
+- Pedi a D-050 com o motivo (a Cleveland não aceita dois departamentos na mesma chamada) e a linha em "Comportamentos esperados" do README.
+- Decidi que a tela com o seletor de departamento fica para a 3.5.
+- Decidi manter Monet fora da busca (o departamento dele é o de arte moderna, fora do tema) e pedi "portrait" como exemplo de busca no lugar de "monet".
+- Aprovei testes automáticos do DTO para termo vazio e página inválida; 401/403 ficam com os testes dos guards.
+- Decidi não corrigir os achados opcionais da revisão: buscas simultâneas duplicadas, espaços internos no termo e `total` contando peças descartadas.
+
+**Sugestões rejeitadas e por quê:**
+- *Só European Painting and Sculpture, sem seletor:* troquei por um seletor com Greek and Roman Art, porque estátuas e mármore fazem parte do tema.
+- *Acervo inteiro:* foge do tema de arte clássica europeia (D-050).
