@@ -504,10 +504,53 @@
   color: var(--gold-700);
 }
 
+/* proporção do disponível e do comprometido sobre o saldo total */
+.wallet-scroll-gauge {
+  grid-column: 1 / -1;
+  position: relative;
+  display: flex;
+  height: 3px;
+  margin: 2px 7px 1px;
+  border-top: 1px solid var(--gold-700);
+  border-bottom: 1px solid var(--gold-700);
+}
+
+.wallet-scroll-gauge::before,
+.wallet-scroll-gauge::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  background-color: var(--gold-700);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.wallet-scroll-gauge::before {
+  left: -8px;
+}
+
+.wallet-scroll-gauge::after {
+  right: -8px;
+}
+
+.wallet-scroll-gauge-free {
+  background-color: var(--ultramarine);
+}
+
+.wallet-scroll-gauge-held {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--on-pigment) 0 2px,
+    var(--gold-500) 2px 3.2px
+  );
+}
+
 /* no cabeçalho compacto só cabe o disponível; o valor em lances fica na tela Carteira */
 @media (max-width: 519px) {
   .wallet-scroll-label,
-  .wallet-scroll-held {
+  .wallet-scroll-held,
+  .wallet-scroll-gauge {
     display: none;
   }
 

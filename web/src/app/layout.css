@@ -230,6 +230,39 @@
   color: var(--ink-muted);
 }
 
+/* medidas do canvas Main.dc.html; abaixo de 1024px ficam as do cabeçalho em duas linhas */
+@media (min-width: 1024px) {
+  .header-bar {
+    padding-block: 14px;
+  }
+
+  .header-logo {
+    width: clamp(34px, 1.2vw + 24px, 42px);
+    height: auto;
+  }
+
+  .header-name {
+    font-size: clamp(24px, 1.6vw + 10px, 32px);
+    line-height: 1.1;
+  }
+
+  .header-nav {
+    gap: var(--space-1) 36px;
+  }
+
+  .header-nav .nav-link {
+    font-size: 14px;
+  }
+
+  .header-meander {
+    height: 18px;
+    box-sizing: content-box;
+    background-color: var(--marble-100);
+    border-top: 1px solid var(--gold-500);
+    border-bottom: 1px solid var(--gold-500);
+  }
+}
+
 /* abaixo de 1024px: logo e ações (carteira e monograma juntos) na primeira linha e o menu,
    que rola para o lado, na segunda */
 @media (max-width: 1023px) {
