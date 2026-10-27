@@ -109,19 +109,61 @@
 
 .account-panel {
   position: absolute;
-  top: calc(100% + var(--space-2));
+  top: calc(100% + 12px);
   right: 0;
   z-index: 10;
-  width: max-content;
-  min-width: 200px;
-  max-width: min(280px, calc(100vw - 32px));
-  padding: var(--space-4);
-  background-color: var(--marble-000);
+  width: 220px;
+  max-width: calc(100vw - 32px);
+  padding: 24px 22px 22px;
+  background-color: var(--marble-100);
   border: 1px solid var(--gold-500);
   box-shadow:
-    inset 0 0 0 4px var(--marble-000),
+    inset 0 0 0 4px var(--marble-100),
     inset 0 0 0 5px var(--vein),
-    0 12px 24px -12px rgba(43, 37, 32, 0.45);
+    0 14px 24px -14px rgba(43, 37, 32, 0.5);
+  /* cantoneiras da ficha do lote, em tamanho menor */
+  background-image:
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500));
+  background-repeat: no-repeat;
+  background-size:
+    14px 2px,
+    2px 14px,
+    14px 2px,
+    2px 14px,
+    14px 2px,
+    2px 14px,
+    14px 2px,
+    2px 14px;
+  background-position:
+    left 8px top 8px,
+    left 8px top 8px,
+    right 8px top 8px,
+    right 8px top 8px,
+    left 8px bottom 8px,
+    left 8px bottom 8px,
+    right 8px bottom 8px,
+    right 8px bottom 8px;
+}
+
+/* setinha apontando para o centro do monograma */
+.account-panel::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  right: 16px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--marble-100);
+  border-top: 1px solid var(--gold-500);
+  border-left: 1px solid var(--gold-500);
+  transform: rotate(45deg);
 }
 
 .account-panel[hidden] {
@@ -130,28 +172,58 @@
 
 .account-name {
   margin: 0;
+  padding: 0 8px;
+  font-family: var(--font-display);
   font-weight: 600;
-  font-size: 17px;
-  line-height: 24px;
+  font-size: 15px;
+  line-height: 20px;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
   overflow-wrap: anywhere;
 }
 
 .account-role {
-  margin: 0 0 var(--space-3);
+  margin: 2px 0 0;
+  padding: 0 8px;
+  font-style: italic;
   font-size: 15px;
   line-height: 20px;
   color: var(--ink-muted);
 }
 
-.account-leave {
-  min-height: 44px;
+.account-rule {
+  margin: 12px 8px 6px;
 }
 
-.header-meander {
-  height: 18px;
-  background-color: var(--marble-100);
-  border-top: 1px solid var(--gold-500);
-  border-bottom: 1px solid var(--gold-500);
+.account-leave {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 0;
+  background: none;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-leave:hover,
+.account-leave:focus-visible {
+  background-color: color-mix(in srgb, var(--gold-300) 45%, var(--marble-100));
+  box-shadow: inset 2px 0 0 var(--gold-500);
+  outline: none;
+}
+
+.account-leave__icon {
+  flex: none;
+  color: var(--ink-muted);
 }
 
 /* celular: logo e monograma na primeira linha, carteira na segunda e o menu, que rola
