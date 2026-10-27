@@ -32,18 +32,15 @@ import { LotDetailDto, toLotDetail } from './dto/lot-detail.dto';
 import type { CreatedLot } from './dto/lot-response.dto';
 import { LotCountsDto, LotShowcaseDto } from './dto/lot-showcase.dto';
 import { LotImage } from './lot-image.entity';
+import { STATUS_SQL, STATUS_WHERE } from './lot-status';
 import { Lot } from './lot.entity';
-import { assertAvailable, scheduleErrors } from './lot.rules';
+import {
+  assertAvailable,
+  assertCancellable,
+  scheduleErrors,
+} from './lot.rules';
 
 const PAGE_SIZE = 12;
-
-const STATUS_SQL = `CASE WHEN :now < lot.startsAt THEN 'scheduled' WHEN :now < lot.endsAt THEN 'live' ELSE 'ended' END`;
-
-const STATUS_WHERE: Record<LotStatus, string> = {
-  scheduled: ':now < lot.startsAt',
-  live: 'lot.startsAt <= :now AND :now < lot.endsAt',
-  ended: 'lot.endsAt <= :now',
-};
 
 const STATUS_ORDER: Record<LotStatus, [string, 'ASC' | 'DESC']> = {
   live: ['lot.endsAt', 'ASC'],
@@ -156,6 +153,22 @@ export class LotsService {
     return this.dataSource.transaction((manager) =>
       this.insert(manager, { auctioneerId, artwork, conditions, image }),
     );
+  }
+
+  // Lote alheio, inexistente ou já cancelado dá o mesmo 404: não revela que o lote existe.
+  async cancel(auctioneerId: number, id: number): Promise<void> {
+    await this.dataSource.transaction(async (manager) => {
+      const lots = manager.getRepository(Lot);
+      const lot = await lots.findOne({
+        select: { id: true, endsAt: true, bidCount: true },
+        where: { id, auctioneerId, cancelledAt: IsNull() },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (!lot) throw new NotFoundException();
+      const now = this.clock.now();
+      assertCancellable(lot, now);
+      await lots.update({ id }, { cancelledAt: now });
+    });
   }
 
   async image(id: number): Promise<ImageFile> {

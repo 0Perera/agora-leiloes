@@ -6,7 +6,9 @@ export type DomainCode =
   | 'BALANCE_LIMIT_EXCEEDED'
   | 'CATALOG_UNAVAILABLE'
   | 'IMAGE_DOWNLOAD_FAILED'
-  | 'ARTWORK_ALREADY_LISTED';
+  | 'ARTWORK_ALREADY_LISTED'
+  | 'LOT_HAS_BIDS'
+  | 'LOT_ENDED';
 
 export class DomainException extends Error {
   constructor(readonly code: DomainCode) {

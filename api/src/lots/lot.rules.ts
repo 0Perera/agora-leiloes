@@ -5,6 +5,7 @@ export const START_TOLERANCE_MS = 60_000;
 
 export type Schedule = { startsAt: Date; endsAt: Date };
 export type ListedLot = { cancelledAt: Date | null; endsAt: Date };
+export type CancelState = { endsAt: Date; bidCount: number };
 
 export function scheduleErrors(
   { startsAt, endsAt }: Schedule,
@@ -28,4 +29,12 @@ export function assertAvailable(lots: ListedLot[], now: Date): void {
     (lot) => lot.cancelledAt === null && now.getTime() < lot.endsAt.getTime(),
   );
   if (active) throw new DomainException('ARTWORK_ALREADY_LISTED');
+}
+
+// Encerrado vem primeiro: lote vencido com lance é resultado, não "chegou um lance".
+export function assertCancellable(lot: CancelState, now: Date): void {
+  if (now.getTime() >= lot.endsAt.getTime()) {
+    throw new DomainException('LOT_ENDED');
+  }
+  if (lot.bidCount > 0) throw new DomainException('LOT_HAS_BIDS');
 }

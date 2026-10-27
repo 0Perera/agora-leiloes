@@ -118,6 +118,35 @@ export type LotDetail = {
   serverTime: string;
 };
 
+export type BookStatus = LotStatus | 'cancelled';
+
+export type DashboardLot = {
+  id: number;
+  number: number;
+  title: string;
+  artist: string;
+  status: BookStatus;
+  startingBid: number;
+  currentBid: number | null;
+  bidCount: number;
+  startsAt: string;
+  endsAt: string;
+};
+
+export type DashboardBook = {
+  items: DashboardLot[];
+  page: number;
+  pageSize: number;
+  total: number;
+  counts: Record<BookStatus | 'all', number>;
+};
+
+export type DashboardSummary = {
+  live: { count: number; currentBidTotal: number };
+  scheduled: { count: number; nextStartsAt: string | null };
+  ended: { count: number; withoutBids: number };
+};
+
 export type ApiErrorBody = {
   code?: string;
   fields?: Record<string, string>;

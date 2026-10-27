@@ -1,6 +1,8 @@
 import { DomainException } from '../common/domain.exception';
 import {
   assertAvailable,
+  assertCancellable,
+  CancelState,
   ListedLot,
   Schedule,
   scheduleErrors,
@@ -19,6 +21,10 @@ function makeSchedule(override: Partial<Schedule> = {}): Schedule {
 
 function makeLot(override: Partial<ListedLot> = {}): ListedLot {
   return { cancelledAt: null, endsAt: at(HOUR), ...override };
+}
+
+function makeCancel(override: Partial<CancelState> = {}): CancelState {
+  return { endsAt: at(2 * HOUR), bidCount: 0, ...override };
 }
 
 describe('scheduleErrors', () => {
@@ -73,5 +79,41 @@ describe('assertAvailable', () => {
     const lot = makeLot({ endsAt: NOW });
 
     expect(() => assertAvailable([lot], NOW)).not.toThrow();
+  });
+});
+
+describe('assertCancellable', () => {
+  it('aceita lote agendado sem lances', () => {
+    expect(() => assertCancellable(makeCancel(), NOW)).not.toThrow();
+  });
+
+  it('aceita lote ao vivo sem lances', () => {
+    const lot = makeCancel({ endsAt: at(60_000) });
+
+    expect(() => assertCancellable(lot, NOW)).not.toThrow();
+  });
+
+  it('recusa lote com lance com LOT_HAS_BIDS', () => {
+    const lot = makeCancel({ bidCount: 1 });
+
+    expect(() => assertCancellable(lot, NOW)).toThrow(
+      new DomainException('LOT_HAS_BIDS'),
+    );
+  });
+
+  it('recusa lote encerrado com LOT_ENDED', () => {
+    const lot = makeCancel({ endsAt: NOW });
+
+    expect(() => assertCancellable(lot, NOW)).toThrow(
+      new DomainException('LOT_ENDED'),
+    );
+  });
+
+  it('lote encerrado com lance recusa com LOT_ENDED', () => {
+    const lot = makeCancel({ endsAt: at(-HOUR), bidCount: 3 });
+
+    expect(() => assertCancellable(lot, NOW)).toThrow(
+      new DomainException('LOT_ENDED'),
+    );
   });
 });

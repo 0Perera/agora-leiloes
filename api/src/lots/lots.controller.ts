@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -53,6 +55,16 @@ export class LotsController {
   @Get(':id')
   find(@Param('id', LotIdPipe) id: number): Promise<LotDetailDto> {
     return this.lots.find(id);
+  }
+
+  @Post(':id/cancel')
+  @Auth('AUCTIONEER')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  cancel(
+    @CurrentUser() user: AuthUser,
+    @Param('id', LotIdPipe) id: number,
+  ): Promise<void> {
+    return this.lots.cancel(user.id, id);
   }
 
   // Lote não é editável: a imagem de um id nunca muda, então o cache pode ser eterno.
