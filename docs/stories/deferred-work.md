@@ -10,3 +10,9 @@
 - source_spec: `docs/stories/spec-3-3-vitrine-destaque-e-detalhe-do-lote-na-api.md`
   summary: testes de integração da vitrine para a story 4.4 (Testcontainers): lote cancelado fora de GET /lots, /lots/featured e /lots/:id; counts das três abas com q aplicado; ordem de cada aba.
   evidence: pedido do usuário na aprovação da 3.3; hoje a story só tem testes unitários, e a infraestrutura de Testcontainers entra na 4.4.
+- source_spec: `docs/stories/spec-3-3-vitrine-destaque-e-detalhe-do-lote-na-api.md`
+  summary: comportamento conhecido aceito: em GET /lots, itens e counts saem de duas queries e podem divergir por instantes se um lote é criado, cancelado ou muda de status entre elas.
+  evidence: achado da revisão da 3.3; o próximo GET corrige, e alinhar exigiria transação REPEATABLE READ ou COUNT(*) OVER (). O usuário aceitou como está.
+- source_spec: `docs/stories/spec-3-3-vitrine-destaque-e-detalhe-do-lote-na-api.md`
+  summary: comportamento conhecido aceito: GET /lots/:id/image continua servindo a imagem de lote cancelado, enquanto GET /lots/:id responde 404.
+  evidence: achado da revisão da 3.3; comportamento vindo da 3.2, a imagem é de acervo público e tem cache imutável. O usuário aceitou como está.

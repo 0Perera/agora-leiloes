@@ -220,7 +220,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 ## Story 3.3: Vitrine, destaque e detalhe do lote na API
 
 **O que a IA gerou:**
-- `LotIdPipe` (id inteiro de 1 ao teto do `integer`, senão 404 sem tocar o banco), aplicado no detalhe e na imagem, em commit `refactor` separado.
+- `LotIdPipe` (id inteiro de 1 ao teto do `integer`, senão 404 sem tocar o banco), aplicado no detalhe e na imagem, em commit `refactor` separado (D-052).
 - Índice `lots_current_bid`, com a migration gerada pelo CLI (D-037).
 - `GET /lots`: vitrine paginada de 12 com status calculado por `CASE` no SQL com o `now` do `Clock`, busca `ILIKE` em título e artista com curingas escapados, filtro por número e contagem das três abas com a busca aplicada, em duas queries.
 - `GET /lots/featured`: cadeia ao vivo com maior lance, ao vivo que encerra primeiro e próximo agendado, até 3 queries, 204 sem lote; rota declarada antes de `:id`.
@@ -240,6 +240,10 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi que os testes de integração da vitrine (cancelado fora das três rotas, contagens com busca, ordem de cada aba) fiquem para a 4.4, com o Testcontainers.
 - Aprovei os oito casos de teste da spec.
 - Pedi só o revisor de casos de borda nesta story.
+- Pedi para o `number` da vitrine aceitar só dígitos (`1e3`, `0x10` e ` 7` recusados com 400), com um caso de teste no DTO.
+- Decidi manter o teto de 100 no `page`.
+- Aceitei os outros dois achados da revisão (divergência momentânea das contagens e imagem de lote cancelado) como comportamentos conhecidos, registrados no `deferred-work.md`.
+- Aprovei registrar o 404 do `LotIdPipe` como decisão (D-052).
 
 **Sugestões rejeitadas e por quê:**
 - *Destaque desempatado só pelo fim mais próximo:* pedi também o número do lote, para o desempate ser determinístico.

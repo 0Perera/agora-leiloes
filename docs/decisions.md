@@ -527,3 +527,14 @@ Story: 3.2
 **Por quê:** dois lotes simultâneos da mesma obra significariam vender a mesma peça duas vezes e confundiriam a vitrine.
 **Alternativas descartadas:** permitir lotes simultâneos da mesma peça (venda duplicada); bloquear a peça para sempre depois do primeiro lote (peça encerrada sem lance ou cancelada nunca voltaria ao leilão).
 **Consequência:** a checagem roda dentro da transação da criação, depois de `pg_advisory_xact_lock(artwork_id)`, para duas criações simultâneas da mesma peça não passarem juntas; `lots.artwork_id` tem índice.
+
+## D-052: Id de lote inválido responde 404
+
+Status: Aceita
+Data: 2026-10-26
+Story: 3.3
+
+**Decisão:** o `:id` das rotas de lote passa por um `LotIdPipe` que aceita só dígitos de 1 ao teto do `integer`; qualquer outro valor (`abc`, `0`, `9999999999`) responde 404, sem consultar o banco.
+**Por quê:** segue o padrão que `GET /lots/:id/image` já usava na 3.2: um id fora do `integer` nunca existe, então a resposta é a mesma de um lote inexistente, e o Postgres não chega a dar erro de faixa (500).
+**Alternativas descartadas:** `ParseIntPipe` do Nest (400 fora do formato `VALIDATION_FAILED` e sem checar o teto do `integer`); 400 `VALIDATION_FAILED` para id malformado (distingue "id inválido" de "não existe" sem ganho para o front, que mostra "lote não encontrado" nos dois casos).
+**Consequência:** toda rota nova com `:id` de lote (cancelamento, lances, stream, auditoria) usa o mesmo pipe.

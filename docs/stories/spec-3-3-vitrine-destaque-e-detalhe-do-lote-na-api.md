@@ -103,6 +103,6 @@ context:
 
 | # | Achado (edge-case-hunter) | Veredito | Evidência / rota |
 |---|---|---|---|
-| 1 | itens e `counts` em duas queries podem divergir se um lote muda entre elas | low | real só numa janela de milissegundos (READ COMMITTED) e o próximo GET corrige; a correção exige transação ou window function. rejeitado: opcional, listado |
-| 2 | `GET /lots/:id/image` ainda serve a imagem de lote cancelado | low | comportamento da 3.2, sem mudança aqui; a imagem é de acervo público e a linha do README fala do link do lote. rejeitado: opcional, listado |
-| 3 | `number=1e3`, `0x10` ou ` 7 ` aceitos pelo `@Type(() => Number)` | low | confirmado: viram 1000, 16 e 7; o front (3.6) só manda dígitos, e o efeito é uma busca por outro número. rejeitado: opcional, listado |
+| 1 | itens e `counts` em duas queries podem divergir se um lote muda entre elas | low | real só numa janela de milissegundos (READ COMMITTED) e o próximo GET corrige; a correção exige transação ou window function. aceito pelo usuário como comportamento conhecido (`deferred-work.md`) |
+| 2 | `GET /lots/:id/image` ainda serve a imagem de lote cancelado | low | comportamento da 3.2, sem mudança aqui; a imagem é de acervo público e a linha do README fala do link do lote. aceito pelo usuário como comportamento conhecido (`deferred-work.md`) |
+| 3 | `number=1e3`, `0x10` ou ` 7 ` aceitos pelo `@Type(() => Number)` | low | confirmado: viram 1000, 16 e 7. corrigido a pedido do usuário: `@Transform` só com `^\d+$` + teste no DTO |
