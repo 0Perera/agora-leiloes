@@ -4,16 +4,19 @@ import { CatalogModule } from '../catalog/catalog.module';
 import { Clock } from '../common/clock';
 import { DashboardController } from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
-import { LotEventsService } from './lot-events.service';
+import { LotEventsModule } from './lot-events.module';
 import { LotImage } from './lot-image.entity';
 import { Lot } from './lot.entity';
 import { LotsController } from './lots.controller';
 import { LotsService } from './lots.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Lot, LotImage]), CatalogModule],
+  imports: [
+    TypeOrmModule.forFeature([Lot, LotImage]),
+    CatalogModule,
+    LotEventsModule,
+  ],
   controllers: [LotsController, DashboardController],
-  providers: [LotsService, DashboardService, LotEventsService, Clock],
-  exports: [LotEventsService],
+  providers: [LotsService, DashboardService, Clock],
 })
 export class LotsModule {}
