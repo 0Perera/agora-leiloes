@@ -1,5 +1,6 @@
 import { lotImageUrl } from '../../shared/api/client';
 import type { LotDetail } from '../../shared/api/types';
+import { artworkType } from '../../shared/lib/artwork-type';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel } from '../../shared/lib/roman';
@@ -54,6 +55,7 @@ function RoomInfo({ lot }: { lot: LotDetail }) {
   const facts: [string, string][] = [
     ['Artista', lot.artist],
     ['Data', lot.date],
+    ['Tipo', artworkType(lot.type)],
     ['Técnica', lot.technique],
     ['Dimensões', lot.measurements],
   ];
