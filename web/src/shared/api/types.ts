@@ -151,6 +151,13 @@ export type DashboardLot = {
   bidCount: number;
   startsAt: string;
   endsAt: string;
+  result: BookResult | null;
+};
+
+export type BookResult = {
+  alias: string | null;
+  amount: number | null;
+  receiptToken: string | null;
 };
 
 export type BookFilter = BookStatus | 'all';
@@ -167,7 +174,65 @@ export type DashboardSummary = {
   live: { count: number; currentBidTotal: number };
   scheduled: { count: number; nextStartsAt: string | null };
   ended: { count: number; withoutBids: number };
+  received: number;
 };
+
+export type Receipt = {
+  lotId: number;
+  number: number;
+  title: string;
+  artist: string;
+  amount: number;
+  alias: string;
+  settledAt: string;
+  finalHash: string;
+  valid: boolean;
+};
+
+export type MyBidsSection = 'ongoing' | 'won' | 'lost';
+
+export type OngoingBid = {
+  id: number;
+  number: number;
+  title: string;
+  currentBid: number | null;
+  myBid: number;
+  endsAt: string;
+  situation: 'winning' | 'outbid';
+  awaitingSettlement: boolean;
+};
+
+export type WonBid = {
+  id: number;
+  number: number;
+  title: string;
+  amount: number;
+  settledAt: string;
+  receiptToken: string;
+};
+
+export type LostBid = {
+  id: number;
+  number: number;
+  title: string;
+  amount: number | null;
+  myBid: number;
+  settledAt: string;
+};
+
+type MyBidsPage<S extends MyBidsSection, T> = {
+  section: S;
+  items: T[];
+  page: number;
+  pageSize: number;
+  total: number;
+  counts: Record<MyBidsSection, number>;
+};
+
+export type MyBids =
+  | MyBidsPage<'ongoing', OngoingBid>
+  | MyBidsPage<'won', WonBid>
+  | MyBidsPage<'lost', LostBid>;
 
 export type PlaceBidRequest = { amount: number };
 
