@@ -70,8 +70,7 @@ function RoomError({ onRetry }: { onRetry: () => void }) {
           Não foi possível abrir a sala do lote
         </p>
         <p className="ag-notice__text">
-          Não conseguimos abrir a sala agora. Nenhum lance seu foi enviado ou
-          perdido.
+          Não foi possível carregar o lote. Verifique a conexão e tente de novo.
         </p>
       </div>
       <div className="room-error__actions">
