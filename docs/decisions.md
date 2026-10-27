@@ -538,3 +538,14 @@ Story: 3.3
 **Por quê:** segue o padrão que `GET /lots/:id/image` já usava na 3.2: um id fora do `integer` nunca existe, então a resposta é a mesma de um lote inexistente, e o Postgres não chega a dar erro de faixa (500).
 **Alternativas descartadas:** `ParseIntPipe` do Nest (400 fora do formato `VALIDATION_FAILED` e sem checar o teto do `integer`); 400 `VALIDATION_FAILED` para id malformado (distingue "id inválido" de "não existe" sem ganho para o front, que mostra "lote não encontrado" nos dois casos).
 **Consequência:** toda rota nova com `:id` de lote (cancelamento, lances, stream, auditoria) usa o mesmo pipe.
+
+## D-053: Número do lote só depois da criação
+
+Status: Aceita
+Data: 2026-10-26
+Story: 3.5
+
+**Decisão:** a ficha de novo lote não mostra o número que o lote vai receber ("2. Ficha do lote", sem número). O número em romano aparece só na confirmação, com o `number` devolvido pelo `POST /lots`: "Lote {romano} publicado…". Substitui o trecho do critério da ficha que pedia o número antes da criação.
+**Por quê:** o número é gerado por sequência global no banco; prever o próximo na tela mostraria um número errado sempre que outro leiloeiro criasse um lote antes, ou quando uma criação falhasse e consumisse a sequência.
+**Alternativas descartadas:** endpoint com o próximo número (continua sujeito a corrida e a buracos da sequência, e muda a API); reservar o número ao abrir a ficha (exige estado de rascunho no banco).
+**Consequência:** a ficha só mostra dados da obra e as condições; o leiloeiro vê o número na faixa de sucesso e no livro de lotes.
