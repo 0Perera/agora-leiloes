@@ -534,3 +534,23 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Recusei derivar a situação só dos lances carregados: quem fosse superado por mais de 20 lances veria "ainda não deu lance".
 - Recusei a ordem do canvas no celular, com miniatura no cabeçalho: mantive a decidida na 3.7.
 - Mudei o texto proposto para a recusa por integridade, para dizer que o lance não foi registrado.
+
+## Story 4.7: Destaque ao vivo e lotes comprometidos na carteira
+
+**O que a IA gerou:**
+- O fim de cada lote comprometido em `GET /wallet`, na mesma query, com teste unitário e um caso e2e.
+- Modelo, stream e quadro de situação da sala movidos para `shared`, sem mudar os testes, para a página inicial reaproveitar.
+- Destaque da página inicial ao vivo: lance atual, número de lances e prazo pelo único stream da página, unidos pelo `seq`.
+- Quadro "Você está ganhando" ou "Você foi superado" no destaque, com a carteira relida quando a situação muda.
+- Lista dos lotes comprometidos na Carteira, com número, título, situação, valor e link para a sala, e "e mais N lotes" acima de 20.
+- Os casos de teste aprovados, README e `deferred-work.md`.
+
+**O que revisei e pedi para mudar:**
+- Decidi os textos da situação na Carteira: "Você lidera · encerra {data}" e, com o lote já vencido, "Você arrematou · aguardando liquidação".
+- Decidi trazer o fim do lote na lista de comprometidos, num commit próprio da API, com teste unitário e um caso e2e.
+- Pedi o caso de teste da linha do lote encerrado mostrando "aguardando liquidação".
+- Aprovei os casos de teste da story.
+- Decidi deixar a virada de status do destaque com a página aberta para depois, num item só do `deferred-work.md` junto com o achado da revisão da 3.6.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma.

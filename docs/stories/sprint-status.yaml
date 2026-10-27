@@ -65,7 +65,7 @@ development_status:
   4-4-testcontainers-ci-e-lances-simultaneos: done
   4-5-tempo-real-historico-e-situacao-do-licitante-na-api: done
   4-6-tela-sala-do-lote-ao-vivo-lances-e-tempo-real: done
-  4-7-destaque-ao-vivo-e-lotes-comprometidos-na-carteira: backlog
+  4-7-destaque-ao-vivo-e-lotes-comprometidos-na-carteira: in-progress
   epic-4-retrospective: optional
 
   epic-5: backlog

@@ -68,6 +68,10 @@
   summary: na 6.2, reescrever as entradas antigas do `docs/ai-log.md` no estilo novo: frases curtas, português corrente, detalhe técnico só quando for indispensável.
   evidence: pedido do usuário na 4.3, junto com o "Resumo" do topo do ai-log e a regra nova no CLAUDE.md.
 
+- source_spec: `docs/stories/spec-4-7-destaque-ao-vivo-e-lotes-comprometidos-na-carteira.md`
+  summary: virada de status do destaque com a página aberta: o destaque agendado continua "Agendado / Abre em" com a data passada depois de `startsAt`, e o ao vivo continua "Ao vivo" com a contagem em 00:00 depois de `endsAt`; buscar o lote de novo na virada, como faz a sala.
+  evidence: achado #1 da revisão da 3.6 (rejeitado na época); a 4.7 trouxe o stream ao destaque e manteve o status do carregamento, por decisão do usuário na spec.
+
 ## Revisão final (antes da 6.2)
 
 - source_spec: `docs/stories/spec-4-4-testcontainers-ci-e-lances-simultaneos.md`
