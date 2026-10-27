@@ -1,3 +1,5 @@
+const SNIPING_WINDOW_MS = 2 * 60 * 1000;
+
 export type BidLot = {
   startsAt: Date;
   endsAt: Date;
@@ -24,6 +26,7 @@ type Refusal =
 
 type Acceptance = {
   accepted: true;
+  endsAt: Date;
   commit: Movement;
   release: Movement | null;
 };
@@ -35,9 +38,22 @@ export function decide(state: BidState): BidDecision {
 }
 
 // O valor cheio do novo lance fica comprometido e o do líder anterior volta inteiro.
-function accept({ last, userId, amount }: BidState): Acceptance {
+function accept(state: BidState): Acceptance {
+  const { last, userId, amount } = state;
   const release = last && { userId: last.userId, amount: last.amount };
-  return { accepted: true, commit: { userId, amount }, release };
+  return {
+    accepted: true,
+    endsAt: extend(state),
+    commit: { userId, amount },
+    release,
+  };
+}
+
+// Soma ao fim atual, não ao horário do lance, como o Catawiki (D-011).
+function extend({ lot, now }: BidState): Date {
+  const remaining = lot.endsAt.getTime() - now.getTime();
+  if (remaining > SNIPING_WINDOW_MS) return lot.endsAt;
+  return new Date(lot.endsAt.getTime() + SNIPING_WINDOW_MS);
 }
 
 // A ordem define o código devolvido quando mais de uma checagem falharia.
