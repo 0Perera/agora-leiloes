@@ -28,6 +28,6 @@ export class DomainExceptionFilter implements ExceptionFilter<DomainException> {
   catch(exception: DomainException, host: ArgumentsHost): void {
     const response = host.switchToHttp().getResponse<Response>();
     const { code, detail } = exception;
-    response.status(STATUS[code]).json({ code, ...detail });
+    response.status(STATUS[code]).json({ ...detail, code });
   }
 }
