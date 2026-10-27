@@ -20,6 +20,8 @@ describe('DomainExceptionFilter.catch', () => {
     ['CATALOG_UNAVAILABLE', 503],
     ['IMAGE_DOWNLOAD_FAILED', 502],
     ['ARTWORK_ALREADY_LISTED', 409],
+    ['LOT_HAS_BIDS', 409],
+    ['LOT_ENDED', 422],
   ])('responde %s com status %i e só o código', (code, status) => {
     const { host, response } = makeHost();
 

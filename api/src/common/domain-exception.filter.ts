@@ -15,6 +15,8 @@ const STATUS: Record<DomainCode, HttpStatus> = {
   CATALOG_UNAVAILABLE: HttpStatus.SERVICE_UNAVAILABLE,
   IMAGE_DOWNLOAD_FAILED: HttpStatus.BAD_GATEWAY,
   ARTWORK_ALREADY_LISTED: HttpStatus.CONFLICT,
+  LOT_HAS_BIDS: HttpStatus.CONFLICT,
+  LOT_ENDED: HttpStatus.UNPROCESSABLE_ENTITY,
 };
 
 @Catch(DomainException)

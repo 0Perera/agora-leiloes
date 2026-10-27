@@ -1,5 +1,6 @@
 import { DataSource, IsNull, Repository } from 'typeorm';
 import type { ArtworkDetail } from '../catalog/artwork.mapper';
+import { NotFoundException } from '@nestjs/common';
 import { CatalogService } from '../catalog/catalog.service';
 import { DomainException } from '../common/domain.exception';
 import { CreateLotDto } from './dto/create-lot.dto';
@@ -125,5 +126,68 @@ describe('LotsService.featured', () => {
 
     expect(await service.featured()).toBeNull();
     expect(findOne).toHaveBeenCalledTimes(3);
+  });
+});
+
+function makeCancel(lot: Pick<Lot, 'id' | 'endsAt' | 'bidCount'> | null) {
+  const repository = {
+    findOne: jest.fn().mockResolvedValue(lot),
+    update: jest.fn().mockResolvedValue(undefined),
+  };
+  const manager = { getRepository: () => repository };
+  const dataSource = {
+    transaction: (fn: (manager: unknown) => Promise<unknown>) => fn(manager),
+  };
+  const service = new LotsService(
+    dataSource as unknown as DataSource,
+    {} as CatalogService,
+    { now: () => NOW },
+    {} as Repository<LotImage>,
+    {} as Repository<Lot>,
+  );
+  return { service, repository };
+}
+
+describe('LotsService.cancel', () => {
+  it('responde 404 quando o lote não é do leiloeiro', async () => {
+    const { service, repository } = makeCancel(null);
+
+    await expect(service.cancel(2, 1)).rejects.toThrow(NotFoundException);
+    expect(repository.findOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 1, auctioneerId: 2, cancelledAt: IsNull() },
+        lock: { mode: 'pessimistic_write' },
+      }),
+    );
+  });
+
+  it('não grava cancelled_at quando o lote tem lance', async () => {
+    const lot = {
+      id: 1,
+      endsAt: new Date('2026-10-27T12:00:00Z'),
+      bidCount: 1,
+    };
+    const { service, repository } = makeCancel(lot);
+
+    await expect(service.cancel(2, 1)).rejects.toThrow(
+      new DomainException('LOT_HAS_BIDS'),
+    );
+    expect(repository.update).not.toHaveBeenCalled();
+  });
+
+  it('cancela lote agendado sem lances e grava cancelled_at com o now do Clock', async () => {
+    const lot = {
+      id: 1,
+      endsAt: new Date('2026-10-28T12:00:00Z'),
+      bidCount: 0,
+    };
+    const { service, repository } = makeCancel(lot);
+
+    await service.cancel(2, 1);
+
+    expect(repository.update).toHaveBeenCalledWith(
+      { id: 1 },
+      { cancelledAt: NOW },
+    );
   });
 });
