@@ -101,3 +101,7 @@
 - source_spec: `docs/stories/spec-5-2-liquidacao-e-comprovante-assinado-na-api.md`
   summary: na 5.3, se o timer chamar a liquidação por um caminho sem o lock do lote, cobrir com teste o `ignoreDuplicate` (violação de `receipts_lot_id` termina sem erro e sem evento).
   evidence: achado da revisão da 5.2 (maybe-false, seria medium); hoje o `FOR UPDATE` no lote serializa as liquidações e a segunda sempre vê `settled_at`, então o caminho não é alcançado.
+
+- source_spec: `docs/stories/spec-5-3-timer-de-liquidacao-em-memoria.md`
+  summary: Rearmar o timer de liquidação com nova tentativa quando a consulta do próximo fim falha (banco fora no boot ou erro transitório).
+  evidence: em `SettlementTimer.schedule`, o erro do `next` só vai para o log e nenhum timer fica armado até o próximo lance ou lote criado; o gatilho por acesso continua liquidando.
