@@ -201,22 +201,32 @@ export async function start(): Promise<TestApp> {
   );
 }
 
-async function lockWaiters(db: DataSource): Promise<number> {
+// Recursivo: só o primeiro da fila espera a barreira; os outros esperam quem está à frente.
+async function lockWaiters(db: DataSource, barrier: Barrier): Promise<number> {
   const [row] = await db.query<{ waiters: number }[]>(
-    `SELECT COUNT(DISTINCT pid)::int AS waiters FROM pg_stat_activity
-     WHERE datname = current_database() AND wait_event_type = 'Lock'`,
+    `WITH RECURSIVE queue(pid) AS (
+       SELECT pid FROM pg_stat_activity WHERE $1 = ANY(pg_blocking_pids(pid))
+       UNION
+       SELECT a.pid FROM pg_stat_activity a
+       JOIN queue q ON q.pid = ANY(pg_blocking_pids(a.pid))
+     )
+     SELECT COUNT(DISTINCT a.pid)::int AS waiters
+     FROM queue q JOIN pg_stat_activity a ON a.pid = q.pid
+     WHERE a.datname = current_database() AND a.wait_event_type = 'Lock'`,
+    [barrier.pid],
   );
   return row.waiters;
 }
 
-// Prova de simultaneidade: só volta quando N backends distintos estão parados num lock.
+// Prova de simultaneidade: só volta quando N backends distintos estão parados no lock da barreira.
 export async function waitForLockWaiters(
   db: DataSource,
+  barrier: Barrier,
   expected: number,
 ): Promise<number> {
   const deadline = Date.now() + LOCK_TIMEOUT_MS;
   for (;;) {
-    const waiters = await lockWaiters(db);
+    const waiters = await lockWaiters(db, barrier);
     if (waiters >= expected) return waiters;
     if (Date.now() > deadline) {
       throw new Error(
@@ -227,15 +237,23 @@ export async function waitForLockWaiters(
   }
 }
 
-export type Barrier = { release(): Promise<void>; abort(): Promise<void> };
+export type Barrier = {
+  pid: number;
+  release(): Promise<void>;
+  abort(): Promise<void>;
+};
 
 // Conexão à parte segurando a linha do lote: os lances chegam e ficam na fila do lock.
 export async function lockLot(db: DataSource, lotId: number): Promise<Barrier> {
   const runner = db.createQueryRunner();
   await runner.connect();
+  const [{ pid }] = (await runner.query('SELECT pg_backend_pid() AS pid')) as {
+    pid: number;
+  }[];
   await runner.startTransaction();
   await runner.query('SELECT id FROM lots WHERE id = $1 FOR UPDATE', [lotId]);
   return {
+    pid,
     release: async () => {
       await runner.commitTransaction();
       await runner.release();

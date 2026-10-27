@@ -41,7 +41,7 @@ async function race(
     test.bid(bidder, lotId, amount).then((response) => response),
   );
   try {
-    const waiters = await waitForLockWaiters(test.db, offers.length);
+    const waiters = await waitForLockWaiters(test.db, barrier, offers.length);
     await barrier.release();
     return { waiters, responses: await Promise.all(pending) };
   } catch (error) {
