@@ -157,23 +157,27 @@ describe('liquidação pelo acesso ao lote', () => {
     const before = await wallets();
     end();
 
-    await detail().expect(200);
+    const response = await detail().expect(200);
 
+    expect((response.body as Detail).result).toEqual({
+      alias: null,
+      amount: null,
+    });
     expect(await settledAt()).toEqual(at(60));
     expect(await receipts()).toEqual([]);
     expect(await wallets()).toEqual(before);
   });
 
   it('só o vencedor recebe o token do comprovante', async () => {
-    await api.bid(bidder, lotId, STARTING_BID).expect(201);
+    await api.bid(rival, lotId, STARTING_BID).expect(201);
+    await api.bid(bidder, lotId, STARTING_BID + INCREMENT).expect(201);
     end();
-    await detail().expect(200);
-    const [receipt] = await receipts();
 
     const winner = (await detail(bidder).expect(200)).body as Detail;
+    const [receipt] = await receipts();
     const loser = (await detail(rival).expect(200)).body as Detail;
 
-    const result = { alias: receipt.alias, amount: STARTING_BID };
+    const result = { alias: receipt.alias, amount: STARTING_BID + INCREMENT };
     expect(winner.result).toEqual(result);
     expect(winner.me?.receiptToken).toBe(receipt.token);
     expect(loser.result).toEqual(result);
