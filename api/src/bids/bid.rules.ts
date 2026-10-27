@@ -18,12 +18,17 @@ export type BidState = {
 
 type Refusal =
   | { accepted: false; code: 'LOT_NOT_STARTED'; startsAt: Date }
-  | { accepted: false; code: 'LOT_ENDED' | 'ALREADY_WINNING' };
+  | { accepted: false; code: 'LOT_ENDED' | 'ALREADY_WINNING' }
+  | { accepted: false; code: 'BID_BELOW_MINIMUM'; minimum: number };
 
 export type BidDecision = { accepted: true } | Refusal;
 
 export function decide(state: BidState): BidDecision {
-  return checkStatus(state) ?? checkLeader(state) ?? { accepted: true };
+  return (
+    checkStatus(state) ??
+    checkLeader(state) ??
+    checkAmount(state) ?? { accepted: true }
+  );
 }
 
 // Início inclusivo e fim exclusivo, a mesma fronteira do STATUS_SQL.
@@ -40,6 +45,14 @@ function checkStatus({ lot, now }: BidState): Refusal | null {
 function checkLeader({ last, userId }: BidState): Refusal | null {
   if (last?.userId === userId) {
     return { accepted: false, code: 'ALREADY_WINNING' };
+  }
+  return null;
+}
+
+function checkAmount({ lot, last, amount }: BidState): Refusal | null {
+  const minimum = last ? last.amount + lot.increment : lot.startingBid;
+  if (amount < minimum) {
+    return { accepted: false, code: 'BID_BELOW_MINIMUM', minimum };
   }
   return null;
 }
