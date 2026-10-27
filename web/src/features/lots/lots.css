@@ -73,7 +73,6 @@
 /* destaque */
 .home-hero {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 64px;
   padding: var(--space-6) 0 80px;
@@ -577,9 +576,30 @@
   }
 }
 
+/* empilhado, a obra vem antes do texto e o arco cabe na tela com o título e o botão perto */
+@media (max-width: 960px) {
+  .home-hero {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-6);
+  }
+
+  .home-hero__art {
+    order: -1;
+    flex: none;
+  }
+
+  .home-hero__text {
+    flex: none;
+  }
+
+  .niche--hero {
+    width: min(100%, 440px, calc(55vh * 440 / 540));
+  }
+}
+
 @media (max-width: 760px) {
   .home-hero {
-    gap: var(--space-7);
     padding-top: 0;
   }
 
