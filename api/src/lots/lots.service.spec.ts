@@ -279,3 +279,46 @@ describe('LotsService.cancel', () => {
     );
   });
 });
+
+function makeFind(hasBid: boolean) {
+  const lot = { ...makeLot(), increment: 5_000, bidCount: 0 };
+  const builder = {
+    where: () => builder,
+    setParameter: () => builder,
+    select: () => builder,
+    addSelect: () => builder,
+    andWhere: () => builder,
+    getRawAndEntities: jest.fn().mockResolvedValue({
+      entities: [lot],
+      raw: [{ status: 'live', hasBid }],
+    }),
+  };
+  const lots = { createQueryBuilder: () => builder };
+  const service = new LotsService(
+    {} as DataSource,
+    {} as CatalogService,
+    { now: () => NOW },
+    {} as Repository<LotImage>,
+    lots as unknown as Repository<Lot>,
+    config,
+  );
+  return { service, builder };
+}
+
+describe('LotsService.find', () => {
+  it('licitante com lance no lote recebe hasBid verdadeiro', async () => {
+    const { service } = makeFind(true);
+
+    const detail = await service.find(1, { id: 3, role: 'BIDDER' });
+
+    expect(detail.me?.hasBid).toBe(true);
+  });
+
+  it('licitante sem lance no lote recebe hasBid falso', async () => {
+    const { service } = makeFind(false);
+
+    const detail = await service.find(1, { id: 3, role: 'BIDDER' });
+
+    expect(detail.me?.hasBid).toBe(false);
+  });
+});

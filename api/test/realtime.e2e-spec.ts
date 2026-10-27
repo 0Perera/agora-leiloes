@@ -166,6 +166,15 @@ describe('tempo real, histórico e situação do licitante', () => {
     });
   });
 
+  it('detalhe do licitante traz hasBid falso antes do lance e verdadeiro depois', async () => {
+    const before = await detail(bidder.token).expect(200);
+    await test.bid(bidder, lotId, STARTING_BID).expect(201);
+    const after = await detail(bidder.token).expect(200);
+
+    expect(before.body).toMatchObject({ me: { hasBid: false } });
+    expect(after.body).toMatchObject({ me: { hasBid: true } });
+  });
+
   it('detalhe sem token não traz me', async () => {
     const response = await detail().expect(200);
 
