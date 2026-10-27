@@ -80,6 +80,7 @@
 - source_spec: `docs/stories/spec-4-4-testcontainers-ci-e-lances-simultaneos.md`
   summary: unificar o CSS duplicado entre telas como componentes em `shared/ui` (`Skeleton`, `ErrorState`, `Tabs`): esqueleto de carregamento (painel, sala, vitrine, carteira), estado de erro com "Tentar de novo" (as mesmas quatro) e abas (painel, login, vitrine), hoje reescritos com o prefixo de cada tela.
   evidence: pedido do usuário na aprovação da 4.4.
+  extra: junto da unificação, tipografia e espaçamentos fluidos com `clamp()` pelos tokens (largura máxima do conteúdo, títulos, texto base, espaços entre seções e componentes), para a proporção crescer em telas grandes e encolher no celular; conferir todas as telas em 360, 768, 1024, 1280 e 1920px (pedido do usuário na 4.7).
 - source_spec: `docs/stories/spec-4-4-testcontainers-ci-e-lances-simultaneos.md`
   summary: padrão único de chamada à API no front: hoje algumas telas usam hook (`use-dashboard`, `use-wallet`) e outras chamam a API direto no componente (`lot-form`, `catalog-search`, `ledger`, `deposit-form`); escolher um padrão e aplicar em todas.
   evidence: pedido do usuário na aprovação da 4.4.
