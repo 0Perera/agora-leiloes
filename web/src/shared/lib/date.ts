@@ -1,6 +1,4 @@
-// horário da casa fixo, para a data não mudar com o fuso de quem acessa
 const shortFormat = new Intl.DateTimeFormat('pt-BR', {
-  timeZone: 'America/Sao_Paulo',
   day: 'numeric',
   month: 'short',
   hour: 'numeric',

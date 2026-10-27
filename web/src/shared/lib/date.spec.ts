@@ -2,11 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { formatShortDate, fromLocalInput, toLocalInput } from './date';
 
 describe('formatShortDate', () => {
-  it('formata hora cheia em America/Sao_Paulo', () => {
+  it('formata hora cheia', () => {
     expect(formatShortDate('2026-10-24T22:00:00.000Z')).toBe('24 out, 19h');
   });
 
-  it('formata hora com minutos em America/Sao_Paulo', () => {
+  it('formata hora com minutos', () => {
     expect(formatShortDate('2026-10-24T22:30:00.000Z')).toBe('24 out, 19h30');
   });
 });
