@@ -7,15 +7,9 @@ import type {
   CatalogSearch as SearchPage,
 } from '../../shared/api/types';
 import { FieldError } from '../../shared/ui/field-error';
+import { DepartmentPicker } from './department-picker';
+import { departments } from './departments';
 import { Pager } from './pager';
-
-const departments: { value: CatalogDepartment; label: string }[] = [
-  {
-    value: 'European Painting and Sculpture',
-    label: 'Pintura e escultura europeia',
-  },
-  { value: 'Greek and Roman Art', label: 'Arte grega e romana' },
-];
 
 type Query = { q: string; department: CatalogDepartment; page: number };
 
@@ -94,24 +88,7 @@ export function CatalogSearch({ selected, onPick }: Props) {
             message={empty ? 'Digite um termo para buscar no acervo.' : ''}
           />
         </label>
-        <fieldset className="ag-field panel-search-department">
-          <legend className="ag-field__label panel-legend">Departamento</legend>
-          <div className="ag-input panel-segments">
-            {departments.map((item) => (
-              <label key={item.value} className="panel-segment">
-                <input
-                  className="sr-only"
-                  type="radio"
-                  name="department"
-                  value={item.value}
-                  checked={department === item.value}
-                  onChange={() => setDepartment(item.value)}
-                />
-                <span className="panel-segment-text">{item.label}</span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
+        <DepartmentPicker value={department} onChange={setDepartment} />
         <button
           className="ag-btn ag-btn--secondary panel-search-submit"
           type="submit"
