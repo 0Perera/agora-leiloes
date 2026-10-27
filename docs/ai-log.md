@@ -378,3 +378,19 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - *"Abrir sala" só em lote ao vivo, como no canvas do Painel:* recusei; pedi em todo lote não cancelado, para o leiloeiro abrir também agendados e encerrados.
 - *Nova busca da virada uma vez só:* mudei para até 3 tentativas a cada 2 s, para a sala não ficar parada em 00:00 se o servidor demorar a virar o status.
 - *Texto de erro do canvas ("Nenhum lance seu foi enviado ou perdido"):* recusei; pedi um texto neutro, porque ainda não há lance.
+
+## Story 4.1: Regras de lance, saldo comprometido e anti-sniping (TDD)
+
+**O que a IA gerou:**
+- Função pura `decide` em `api/src/bids/bid.rules.ts`: recebe lote, último lance, licitante, disponível, valor e `now` e devolve aceite (novo `endsAt`, valor a comprometer e valor a liberar) ou recusa (código e detalhe), como união discriminada para a 4.3 mapear sem `as`.
+- Checagens em funções pequenas, na ordem status do lote, líder, valor e saldo; a primeira que falha decide. Início inclusivo e fim exclusivo, como o `STATUS_SQL`.
+- Anti-sniping somando 2 min ao fim atual quando faltam 2 min ou menos (D-011); recusa nunca prorroga.
+- Os 27 casos aprovados em `bid.rules.spec.ts`, em seis pares de commits `test(bids)` (vermelho) e `feat(bids)` (verde), um por grupo.
+
+**O que revisei e pedi para mudar:**
+- Aprovei os 27 casos de teste da spec, agrupados em status do lote, líder, valor, saldo, saldo comprometido e anti-sniping.
+- Pedi TDD com o commit do teste antes do commit da implementação em cada grupo, para o histórico mostrar a ordem.
+- Decidi que a recusa é retornada pela regra e convertida em exceção de domínio só na 4.3.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma nesta story.
