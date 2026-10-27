@@ -1,0 +1,366 @@
+.room {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
+  grid-template-areas:
+    'art head'
+    'art summary'
+    'art info';
+  grid-template-rows: auto auto 1fr;
+  gap: 28px 56px;
+  align-items: start;
+}
+
+.room__head {
+  grid-area: head;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.room__summary {
+  grid-area: summary;
+}
+
+.room__art {
+  grid-area: art;
+  margin: 0;
+  min-width: 0;
+}
+
+.room__info {
+  grid-area: info;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.room-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.room-kicker {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.room-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(32px, 7vw, 46px);
+  line-height: 1.05;
+  overflow-wrap: break-word;
+}
+
+.room-byline {
+  margin: 0;
+  font-size: 17px;
+  line-height: 24px;
+  color: var(--ink-muted);
+  overflow-wrap: anywhere;
+}
+
+/* resumo: lance e contagem */
+.room-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 22px;
+  background-color: var(--marble-000);
+  border: 1px solid var(--gold-500);
+  box-shadow:
+    inset 0 0 0 4px var(--marble-000),
+    inset 0 0 0 5px var(--vein);
+}
+
+.room-price {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(30px, 8vw, 44px);
+  line-height: 1.1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.room-bids {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--ink-muted);
+}
+
+.room-countdown__value {
+  min-width: 60px;
+  padding: 8px 6px 6px;
+  font-size: 30px;
+  line-height: 34px;
+}
+
+.room-countdown__sep {
+  padding-top: 8px;
+}
+
+.room-note {
+  margin: 0;
+  max-width: 220px;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--ink-muted);
+}
+
+.room-note--urgent {
+  color: var(--cinnabar-deep);
+}
+
+.room-opens {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-left: 20px;
+  border-left: 3px double var(--gold-500);
+}
+
+.room-opens__date {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 32px;
+}
+
+.room-opens__note {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--ink-muted);
+}
+
+/* nicho em arco onde a obra fica exposta, inteira */
+.room-niche {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 440 / 540;
+  margin: 0 auto;
+  background-color: var(--marble-100);
+  border: 1px solid var(--gold-500);
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+  box-shadow:
+    inset 0 22px 30px -22px rgba(43, 37, 32, 0.3),
+    inset 0 0 0 6px var(--marble-100),
+    inset 0 0 0 7px var(--vein);
+}
+
+.room-niche__stage {
+  position: absolute;
+  top: 24%;
+  left: 11%;
+  right: 11%;
+  bottom: 7%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.room-niche__image {
+  box-sizing: border-box;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border: 7px solid var(--gold-500);
+  background-color: var(--marble-200);
+  box-shadow:
+    0 0 0 1px var(--gold-700),
+    0 14px 18px -12px rgba(43, 37, 32, 0.55);
+}
+
+/* sobre a obra e o lote */
+.room-subtitle {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 32px;
+}
+
+.room-description {
+  margin: 0;
+  font-size: 17px;
+  line-height: 26px;
+  overflow-wrap: break-word;
+}
+
+.room-dl {
+  display: grid;
+  grid-template-columns: minmax(110px, max-content) minmax(0, 1fr);
+  gap: 10px 20px;
+  margin: 0;
+}
+
+.room-dl dt {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 24px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.room-dl dd {
+  margin: 0;
+  font-size: 17px;
+  line-height: 24px;
+  overflow-wrap: anywhere;
+}
+
+/* estados */
+.room-skel {
+  background-color: var(--marble-200);
+  animation: room-skel 1.4s ease-in-out infinite;
+}
+
+@keyframes room-skel {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.room-skel-head {
+  gap: var(--space-3);
+}
+
+.room-skel--label {
+  height: 24px;
+  width: 40%;
+}
+
+.room-skel--title {
+  height: 44px;
+  width: 90%;
+}
+
+.room-skel--line {
+  height: 20px;
+  width: 60%;
+}
+
+.room-skel--summary {
+  height: 132px;
+}
+
+.room-skel--art {
+  width: 75%;
+  height: 100%;
+}
+
+.room-missing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 640px;
+  margin: 48px auto;
+  padding: 40px var(--space-5);
+  border-top: 3px double var(--gold-500);
+  border-bottom: 3px double var(--gold-500);
+  text-align: center;
+}
+
+.room-missing .room-kicker {
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.room-missing__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 38px;
+}
+
+.room-missing__text {
+  margin: 0;
+  font-size: 18px;
+  line-height: 27px;
+  color: var(--ink-muted);
+}
+
+.room-error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  max-width: 640px;
+  margin: 48px auto;
+}
+
+.room-error .ag-notice {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.room-error__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.room-error__back {
+  min-height: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-skel {
+    animation: none;
+  }
+}
+
+/* empilhado, a obra vem antes e o arco cabe na tela com o título perto */
+@media (max-width: 880px) {
+  .room {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'art'
+      'head'
+      'summary'
+      'info';
+    grid-template-rows: none;
+    gap: 20px;
+  }
+
+  .room-niche {
+    width: min(100%, 520px, calc(55vh * 440 / 540));
+  }
+}
+
+@media (max-width: 420px) {
+  .room-summary {
+    padding: var(--space-4);
+  }
+
+  .room-missing {
+    padding: var(--space-6) var(--space-2);
+  }
+}

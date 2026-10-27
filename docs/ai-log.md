@@ -345,3 +345,28 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - *Cards esticados para preencher a linha com poucos resultados:* recusei; pedi o mesmo grid do painel, com os cards no tamanho natural.
 
+## Story 3.7: Tela Sala do lote ao vivo (leitura)
+
+**O que a IA gerou:**
+- `/lots/:id` em `features/live-room`, no lugar da página provisória: cabeçalho com selo, `lotLabel`, título e linha "artista, data · técnica"; resumo com lance atual, vencedor ou inicial e a contagem de lances; obra no nicho em arco com a imagem de `GET /lots/:id/image`; "Sobre a obra e o lote" com descrição e ficha.
+- Contagem Min:Seg ou Horas:Min corrigida pelo `serverTime`, urgente abaixo de 2 min, 00:00 com "Lote encerrado." no lote encerrado e bloco "Abre em" no agendado; timer de 1s só com o lote ao vivo.
+- Virada de estado com a página aberta: um `GET /lots/:id` silencioso ao chegar no início ou no fim, com o status vindo da API; erro nesse GET mantém a tela.
+- Estados carregando (esqueleto só com cabeçalho, resumo e obra), "Lote não encontrado" para 404 e id inválido sem chamar a API, e erro com "Tentar de novo".
+- Layout em duas colunas no desktop e empilhado abaixo de 880px, com a obra primeiro e o arco limitado a ~55vh.
+- "Abrir sala" no livro do painel para todo lote não cancelado.
+- Testes dos casos aprovados (31) a (36) em `room-summary.spec.ts`.
+
+**O que revisei e pedi para mudar:**
+- Pedi para seguir o canvas da Sala e as classes `ag-*`, substituindo a página provisória da 3.6.
+- Pedi para reaproveitar o helper de contagem com `serverTime` da 3.6, sem criar outro.
+- Pedi que a tela ficasse completa sem os blocos do épico 4 (lance, histórico, tempo real), sem espaços vazios ou placeholders.
+- Pedi número no formato da D-054, datas no fuso do navegador e valores com centavos (D-048).
+- Pedi "Abrir sala" no livro do painel, item registrado no `deferred-work.md` na 3.5.
+- Aprovei os casos de teste (31) a (36) da spec.
+- Decidi o layout abaixo de 880px igual ao destaque da página inicial: obra primeiro, arco limitado a ~55vh, sem miniatura no cabeçalho.
+- Aprovei refazer o `GET /lots/:id` uma vez quando o lote abre ou encerra com a página aberta.
+- Decidi "Abrir sala" no painel em todo lote não cancelado (ao vivo, agendado e encerrado), sumindo durante a confirmação de cancelamento.
+
+**Sugestões rejeitadas e por quê:**
+- *Cabeçalho com miniatura antes da obra no mobile:* recusei; pedi a obra primeiro, como no destaque da página inicial.
+- *"Abrir sala" só em lote ao vivo, como no canvas do Painel:* recusei; pedi em todo lote não cancelado, para o leiloeiro abrir também agendados e encerrados.
