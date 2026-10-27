@@ -96,6 +96,7 @@ Sem lance: `{ settle: true, winner: null, moves: [] }`. O caso 13 fica garantido
 - Commits em dois pares TDD (`09ff047`/`8170284`, `ed0ad96`/`5a819e8`) e docs em `038d90a`. O primeiro `feat` devolve só `{ settle: true }`, para o segundo `test` nascer vermelho.
 - `last` e `winner` reaproveitam o tipo `Movement` da `bid.rules.ts`.
 - Depois da revisão, a pedido do usuário: caso 16 (commit `test` que nasce verde; falha com as checagens invertidas), caso 3 conferido 1 ms antes do fim prorrogado e casos de movimentos comparando a lista inteira.
+- Os casos 10 a 13 viraram um teste só (`move o valor do último lance do vencedor para o leiloeiro e mais nada`): com a comparação da lista inteira, os quatro ficaram idênticos, e um teste cobre débito, liberação do comprometido, crédito do leiloeiro e ausência de outro movimento. A spec passa a ter 13 testes para os 16 casos.
 - Ajustes de documentação depois da revisão: contrato no `epic-5-context.md`, evidência da pendência do selo e ai-log.
 
 ## Spec Change Log

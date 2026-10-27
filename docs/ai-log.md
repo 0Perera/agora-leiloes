@@ -574,8 +574,8 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi dois casos a mais: lote cancelado e já vencido, e lote já liquidado e já vencido.
 - Pedi que a 5.2 confira o selo do lote antes de mover saldo, porque apagar o último lance direto no banco mudaria quem paga.
 - Na revisão, aprovei um caso 16 (lote cancelado e já liquidado responde cancelado), porque nenhum teste fixava essa parte da ordem.
-- Pedi que o caso do fim prorrogado conferisse um instante antes e o instante exato, e que os casos de movimentos comparassem a lista inteira, para falhar com um movimento a mais.
+- Pedi que o caso do fim prorrogado conferisse um instante antes e o instante exato.
 - Decidi deixar como estão os outros achados de estilo da revisão.
 
 **Sugestões rejeitadas e por quê:**
-- Mudei os testes de movimentos propostos: em vez de buscar o movimento de cada carteira, comparam a lista inteira, porque um movimento a mais passaria despercebido.
+- Pedi para juntar os quatro testes de movimentos num só: a comparação da lista inteira, sugerida pelo Claude (app), tinha deixado os quatro idênticos.
