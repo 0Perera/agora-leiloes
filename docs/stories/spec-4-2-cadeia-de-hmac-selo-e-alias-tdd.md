@@ -2,7 +2,7 @@
 title: 'Cadeia de HMAC, selo e alias (TDD)'
 type: 'feature'
 created: '2026-10-27'
-status: 'in-progress'
+status: 'done'
 baseline_commit: 'a9606852d9000b5ff6c5604ee126c7fb8913e33a'
 route: 'dispatch'
 review_loop_iteration: 0
@@ -74,13 +74,13 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `docs/stories/sprint-status.yaml` -- 4-1 `done` (feito), 4-2 `in-progress`
-- [ ] `api/src/audit/chain.spec.ts` + `chain.ts` -- ciclos vermelho/verde: `hashBid` (1-5, 12), depois `sealLot` (6-8); exporta `GENESIS`
-- [ ] `api/src/audit/alias.ts` + `alias.spec.ts` -- `forLot(secret, userId, lotId)` e casos 9-11
-- [ ] `api/src/config/env.validation.ts` + `env.validation.spec.ts` -- `BID_HMAC_SECRET` e caso 13
-- [ ] `api/.env.example`, `docker-compose.yml`, `render.yaml`, `api/.env` local (ignorado) -- nova env
-- [ ] `docs/deploy-notes.md`, `docs/stories/deferred-work.md` -- pedidos do usuário
-- [ ] `docs/ai-log.md` -- entrada da 4.2
+- [x] `docs/stories/sprint-status.yaml` -- 4-1 `done` (feito), 4-2 `in-progress`
+- [x] `api/src/audit/chain.spec.ts` + `chain.ts` -- ciclos vermelho/verde: `hashBid` (1-5, 12), depois `sealLot` (6-8); exporta `GENESIS`
+- [x] `api/src/audit/alias.ts` + `alias.spec.ts` -- `forLot(secret, userId, lotId)` e casos 9-11
+- [x] `api/src/config/env.validation.ts` + `env.validation.spec.ts` -- `BID_HMAC_SECRET` e caso 13
+- [x] `api/.env.example`, `docker-compose.yml`, `render.yaml`, `api/.env` local (ignorado) -- nova env
+- [x] `docs/deploy-notes.md`, `docs/stories/deferred-work.md` -- pedidos do usuário
+- [x] `docs/ai-log.md` -- entrada da 4.2
 
 **Acceptance Criteria:**
 - Given o histórico da branch, when lido, then cada `test(audit)` vem antes do `feat(audit)` correspondente e fica vermelho sozinho.
@@ -108,6 +108,31 @@ forLot(secret, userId, lotId): string   // "Licitante K7QX2M"
 
 ## Implementation Notes
 
+- Dois pares `test(audit)` → `feat(audit)`: `hashBid` (1-4, 12) e `sealLot` (5-8). O caso 5 foi para o segundo par porque compara com `sealLot`.
+- `sign(secret, prefix, fields)` exportado de `chain.ts` e reaproveitado por `alias.ts` (e pelo comprovante no épico 5).
+- Depois da revisão: casos 14 (alias por licitante), 15 (hash com valor conhecido) e 16 (env válida e sem vazar o valor), aprovados pelo usuário; cópia do segredo fora do Render no `deploy-notes.md`; regra do genesis para a 5.5 no `deferred-work.md`.
+- `env.validation.spec.ts` importa `reflect-metadata` por causa dos decorators do class-validator.
+
 ## Spec Change Log
 
 ## Review Triage Log
+
+| # | Achado | Veredito | Evidência |
+|---|---|---|---|
+| 1 | `createdAt` inválido lança `RangeError` | false | falha ruidosa em estado que nenhum chamador produz; comportamento correto |
+| 2 | `amount`/ids não inteiros são assinados | low | colunas `integer` e DTO garantem inteiro; guarda acrescentaria ramo sem caso real (rejeitado) |
+| 3 | `prevHash` null aceito em `seq > 1` | low | a verificação da 5.5 compara `prev_hash` com o hash do lance anterior e acusa a quebra; registrado para a 5.5 |
+| 4 | `sign()` sem guarda para `|` em campo string e prefixo livre | low | hoje só números, ISO e hex; prefixo como union é opcional (listado) |
+| 5 | selo aceita estado impossível (contagem negativa etc.) | low | chamador é o service da 4.3; rejeitado |
+| 6 | colisão de alias no mesmo lote | false | risco aceito na D-044 (30 bits) |
+| 7 | segredo só de espaços ou igual ao JWT passa | low | configuração do próprio operador; rejeitado |
+| 8 | alias não testa licitantes diferentes no mesmo lote | medium | `sign(secret,'alias',[lotId])` passaria nos casos 9-11; caso novo depende do usuário |
+| 9 | env sem controle positivo e sem checar que o valor não vaza | medium | AC "cita só o nome" não tem teste; caso novo depende do usuário |
+| 10 | serialização sem teste de resposta conhecida | medium | reordenar campos ou trocar separador deixa 1-8 e 12 verdes; caso novo depende do usuário |
+| 11 | Tasks diz `hashBid (1-5, 12)` e as notas dizem (1-4, 12) | false | Implementation Notes registram o desvio; correção seria editar a spec |
+| 12 | sprint-status `in-progress` com spec `in-review` | false | o passo seguinte do fluxo sincroniza o status |
+| 13 | falta `verify` com `timingSafeEqual` | false | as comparações da 5.5 são entre valores guardados no servidor, sem MAC vindo do atacante |
+| 14 | segredo sem cópia fora do Render | low | recriar o serviço geraria outro valor; patch de uma linha no deploy-notes |
+| 15 | formato da serialização fora do `decisions.md` | low | formato já definido nas notas aprovadas da story no `epics.md`; opcional (listado) |
+| 16 | README sem a env nova | false | "Rodar local" usa `cp .env.example`, que já traz a env |
+| 17 | Code Map cita o passo 5 e o diff mexe no passo 1 | false | o passo 5 já citava o segredo; o 1 só reforça |
