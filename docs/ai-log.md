@@ -521,14 +521,14 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Os casos de teste aprovados, README e `deferred-work.md`.
 
 **O que revisei e pedi para mudar:**
-- Pedi que a spec tratasse o evento `bid` do stream, a união do lance do POST com o do stream pelo `seq` e o botão travado durante o envio.
+- Pedi que a spec tratasse o evento `bid` do stream, a união do lance do POST com o do stream pelo `seq`, o botão travado durante o envio e o link da auditoria só na 5.8.
 - Pedi que esqueleto e erro com "Tentar de novo" fossem para `shared/ui` num commit de refatoração antes de usar, sem bloco novo com o nome da tela.
-- Escolhi que o detalhe do lote informe se o licitante já deu lance, num commit próprio com teste unitário e um caso e2e.
+- Escolhi que o detalhe do lote informe se o licitante já deu lance, num commit próprio, e pedi os testes desse caso junto com os aprovados.
 - Decidi a regra da situação: ganhando pelo último lance; superado se já deu lance e o último é de outro; senão, ainda não deu lance.
 - Defini o texto da recusa por integridade: "Lances suspensos neste lote." e que o lance não foi registrado.
 - Pedi para manter no celular o layout da 3.7, com a obra primeiro e sem miniatura no cabeçalho.
-- Decidi deixar o link para a auditoria do lote para a 5.8.
-- Aprovei os casos de teste e pedi os do "já deu lance".
+- Ao conferir, apontei que a sala não avisava a queda da API; pedi o aviso "Conexão perdida. Reconectando…", o botão travado e a volta sem recarregar.
+- Pedi valor e contagem lado a lado no resumo, com o líder ao lado do número de lances, e os links do cabeçalho centralizados no celular.
 
 **Sugestões rejeitadas e por quê:**
 - Recusei derivar a situação só dos lances carregados: quem fosse superado por mais de 20 lances veria "ainda não deu lance".
