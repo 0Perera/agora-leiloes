@@ -423,11 +423,16 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - `DomainException` com detalhe, quatro códigos novos (422) no filter e códigos da `Refusal` amarrados ao `DomainCode`.
 - Cancelamento com `EXISTS` em `bids` depois do lock e selo vazio gravado na criação do lote.
 - Os 14 casos aprovados, tipos `PlaceBidRequest`/`PlacedBid` no front e os campos de detalhe no `ApiErrorBody`.
+- Depois da revisão: conferência do selo antes de gravar o lance (`LOT_INTEGRITY_FAILED`, 409) em TDD, seis casos novos e os dois ajustes de estilo.
 
 **O que revisei e pedi para mudar:**
 - Decidi manter só o `UNIQUE (lot_id, seq)`, sem índice separado em `lot_id`, como desvio consciente do critério (D-057).
 - Decidi gravar o selo vazio na criação do lote e tratar selo nulo como não íntegro na 5.5 (D-058).
 - Aprovei os casos 1 a 14 e pedi que o caso 8 conferisse os quatro campos do lote (`seal`, `current_bid`, `bid_count`, `ends_at`).
+- Aprovei os seis casos sugeridos pela revisão: selo vazio na criação, resposta do lance, `EXISTS` depois do lock, `bid_count` sem lances em `bids`, recusas sem gravação e DTO com valor ausente, zero e válido.
+- Decidi tratar já na 4.3 o lance dado depois de lances apagados do fim: recusar com 409 `LOT_INTEGRITY_FAILED` quando o selo não confere, inclusive nulo, sem query a mais e em TDD (D-059).
+- Pedi registrar no `deferred-work.md` a tradução de `LOT_INTEGRITY_FAILED` na sala, para a 4.6.
+- Pedi corrigir os dois ajustes de estilo: o `code` depois do detalhe no filter e o `bidCount` fora do helper de cancelamento.
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta story.

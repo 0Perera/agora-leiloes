@@ -604,3 +604,14 @@ Story: 4.3
 **Por quê:** com o selo desde o início, a auditoria (5.5) detecta também a remoção de todos os lances de um lote, e não só do final da cadeia.
 **Alternativas descartadas:** selo nulo até o primeiro lance (lote com todos os lances apagados ficaria igual a um lote que nunca recebeu lance); `NOT NULL` com selo calculado na migration (a migration precisaria do segredo).
 **Consequência:** na 5.5, selo nulo conta como não íntegro. Em produção o banco é recriado na entrega, então nenhum lote fica com selo nulo.
+
+## D-059: Lance recusado quando o selo do lote não confere
+
+Status: Aceita
+Data: 2026-10-27
+Story: 4.3
+
+**Decisão:** antes de gravar um lance, o service recalcula o selo esperado (`lot_id`, `seq` do último lance ou 0, hash do último lance ou `GENESIS`) com os dados já lidos na transação e compara com `lots.seal`. Se não bater, inclusive com selo nulo, o lance é recusado com 409 `LOT_INTEGRITY_FAILED` e nada é gravado.
+**Por quê:** sem a conferência, quem apagasse lances do fim da cadeia direto no banco veria o próximo lance reusar o `seq` e reassinar o selo, e a auditoria passaria a mostrar o lote como íntegro: a evidência da remoção sumiria.
+**Alternativas descartadas:** deixar a detecção só para a auditoria da 5.5 (o próximo lance apagaria a evidência antes de alguém abrir a auditoria); gravar o lance e só registrar a divergência (o selo novo continuaria cobrindo a cadeia adulterada).
+**Consequência:** lote com a cadeia adulterada para de aceitar lances até alguém investigar; lote antigo, sem selo, também. Não custa query a mais: usa o lote travado e o último lance já lidos.

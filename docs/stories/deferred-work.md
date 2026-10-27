@@ -53,6 +53,10 @@
   summary: na 4.4, teste HTTP de `POST /lots/:id/bids` com 403 `ROLE_NOT_ALLOWED` para leiloeiro e 401 sem token.
   evidence: achado da revisão da 4.3; trocar ou remover o `@Auth('BIDDER')` da rota deixa a suíte verde, e o repo cobre a borda HTTP com Testcontainers a partir da 4.4.
 
+- source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
+  summary: na 4.6, traduzir `LOT_INTEGRITY_FAILED` (409) na sala do lote.
+  evidence: decisão do usuário na revisão da 4.3 (D-059); o lance passa a ser recusado quando o selo do lote não confere com a cadeia.
+
 ## Polimento visual
 
 - source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`

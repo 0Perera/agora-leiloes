@@ -129,6 +129,8 @@ Valores das carteiras escritos a partir da linha travada (`committed: wallet.com
 - Conferido na API local: 201 com `endsAt` prorrogado em 2 min, `ALREADY_WINNING`, `BID_BELOW_MINIMUM` com `minimum`, `INSUFFICIENT_BALANCE` com `available`, `LOT_NOT_STARTED` com `startsAt`, 403 do leiloeiro, 401 sem token, 400 para `1.5`, `2147483648` e corpo vazio, 404 de lote cancelado e inexistente, `LOT_HAS_BIDS` no cancelamento, cadeia (`GENESIS` → hash do lance 1) e selo gravado no lote novo.
 - Selo vazio na criação: `UPDATE` do lote logo depois do `INSERT`, na mesma transação, porque o selo leva o `lot_id` gerado.
 - `ApiErrorBody` do front ganhou `startsAt`, `minimum` e `available` (detalhe das recusas), além de `PlaceBidRequest`/`PlacedBid`.
+- Decisões do usuário na revisão: casos a-f aprovados (achados 5, 6, 7, 9, 10, 11); achado 1 tratado com a conferência do selo antes de gravar (409 `LOT_INTEGRITY_FAILED`, TDD com commit vermelho, D-059); achados 4 e 11 (estilo) corrigidos; tradução do código novo registrada para a 4.6.
+- O caso do selo fica antes do lock das carteiras: a recusa por integridade usa só o lote e o último lance, e o lance recusado assim dispara 2 queries.
 
 ## Spec Change Log
 
