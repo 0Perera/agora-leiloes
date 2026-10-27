@@ -2,7 +2,7 @@
 title: 'Testcontainers, CI e lances simultâneos'
 type: 'feature'
 created: '2026-10-27'
-status: 'in-progress'
+status: 'done'
 baseline_commit: '3e66ccddc3449217812cc79c3d71c7ecb4e636ed'
 route: 'dispatch'
 review_loop_iteration: 0
@@ -96,18 +96,53 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `docs/stories/sprint-status.yaml` -- 4-3 `done` (feito), 4-4 `in-progress`
-- [ ] `api/src/app.setup.ts`, `api/src/main.ts` -- extrai `setup(app)`
-- [ ] `api/package.json`, `package-lock.json` -- `@testcontainers/postgresql`; `test:e2e` com `--runInBand`
-- [ ] `api/test/jest-e2e.json`, `test/global-setup.ts`, `test/global-teardown.ts` -- container e envs
-- [ ] `api/test/app.ts` -- `start()`, `reset()`, relógio de teste, catálogo falso, helpers `signup`, `deposit`, `createLot`, `waitForLockWaiters`
-- [ ] `api/test/bids.e2e-spec.ts` (1-5), `concurrency.e2e-spec.ts` (6-15), `lots.e2e-spec.ts` (16-22)
-- [ ] `.github/workflows/ci.yml` -- job `api-e2e`
-- [ ] `README.md` (Testes e Rodar local: e2e exige Docker), `docs/decisions.md` (D-060, D-061), `docs/ai-log.md`, `deferred-work.md` (itens da vitrine e do 403/401 como feitos)
+- [x] `docs/stories/sprint-status.yaml` -- 4-3 `done` (feito), 4-4 `in-progress`
+- [x] `api/src/app.setup.ts`, `api/src/main.ts` -- extrai `setup(app)`
+- [x] `api/package.json`, `package-lock.json` -- `@testcontainers/postgresql`; `test:e2e` com `--runInBand`
+- [x] `api/test/jest-e2e.json`, `test/global-setup.ts`, `test/global-teardown.ts` -- container e envs
+- [x] `api/test/app.ts` -- `start()`, `reset()`, relógio de teste, catálogo falso, helpers `signup`, `deposit`, `createLot`, `waitForLockWaiters`
+- [x] `api/test/bids.e2e-spec.ts` (1-5), `concurrency.e2e-spec.ts` (6-15), `lots.e2e-spec.ts` (16-22)
+- [x] `.github/workflows/ci.yml` -- job `api-e2e`
+- [x] `README.md` (Testes e Rodar local: e2e exige Docker), `docs/decisions.md` (D-060, D-061), `docs/ai-log.md`, `deferred-work.md` (itens da vitrine e do 403/401 como feitos)
 
 **Acceptance Criteria:**
 - Given Docker local, when `cd api && npm run test:e2e`, then as três suítes passam.
 - Given a PR, when o CI roda, then o job `api-e2e` aparece e fica verde.
+
+## Implementation Notes
+
+- `npm run test:e2e`: 24 testes (22 casos; o caso 22 é `it.each` com 3 linhas).
+- Linha "Barreira não forma" da matriz: conferida à mão exigindo N+1 lances esperando (falha em 10 s com "only 10 of 11"); linha "Sem Docker" é de ambiente, sem teste automático.
+- `package-lock.json`: só pacotes novos do Testcontainers; nenhuma versão existente mudou.
+- Patch do achado 1: filtrar só por `pg_blocking_pids` da barreira contava 1 de 10, porque só o primeiro da fila espera a barreira e os demais esperam quem está à frente. A contagem virou recursiva a partir do pid da barreira.
+
+## Review Triage Log
+
+| # | Achado | Veredito | Evidência |
+|---|---|---|---|
+| 1 | Contagem de espera por lock pega qualquer backend do banco, não só os bloqueados pela barreira (edge, blind, verification) | medium | `lockWaiters` filtra só `wait_event_type = 'Lock'`; a prova da disputa (ponto 1 do pedido) fica mais fraca do que diz. Patch: filtrar por `pg_blocking_pids` do pid da barreira |
+| 2 | Execução em série depende só do `--runInBand` do script (edge) | medium | `npx jest --config test/jest-e2e.json` roda suítes em paralelo com `TRUNCATE` no mesmo banco. Patch: `maxWorkers: 1` na config |
+| 3 | ai-log traz autorização operacional (ruleset) em "O que revisei" (blind) | low | CLAUDE.md exclui autorizações operacionais; linha removida |
+| 4 | Liberação do comprometido do superado só é exercida se a ordem de chegada aceitar 2+ lances (verification) | medium | ordem livre; na prática os lances saem em ordem crescente e quase todos são aceitos, mas não é garantido. Caso novo depende do usuário |
+| 5 | Lances disparados em ordem crescente quase nunca geram recusa no caso 7 (blind) | low | mesma raiz da ordem livre; embaralhar mudaria o cenário aprovado; levado ao usuário |
+| 6 | Caso 7 sem asserção quando todos são 201 (blind) | false | todos 201 satisfaz "só 201 ou 422"; qualquer outro status cai no laço e falha |
+| 7 | Casos 10 e 11 com `TypeError` se nenhum lance for aceito (blind) | false | o maior lance é sempre aceito (≥ qualquer mínimo); e o teste falharia de qualquer jeito |
+| 8 | Caso 15 não confere carteira, cadeia nem selo do lote empatado (blind) | low | o caso aprovado é sobre as respostas; asserção nova depende do usuário |
+| 9 | Caso 15 roda depois de 13 e 14 no mesmo banco (blind) | low | Jest roda os `it` em ordem de arquivo; 13 e 14 leem antes; listado |
+| 10 | Anti-sniping sob concorrência sem teste (blind) | low | fora dos ACs da 4.4; caso novo depende do usuário |
+| 11 | Só um código de recusa testado por HTTP (blind) | false | o AC pede "uma recusa por código"; os demais são cobertos no unitário do filter |
+| 12 | Caso 20 não confere `counts.scheduled` (blind) | low | asserção extra no caso aprovado; listado |
+| 13 | `FakeCatalog` sem tipo ligado ao `CatalogService` (blind) | low | estilo; listado |
+| 14 | Variável `test` sombreia o `test()` global do Jest (blind) | low | estilo; listado |
+| 15 | Spec diz 22 casos e o Jest reporta 24 (blind) | false | o caso 22 é `it.each` de 3 linhas; registrado nas Implementation Notes |
+| 16 | Status do sprint diverge da spec (blind) | false | o passo seguinte do fluxo sincroniza |
+| 17 | Job `api-e2e` sem `timeout-minutes` (blind, edge) | low | runner travado ficaria até 6 h; listado |
+| 18 | `.then((r) => r)` sem efeito e `PORT` sem uso (blind) | low | estilo; listado |
+| 19 | `main.ts` chamando `setup(app)` só conferido pelo build (verification) | low | função de 3 linhas, revisada; rejeitado |
+| 20 | Timeout da barreira esconde a causa quando um lance falha antes do lock (edge) | low | só piora o diagnóstico; listado |
+| 21 | `lockLot` vaza conexão se `startTransaction` lançar (edge) | low | raro e só em teste; rejeitado |
+| 22 | `lockLot` em lote inexistente não trava nada (edge) | false | os chamadores sempre passam o lote recém-criado |
+| 23 | `createLot` não devolve o relógio a `BASE` se o `POST` falhar (edge) | low | o teste já falha nesse ponto; rejeitado |
 
 ## Verification
 

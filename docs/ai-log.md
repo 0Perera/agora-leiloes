@@ -476,8 +476,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **O que revisei e pedi para mudar:**
 - Decidi usar um catálogo falso nos testes, devolvendo a peça e a imagem, sem chamar a Cleveland (D-060).
 - Decidi um container só para a execução inteira, com suítes em série e tabelas limpas no começo de cada uma (D-061).
-- Decidi que eu mesmo incluo o `api-e2e` na proteção da `main`, depois do primeiro run verde.
-- Pedi a extração do `setup(app)` num commit separado.
+- Aprovei a extração do `setup(app)` num commit separado.
 - Aprovei os casos 1 a 22.
 - Pedi registrar no `deferred-work.md` a unificação do CSS repetido entre telas e um padrão único de chamada à API no front.
 
