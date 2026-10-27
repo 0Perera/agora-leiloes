@@ -553,6 +553,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Decidi deixar a virada de status do destaque com a página aberta para depois, num item só do `deferred-work.md` junto com o achado da revisão da 3.6.
 - Pedi para a nota do comprometido dizer só "reservado em N lotes", porque a contagem inclui lotes arrematados aguardando liquidação.
 - Decidi manter a linha "encerra" desatualizada com a Carteira aberta depois do fim, registrada no `deferred-work.md`.
+- Pedi o cabeçalho com as medidas do canvas a partir de 1024px e a barra de proporção da carteira no resumo, com teste da proporção.
 
 **Sugestões rejeitadas e por quê:**
 - Mudei a proposta da data de fim na Carteira: o lote já vencido e ainda não liquidado mostra "Você arrematou · aguardando liquidação" em vez da data.
