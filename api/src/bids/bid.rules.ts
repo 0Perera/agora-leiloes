@@ -18,12 +18,12 @@ export type BidState = {
 
 type Refusal =
   | { accepted: false; code: 'LOT_NOT_STARTED'; startsAt: Date }
-  | { accepted: false; code: 'LOT_ENDED' };
+  | { accepted: false; code: 'LOT_ENDED' | 'ALREADY_WINNING' };
 
 export type BidDecision = { accepted: true } | Refusal;
 
 export function decide(state: BidState): BidDecision {
-  return checkStatus(state) ?? { accepted: true };
+  return checkStatus(state) ?? checkLeader(state) ?? { accepted: true };
 }
 
 // Início inclusivo e fim exclusivo, a mesma fronteira do STATUS_SQL.
@@ -33,6 +33,13 @@ function checkStatus({ lot, now }: BidState): Refusal | null {
   }
   if (now.getTime() >= lot.endsAt.getTime()) {
     return { accepted: false, code: 'LOT_ENDED' };
+  }
+  return null;
+}
+
+function checkLeader({ last, userId }: BidState): Refusal | null {
+  if (last?.userId === userId) {
+    return { accepted: false, code: 'ALREADY_WINNING' };
   }
   return null;
 }
