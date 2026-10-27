@@ -1,5 +1,6 @@
-import { Link, NavLink, useNavigate } from 'react-router';
+import { Link, NavLink } from 'react-router';
 import { WalletBadge } from '../features/wallet/wallet-badge';
+import { AccountMenu } from './account-menu';
 import type { Session } from './session';
 import { useSession } from './use-session';
 
@@ -28,7 +29,11 @@ export function Header() {
             </NavLink>
           )}
         </nav>
-        <div className="header-actions">
+        <div
+          className={
+            session ? 'header-actions' : 'header-actions header-actions--guest'
+          }
+        >
           {session ? <Account session={session} /> : <GuestActions />}
         </div>
       </div>
@@ -51,29 +56,10 @@ function GuestActions() {
 }
 
 function Account({ session }: { session: Session }) {
-  const { signOut } = useSession();
-  const navigate = useNavigate();
-  const isBidder = session.user.role === 'BIDDER';
-  const roleLabel = isBidder ? 'Licitante' : 'Leiloeiro';
-
-  function leave() {
-    signOut();
-    void navigate('/login', { replace: true });
-  }
-
   return (
     <>
-      {isBidder && <WalletBadge />}
-      <span className="header-user">
-        {roleLabel} · {session.user.name}
-      </span>
-      <button
-        className="ag-btn ag-btn--secondary header-btn"
-        type="button"
-        onClick={leave}
-      >
-        Sair
-      </button>
+      {session.user.role === 'BIDDER' && <WalletBadge />}
+      <AccountMenu session={session} />
     </>
   );
 }

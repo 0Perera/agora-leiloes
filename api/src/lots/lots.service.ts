@@ -79,6 +79,10 @@ const DETAIL_COLUMNS = [
   'bidCount',
 ] as const;
 
+// Filtro pelo índice bids_user_id; fora do licitante, :bidderId é nulo e o EXISTS dá falso.
+const HAS_BID_SQL =
+  'EXISTS (SELECT 1 FROM bids bid WHERE bid.user_id = :bidderId AND bid.lot_id = lot.id)';
+
 type Candidate = {
   status: LotStatus;
   where: FindOptionsWhere<Lot>;
@@ -143,16 +147,22 @@ export class LotsService {
   // Só licitante recebe me: leiloeiro não dá lance, então não tem alias no lote.
   async find(id: number, viewer?: AuthUser): Promise<LotDetailDto> {
     const now = this.clock.now();
+    const bidderId = viewer?.role === 'BIDDER' ? viewer.id : null;
     const { entities, raw } = await this.visible(now)
       .select(DETAIL_COLUMNS.map((column) => `lot.${column}`))
       .addSelect(STATUS_SQL, 'status')
+      .addSelect(HAS_BID_SQL, 'hasBid')
       .andWhere('lot.id = :id', { id })
-      .getRawAndEntities<{ status: LotStatus }>();
+      .setParameter('bidderId', bidderId)
+      .getRawAndEntities<{ status: LotStatus; hasBid: boolean }>();
     if (entities.length === 0) throw new NotFoundException();
     const me =
-      viewer?.role === 'BIDDER'
-        ? { alias: forLot(this.secret, viewer.id, id) }
-        : undefined;
+      bidderId === null
+        ? undefined
+        : {
+            alias: forLot(this.secret, bidderId, id),
+            hasBid: raw[0].hasBid,
+          };
     return toLotDetail(entities[0], raw[0].status, now, me);
   }
 

@@ -7,7 +7,7 @@ import type {
 } from '../../shared/api/types';
 import { LedgerRow } from './ledger-row';
 import type { Fresh } from './ledger-row';
-import { LoadError } from './load-error';
+import { LoadError } from '../../shared/ui/load-error';
 import { cancelError } from './lot-errors';
 import type { Notice } from './lot-errors';
 import { Pager } from '../../shared/ui/pager';

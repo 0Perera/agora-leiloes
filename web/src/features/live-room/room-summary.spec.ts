@@ -43,6 +43,12 @@ describe('countNote', () => {
       'Últimos minutos: um lance agora estende o fim em +2 min.',
     );
   });
+
+  it('avisa a prorrogação quando o último lance estendeu o fim', () => {
+    expect(countNote(false, 200, true).text).toBe(
+      'Prorrogado em +2 min pelo último lance.',
+    );
+  });
 });
 
 describe('parseLotId', () => {

@@ -32,6 +32,10 @@
   color: var(--ink);
 }
 
+.header-logo {
+  flex: none;
+}
+
 .header-name {
   font-family: var(--font-display);
   font-weight: 600;
@@ -69,7 +73,7 @@
 
 .header-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: var(--space-3);
 }
@@ -78,25 +82,177 @@
   min-height: 44px;
 }
 
-.header-user {
+.account {
+  position: relative;
+}
+
+.account-monogram {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background-color: var(--ink);
+  box-shadow:
+    inset 0 0 0 2px var(--ink),
+    inset 0 0 0 3px var(--gold-300);
+  color: var(--gold-300);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.account-monogram:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.account-panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 10;
+  width: 180px;
+  max-width: calc(100vw - 32px);
+  padding: 14px 12px 12px;
+  background-color: var(--marble-100);
+  border: 1px solid var(--gold-500);
+  box-shadow:
+    inset 0 0 0 3px var(--marble-100),
+    inset 0 0 0 4px var(--vein),
+    0 14px 24px -14px rgba(43, 37, 32, 0.5);
+  /* cantoneiras da ficha do lote, em tamanho menor */
+  background-image:
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500)),
+    linear-gradient(var(--gold-500), var(--gold-500));
+  background-repeat: no-repeat;
+  background-size:
+    8px 2px,
+    2px 8px,
+    8px 2px,
+    2px 8px,
+    8px 2px,
+    2px 8px,
+    8px 2px,
+    2px 8px;
+  background-position:
+    left 6px top 6px,
+    left 6px top 6px,
+    right 6px top 6px,
+    right 6px top 6px,
+    left 6px bottom 6px,
+    left 6px bottom 6px,
+    right 6px bottom 6px,
+    right 6px bottom 6px;
+}
+
+/* setinha apontando para o centro do monograma */
+.account-panel::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  right: 16px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--marble-100);
+  border-top: 1px solid var(--gold-500);
+  border-left: 1px solid var(--gold-500);
+  transform: rotate(45deg);
+}
+
+.account-panel[hidden] {
+  display: none;
+}
+
+.account-name {
+  margin: 0;
+  padding: 0 6px;
+  font-family: var(--font-display);
+  font-weight: 600;
   font-size: 15px;
   line-height: 20px;
-  color: var(--ink-muted);
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
   overflow-wrap: anywhere;
 }
 
-.header-meander {
-  height: 18px;
-  background-color: var(--marble-100);
-  border-top: 1px solid var(--gold-500);
-  border-bottom: 1px solid var(--gold-500);
+.account-role {
+  margin: 0;
+  padding: 0 6px;
+  font-style: italic;
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--ink-muted);
 }
 
-/* celular: menu numa linha que rola para o lado, em vez de ocupar várias linhas */
-@media (max-width: 760px) {
+.account-rule {
+  margin: 8px 24px 4px 6px;
+}
+
+.account-leave {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 6px;
+  border: 0;
+  background: none;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-leave:hover,
+.account-leave:focus-visible {
+  background-color: color-mix(in srgb, var(--gold-300) 45%, var(--marble-100));
+  box-shadow: inset 2px 0 0 var(--gold-500);
+  outline: none;
+}
+
+.account-leave__icon {
+  flex: none;
+  color: var(--ink-muted);
+}
+
+/* abaixo de 1024px: logo e ações (carteira e monograma juntos) na primeira linha e o menu,
+   que rola para o lado, na segunda */
+@media (max-width: 1023px) {
+  .header-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'brand actions'
+      'nav nav';
+  }
+
+  .header-brand {
+    grid-area: brand;
+    min-width: 0;
+  }
+
+  .header-actions {
+    grid-area: actions;
+    justify-self: end;
+  }
+
   .header-nav {
-    order: 3;
-    width: 100%;
+    grid-area: nav;
     flex-wrap: nowrap;
     overflow-x: auto;
     gap: 0 20px;
@@ -109,12 +265,28 @@
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 519px) {
+  .header-actions {
+    gap: var(--space-2);
+  }
+
+  .header-actions--guest .header-btn {
+    padding-inline: var(--space-3);
+    white-space: nowrap;
+  }
+}
+
+/* medido com R$ 100.000,00 disponível: abaixo de 440px o nome encosta na carteira */
+@media (max-width: 439px) {
   .layout-main {
     padding: var(--space-5) var(--space-4) var(--space-7);
   }
 
   .header-bar {
     padding: 10px var(--space-4);
+  }
+
+  .header-name {
+    display: none;
   }
 }

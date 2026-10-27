@@ -130,7 +130,7 @@ export type LotDetail = {
   currentBid: number | null;
   bidCount: number;
   serverTime: string;
-  me?: { alias: string };
+  me?: { alias: string; hasBid: boolean };
 };
 
 export type BookStatus = LotStatus | 'cancelled';

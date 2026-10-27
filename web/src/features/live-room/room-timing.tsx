@@ -5,27 +5,45 @@ import { formatMoney } from '../../shared/lib/money';
 import { countNote, summaryOf } from './room-summary';
 import { useNow } from './use-room';
 
-type Props = { lot: LotDetail; offset: number };
+type SummaryProps = {
+  lot: LotDetail;
+  offset: number;
+  extended: boolean;
+  leader?: string;
+};
 
-export function RoomSummary({ lot, offset }: Props) {
+export function RoomSummary({ lot, offset, extended, leader }: SummaryProps) {
   const summary = summaryOf(lot);
+  const live = lot.status === 'live';
+  const now = useNow(live);
+  const seconds = live ? secondsLeft(lot.endsAt, now, offset) : Infinity;
+  const note = countNote(lot.status === 'ended', seconds, extended);
 
   return (
-    <section
-      className="room__summary room-summary"
-      aria-label="Lance atual e tempo restante"
-    >
-      <div>
-        <span className="ag-lot__label">{summary.label}</span>
-        <span className="room-price">{formatMoney(summary.amount)}</span>
-        <span className="room-bids">{summary.bids}</span>
-      </div>
-      {lot.status === 'scheduled' ? (
-        <RoomOpens startsAt={lot.startsAt} />
-      ) : (
-        <RoomCountdown lot={lot} offset={offset} />
-      )}
-    </section>
+    <div className="room__summary">
+      <section
+        className="room-summary"
+        aria-label="Lance atual e tempo restante"
+      >
+        <div className="room-summary__bid">
+          <span className="ag-lot__label">{summary.label}</span>
+          <span className="room-price" aria-live="polite">
+            {formatMoney(summary.amount)}
+          </span>
+          <span className="room-bids">
+            {leader ? `${leader} · ${summary.bids}` : summary.bids}
+          </span>
+        </div>
+        {lot.status === 'scheduled' ? (
+          <RoomOpens startsAt={lot.startsAt} />
+        ) : (
+          <RoomCountdown seconds={live ? seconds : 0} urgent={note.urgent} />
+        )}
+      </section>
+      <p className={note.urgent ? 'room-note room-note--urgent' : 'room-note'}>
+        {note.text}
+      </p>
+    </div>
   );
 }
 
@@ -41,17 +59,18 @@ function RoomOpens({ startsAt }: { startsAt: string }) {
   );
 }
 
-function RoomCountdown({ lot, offset }: Props) {
-  const ended = lot.status === 'ended';
-  const now = useNow(!ended);
-  const seconds = ended ? 0 : secondsLeft(lot.endsAt, now, offset);
+function RoomCountdown({
+  seconds,
+  urgent,
+}: {
+  seconds: number;
+  urgent: boolean;
+}) {
   const { first, second, inHours } = splitLeft(seconds);
-  const note = countNote(ended, seconds);
-  const urgent = note.urgent ? ' ag-countdown--urgent' : '';
 
   return (
     <div
-      className={`ag-countdown${urgent}`}
+      className={urgent ? 'ag-countdown ag-countdown--urgent' : 'ag-countdown'}
       role="timer"
       aria-label="Tempo restante do lote"
     >
@@ -60,9 +79,6 @@ function RoomCountdown({ lot, offset }: Props) {
         <span className="ag-countdown__sep room-countdown__sep">:</span>
         <Unit value={second} label={inHours ? 'Min' : 'Seg'} />
       </div>
-      <p className={note.urgent ? 'room-note room-note--urgent' : 'room-note'}>
-        {note.text}
-      </p>
     </div>
   );
 }

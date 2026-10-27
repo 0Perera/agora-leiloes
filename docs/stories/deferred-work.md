@@ -58,6 +58,11 @@
 - source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
   summary: na 4.6, traduzir `LOT_INTEGRITY_FAILED` (409) na sala do lote.
   evidence: decisão do usuário na revisão da 4.3 (D-059); o lance passa a ser recusado quando o selo do lote não confere com a cadeia.
+  status: feito na 4.6 (`spec-4-6-tela-sala-do-lote-ao-vivo-lances-e-tempo-real.md`).
+
+- source_spec: `docs/stories/spec-4-6-tela-sala-do-lote-ao-vivo-lances-e-tempo-real.md`
+  summary: na 5.8, link "Auditar este lote" no cabeçalho do histórico da sala, como no canvas `Sala.dc.html`.
+  evidence: a tela de auditoria do lote só existe a partir da 5.8; decisão do usuário na spec da 4.6.
 
 - source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
   summary: na 6.2, reescrever as entradas antigas do `docs/ai-log.md` no estilo novo: frases curtas, português corrente, detalhe técnico só quando for indispensável.
@@ -77,3 +82,6 @@
 - source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`
   summary: no painel do leiloeiro em modo cartão (abaixo de 1220px), o selo de estado e o botão "Cancelar lote" ocupam toda a largura da coluna; devem ter a largura do próprio conteúdo (`justify-self: start`), com o botão em largura total só abaixo de 480px. Alinhar a miniatura da obra com o título. Conferir em 360, 768 e 1000px.
   evidence: pedido do usuário durante a implementação da 3.6.
+- source_spec: `docs/stories/spec-4-6-tela-sala-do-lote-ao-vivo-lances-e-tempo-real.md`
+  summary: no painel do leiloeiro, ao escolher uma obra no acervo, rolar até a ficha do lote e levar o foco ao primeiro campo; no celular, hoje é preciso rolar manualmente para encontrá-la.
+  evidence: pedido do usuário na conferência da 4.6.

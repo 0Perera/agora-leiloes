@@ -1,25 +1,28 @@
+/* duas colunas: obra e "Sobre a obra" à esquerda; o resto da sala numa coluna à direita */
 .room {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
   grid-template-areas:
-    'art head'
-    'art summary'
-    'art info';
-  grid-template-rows: auto auto 1fr;
+    'art main'
+    'info main';
+  grid-template-rows: auto 1fr;
   gap: 28px 56px;
   align-items: start;
 }
 
+.room__main {
+  grid-area: main;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
 .room__head {
-  grid-area: head;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-}
-
-.room__summary {
-  grid-area: summary;
 }
 
 .room__art {
@@ -34,6 +37,21 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+}
+
+.room__status {
+  min-width: 0;
+}
+
+.room__form {
+  min-width: 0;
+}
+
+.room__history {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .room-tags {
@@ -72,11 +90,26 @@
   overflow-wrap: anywhere;
 }
 
+/* fica no topo enquanto a página rola: o formulário pode estar longe no celular */
+.room-connection {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0 0 var(--space-4);
+  padding: 10px var(--space-4);
+  background-color: var(--cinnabar-soft);
+  color: var(--cinnabar-deep);
+  border: 1px solid var(--cinnabar);
+  font-size: 16px;
+  line-height: 22px;
+  text-align: center;
+}
+
 /* resumo: lance e contagem */
 .room-summary {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 20px;
   padding: 20px 22px;
@@ -87,14 +120,24 @@
     inset 0 0 0 5px var(--vein);
 }
 
+.room-summary__bid {
+  min-width: 0;
+}
+
+.room-summary > .ag-countdown,
+.room-summary > .room-opens {
+  flex: none;
+}
+
 .room-price {
   display: block;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(30px, 8vw, 44px);
+  font-size: clamp(28px, 6vw, 44px);
   line-height: 1.1;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .room-bids {
@@ -117,9 +160,8 @@
 }
 
 .room-note {
-  margin: 0;
-  max-width: 220px;
-  text-align: center;
+  margin: var(--space-2) 0 0;
+  text-wrap: balance;
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 16px;
@@ -234,18 +276,239 @@
   overflow-wrap: anywhere;
 }
 
+/* situação e caixas de quem não dá lance */
+.room-plain {
+  margin: 0;
+  font-size: 17px;
+  line-height: 24px;
+}
+
+.room-plain--muted {
+  color: var(--ink-muted);
+}
+
+.room-aside {
+  margin: 0;
+  padding: var(--space-4) 20px;
+  border: 1px solid var(--vein);
+  background-color: var(--marble-100);
+  font-size: 17px;
+  line-height: 24px;
+  color: var(--ink-muted);
+}
+
+.room-visitor {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 22px;
+  border: 1px solid var(--gold-500);
+  background-color: var(--marble-100);
+  box-shadow:
+    inset 0 0 0 4px var(--marble-100),
+    inset 0 0 0 5px var(--vein);
+}
+
+.room-visitor__text {
+  margin: 0;
+  font-size: 18px;
+  line-height: 26px;
+}
+
+.room-visitor__link {
+  min-height: 52px;
+}
+
+/* formulário de lance */
+.room-bid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.room-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.room-shortcuts .ag-field__hint {
+  margin-right: var(--space-1);
+}
+
+.room-chip {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--gold-500);
+  border-radius: 2px;
+  background: var(--marble-000);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.room-chip:hover {
+  background: var(--marble-100);
+}
+
+.room-chip:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.room-msg {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  margin: 0;
+  font-size: 16px;
+  line-height: 22px;
+}
+
+.room-msg--error {
+  color: var(--cinnabar-deep);
+}
+
+.room-msg--info {
+  color: var(--ultramarine);
+}
+
+.room-msg--ok {
+  color: var(--malachite);
+}
+
+.room-msg__mark {
+  flex: none;
+  width: 14px;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.room-bid__submit {
+  width: 100%;
+  min-height: 52px;
+}
+
+/* histórico */
+.room-history__count {
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: 17px;
+  color: var(--ink-muted);
+}
+
+.room-history {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--gold-500);
+}
+
+.room-history__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 6px 16px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--vein);
+}
+
+.room-history__row.is-mine {
+  background-color: var(--ultramarine-soft);
+}
+
+.room-history__who {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+
+.room-history__alias {
+  font-size: 17px;
+  line-height: 22px;
+  overflow-wrap: anywhere;
+}
+
+.is-mine .room-history__alias {
+  font-weight: 600;
+  color: var(--ultramarine);
+}
+
+.room-history__leads {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.room-history__amount {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+
+.room-history__time {
+  font-size: 15px;
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.room-history__empty {
+  padding: 20px;
+  border-top: 1px solid var(--gold-500);
+  border-bottom: 1px solid var(--vein);
+  text-align: center;
+}
+
+.room-history__empty-title {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 22px;
+}
+
+.room-history__empty-text {
+  margin: 0;
+  font-size: 17px;
+  line-height: 24px;
+  color: var(--ink-muted);
+}
+
+.room-history__more {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.room-history__more .ag-btn {
+  min-height: 44px;
+}
+
+.room-history__more-error {
+  margin: 0;
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--cinnabar-deep);
+}
+
+.room-history__note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ink-muted);
+}
+
 /* estados */
-.room-skel {
-  background-color: var(--marble-200);
-  animation: room-skel 1.4s ease-in-out infinite;
-}
-
-@keyframes room-skel {
-  50% {
-    opacity: 0.5;
-  }
-}
-
 .room-skel-head {
   gap: var(--space-3);
 }
@@ -307,33 +570,14 @@
   color: var(--ink-muted);
 }
 
-.room-error {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-4);
-  max-width: 640px;
-  margin: 48px auto;
-}
-
-.room-error .ag-notice {
-  box-sizing: border-box;
-  width: 100%;
-}
-
-.room-error__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-}
-
-.room-error__back {
+.room-back {
   min-height: 44px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .room-skel {
-    animation: none;
+/* na coluna de 480px, valores até a casa do milhão cabem ao lado da contagem */
+@media (min-width: 881px) {
+  .room-price {
+    font-size: 32px;
   }
 }
 
@@ -343,10 +587,13 @@
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       'art'
-      'head'
-      'summary'
+      'main'
       'info';
     grid-template-rows: none;
+    gap: 20px;
+  }
+
+  .room__main {
     gap: 20px;
   }
 
@@ -355,9 +602,34 @@
   }
 }
 
+@media (max-width: 479px) {
+  /* o rótulo vai para a linha de cima, para os três atalhos caberem juntos */
+  .room-shortcuts > .ag-field__hint {
+    flex-basis: 100%;
+  }
+
+  .room-summary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 @media (max-width: 420px) {
   .room-summary {
     padding: var(--space-4);
+  }
+
+  .room-visitor {
+    padding: var(--space-4);
+  }
+
+  .room-history__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 10px var(--space-2);
+  }
+
+  .room-history__time {
+    grid-column: 1 / -1;
   }
 
   .room-missing {

@@ -25,6 +25,7 @@ export type DetailFields = Pick<
 
 export class LotViewerDto {
   alias!: string;
+  hasBid!: boolean;
 }
 
 export class LotDetailDto {

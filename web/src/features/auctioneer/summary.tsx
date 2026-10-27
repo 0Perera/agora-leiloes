@@ -1,7 +1,7 @@
 import type { DashboardSummary } from '../../shared/api/types';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
-import { LoadError } from './load-error';
+import { LoadError } from '../../shared/ui/load-error';
 import type { Load } from './use-dashboard';
 
 type Props = {

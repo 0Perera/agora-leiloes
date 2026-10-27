@@ -1,0 +1,16 @@
+.skel {
+  background-color: var(--marble-200);
+  animation: skel 1.4s ease-in-out infinite;
+}
+
+@keyframes skel {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skel {
+    animation: none;
+  }
+}

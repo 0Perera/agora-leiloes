@@ -508,3 +508,29 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Recusei a paginação do histórico por faixa de `seq` a partir da contagem copiada no lote: dependeria dessa cópia (D-042) e quebraria com buracos na sequência; pedi `ORDER BY seq DESC` com `LIMIT` e `OFFSET`.
+
+## Story 4.6: Tela Sala do lote ao vivo (lances e tempo real)
+
+**O que a IA gerou:**
+- `me.hasBid` no detalhe do lote, calculado na mesma query, com teste unitário e um caso e2e.
+- Esqueleto e erro com "Tentar de novo" movidos para `shared/ui`, usados pela página inicial, pelo painel e pela sala.
+- Client da API com lance, histórico, detalhe das recusas e o stream, que reabre sozinho se o navegador desistir da conexão.
+- Sala completa: situação do licitante, formulário com atalhos e recusas traduzidas, histórico ao vivo e nota de prorrogação.
+- Lances do POST, do stream e da reconexão unidos pelo `seq`, sem duplicar e sem dado antigo sobrescrever o novo.
+- Carteira relida em segundo plano quando a situação muda, sem o resumo do cabeçalho piscar.
+- Os casos de teste aprovados, README e `deferred-work.md`.
+
+**O que revisei e pedi para mudar:**
+- Pedi que a spec tratasse o evento `bid` do stream, a união do lance do POST com o do stream pelo `seq`, o botão travado durante o envio e o link da auditoria só na 5.8.
+- Pedi que esqueleto e erro com "Tentar de novo" fossem para `shared/ui` num commit de refatoração antes de usar, sem bloco novo com o nome da tela.
+- Escolhi que o detalhe do lote informe se o licitante já deu lance, num commit próprio, e pedi os testes desse caso junto com os aprovados.
+- Decidi a regra da situação: ganhando pelo último lance; superado se já deu lance e o último é de outro; senão, ainda não deu lance.
+- Defini o texto da recusa por integridade: "Lances suspensos neste lote." e que o lance não foi registrado.
+- Ao conferir, apontei que a sala não avisava a queda da API; pedi o aviso "Conexão perdida. Reconectando…", o botão travado e a volta sem recarregar.
+- Pedi ajustes visuais na sala: no celular, o layout da 3.7 com a obra primeiro; no quadro do lance, só valor, líder e contagem, alinhados pelo topo, com a regra de prorrogação numa linha abaixo; "Sobre a obra" de volta embaixo da obra no desktop; histórico com "Ver lances anteriores" em vez de paginação numerada; e conferência por screenshots antes da entrega.
+- Revi a decisão da 2.4, que deixou o cabeçalho sem o monograma: com mais itens no menu, pedi o monograma de volta, com menu no visual do site (nome, papel e Sair), links centralizados a partir de 1024px e numa segunda linha abaixo disso, carteira sempre junto do monograma, e o nome "ÁGORA" escondido só onde não cabe, medido por screenshot.
+
+**Sugestões rejeitadas e por quê:**
+- Recusei derivar a situação só dos lances carregados: quem fosse superado por mais de 20 lances veria "ainda não deu lance".
+- Recusei a ordem do canvas no celular, com miniatura no cabeçalho: mantive a decidida na 3.7.
+- Mudei o texto proposto para a recusa por integridade, para dizer que o lance não foi registrado.

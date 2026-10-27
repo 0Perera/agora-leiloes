@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router';
+import { LoadError } from '../../shared/ui/load-error';
 import { parseLotId } from './room-summary';
 import { RoomView } from './room-view';
 import { useRoom } from './use-room';
@@ -11,11 +12,19 @@ export function RoomPage() {
 }
 
 function LotRoom({ id }: { id: number }) {
-  const { room, retry } = useRoom(id);
+  const { room, connection, retry, placed, missing, older } = useRoom(id);
   if (room.status === 'loading') return <RoomSkeleton />;
   if (room.status === 'missing') return <RoomMissing />;
   if (room.status === 'error') return <RoomError onRetry={retry} />;
-  return <RoomView lot={room.lot} offset={room.offset} />;
+  return (
+    <RoomView
+      room={room}
+      connection={connection}
+      onPlaced={placed}
+      onMissing={missing}
+      onOlder={older}
+    />
+  );
 }
 
 function RoomSkeleton() {
@@ -25,18 +34,20 @@ function RoomSkeleton() {
         Carregando a sala do lote.
       </p>
       <div className="room" aria-hidden="true">
-        <div className="room__head room-skel-head">
-          <div className="room-skel room-skel--label" />
-          <div className="room-skel room-skel--title" />
-          <div className="room-skel room-skel--line" />
-        </div>
-        <div className="room__summary room-skel room-skel--summary" />
         <div className="room__art">
           <div className="room-niche">
             <div className="room-niche__stage">
-              <div className="room-skel room-skel--art" />
+              <div className="skel room-skel--art" />
             </div>
           </div>
+        </div>
+        <div className="room__main">
+          <div className="room__head room-skel-head">
+            <div className="skel room-skel--label" />
+            <div className="skel room-skel--title" />
+            <div className="skel room-skel--line" />
+          </div>
+          <div className="skel room-skel--summary" />
         </div>
       </div>
     </>
@@ -61,30 +72,15 @@ function RoomMissing() {
 
 function RoomError({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="room-error" role="alert">
-      <div className="ag-notice ag-notice--error">
-        <span className="ag-notice__mark" aria-hidden="true">
-          ✕
-        </span>
-        <p className="ag-notice__title">
-          Não foi possível abrir a sala do lote
-        </p>
-        <p className="ag-notice__text">
-          Não foi possível carregar o lote. Verifique a conexão e tente de novo.
-        </p>
-      </div>
-      <div className="room-error__actions">
-        <button
-          className="ag-btn ag-btn--secondary"
-          type="button"
-          onClick={onRetry}
-        >
-          Tentar de novo
-        </button>
-        <Link className="ag-btn ag-btn--quiet room-error__back" to="/">
-          Voltar à vitrine
-        </Link>
-      </div>
-    </div>
+    <LoadError
+      title="Não foi possível abrir a sala do lote"
+      text="Não foi possível carregar o lote. Verifique a conexão e tente de novo."
+      onRetry={onRetry}
+      centered
+    >
+      <Link className="ag-btn ag-btn--quiet room-back" to="/">
+        Voltar à vitrine
+      </Link>
+    </LoadError>
   );
 }

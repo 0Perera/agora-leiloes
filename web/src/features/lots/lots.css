@@ -59,17 +59,6 @@
     0 12px 16px -12px rgba(43, 37, 32, 0.55);
 }
 
-.skel {
-  background-color: var(--marble-200);
-  animation: home-skel 1.4s ease-in-out infinite;
-}
-
-@keyframes home-skel {
-  50% {
-    opacity: 0.5;
-  }
-}
-
 /* destaque */
 .home-hero {
   display: flex;
@@ -232,24 +221,6 @@
 .home-skel--art {
   width: 72%;
   height: 86%;
-}
-
-/* erros e avisos */
-.home-error {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-4);
-  width: 100%;
-  max-width: 640px;
-}
-
-.home-error .ag-notice {
-  width: 100%;
-}
-
-.home-error--centered {
-  margin: 0 auto;
 }
 
 /* vitrine */
@@ -568,12 +539,6 @@
   font-size: 17px;
   line-height: 26px;
   color: var(--marble-200);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .skel {
-    animation: none;
-  }
 }
 
 /* empilhado, a obra vem antes do texto e o arco cabe na tela com o título e o botão perto */

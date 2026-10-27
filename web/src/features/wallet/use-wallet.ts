@@ -8,6 +8,7 @@ export type WalletState =
 
 export type WalletValue = WalletState & {
   reload: () => void;
+  refresh: () => void;
   update: (balance: WalletBalance) => void;
 };
 
