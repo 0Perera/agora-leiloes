@@ -19,15 +19,22 @@ export type BidState = {
 type Refusal =
   | { accepted: false; code: 'LOT_NOT_STARTED'; startsAt: Date }
   | { accepted: false; code: 'LOT_ENDED' | 'ALREADY_WINNING' }
-  | { accepted: false; code: 'BID_BELOW_MINIMUM'; minimum: number };
+  | { accepted: false; code: 'BID_BELOW_MINIMUM'; minimum: number }
+  | { accepted: false; code: 'INSUFFICIENT_BALANCE'; available: number };
 
 export type BidDecision = { accepted: true } | Refusal;
 
 export function decide(state: BidState): BidDecision {
+  return refuse(state) ?? { accepted: true };
+}
+
+// A ordem define o código devolvido quando mais de uma checagem falharia.
+function refuse(state: BidState): Refusal | null {
   return (
     checkStatus(state) ??
     checkLeader(state) ??
-    checkAmount(state) ?? { accepted: true }
+    checkAmount(state) ??
+    checkBalance(state)
   );
 }
 
@@ -53,6 +60,13 @@ function checkAmount({ lot, last, amount }: BidState): Refusal | null {
   const minimum = last ? last.amount + lot.increment : lot.startingBid;
   if (amount < minimum) {
     return { accepted: false, code: 'BID_BELOW_MINIMUM', minimum };
+  }
+  return null;
+}
+
+function checkBalance({ available, amount }: BidState): Refusal | null {
+  if (amount > available) {
+    return { accepted: false, code: 'INSUFFICIENT_BALANCE', available };
   }
   return null;
 }
