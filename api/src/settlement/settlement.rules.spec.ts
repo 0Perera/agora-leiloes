@@ -99,6 +99,14 @@ describe('decide', () => {
         reason: 'ALREADY_SETTLED',
       });
     });
+
+    it('lote cancelado e já liquidado não liquida por cancelamento', () => {
+      const state = makeState({
+        lot: makeLot({ cancelledAt: at(-2 * MINUTE), settledAt: at(-MINUTE) }),
+      });
+
+      expect(decide(state)).toEqual({ settle: false, reason: 'CANCELLED' });
+    });
   });
 
   describe('resultado', () => {
