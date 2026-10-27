@@ -356,6 +356,21 @@ describe('LotsService.find', () => {
     expect(detail.me?.hasBid).toBe(false);
   });
 
+  it.each([
+    ['ao vivo', { status: 'live' as const, settledAt: null }],
+    ['já liquidado', { status: 'ended' as const, settledAt: NOW }],
+  ])(
+    'lote %s não chama a liquidação e faz uma query só',
+    async (_state, override) => {
+      const { service, builder, settle } = makeFind(override);
+
+      await service.find(1);
+
+      expect(settle).not.toHaveBeenCalled();
+      expect(builder.getRawAndEntities).toHaveBeenCalledTimes(1);
+    },
+  );
+
   it('entrega o token só ao vencedor, mesmo com outro licitante de mesmo alias', async () => {
     const { service } = makeFind({
       status: 'ended',
