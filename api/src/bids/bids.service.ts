@@ -8,6 +8,7 @@ import { DomainException } from '../common/domain.exception';
 import { Env } from '../config/env.validation';
 import { LotEventsService } from '../lots/lot-events.service';
 import { Lot } from '../lots/lot.entity';
+import { SettlementTimer } from '../settlement/settlement.timer';
 import { Wallet } from '../wallets/wallet.entity';
 import { lockWallets, walletOf } from '../wallets/wallet.lock';
 import {
@@ -56,6 +57,7 @@ export class BidsService {
     private readonly clock: Clock,
     private readonly events: LotEventsService,
     config: ConfigService<Env, true>,
+    private readonly timer: SettlementTimer,
   ) {
     this.secret = config.get('BID_HMAC_SECRET', { infer: true });
   }
@@ -68,6 +70,8 @@ export class BidsService {
     const bid = await this.transact(userId, lotId, amount);
     // Fora da transação: evento só depois do commit, nunca de lance revertido.
     this.events.publish(lotId, bid);
+    // Prorrogação muda o próximo fim; o recálculo não segura a resposta.
+    this.timer.refresh();
     return bid;
   }
 

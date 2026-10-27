@@ -310,3 +310,13 @@ describe('SettlementService.next', () => {
     expect(await settlement().next(at(30))).toEqual(at(60));
   });
 });
+
+describe('SettlementTimer.refresh', () => {
+  it('é chamado depois de um lance aceito', async () => {
+    const before = api.timer.refreshes;
+
+    await api.bid(bidder, lotId, STARTING_BID).expect(201);
+
+    expect(api.timer.refreshes).toBe(before + 1);
+  });
+});
