@@ -528,7 +528,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Defini o texto da recusa por integridade: "Lances suspensos neste lote." e que o lance não foi registrado.
 - Ao conferir, apontei que a sala não avisava a queda da API; pedi o aviso "Conexão perdida. Reconectando…", o botão travado e a volta sem recarregar.
 - Pedi ajustes visuais na sala: no celular, o layout da 3.7 com a obra primeiro; no quadro do lance, só valor, líder e contagem, alinhados pelo topo, com a regra de prorrogação numa linha abaixo; e conferência por screenshots em 360, 768, 1024 e 1280px antes da entrega.
-- Revi a decisão da 2.4, que deixou o cabeçalho sem o monograma: com mais itens no menu, pedi o monograma de volta, com menu no visual do site (nome, papel e Sair), links à esquerda e, abaixo de 520px, cabeçalho numa linha só com o arco, o disponível e o monograma.
+- Revi a decisão da 2.4, que deixou o cabeçalho sem o monograma: com mais itens no menu, pedi o monograma de volta, com menu no visual do site (nome, papel e Sair), links centralizados a partir de 1024px e numa segunda linha abaixo disso, carteira sempre junto do monograma, e o nome "ÁGORA" escondido só onde não cabe, medido por screenshot.
 
 **Sugestões rejeitadas e por quê:**
 - Recusei derivar a situação só dos lances carregados: quem fosse superado por mais de 20 lances veria "ainda não deu lance".

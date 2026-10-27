@@ -15,6 +15,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-3) 20px;
 }
 
@@ -29,6 +30,10 @@
 
 .header-brand:hover {
   color: var(--ink);
+}
+
+.header-logo {
+  flex: none;
 }
 
 .header-name {
@@ -67,9 +72,8 @@
 }
 
 .header-actions {
-  margin-left: auto;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: var(--space-3);
 }
@@ -112,14 +116,14 @@
   top: calc(100% + 12px);
   right: 0;
   z-index: 10;
-  width: 220px;
+  width: 180px;
   max-width: calc(100vw - 32px);
-  padding: 24px 22px 22px;
+  padding: 14px 12px 12px;
   background-color: var(--marble-100);
   border: 1px solid var(--gold-500);
   box-shadow:
-    inset 0 0 0 4px var(--marble-100),
-    inset 0 0 0 5px var(--vein),
+    inset 0 0 0 3px var(--marble-100),
+    inset 0 0 0 4px var(--vein),
     0 14px 24px -14px rgba(43, 37, 32, 0.5);
   /* cantoneiras da ficha do lote, em tamanho menor */
   background-image:
@@ -133,23 +137,23 @@
     linear-gradient(var(--gold-500), var(--gold-500));
   background-repeat: no-repeat;
   background-size:
-    14px 2px,
-    2px 14px,
-    14px 2px,
-    2px 14px,
-    14px 2px,
-    2px 14px,
-    14px 2px,
-    2px 14px;
+    8px 2px,
+    2px 8px,
+    8px 2px,
+    2px 8px,
+    8px 2px,
+    2px 8px,
+    8px 2px,
+    2px 8px;
   background-position:
-    left 8px top 8px,
-    left 8px top 8px,
-    right 8px top 8px,
-    right 8px top 8px,
-    left 8px bottom 8px,
-    left 8px bottom 8px,
-    right 8px bottom 8px,
-    right 8px bottom 8px;
+    left 6px top 6px,
+    left 6px top 6px,
+    right 6px top 6px,
+    right 6px top 6px,
+    left 6px bottom 6px,
+    left 6px bottom 6px,
+    right 6px bottom 6px,
+    right 6px bottom 6px;
 }
 
 /* setinha apontando para o centro do monograma */
@@ -172,7 +176,7 @@
 
 .account-name {
   margin: 0;
-  padding: 0 8px;
+  padding: 0 6px;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 15px;
@@ -183,8 +187,8 @@
 }
 
 .account-role {
-  margin: 2px 0 0;
-  padding: 0 8px;
+  margin: 0;
+  padding: 0 6px;
   font-style: italic;
   font-size: 15px;
   line-height: 20px;
@@ -192,7 +196,7 @@
 }
 
 .account-rule {
-  margin: 12px 8px 6px;
+  margin: 8px 24px 4px 6px;
 }
 
 .account-leave {
@@ -200,8 +204,8 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  min-height: 44px;
-  padding: 0 8px;
+  min-height: 40px;
+  padding: 0 6px;
   border: 0;
   background: none;
   font-family: var(--font-display);
@@ -226,39 +230,25 @@
   color: var(--ink-muted);
 }
 
-/* celular: logo e monograma na primeira linha, carteira na segunda e o menu, que rola
-   para o lado, na terceira */
-@media (max-width: 760px) {
+/* abaixo de 1024px: logo e ações (carteira e monograma juntos) na primeira linha e o menu,
+   que rola para o lado, na segunda */
+@media (max-width: 1023px) {
   .header-bar {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       'brand actions'
-      'wallet wallet'
       'nav nav';
   }
 
   .header-brand {
     grid-area: brand;
+    min-width: 0;
   }
 
   .header-actions {
-    display: contents;
-  }
-
-  .header-actions--guest {
-    grid-area: wallet;
-    display: flex;
-    margin-left: 0;
-  }
-
-  .header-actions .account {
     grid-area: actions;
-  }
-
-  .header-actions .wallet-scroll {
-    grid-area: wallet;
-    justify-self: start;
+    justify-self: end;
   }
 
   .header-nav {
@@ -275,36 +265,21 @@
   }
 }
 
-/* compacto: logo só com o arco, carteira com o disponível e monograma numa linha só */
 @media (max-width: 519px) {
-  .header-bar {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    grid-template-areas:
-      'brand wallet actions'
-      'nav nav nav';
-    column-gap: var(--space-3);
-  }
-
-  .header-name {
-    display: none;
-  }
-
-  .header-actions .wallet-scroll {
-    justify-self: center;
-  }
-
-  .header-actions--guest {
-    grid-area: auto;
-    grid-column: 2 / -1;
-    grid-row: 1;
-    justify-self: end;
-    flex-wrap: nowrap;
+  .header-actions {
     gap: var(--space-2);
   }
 
   .header-actions--guest .header-btn {
     padding-inline: var(--space-3);
     white-space: nowrap;
+  }
+}
+
+/* medido com R$ 100.000,00 disponível: abaixo de 420px o nome encosta na carteira */
+@media (max-width: 419px) {
+  .header-name {
+    display: none;
   }
 }
 
