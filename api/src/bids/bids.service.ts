@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DataSource, EntityManager, In, IsNull } from 'typeorm';
+import { DataSource, EntityManager, IsNull } from 'typeorm';
 import { forLot } from '../audit/alias';
 import { GENESIS, hashBid, sealLot } from '../audit/chain';
 import { Clock } from '../common/clock';
@@ -9,6 +9,7 @@ import { Env } from '../config/env.validation';
 import { LotEventsService } from '../lots/lot-events.service';
 import { Lot } from '../lots/lot.entity';
 import { Wallet } from '../wallets/wallet.entity';
+import { lockWallets, walletOf } from '../wallets/wallet.lock';
 import {
   BidHistoryDto,
   HistoryRow,
@@ -193,26 +194,6 @@ function lastBid(manager: EntityManager, lotId: number) {
     where: { lotId },
     order: { seq: 'DESC' },
   });
-}
-
-// Uma query com ORDER BY id: o Postgres trava as linhas nessa ordem, sem deadlock.
-function lockWallets(
-  manager: EntityManager,
-  userIds: (number | undefined)[],
-): Promise<Wallet[]> {
-  const ids = [...new Set(userIds)].filter((id) => id !== undefined);
-  return manager.getRepository(Wallet).find({
-    select: { id: true, userId: true, balance: true, committed: true },
-    where: { userId: In(ids) },
-    order: { id: 'ASC' },
-    lock: { mode: 'pessimistic_write' },
-  });
-}
-
-function walletOf(wallets: Wallet[], userId: number): Wallet {
-  const wallet = wallets.find((candidate) => candidate.userId === userId);
-  if (!wallet) throw new Error('wallet missing');
-  return wallet;
 }
 
 function available(wallets: Wallet[], userId: number): number {
