@@ -12,6 +12,7 @@ import type { CardFields } from './dto/lot-card.dto';
 import { LotImage } from './lot-image.entity';
 import { Lot } from './lot.entity';
 import { LotsService } from './lots.service';
+import { SettlementService } from '../settlement/settlement.service';
 
 const NOW = new Date('2026-10-26T12:00:00Z');
 
@@ -59,6 +60,7 @@ describe('LotsService.create', () => {
       {} as Repository<LotImage>,
       {} as Repository<Lot>,
       config,
+      {} as SettlementService,
     );
 
     await expect(service.create(1, makeDto())).rejects.toThrow(
@@ -96,6 +98,7 @@ describe('LotsService.create', () => {
       {} as Repository<LotImage>,
       {} as Repository<Lot>,
       config,
+      {} as SettlementService,
     );
 
     await service.create(1, makeDto());
@@ -133,6 +136,7 @@ function makeFeatured(...results: (CardFields | null)[]) {
     {} as Repository<LotImage>,
     { findOne } as unknown as Repository<Lot>,
     config,
+    {} as SettlementService,
   );
   return { service, findOne };
 }
@@ -199,6 +203,7 @@ function makeCancel(lot: Pick<Lot, 'id' | 'endsAt'> | null, hasBids = false) {
     {} as Repository<LotImage>,
     {} as Repository<Lot>,
     config,
+    {} as SettlementService,
   );
   return { service, repository, bids };
 }
@@ -288,6 +293,7 @@ function makeFind(hasBid: boolean) {
     select: () => builder,
     addSelect: () => builder,
     andWhere: () => builder,
+    leftJoin: () => builder,
     getRawAndEntities: jest.fn().mockResolvedValue({
       entities: [lot],
       raw: [{ status: 'live', hasBid }],
@@ -301,6 +307,7 @@ function makeFind(hasBid: boolean) {
     {} as Repository<LotImage>,
     lots as unknown as Repository<Lot>,
     config,
+    {} as SettlementService,
   );
   return { service, builder };
 }

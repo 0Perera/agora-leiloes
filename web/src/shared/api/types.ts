@@ -131,8 +131,12 @@ export type LotDetail = {
   currentBid: number | null;
   bidCount: number;
   serverTime: string;
-  me?: { alias: string; hasBid: boolean };
+  // Nulo até a liquidação; alias e valor nulos quando o lote encerrou sem lances.
+  result: LotResult | null;
+  me?: { alias: string; hasBid: boolean; receiptToken?: string };
 };
+
+export type LotResult = { alias: string | null; amount: number | null };
 
 export type BookStatus = LotStatus | 'cancelled';
 
@@ -176,6 +180,8 @@ export type PlacedBid = {
 };
 
 export type BidEvent = PlacedBid;
+
+export type SettledEvent = LotResult;
 
 export type BidHistoryItem = {
   seq: number;
