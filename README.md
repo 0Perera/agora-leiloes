@@ -66,6 +66,8 @@ _(regras que podem surpreender, uma linha cada, com o porquê)_
 - O número do lote aparece em romano com o número comum ao lado ("Lote XIV · nº 14"); acima de 3999, onde o romano padrão acaba, aparece só o número comum (D-054).
 - O destaque da página inicial é escolhido ao abrir a página e não troca de lote enquanto ela está aberta, mesmo que outro lote passe a ter o maior lance: a troca no meio da leitura tiraria a obra da frente do visitante.
 - Na busca da vitrine, "7", "VII" e "lote vii" procuram o número do lote; romano em minúscula sem o "lote " vai como texto, porque o acervo tem nomes como "Agnolo di Cosimo". A busca abre a primeira aba com resultado (Ao vivo, Agendados, Encerrados), para o visitante não achar que nada existe só porque a aba atual está vazia.
+- A sala do lote não calcula o status no navegador: quando a contagem chega ao início ou ao fim, ela busca o lote de novo (e repete até 3 vezes, a cada 2 s, se o status ainda não mudou), porque a hora de referência é a do servidor.
+- Os dados das obras (título, técnica, dimensões, descrição) aparecem como no acervo da Cleveland, em inglês, porque vêm só do acervo (D-038); só o tipo da obra é traduzido.
 
 ## Testes
 
@@ -77,7 +79,7 @@ cd web && npm test   # Vitest
 - **API:** regras de saldo e depósito, validação dos DTOs, hash de senha, cadastro e login, guards de token e de papel, filters de erro, `/health` e o logger que esconde parâmetros de query.
 - **Catálogo:** mapeamento da peça da Cleveland (artista com fallback para `culture`, descarte de peça sem imagem), cache da busca com TTL, falha da Cleveland virando `CATALOG_UNAVAILABLE` sem entrar no cache e download da imagem (só JPEG, PNG ou WebP, até 5 MB contados nos bytes lidos).
 - **Lotes:** datas de início e fim, peça já em lote ativo, limites de lance inicial e incremento, falha da imagem sem gravar lote, cadeia do destaque (maior lance, fim mais próximo, próximo agendado), filtros da vitrine e do painel, resumo do painel sem lotes e cancelamento (encerrado, com lance, lote alheio e trava da linha).
-- **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito.
+- **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito, rótulos e nota do resumo da sala do lote, id inválido na rota da sala, nova busca na virada de estado e tradução do tipo da obra.
 
 ## Stack e decisões
 

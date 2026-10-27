@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { api } from '../../shared/api/client';
+import { artworkType } from '../../shared/lib/artwork-type';
 import type {
   Artwork,
   CatalogDepartment,
@@ -229,7 +230,9 @@ function ResultCard({ artwork, selected, onPick }: CardProps) {
             selected ? 'panel-result-tag is-selected' : 'panel-result-tag'
           }
         >
-          {selected ? `✓ Selecionada · ${artwork.type}` : artwork.type}
+          {selected
+            ? `✓ Selecionada · ${artworkType(artwork.type)}`
+            : artworkType(artwork.type)}
         </span>
       </span>
     </button>

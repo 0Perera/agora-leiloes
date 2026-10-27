@@ -679,6 +679,18 @@
   padding: var(--space-2) 0;
 }
 
+.panel-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.panel-open {
+  min-height: 44px;
+  padding: 0;
+}
+
 .panel-stamp-cell {
   grid-column: span 4;
   display: flex;

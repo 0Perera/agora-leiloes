@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router';
 import { lotImageUrl } from '../../shared/api/client';
 import type { DashboardLot } from '../../shared/api/types';
 import { formatShortDate } from '../../shared/lib/date';
@@ -160,13 +161,23 @@ function Action({
 }: ActionProps) {
   if (lot.status === 'cancelled')
     return <span className="panel-sub">Fora da vitrine.</span>;
-  const open = lot.status === 'scheduled' || lot.status === 'live';
-  if (!open || lot.bidCount > 0) return null;
-  if (!confirming)
+  const cancellable = lot.status !== 'ended' && lot.bidCount === 0;
+  if (!cancellable || !confirming)
     return (
-      <button className="panel-cancel" type="button" onClick={onAsk}>
-        Cancelar lote
-      </button>
+      <span className="panel-actions">
+        <Link
+          className="ag-btn ag-btn--quiet panel-open"
+          to={`/lots/${lot.id}`}
+          aria-label={`Abrir sala do ${lotLabel(lot.number)}`}
+        >
+          Abrir sala
+        </Link>
+        {cancellable && (
+          <button className="panel-cancel" type="button" onClick={onAsk}>
+            Cancelar lote
+          </button>
+        )}
+      </span>
     );
 
   return (

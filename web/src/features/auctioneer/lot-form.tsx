@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { api } from '../../shared/api/client';
 import type { Artwork, CreatedLot } from '../../shared/api/types';
+import { artworkType } from '../../shared/lib/artwork-type';
 import { toLocalInput } from '../../shared/lib/date';
 import { maskAmount } from '../../shared/lib/money';
 import { FieldError } from '../../shared/ui/field-error';
@@ -188,7 +189,7 @@ function ArtworkFacts({ artwork }: { artwork: Artwork }) {
         <dt className="ag-lot__label">Técnica</dt>
         <dd>{artwork.technique || 'Não informada'}</dd>
         <dt className="ag-lot__label">Tipo</dt>
-        <dd>{artwork.type || 'Não informado'}</dd>
+        <dd>{artworkType(artwork.type) || 'Não informado'}</dd>
       </dl>
     </div>
   );
