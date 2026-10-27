@@ -89,6 +89,7 @@ context:
 ## Implementation Notes
 
 - Depois da revisão, a pedido do usuário: o campo usa `maskAmount` (máscara de maquininha, só dígitos, centavos pela direita). O `parseAmount` continua lendo o valor mascarado; o achado #4 da triagem deixa de ser alcançável pelo campo.
+- Depois do teste no navegador, a pedido do usuário: `formatMoney` sempre com duas casas (D-048), confirmação curta em `ag-notice--success` ("Depósito confirmado" / "R$ X adicionados ao seu saldo."), classes com prefixo `wallet-` e atualização pessimista do saldo registrada (D-049). Isso substitui, no código, o texto de sucesso e a regra de ",00" do bloco congelado.
 
 ## Spec Change Log
 

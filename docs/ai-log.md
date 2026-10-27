@@ -140,6 +140,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - `FieldError` e o estilo de campo inválido movidos para `shared/ui/`; tokens `--space-*` nos CSS e `App` com export nomeado.
 - Testes de `validateAmount` (vazio, abaixo do mínimo, acima do máximo), acrescentados pela IA para cobrir a matriz da spec, fora da lista aprovada.
 - Máscara de moeda no campo (`maskAmount` em `shared/lib/money.ts`), com testes: só dígitos, que entram pela direita nos centavos.
+- Ajustes depois do teste no navegador: valores sempre com centavos, confirmação curta do depósito em `ag-notice`, classes CSS com prefixo `wallet-`, D-048, D-049 e a story opcional de pagamento simulado no `deferred-work.md`.
 - Correção feita pela própria IA na revisão: digitar ou clicar num chip durante o envio apagava o valor novo; campo e chips passaram a travar enquanto o depósito está em andamento.
 
 **O que revisei e pedi para mudar:**
@@ -153,9 +154,18 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Decidi manter a spec inteira, acima do limite de tamanho.
 - Aprovei mover `FieldError` para `shared/ui/` num refactor separado, o widget de carteira no cabeçalho sem o monograma e o extrato fora da tela.
 - Pedi uma máscara de moeda no campo de depósito, para ninguém digitar ponto e vírgula à mão: a formatação aparece sozinha conforme os dígitos entram.
+- Aprovei os 6 testes da máscara e os 3 de `validateAmount`; com a máscara, colar "R$ 1.500,00" deixou de ser problema.
+- Pedi valores sempre com duas casas decimais em todo o app (avisos, erros, atalhos e confirmação), porque o campo mostrava centavos e os textos não (D-048).
+- Pedi a confirmação curta do depósito ("Depósito confirmado" / "R$ 5.000,00 adicionados ao seu saldo."), sem repetir saldo e disponível, que a tela e o cabeçalho já mostram.
+- Pedi o prefixo da feature nas classes CSS da carteira, para não colidirem com telas futuras.
+- Decidi registrar a atualização pessimista do saldo (D-049): com dinheiro, não se mostra saldo que a API não confirmou.
+- Pedi a linha "O depósito é simulado, sem meio de pagamento (Pix, cartão)." em "Fora do escopo".
+- Pedi o registro de uma story opcional de pagamento simulado (Pix ou cartão de teste, só no front, 45 min) para depois do épico 5.
 - Pedi a atualização do README (Rodar local, Stack e decisões, Testes e Uso de IA) num commit `docs` separado.
 
 **Sugestões rejeitadas e por quê:**
 - *Mínimo de R$ 10, como no canvas:* a tela ficaria mais restrita que a API.
 - *Só reais inteiros no campo:* desperdiçaria a precisão em centavos da API.
+- *Valores inteiros sem ",00":* troquei por duas casas sempre, para bater com o campo (D-048).
+- *Confirmação repetindo saldo total e disponível:* troquei por uma mensagem curta, porque a tela já mostra os valores.
 - *`parseAmount` dentro de `features/wallet`:* o lance vai usar o mesmo parse, então foi para `shared/lib`.
