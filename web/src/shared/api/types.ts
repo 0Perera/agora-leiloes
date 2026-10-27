@@ -133,12 +133,14 @@ export type DashboardLot = {
   endsAt: string;
 };
 
+export type BookFilter = BookStatus | 'all';
+
 export type DashboardBook = {
   items: DashboardLot[];
   page: number;
   pageSize: number;
   total: number;
-  counts: Record<BookStatus | 'all', number>;
+  counts: Record<BookFilter, number>;
 };
 
 export type DashboardSummary = {

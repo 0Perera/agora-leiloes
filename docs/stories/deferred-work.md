@@ -19,3 +19,7 @@
 - source_spec: `docs/stories/spec-3-4-painel-do-leiloeiro-na-api.md`
   summary: na story 4.3, trocar a checagem "tem lance" do cancelamento (POST /lots/:id/cancel) de `bid_count > 0` para `EXISTS` na tabela `bids`, depois do lock do lote.
   evidence: decisão do usuário na aprovação da 3.4; `bid_count` é só cache de exibição (D-042) e a tabela `bids` ainda não existe.
+
+- source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`
+  summary: na 3.7, adicionar a ação "Abrir sala" na coluna Ação do livro de lotes do painel.
+  evidence: a rota `/lots/:id` só existe a partir da 3.7; o usuário pediu para registrar aqui.

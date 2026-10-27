@@ -275,3 +275,47 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - *Justificativa do cancelamento no README ("quem deu lance já tem saldo comprometido"):* pedi a regra do enunciado e o motivo real, o estorno fora do escopo (D-018).
+
+## Story 3.5: Tela Painel do leiloeiro
+
+**O que a IA gerou:**
+- `/dashboard` em `features/auctioneer`: cabeçalho da página com "Novo lote"/"Fechar novo lote" (`aria-expanded`, estado em `?new` na URL), resumo em três cartões, seção de novo lote (busca + ficha) e livro de lotes.
+- Busca no acervo com seletor de departamento (D-050), erro de campo para termo vazio sem chamar a API, seis esqueletos, vazio, erro "O acervo do museu não respondeu" com "Tentar de novo", cartões-botão com `aria-pressed` e imagem do CDN, e paginação Anterior/Próxima.
+- Ficha só leitura (título, artista, data, técnica, tipo e imagem) com os quatro campos editáveis, máscara de maquininha nos valores, `datetime-local` convertido para ISO UTC, validação pura em `lot-validation.ts` com as faixas da API e resumo "Corrija N campos". Faixa de sucesso com o número em romano devolvido pela API (D-053).
+- `lot-errors.ts` com `createError` (`VALIDATION_FAILED` por campo, `IMAGE_DOWNLOAD_FAILED`, `ARTWORK_ALREADY_LISTED`, `CATALOG_UNAVAILABLE`, conexão) e `cancelError` (`LOT_HAS_BIDS`, `LOT_ENDED`, 404).
+- Livro com cinco filtros e contagem, 20 por página, miniatura de `GET /lots/:id/image`, carimbo "Cancelado", cancelamento com confirmação na linha e recarga de livro e resumo; vira cartões com `data-label` abaixo de 1180px.
+- Client tipado com `catalogSearch`, `createLot`, `cancelLot` (trata 204), `dashboardLots`, `dashboardSummary` e `lotImageUrl`; helpers `toRoman`, `lotLabel` e `formatShortDate`/`fromLocalInput`/`toLocalInput` em `shared/lib`.
+- Testes dos casos aprovados: `roman.spec.ts`, `date.spec.ts`, `lot-validation.spec.ts` e `lot-errors.spec.ts`.
+
+**O que revisei e pedi para mudar:**
+- Pedi que a ficha não mostrasse o número que o lote vai receber, porque o número é global e sequencial e outro leiloeiro pode pegá-lo no meio; o romano aparece só na confirmação, com o valor devolvido pelo `POST /lots` (D-053).
+- Pedi valores sempre com centavos (D-048) e o visual do canvas Painel com as classes `ag-*`.
+- Escolhi omitir Dimensões e Nº no acervo da ficha, em vez de acrescentar os campos à busca da API.
+- Pedi que a data curta fosse testada em `America/Sao_Paulo`, para o teste passar igual no CI (UTC) e na máquina local.
+- Depois da revisão, pedi que as datas exibidas usassem o fuso do navegador, igual aos campos de início e fim, com `TZ=America/Sao_Paulo` fixado na config do vitest, não no código.
+- Recusei os casos de leitura do romano e a própria função de leitura: a 3.5 só exibe, e a leitura entra na story que usar primeiro.
+- Pedi dois casos a mais em `lot-errors.spec.ts`: traduz `LOT_HAS_BIDS` e traduz `LOT_ENDED`.
+- Aprovei as outras escolhas da spec: seletor de departamento, resumo em três cartões, livro sem alias, arrematante, "Abrir sala" e comprovante, sem a regra "aumento não maior que o lance inicial" do canvas e com os limites da API.
+- Pedi para registrar em `deferred-work.md` a ação "Abrir sala" no livro para a 3.7.
+- Pedi só o revisor de casos de borda e `npm run lint:check` antes do commit.
+- Na conferência no navegador, apontei que o seletor de departamento abria a lista genérica do navegador; aprovei a troca por dois botões de opção.
+- Perguntei por que o primeiro lote da minha conta saiu com o número 5 (a sequência é global e não reaproveita números de lotes apagados).
+- Perguntei se o romano vira problema com muitos lotes e para quem não lê romano; decidi mostrar romano e número comum juntos ("Lote DXXXVII · nº 537"), só o número comum acima de 3999, numa decisão nova que substitui a D-036 (D-054).
+- Pedi a busca no acervo sempre visível no painel, sem o link "Criar lote" no cabeçalho nem modo separado de criação.
+- Pedi o estado vazio sem botão, com o texto "Busque uma obra no acervo para criar seu primeiro lote".
+- Pedi que, depois de criar, a ficha feche, a obra e os campos sejam limpos, a mensagem de sucesso mostre o número e o livro volte para Todos, página 1.
+- Pedi uma linha no README sobre o formato do número e o limite de 3999.
+- Autorizei apagar do banco local o usuário de teste `leiloeiro35@example.com` e o lote dele.
+- Pedi a coluna Nº do livro centralizada na vertical e alinhada com o cabeçalho "Nº".
+- Pedi trocar a faixa de sucesso por uma janela modal no estilo da ficha, com título "Lote VI · nº 6 publicado", miniatura e título da obra, estado e abertura, e os botões "Ver no livro" e "Criar outro lote"; a ficha só é limpa quando a janela fecha; `role="dialog"`, foco preso, Esc fecha e o foco volta para a busca; em 360px, largura da tela com margem.
+- Pedi destacar por alguns segundos a linha do lote recém-criado, com fundo dourado que some, respeitando `prefers-reduced-motion`.
+- Pedi os cartões da busca com `repeat(auto-fill, minmax(200px, 1fr))` e conferência com 1, 5 e 12 resultados e em 360px.
+- Pedi trocar os dois botões de departamento por uma lista suspensa (cascata) e tirar a borda azul que aparecia em volta dela com o mouse.
+
+**Sugestões rejeitadas e por quê:**
+- *Faixa de sucesso dentro da seção de novo lote:* recusei; pedi uma janela modal com ações para ver o lote no livro ou criar outro.
+- *Seção de novo lote aberta pelo botão "Novo lote" e pelo link "Criar lote" no cabeçalho:* recusei; pedi a busca sempre visível no painel.
+- *Botão "Criar o primeiro lote" no livro vazio:* recusei; pedi só o texto orientando a busca.
+- *Casos (2) e (3), leitura do romano de volta e recusa de romano inválido:* recusei, a tela só exibe o romano.
+- *Caso (4) com o fuso do ambiente:* pedi o fuso fixo nos testes, para o resultado não depender da máquina.
+- *Datas exibidas sempre em `America/Sao_Paulo`, diferente dos campos da ficha:* recusei; pedi o fuso do navegador nos dois.
