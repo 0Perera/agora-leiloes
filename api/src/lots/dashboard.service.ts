@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Clock } from '../common/clock';
 import { BookCountsDto, DashboardBookDto } from './dto/dashboard-book.dto';
+import { Receipt } from '../receipts/receipt.entity';
 import {
+  BookResultDto,
   BookStatus,
   DashboardLotDto,
   toDashboardLot,
@@ -35,7 +37,15 @@ const BOOK_COLUMNS = [
   'bidCount',
   'startsAt',
   'endsAt',
+  'settledAt',
 ] as const;
+
+type BookRaw = {
+  status: BookStatus;
+  receiptAlias: string | null;
+  receiptAmount: number | null;
+  receiptToken: string | null;
+};
 
 type SummaryRow = {
   liveCount: number;
@@ -44,6 +54,7 @@ type SummaryRow = {
   nextStartsAt: Date | null;
   endedCount: number;
   withoutBids: number;
+  received: string | null;
 };
 
 const EMPTY_SUMMARY: SummaryRow = {
@@ -53,6 +64,7 @@ const EMPTY_SUMMARY: SummaryRow = {
   nextStartsAt: null,
   endedCount: 0,
   withoutBids: 0,
+  received: null,
 };
 
 @Injectable()
@@ -70,14 +82,18 @@ export class DashboardService {
     const { entities, raw } = await this.own(auctioneerId, now)
       .select(BOOK_COLUMNS.map((column) => `lot.${column}`))
       .addSelect(BOOK_SQL, 'status')
+      .leftJoin(Receipt, 'receipt', 'receipt.lotId = lot.id')
+      .addSelect('receipt.alias', 'receiptAlias')
+      .addSelect('receipt.amount', 'receiptAmount')
+      .addSelect('receipt.token', 'receiptToken')
       .andWhere(BOOK_WHERE[query.status])
       .orderBy('lot.number', 'DESC')
       .offset((query.page - 1) * PAGE_SIZE)
       .limit(PAGE_SIZE)
-      .getRawAndEntities<{ status: BookStatus }>();
+      .getRawAndEntities<BookRaw>();
     const counts = await this.counts(auctioneerId, now);
     const items: DashboardLotDto[] = entities.map((lot, index) =>
-      toDashboardLot(lot, raw[index].status),
+      toDashboardLot(lot, raw[index].status, toResult(lot, raw[index])),
     );
     return {
       items,
@@ -112,6 +128,8 @@ export class DashboardService {
         `COUNT(*) FILTER (WHERE ${STATUS_WHERE.ended} AND lot.bidCount = 0)::int`,
         'withoutBids',
       )
+      .leftJoin(Receipt, 'receipt', 'receipt.lotId = lot.id')
+      .addSelect('SUM(receipt.amount)', 'received')
       .getRawOne<SummaryRow>();
     return toSummary(row);
   }
@@ -148,5 +166,19 @@ function toSummary(row: SummaryRow = EMPTY_SUMMARY): DashboardSummaryDto {
     },
     scheduled: { count: row.scheduledCount, nextStartsAt: row.nextStartsAt },
     ended: { count: row.endedCount, withoutBids: row.withoutBids },
+    received: Number(row.received ?? 0),
+  };
+}
+
+// Nulo enquanto não liquidado; liquidado sem lances não tem comprovante e sai com nulos.
+function toResult(
+  lot: Pick<Lot, 'settledAt'>,
+  raw: BookRaw,
+): BookResultDto | null {
+  if (lot.settledAt === null) return null;
+  return {
+    alias: raw.receiptAlias,
+    amount: raw.receiptAmount,
+    receiptToken: raw.receiptToken,
   };
 }

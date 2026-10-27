@@ -16,6 +16,13 @@ export type BookFields = Pick<
   | 'endsAt'
 >;
 
+// Alias, valor e token nulos: lote liquidado sem lances.
+export class BookResultDto {
+  alias!: string | null;
+  amount!: number | null;
+  receiptToken!: string | null;
+}
+
 export class DashboardLotDto {
   id!: number;
   number!: number;
@@ -27,11 +34,13 @@ export class DashboardLotDto {
   bidCount!: number;
   startsAt!: Date;
   endsAt!: Date;
+  result!: BookResultDto | null;
 }
 
 export function toDashboardLot(
   lot: BookFields,
   status: BookStatus,
+  result: BookResultDto | null,
 ): DashboardLotDto {
   return {
     id: lot.id,
@@ -44,5 +53,6 @@ export function toDashboardLot(
     bidCount: lot.bidCount,
     startsAt: lot.startsAt,
     endsAt: lot.endsAt,
+    result,
   };
 }
