@@ -24,10 +24,22 @@ export type LoginRequest = {
   password: string;
 };
 
-export type Wallet = {
+export type WalletBalance = {
   balance: number;
   committed: number;
   available: number;
+};
+
+export type CommittedLot = {
+  id: number;
+  number: number;
+  title: string;
+  amount: number;
+};
+
+export type Wallet = WalletBalance & {
+  lots: CommittedLot[];
+  lotsTotal: number;
 };
 
 export type DepositRequest = {
@@ -118,6 +130,7 @@ export type LotDetail = {
   currentBid: number | null;
   bidCount: number;
   serverTime: string;
+  me?: { alias: string };
 };
 
 export type BookStatus = LotStatus | 'cancelled';
@@ -159,6 +172,22 @@ export type PlacedBid = {
   alias: string;
   createdAt: string;
   endsAt: string;
+};
+
+export type BidEvent = PlacedBid;
+
+export type BidHistoryItem = {
+  seq: number;
+  alias: string;
+  amount: number;
+  createdAt: string;
+};
+
+export type BidHistory = {
+  items: BidHistoryItem[];
+  page: number;
+  pageSize: number;
+  total: number;
 };
 
 export type ApiErrorBody = {

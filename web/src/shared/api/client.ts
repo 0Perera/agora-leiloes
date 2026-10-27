@@ -17,6 +17,7 @@ import type {
   LotStatus,
   SignupRequest,
   Wallet,
+  WalletBalance,
 } from './types';
 
 const baseUrl = import.meta.env.VITE_API_URL;
@@ -113,7 +114,7 @@ export const api = {
   wallet: () => request<Wallet>('/wallet'),
   deposit: (amount: number) => {
     const body: DepositRequest = { amount };
-    return request<Wallet>('/wallet/deposits', { method: 'POST', body });
+    return request<WalletBalance>('/wallet/deposits', { method: 'POST', body });
   },
   catalogSearch: (q: string, department: CatalogDepartment, page: number) => {
     const query = new URLSearchParams({ q, department, page: String(page) });
