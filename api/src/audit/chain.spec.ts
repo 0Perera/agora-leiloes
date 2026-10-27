@@ -21,6 +21,14 @@ describe('chain.hashBid', () => {
     expect(hashBid(SECRET, makeBid())).toBe(hashBid(SECRET, makeBid()));
   });
 
+  it('assina os campos em ordem fixa com prefixo bid:', () => {
+    expect(hashBid(SECRET, makeBid())).toBe(
+      createHmac('sha256', SECRET)
+        .update('bid:7|3|42|150000|2026-10-27T12:00:00.123Z|' + 'a'.repeat(64))
+        .digest('hex'),
+    );
+  });
+
   it.each<[string, Partial<BidLink>]>([
     ['lotId', { lotId: 8 }],
     ['seq', { seq: 4 }],
