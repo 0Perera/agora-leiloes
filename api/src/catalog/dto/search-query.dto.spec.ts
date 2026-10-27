@@ -17,9 +17,23 @@ async function validate(query: unknown): Promise<unknown> {
 
 describe('SearchQueryDto', () => {
   it('recusa departamento fora da lista', async () => {
-    expect(await validate({ q: 'monet', department: 'Prints' })).toEqual({
+    expect(await validate({ q: 'portrait', department: 'Prints' })).toEqual({
       code: 'VALIDATION_FAILED',
       fields: { department: 'isIn' },
+    });
+  });
+
+  it('recusa termo vazio', async () => {
+    expect(await validate({ q: '   ' })).toEqual({
+      code: 'VALIDATION_FAILED',
+      fields: { q: 'isNotEmpty' },
+    });
+  });
+
+  it('recusa página menor que 1', async () => {
+    expect(await validate({ q: 'portrait', page: '0' })).toEqual({
+      code: 'VALIDATION_FAILED',
+      fields: { page: 'min' },
     });
   });
 });
