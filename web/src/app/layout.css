@@ -99,7 +99,6 @@
     width: 100%;
     flex-wrap: nowrap;
     overflow-x: auto;
-    justify-content: safe center;
     gap: 0 20px;
     scrollbar-width: thin;
   }
