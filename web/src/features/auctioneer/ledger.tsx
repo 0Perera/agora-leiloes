@@ -6,6 +6,7 @@ import type {
   DashboardLot,
 } from '../../shared/api/types';
 import { LedgerRow } from './ledger-row';
+import type { Fresh } from './ledger-row';
 import { LoadError } from './load-error';
 import { cancelError } from './lot-errors';
 import type { Notice } from './lot-errors';
@@ -23,6 +24,7 @@ const filters: { id: BookFilter; label: string; empty: string }[] = [
 type Props = {
   state: Load<DashboardBook>;
   filter: BookFilter;
+  fresh: Fresh | null;
   onFilter: (filter: BookFilter) => void;
   onTurn: (page: number) => void;
   onRetry: () => void;
@@ -94,7 +96,14 @@ export function Ledger(props: Props) {
 
 type BodyProps = Props & { onCancel: (lot: DashboardLot) => Promise<void> };
 
-function LedgerBody({ state, filter, onRetry, onTurn, onCancel }: BodyProps) {
+function LedgerBody({
+  state,
+  filter,
+  fresh,
+  onRetry,
+  onTurn,
+  onCancel,
+}: BodyProps) {
   if (state.status === 'error')
     return (
       <LoadError
@@ -110,7 +119,7 @@ function LedgerBody({ state, filter, onRetry, onTurn, onCancel }: BodyProps) {
 
   return (
     <>
-      <LedgerTable items={book.items} onCancel={onCancel} />
+      <LedgerTable items={book.items} fresh={fresh} onCancel={onCancel} />
       <Pager
         page={book.page}
         pageSize={book.pageSize}
@@ -125,9 +134,10 @@ function LedgerBody({ state, filter, onRetry, onTurn, onCancel }: BodyProps) {
 type TableProps = {
   items: DashboardLot[];
   onCancel: (lot: DashboardLot) => Promise<void>;
+  fresh: Fresh | null;
 };
 
-function LedgerTable({ items, onCancel }: TableProps) {
+function LedgerTable({ items, fresh, onCancel }: TableProps) {
   const [confirming, setConfirming] = useState<number | null>(null);
   const [busy, setBusy] = useState<number | null>(null);
 
@@ -156,6 +166,7 @@ function LedgerTable({ items, onCancel }: TableProps) {
         <LedgerRow
           key={lot.id}
           lot={lot}
+          fresh={fresh?.id === lot.id ? fresh : null}
           confirming={confirming === lot.id}
           busy={busy === lot.id}
           onAsk={() => setConfirming(lot.id)}

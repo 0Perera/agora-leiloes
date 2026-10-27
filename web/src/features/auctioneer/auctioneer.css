@@ -478,18 +478,6 @@
   background-color: var(--cinnabar-soft);
 }
 
-.panel-success {
-  display: flex;
-  gap: var(--space-2);
-  margin: 0;
-  padding: 10px 14px;
-  border: 1px solid var(--malachite);
-  background-color: var(--malachite-soft);
-  color: var(--malachite);
-  font-size: 16px;
-  line-height: 22px;
-}
-
 .panel-sheet-actions {
   display: flex;
   flex-wrap: wrap;
@@ -809,6 +797,74 @@
   50% {
     opacity: 0.5;
   }
+}
+
+/* lote recém-criado: fundo dourado que some; com movimento reduzido, fica fixo até o timer */
+.panel-lrow.is-fresh {
+  background-color: color-mix(in srgb, var(--gold-300) 45%, transparent);
+}
+
+.panel-lrow.is-fresh:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .panel-lrow.is-fresh {
+    animation: panel-fresh 4s ease-out forwards;
+  }
+}
+
+@keyframes panel-fresh {
+  from {
+    background-color: color-mix(in srgb, var(--gold-300) 45%, transparent);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+/* panel-corners põe position: relative; a janela modal precisa de fixed */
+.panel-dialog {
+  position: fixed;
+  inset: 0;
+  height: fit-content;
+  margin: auto;
+  width: min(520px, calc(100vw - 32px));
+  max-width: none;
+  padding: var(--space-6) var(--space-5);
+  color: var(--ink);
+}
+
+.panel-dialog::backdrop {
+  background-color: rgba(43, 37, 32, 0.55);
+}
+
+.panel-dialog-title {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 28px;
+  color: var(--ink);
+}
+
+.panel-dialog-work {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.panel-dialog-state {
+  margin: var(--space-4) 0 var(--space-5);
+  color: var(--ink-muted);
+}
+
+.panel-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
 }
 
 @media (prefers-reduced-motion: reduce) {

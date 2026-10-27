@@ -1,16 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Artwork, CreatedLot } from '../../shared/api/types';
-import { formatShortDate } from '../../shared/lib/date';
-import { lotLabel } from '../../shared/lib/roman';
 import { CatalogSearch } from './catalog-search';
+import { CreatedDialog } from './created-dialog';
 import { Ledger } from './ledger';
+import type { Fresh } from './ledger-row';
 import { LotForm } from './lot-form';
 import { Summary } from './summary';
 import { useDashboard } from './use-dashboard';
 import './auctioneer.css';
 
+const freshMs = 4000;
+
 export function DashboardPage() {
   const dashboard = useDashboard();
+  const [fresh, setFresh] = useState<Fresh | null>(null);
+
+  useEffect(() => {
+    if (!fresh) return;
+    const timer = setTimeout(() => setFresh(null), freshMs);
+    return () => clearTimeout(timer);
+  }, [fresh]);
 
   return (
     <div className="panel-page">
@@ -26,10 +35,11 @@ export function DashboardPage() {
         </div>
         <Summary state={dashboard.summary} onRetry={dashboard.retrySummary} />
       </section>
-      <NewLot onCreated={dashboard.showCreated} />
+      <NewLot onCreated={dashboard.showCreated} onClosed={setFresh} />
       <Ledger
         state={dashboard.book}
         filter={dashboard.filter}
+        fresh={fresh}
         onFilter={dashboard.choose}
         onTurn={dashboard.turn}
         onRetry={dashboard.retryBook}
@@ -39,23 +49,25 @@ export function DashboardPage() {
   );
 }
 
-function publishedText(lot: CreatedLot): string {
-  return `${lotLabel(lot.number)} publicado. Ele aparece na vitrine como Agendado, abrindo em ${formatShortDate(lot.startsAt)}.`;
-}
+type NewLotProps = {
+  onCreated: () => void;
+  onClosed: (fresh: Fresh) => void;
+};
 
-function NewLot({ onCreated }: { onCreated: () => void }) {
+function NewLot({ onCreated, onClosed }: NewLotProps) {
   const [artwork, setArtwork] = useState<Artwork | null>(null);
-  const [published, setPublished] = useState<string | null>(null);
+  const [created, setCreated] = useState<CreatedLot | null>(null);
 
-  function pick(next: Artwork) {
-    setArtwork(next);
-    setPublished(null);
+  function publish(lot: CreatedLot) {
+    setCreated(lot);
+    onCreated();
   }
 
-  function created(lot: CreatedLot) {
+  function close(lot: CreatedLot, reveal: boolean) {
+    setCreated(null);
     setArtwork(null);
-    setPublished(publishedText(lot));
-    onCreated();
+    onClosed({ id: lot.id, reveal });
+    if (!reveal) document.getElementById('q')?.focus();
   }
 
   return (
@@ -66,17 +78,15 @@ function NewLot({ onCreated }: { onCreated: () => void }) {
         </h2>
         <div className="ag-meander panel-section-meander" />
       </header>
-      <div role="status">
-        {published && (
-          <p className="panel-success">
-            <span aria-hidden="true">✓</span>
-            <span>{published}</span>
-          </p>
-        )}
-      </div>
-      <CatalogSearch selected={artwork} onPick={pick} />
+      <CatalogSearch selected={artwork} onPick={setArtwork} />
       {artwork && (
-        <LotForm key={artwork.id} artwork={artwork} onCreated={created} />
+        <LotForm key={artwork.id} artwork={artwork} onCreated={publish} />
+      )}
+      {created && (
+        <CreatedDialog
+          lot={created}
+          onClose={(reveal) => close(created, reveal)}
+        />
       )}
     </section>
   );

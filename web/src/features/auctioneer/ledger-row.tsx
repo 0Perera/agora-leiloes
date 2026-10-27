@@ -1,11 +1,15 @@
+import { useEffect, useRef } from 'react';
 import { lotImageUrl } from '../../shared/api/client';
 import type { DashboardLot } from '../../shared/api/types';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel, toRoman } from '../../shared/lib/roman';
 
+export type Fresh = { id: number; reveal: boolean };
+
 type Props = {
   lot: DashboardLot;
+  fresh: Fresh | null;
   confirming: boolean;
   busy: boolean;
   onAsk: () => void;
@@ -19,13 +23,34 @@ const badges = {
   ended: { className: 'ag-badge ag-badge--closed', text: 'Encerrado' },
 };
 
-export function LedgerRow({ lot, ...actions }: Props) {
+function rowClass(cancelled: boolean, fresh: boolean): string {
+  const classes = ['panel-lrow'];
+  if (cancelled) classes.push('is-cancelled');
+  if (fresh) classes.push('is-fresh');
+  return classes.join(' ');
+}
+
+function reveal(row: HTMLElement) {
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  row.scrollIntoView({ block: 'center', behavior: still ? 'auto' : 'smooth' });
+  row.focus({ preventScroll: true });
+}
+
+export function LedgerRow({ lot, fresh, ...actions }: Props) {
   const cancelled = lot.status === 'cancelled';
+  const row = useRef<HTMLDivElement>(null);
+  const revealed = fresh?.reveal ?? false;
+
+  useEffect(() => {
+    if (revealed && row.current) reveal(row.current);
+  }, [revealed]);
 
   return (
     <div
-      className={cancelled ? 'panel-lrow is-cancelled' : 'panel-lrow'}
+      ref={row}
+      className={rowClass(cancelled, fresh !== null)}
       role="row"
+      tabIndex={fresh ? -1 : undefined}
     >
       <div className="panel-num" role="cell" aria-label={lotLabel(lot.number)}>
         <span aria-hidden="true">{toRoman(lot.number) ?? lot.number}</span>
@@ -123,7 +148,7 @@ function periodOf(lot: DashboardLot): string {
   return `${starts} até ${ends}`;
 }
 
-type ActionProps = Omit<Props, 'lot'> & { lot: DashboardLot };
+type ActionProps = Omit<Props, 'lot' | 'fresh'> & { lot: DashboardLot };
 
 function Action({
   lot,
