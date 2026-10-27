@@ -316,6 +316,7 @@ Refs: story <epic>.<story>
 
 Atomicidade:
 - Um commit = uma mudança lógica que compila e passa nos testes sozinha.
+  Exceção: nas stories em TDD, o commit `test` vem vermelho antes do `feat` (ver D-055).
 - Teste vai no mesmo commit da funcionalidade que ele cobre. Migration vai no mesmo commit da entidade.
 - Nunca misturar `refactor` com `feat` ou `fix` no mesmo commit.
 - Adicionar arquivos explicitamente (nunca `git add .` às cegas) e revisar `git diff --staged` antes de commitar.

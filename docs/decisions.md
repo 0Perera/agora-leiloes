@@ -560,3 +560,14 @@ Story: 3.5 · Substitui D-036
 **Por quê:** o romano fica longo e difícil de ler com o crescimento da numeração (888 vira DCCCLXXXVIII), quem não lê romano não sabe qual número digitar na busca, e a notação padrão não passa de 3999.
 **Alternativas descartadas:** só o número comum (perde a identidade visual do tema); romano só nos destaques e número comum nas listas (dois formatos na mesma interface).
 **Consequência:** toda tela usa o `lotLabel` de `web/src/shared/lib/roman.ts`; o `toRoman` devolve `null` fora de 1 a 3999.
+
+## D-055: Commit do teste vermelho antes da implementação nas stories TDD
+
+Status: Aceita
+Data: 2026-10-27
+Story: 4.1
+
+**Decisão:** nas stories em TDD (4.1, 4.2, 5.1, 5.5), cada grupo de casos vira um commit `test` com os `it` falhando, seguido do commit `feat` que os faz passar. É a exceção à regra "todo commit passa nos testes".
+**Por quê:** o histórico da branch serve de evidência do TDD (D-019). O squash merge (D-021) garante que a `main` nunca recebe commit vermelho: os commits `test` vermelhos ficam só na branch, e o CI roda no topo da PR, que fica verde.
+**Alternativas descartadas:** teste e código no mesmo commit (o histórico não mostra que o teste veio antes).
+**Consequência:** `git bisect` na branch de uma story TDD encontra commits vermelhos de propósito; na `main` isso não acontece.
