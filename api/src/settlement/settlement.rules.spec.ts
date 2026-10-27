@@ -1,8 +1,14 @@
-import { decide, SettlementLot, SettlementState } from './settlement.rules';
+import {
+  decide,
+  SettlementDecision,
+  SettlementLot,
+  SettlementState,
+} from './settlement.rules';
 
 const NOW = new Date('2026-10-27T12:00:00Z');
 const MINUTE = 60 * 1000;
 const AUCTIONEER = 1;
+const WINNER = 2;
 
 function at(offsetMs: number): Date {
   return new Date(NOW.getTime() + offsetMs);
@@ -26,6 +32,15 @@ function makeState(override: Partial<SettlementState> = {}): SettlementState {
     now: NOW,
     ...override,
   };
+}
+
+function closeOf(decision: SettlementDecision) {
+  if (!decision.settle) throw new Error(decision.reason);
+  return decision;
+}
+
+function moveOf(decision: SettlementDecision, userId: number) {
+  return closeOf(decision).moves.find((move) => move.userId === userId);
 }
 
 describe('decide', () => {
@@ -82,6 +97,65 @@ describe('decide', () => {
       expect(decide(state)).toEqual({
         settle: false,
         reason: 'ALREADY_SETTLED',
+      });
+    });
+  });
+
+  describe('resultado', () => {
+    it('fecha sem vencedor quando não há lances', () => {
+      expect(closeOf(decide(makeState())).winner).toBeNull();
+    });
+
+    it('não move saldo quando não há lances', () => {
+      expect(closeOf(decide(makeState())).moves).toEqual([]);
+    });
+
+    it('o vencedor é o autor do último lance', () => {
+      const state = makeState({ last: { userId: WINNER, amount: 15_000 } });
+
+      expect(closeOf(decide(state)).winner?.userId).toBe(WINNER);
+    });
+
+    it('o valor vem do último lance, não do lance atual do lote', () => {
+      const state = makeState({
+        lot: makeLot({ currentBid: 99_000 }),
+        last: { userId: WINNER, amount: 15_000 },
+      });
+
+      expect(closeOf(decide(state)).winner?.amount).toBe(15_000);
+    });
+  });
+
+  describe('movimentos', () => {
+    const last = { userId: WINNER, amount: 15_000 };
+
+    it('debita o valor do saldo do vencedor', () => {
+      expect(moveOf(decide(makeState({ last })), WINNER)?.balance).toBe(
+        -15_000,
+      );
+    });
+
+    it('libera o valor do comprometido do vencedor', () => {
+      expect(moveOf(decide(makeState({ last })), WINNER)?.committed).toBe(
+        -15_000,
+      );
+    });
+
+    it('credita o valor no saldo do leiloeiro', () => {
+      expect(moveOf(decide(makeState({ last })), AUCTIONEER)).toEqual({
+        userId: AUCTIONEER,
+        balance: 15_000,
+        committed: 0,
+      });
+    });
+
+    it('o comprometido do vencedor varia só pelo valor deste lote', () => {
+      const decision = decide(makeState({ last }));
+
+      expect(moveOf(decision, WINNER)).toEqual({
+        userId: WINNER,
+        balance: -15_000,
+        committed: -15_000,
       });
     });
   });
