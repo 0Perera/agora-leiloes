@@ -1,8 +1,9 @@
 import { NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DataSource, In, IsNull } from 'typeorm';
+import { forLot } from '../audit/alias';
 import { GENESIS, hashBid, sealLot } from '../audit/chain';
-import { DomainException } from '../common/domain.exception';
+import { DomainCode, DomainException } from '../common/domain.exception';
 import { Env } from '../config/env.validation';
 import { Lot } from '../lots/lot.entity';
 import { Wallet } from '../wallets/wallet.entity';
@@ -170,6 +171,22 @@ describe('BidsService.place', () => {
     expect(wallets.update).not.toHaveBeenCalled();
   });
 
+  it.each<[DomainCode, Parameters<typeof makeService>[0], number]>([
+    ['ALREADY_WINNING', { last: makeBid({ userId: 10 }) }, 200_000],
+    ['INSUFFICIENT_BALANCE', {}, 600_000],
+    ['LOT_NOT_STARTED', { lot: makeLot({ startsAt: at(HOUR) }) }, 100_000],
+    ['LOT_ENDED', { lot: makeLot({ endsAt: at(-MINUTE) }) }, 100_000],
+  ])('recusa com %s sem gravar nada', async (code, state, amount) => {
+    const { service, lots, bids, wallets } = makeService(state);
+
+    await expect(service.place(10, 1, amount)).rejects.toThrow(
+      new DomainException(code),
+    );
+    expect(bids.insert).not.toHaveBeenCalled();
+    expect(lots.update).not.toHaveBeenCalled();
+    expect(wallets.update).not.toHaveBeenCalled();
+  });
+
   it('grava o primeiro lance com seq 1, hash anterior genesis e data do Clock', async () => {
     const { service, bids } = makeService();
 
@@ -238,6 +255,21 @@ describe('BidsService.place', () => {
         seal: sealLot(SECRET, { lotId: 1, count: 1, lastHash: hash }),
       },
     );
+  });
+
+  it('devolve o lance com o alias, a data do Clock e o fim prorrogado', async () => {
+    const endsAt = at(MINUTE);
+    const { service } = makeService({ lot: makeLot({ endsAt }) });
+
+    const bid = await service.place(10, 1, 100_000);
+
+    expect(bid).toEqual({
+      seq: 1,
+      amount: 100_000,
+      alias: forLot(SECRET, 10, 1),
+      createdAt: NOW,
+      endsAt: new Date(endsAt.getTime() + 2 * MINUTE),
+    });
   });
 
   it('libera o comprometido do líder anterior e compromete o novo lance', async () => {
