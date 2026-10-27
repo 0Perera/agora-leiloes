@@ -26,7 +26,7 @@ export function useStream(id: number, active: boolean, handlers: Handlers) {
       );
     };
 
-    const close = openLotStream(id, { onBid, onOpen });
+    const close = openLotStream(id, { onBid, onOpen, onDrop: onOpen });
     return () => {
       open = false;
       close();

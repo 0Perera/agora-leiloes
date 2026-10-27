@@ -101,6 +101,14 @@ describe('mergeBid', () => {
     expect(merged.extended).toBe(true);
   });
 
+  it('desmarca prorrogado quando o lance mais novo não prorroga', () => {
+    const room = mergeBid(makeRoom(), makeBid({ endsAt: extendedEnd }));
+
+    const merged = mergeBid(room, makeBid({ seq: 4, endsAt: extendedEnd }));
+
+    expect(merged.extended).toBe(false);
+  });
+
   it('não muda o lance atual com lance de seq menor que o atual', () => {
     const room = makeRoom({ bids: [makeItem()] });
 

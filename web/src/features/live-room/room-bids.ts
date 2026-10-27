@@ -34,7 +34,7 @@ export function mergeBid(room: LiveRoom, bid: BidEvent): LiveRoom {
     },
     bids: unite(room.bids, [toItem(bid)]),
     total: Math.max(room.total, bid.seq),
-    extended: room.extended || (newest && later(bid.endsAt, lot.endsAt)),
+    extended: newest ? later(bid.endsAt, lot.endsAt) : room.extended,
   };
 }
 
