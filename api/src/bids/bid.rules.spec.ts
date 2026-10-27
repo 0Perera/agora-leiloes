@@ -152,4 +152,50 @@ describe('BidRules.decide', () => {
       });
     });
   });
+
+  describe('saldo', () => {
+    it('recusa lance acima do disponível', () => {
+      const bid = makeBid({ available: 9_999, amount: 10_000 });
+
+      expect(decide(bid)).toMatchObject({
+        accepted: false,
+        code: 'INSUFFICIENT_BALANCE',
+      });
+    });
+
+    it('aceita lance igual ao disponível', () => {
+      const bid = makeBid({ available: 10_000, amount: 10_000 });
+
+      expect(decide(bid).accepted).toBe(true);
+    });
+
+    it('recusa por status antes de checar o saldo', () => {
+      const bid = makeBid({
+        lot: makeLot({ endsAt: at(-MINUTE) }),
+        available: 0,
+      });
+
+      expect(decide(bid)).toEqual({ accepted: false, code: 'LOT_ENDED' });
+    });
+
+    it('recusa por valor antes de checar o saldo', () => {
+      const bid = makeBid({ available: 0, amount: 9_000 });
+
+      expect(decide(bid)).toEqual({
+        accepted: false,
+        code: 'BID_BELOW_MINIMUM',
+        minimum: 10_000,
+      });
+    });
+
+    it('a recusa por saldo informa o disponível', () => {
+      const bid = makeBid({ available: 5_000, amount: 10_000 });
+
+      expect(decide(bid)).toEqual({
+        accepted: false,
+        code: 'INSUFFICIENT_BALANCE',
+        available: 5_000,
+      });
+    });
+  });
 });
