@@ -276,19 +276,17 @@
   }
 }
 
-/* medido com R$ 100.000,00 disponível: abaixo de 420px o nome encosta na carteira */
-@media (max-width: 419px) {
-  .header-name {
-    display: none;
-  }
-}
-
-@media (max-width: 420px) {
+/* medido com R$ 100.000,00 disponível: abaixo de 440px o nome encosta na carteira */
+@media (max-width: 439px) {
   .layout-main {
     padding: var(--space-5) var(--space-4) var(--space-7);
   }
 
   .header-bar {
     padding: 10px var(--space-4);
+  }
+
+  .header-name {
+    display: none;
   }
 }

@@ -2,6 +2,8 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { Session } from './session';
 import { initialsOf } from './initials';
+import { restoresFocus } from './menu-close';
+import type { CloseReason } from './menu-close';
 import { useSession } from './use-session';
 
 export function AccountMenu({ session }: { session: Session }) {
@@ -16,15 +18,15 @@ export function AccountMenu({ session }: { session: Session }) {
 
   useEffect(() => {
     if (!open) return;
-    const close = () => {
+    const close = (reason: CloseReason) => {
       setOpen(false);
-      trigger.current?.focus();
+      if (restoresFocus(reason)) trigger.current?.focus();
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') close();
+      if (event.key === 'Escape') close('escape');
     };
     const onPointer = (event: PointerEvent) => {
-      if (!root.current?.contains(event.target as Node)) close();
+      if (!root.current?.contains(event.target as Node)) close('outside');
     };
     document.addEventListener('keydown', onKey);
     document.addEventListener('pointerdown', onPointer);
@@ -45,7 +47,6 @@ export function AccountMenu({ session }: { session: Session }) {
         ref={trigger}
         className="account-monogram"
         type="button"
-        aria-haspopup="true"
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={`Conta de ${name}`}
