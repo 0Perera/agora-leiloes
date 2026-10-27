@@ -243,15 +243,19 @@ export type Barrier = {
   abort(): Promise<void>;
 };
 
-// Conexão à parte segurando a linha do lote: os lances chegam e ficam na fila do lock.
-export async function lockLot(db: DataSource, lotId: number): Promise<Barrier> {
+// Conexão à parte segurando uma linha: os lances chegam e ficam na fila do lock.
+async function hold(
+  db: DataSource,
+  sql: string,
+  params: unknown[],
+): Promise<Barrier> {
   const runner = db.createQueryRunner();
   await runner.connect();
   const [{ pid }] = (await runner.query('SELECT pg_backend_pid() AS pid')) as {
     pid: number;
   }[];
   await runner.startTransaction();
-  await runner.query('SELECT id FROM lots WHERE id = $1 FOR UPDATE', [lotId]);
+  await runner.query(sql, params);
   return {
     pid,
     release: async () => {
@@ -263,4 +267,14 @@ export async function lockLot(db: DataSource, lotId: number): Promise<Barrier> {
       if (!runner.isReleased) await runner.release();
     },
   };
+}
+
+export function lockLot(db: DataSource, lotId: number): Promise<Barrier> {
+  return hold(db, 'SELECT id FROM lots WHERE id = $1 FOR UPDATE', [lotId]);
+}
+
+export function lockWallet(db: DataSource, userId: number): Promise<Barrier> {
+  return hold(db, 'SELECT id FROM wallets WHERE user_id = $1 FOR UPDATE', [
+    userId,
+  ]);
 }

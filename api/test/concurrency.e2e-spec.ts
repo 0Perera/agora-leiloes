@@ -4,7 +4,9 @@ import {
   type Account,
   at,
   BASE,
+  type Barrier,
   lockLot,
+  lockWallet,
   secret,
   start,
   type TestApp,
@@ -37,12 +39,24 @@ async function race(
   offers: Offer[],
 ): Promise<Race> {
   const barrier = await lockLot(test.db, lotId);
-  const pending = offers.map(({ bidder, amount }) =>
+  return contend(
+    test,
+    barrier,
+    offers.map(({ bidder, amount }) => ({ bidder, lotId, amount })),
+  );
+}
+
+async function contend(
+  test: TestApp,
+  barrier: Barrier,
+  requests: { bidder: Account; lotId: number; amount: number }[],
+): Promise<Race> {
+  const pending = requests.map(({ bidder, lotId, amount }) =>
     // O supertest só envia no then(): sem ele, nenhum lance sai antes da barreira.
     test.bid(bidder, lotId, amount).then((response) => response),
   );
   try {
-    const waiters = await waitForLockWaiters(test.db, barrier, offers.length);
+    const waiters = await waitForLockWaiters(test.db, barrier, requests.length);
     await barrier.release();
     return { waiters, responses: await Promise.all(pending) };
   } catch (error) {
@@ -253,5 +267,31 @@ describe('lances simultâneos do mesmo mínimo', () => {
         }),
       ]) as unknown,
     );
+  });
+});
+
+describe('mesmo licitante em dois lotes', () => {
+  it('mesmo licitante em dois lotes com saldo para um só lance: um aceito e o outro INSUFFICIENT_BALANCE', async () => {
+    await api.reset();
+    const lots = [await liveLot(api), await liveLot(api)];
+    const bidder = await api.signup('BIDDER');
+    await api.deposit(bidder, STARTING_BID);
+    const barrier = await lockWallet(api.db, bidder.id);
+
+    const { waiters, responses } = await contend(
+      api,
+      barrier,
+      lots.map((lotId) => ({ bidder, lotId, amount: STARTING_BID })),
+    );
+
+    expect(waiters).toBe(2);
+    expect(responses.map((r) => r.status).sort()).toEqual([201, 422]);
+    expect(responses.find((r) => !isAccepted(r))?.body).toEqual({
+      code: 'INSUFFICIENT_BALANCE',
+      available: 0,
+    });
+    const [wallet] = await committedOf(api, [bidder.id]);
+    expect(wallet.committed).toBe(STARTING_BID);
+    expect(wallet.balance).toBeGreaterThanOrEqual(wallet.committed);
   });
 });
