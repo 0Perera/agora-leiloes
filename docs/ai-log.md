@@ -275,3 +275,29 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - *Justificativa do cancelamento no README ("quem deu lance já tem saldo comprometido"):* pedi a regra do enunciado e o motivo real, o estorno fora do escopo (D-018).
+
+## Story 3.5: Tela Painel do leiloeiro
+
+**O que a IA gerou:**
+- `/dashboard` em `features/auctioneer`: cabeçalho da página com "Novo lote"/"Fechar novo lote" (`aria-expanded`, estado em `?new` na URL), resumo em três cartões, seção de novo lote (busca + ficha) e livro de lotes.
+- Busca no acervo com seletor de departamento (D-050), erro de campo para termo vazio sem chamar a API, seis esqueletos, vazio, erro "O acervo do museu não respondeu" com "Tentar de novo", cartões-botão com `aria-pressed` e imagem do CDN, e paginação Anterior/Próxima.
+- Ficha só leitura (título, artista, data, técnica, tipo e imagem) com os quatro campos editáveis, máscara de maquininha nos valores, `datetime-local` convertido para ISO UTC, validação pura em `lot-validation.ts` com as faixas da API e resumo "Corrija N campos". Faixa de sucesso com o número em romano devolvido pela API (D-053).
+- `lot-errors.ts` com `createError` (`VALIDATION_FAILED` por campo, `IMAGE_DOWNLOAD_FAILED`, `ARTWORK_ALREADY_LISTED`, `CATALOG_UNAVAILABLE`, conexão) e `cancelError` (`LOT_HAS_BIDS`, `LOT_ENDED`, 404).
+- Livro com cinco filtros e contagem, 20 por página, miniatura de `GET /lots/:id/image`, carimbo "Cancelado", cancelamento com confirmação na linha e recarga de livro e resumo; vira cartões com `data-label` abaixo de 1180px.
+- Client tipado com `catalogSearch`, `createLot`, `cancelLot` (trata 204), `dashboardLots`, `dashboardSummary` e `lotImageUrl`; helpers `toRoman` e `formatShortDate`/`fromLocalInput`/`toLocalInput` em `shared/lib`; link "Criar lote" no cabeçalho do leiloeiro.
+- Testes dos casos aprovados: `roman.spec.ts`, `date.spec.ts`, `lot-validation.spec.ts` e `lot-errors.spec.ts`.
+
+**O que revisei e pedi para mudar:**
+- Pedi que a ficha não mostrasse o número que o lote vai receber, porque o número é global e sequencial e outro leiloeiro pode pegá-lo no meio; o romano aparece só na confirmação, com o valor devolvido pelo `POST /lots` (D-053).
+- Pedi valores sempre com centavos (D-048) e o visual do canvas Painel com as classes `ag-*`.
+- Escolhi omitir Dimensões e Nº no acervo da ficha, em vez de acrescentar os campos à busca da API.
+- Pedi que a data curta fosse formatada com `timeZone: 'America/Sao_Paulo'` explícito, para o teste passar igual no CI (UTC) e na máquina local.
+- Recusei os casos de leitura do romano e a própria função de leitura: a 3.5 só exibe, e a leitura entra na story que usar primeiro.
+- Pedi dois casos a mais em `lot-errors.spec.ts`: traduz `LOT_HAS_BIDS` e traduz `LOT_ENDED`.
+- Aprovei as outras escolhas da spec: seletor de departamento, resumo em três cartões, livro sem alias, arrematante, "Abrir sala" e comprovante, sem a regra "aumento não maior que o lance inicial" do canvas e com os limites da API.
+- Pedi para registrar em `deferred-work.md` a ação "Abrir sala" no livro para a 3.7.
+- Pedi só o revisor de casos de borda e `npm run lint:check` antes do commit.
+
+**Sugestões rejeitadas e por quê:**
+- *Casos (2) e (3), leitura do romano de volta e recusa de romano inválido:* recusei, a tela só exibe o romano.
+- *Caso (4) com o fuso do ambiente:* mudei para `America/Sao_Paulo` explícito, para o resultado não depender da máquina.
