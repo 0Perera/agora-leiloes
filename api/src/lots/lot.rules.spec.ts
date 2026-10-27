@@ -24,7 +24,7 @@ function makeLot(override: Partial<ListedLot> = {}): ListedLot {
 }
 
 function makeCancel(override: Partial<CancelState> = {}): CancelState {
-  return { endsAt: at(2 * HOUR), bidCount: 0, ...override };
+  return { endsAt: at(2 * HOUR), hasBids: false, ...override };
 }
 
 describe('scheduleErrors', () => {
@@ -94,7 +94,7 @@ describe('assertCancellable', () => {
   });
 
   it('recusa lote com lance com LOT_HAS_BIDS', () => {
-    const lot = makeCancel({ bidCount: 1 });
+    const lot = makeCancel({ hasBids: true });
 
     expect(() => assertCancellable(lot, NOW)).toThrow(
       new DomainException('LOT_HAS_BIDS'),
@@ -110,7 +110,7 @@ describe('assertCancellable', () => {
   });
 
   it('lote encerrado com lance recusa com LOT_ENDED', () => {
-    const lot = makeCancel({ endsAt: at(-HOUR), bidCount: 3 });
+    const lot = makeCancel({ endsAt: at(-HOUR), hasBids: true });
 
     expect(() => assertCancellable(lot, NOW)).toThrow(
       new DomainException('LOT_ENDED'),

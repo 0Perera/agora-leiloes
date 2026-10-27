@@ -16,6 +16,7 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
+import { Bid } from '../bids/bid.entity';
 import type { ArtworkDetail } from '../catalog/artwork.mapper';
 import { CatalogService } from '../catalog/catalog.service';
 import type { ImageFile } from '../catalog/cleveland.client';
@@ -160,13 +161,17 @@ export class LotsService {
     await this.dataSource.transaction(async (manager) => {
       const lots = manager.getRepository(Lot);
       const lot = await lots.findOne({
-        select: { id: true, endsAt: true, bidCount: true },
+        select: { id: true, endsAt: true },
         where: { id, auctioneerId, cancelledAt: IsNull() },
         lock: { mode: 'pessimistic_write' },
       });
       if (!lot) throw new NotFoundException();
+      // Depois do lock: um lance que chegou antes já está em bids, e bid_count é só exibição.
+      const hasBids = await manager
+        .getRepository(Bid)
+        .exists({ where: { lotId: id } });
       const now = this.clock.now();
-      assertCancellable(lot, now);
+      assertCancellable({ endsAt: lot.endsAt, hasBids }, now);
       await lots.update({ id }, { cancelledAt: now });
     });
   }
