@@ -32,3 +32,12 @@ export function hashBid(secret: string, bid: BidLink): string {
     bid.prevHash ?? GENESIS,
   ]);
 }
+
+// Contagem + último hash detecta lance removido do final da cadeia.
+export function sealLot(
+  secret: string,
+  count: number,
+  lastHash: string | null,
+): string {
+  return sign(secret, 'seal', [count, lastHash ?? GENESIS]);
+}
