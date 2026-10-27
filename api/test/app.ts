@@ -42,7 +42,7 @@ export class TestClock extends Clock {
   }
 }
 
-export class FakeCatalog {
+export class FakeCatalog implements Pick<CatalogService, 'find' | 'image'> {
   private readonly titles = new Map<number, string>();
 
   title(artworkId: number, title: string): void {
