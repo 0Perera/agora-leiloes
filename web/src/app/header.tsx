@@ -23,14 +23,9 @@ export function Header() {
             Vitrine
           </NavLink>
           {isAuctioneer && (
-            <>
-              <NavLink className="nav-link" to="/dashboard">
-                Painel do leiloeiro
-              </NavLink>
-              <Link className="nav-link" to="/dashboard?new">
-                Criar lote
-              </Link>
-            </>
+            <NavLink className="nav-link" to="/dashboard">
+              Painel do leiloeiro
+            </NavLink>
           )}
         </nav>
         <div className="header-actions">

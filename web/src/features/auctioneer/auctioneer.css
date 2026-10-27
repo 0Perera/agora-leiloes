@@ -12,14 +12,6 @@
   min-width: 0;
 }
 
-.panel-intro-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-4);
-}
-
 .panel-eyebrow {
   margin: 0 0 6px;
   font-family: var(--font-display);
@@ -551,7 +543,7 @@
   position: relative;
   display: grid;
   grid-template-columns:
-    56px minmax(160px, 2.2fr)
+    96px minmax(160px, 2.2fr)
     112px 128px 150px 56px 140px 170px;
   gap: 0 var(--space-3);
   align-items: center;
@@ -578,8 +570,9 @@
 .panel-num {
   align-self: stretch;
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
   padding-right: 14px;
   border-right: 3px double var(--cinnabar);
   font-family: var(--font-display);
@@ -587,6 +580,14 @@
   font-size: 14px;
   letter-spacing: 0.06em;
   color: var(--gold-700);
+}
+
+.panel-num-plain {
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0;
+  color: var(--ink-muted);
 }
 
 .panel-lhead .panel-num {
@@ -815,7 +816,7 @@
 }
 
 /* abaixo da largura da tabela, cada lote vira um cartão com rótulos */
-@media (max-width: 1180px) {
+@media (max-width: 1220px) {
   .panel-lhead {
     display: none;
   }
@@ -831,6 +832,9 @@
   }
 
   .panel-num {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--space-2);
     justify-content: flex-start;
     padding: 0;
     border-right: 0;

@@ -27,7 +27,6 @@ type Props = {
   onTurn: (page: number) => void;
   onRetry: () => void;
   onChanged: () => void;
-  onOpenNew: () => void;
 };
 
 export function Ledger(props: Props) {
@@ -95,14 +94,7 @@ export function Ledger(props: Props) {
 
 type BodyProps = Props & { onCancel: (lot: DashboardLot) => Promise<void> };
 
-function LedgerBody({
-  state,
-  filter,
-  onRetry,
-  onTurn,
-  onOpenNew,
-  onCancel,
-}: BodyProps) {
+function LedgerBody({ state, filter, onRetry, onTurn, onCancel }: BodyProps) {
   if (state.status === 'error')
     return (
       <LoadError
@@ -114,13 +106,7 @@ function LedgerBody({
   if (state.status === 'loading' || !state.data) return <LedgerSkeleton />;
   const book = state.data;
   if (book.items.length === 0)
-    return (
-      <LedgerEmpty
-        bookEmpty={book.counts.all === 0}
-        filter={filter}
-        onOpenNew={onOpenNew}
-      />
-    );
+    return <LedgerEmpty bookEmpty={book.counts.all === 0} filter={filter} />;
 
   return (
     <>
@@ -184,10 +170,9 @@ function LedgerTable({ items, onCancel }: TableProps) {
 type EmptyProps = {
   bookEmpty: boolean;
   filter: BookFilter;
-  onOpenNew: () => void;
 };
 
-function LedgerEmpty({ bookEmpty, filter, onOpenNew }: EmptyProps) {
+function LedgerEmpty({ bookEmpty, filter }: EmptyProps) {
   const name = filters.find((item) => item.id === filter)?.empty ?? '';
 
   return (
@@ -197,18 +182,9 @@ function LedgerEmpty({ bookEmpty, filter, onOpenNew }: EmptyProps) {
       </p>
       <p className="panel-empty-text">
         {bookEmpty
-          ? 'Busque uma obra no acervo do museu e publique o primeiro lote da casa.'
+          ? 'Busque uma obra no acervo para criar seu primeiro lote.'
           : 'Escolha outro filtro ou crie um lote novo a partir do acervo.'}
       </p>
-      {bookEmpty && (
-        <button
-          className="ag-btn ag-btn--secondary"
-          type="button"
-          onClick={onOpenNew}
-        >
-          Criar o primeiro lote
-        </button>
-      )}
     </div>
   );
 }

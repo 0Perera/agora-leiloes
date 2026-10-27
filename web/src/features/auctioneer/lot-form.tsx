@@ -2,9 +2,8 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { api } from '../../shared/api/client';
 import type { Artwork, CreatedLot } from '../../shared/api/types';
-import { formatShortDate, toLocalInput } from '../../shared/lib/date';
+import { toLocalInput } from '../../shared/lib/date';
 import { maskAmount } from '../../shared/lib/money';
-import { toRoman } from '../../shared/lib/roman';
 import { FieldError } from '../../shared/ui/field-error';
 import { createError } from './lot-errors';
 import { validateLot } from './lot-validation';
@@ -12,7 +11,7 @@ import type { LotErrors, LotField, LotForm as Form } from './lot-validation';
 
 type Props = {
   artwork: Artwork;
-  onCreated: () => void;
+  onCreated: (lot: CreatedLot) => void;
 };
 
 const fieldOrder: LotField[] = [
@@ -36,10 +35,6 @@ function blankForm(): Form {
   };
 }
 
-function publishedText(lot: CreatedLot): string {
-  return `Lote ${toRoman(lot.number)} publicado. Ele aparece na vitrine como Agendado, abrindo em ${formatShortDate(lot.startsAt)}.`;
-}
-
 function focusFirst(errors: LotErrors) {
   const field = fieldOrder.find((item) => errors[item]);
   if (field) document.getElementById(`f-${field}`)?.focus();
@@ -49,7 +44,6 @@ export function LotForm({ artwork, onCreated }: Props) {
   const [form, setForm] = useState<Form>(blankForm);
   const [errors, setErrors] = useState<LotErrors>({});
   const [notice, setNotice] = useState<string | null>(null);
-  const [published, setPublished] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   function change(field: LotField, value: string) {
@@ -60,14 +54,12 @@ export function LotForm({ artwork, onCreated }: Props) {
     setForm((current) => ({ ...current, [field]: masked }));
     setErrors((current) => ({ ...current, [field]: undefined }));
     setNotice(null);
-    setPublished(null);
   }
 
   function reset() {
     setForm(blankForm());
     setErrors({});
     setNotice(null);
-    setPublished(null);
   }
 
   function fail(next: LotErrors, message: string | null) {
@@ -78,7 +70,6 @@ export function LotForm({ artwork, onCreated }: Props) {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    setPublished(null);
     const result = validateLot(form, new Date());
     if ('errors' in result) return fail(result.errors, null);
     setSubmitting(true);
@@ -87,9 +78,7 @@ export function LotForm({ artwork, onCreated }: Props) {
         artworkId: artwork.id,
         ...result.conditions,
       });
-      reset();
-      setPublished(publishedText(lot));
-      onCreated();
+      onCreated(lot);
     } catch (caught) {
       const failure = createError(caught);
       fail(failure.fields, failure.notice);
@@ -155,11 +144,7 @@ export function LotForm({ artwork, onCreated }: Props) {
               onChange={change}
             />
           </div>
-          <SheetNotices
-            invalid={invalid}
-            notice={notice}
-            published={published}
-          />
+          <SheetNotices invalid={invalid} notice={notice} />
           <div className="panel-sheet-actions">
             <button
               className="ag-btn ag-btn--primary"
@@ -275,10 +260,9 @@ function InputField(props: InputProps) {
 type NoticesProps = {
   invalid: number;
   notice: string | null;
-  published: string | null;
 };
 
-function SheetNotices({ invalid, notice, published }: NoticesProps) {
+function SheetNotices({ invalid, notice }: NoticesProps) {
   const summary =
     invalid === 1
       ? 'Corrija 1 campo para publicar o lote.'
@@ -300,14 +284,6 @@ function SheetNotices({ invalid, notice, published }: NoticesProps) {
           <span>{summary}</span>
         </p>
       )}
-      <div role="status">
-        {published && (
-          <p className="panel-success">
-            <span aria-hidden="true">✓</span>
-            <span>{published}</span>
-          </p>
-        )}
-      </div>
     </>
   );
 }

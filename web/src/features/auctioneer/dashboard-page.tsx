@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router';
-import type { Artwork } from '../../shared/api/types';
+import { useState } from 'react';
+import type { Artwork, CreatedLot } from '../../shared/api/types';
+import { formatShortDate } from '../../shared/lib/date';
+import { lotLabel } from '../../shared/lib/roman';
 import { CatalogSearch } from './catalog-search';
 import { Ledger } from './ledger';
 import { LotForm } from './lot-form';
@@ -10,39 +11,22 @@ import './auctioneer.css';
 
 export function DashboardPage() {
   const dashboard = useDashboard();
-  const [params, setParams] = useSearchParams();
-  const showNew = params.has('new');
-
-  function toggleNew(open: boolean) {
-    setParams(open ? { new: '' } : {}, { replace: true });
-  }
 
   return (
     <div className="panel-page">
       <section className="panel-intro" aria-labelledby="page-title">
-        <div className="panel-intro-head">
-          <div>
-            <p className="panel-eyebrow">Livro da casa</p>
-            <h1 id="page-title" className="panel-title">
-              Painel do leiloeiro
-            </h1>
-            <p className="panel-lede">
-              Lotes da Casa Ágora, do acervo ao arremate.
-            </p>
-          </div>
-          <button
-            className="ag-btn ag-btn--primary"
-            type="button"
-            onClick={() => toggleNew(!showNew)}
-            aria-expanded={showNew}
-            aria-controls="novo-lote"
-          >
-            {showNew ? 'Fechar novo lote' : 'Novo lote'}
-          </button>
+        <div>
+          <p className="panel-eyebrow">Livro da casa</p>
+          <h1 id="page-title" className="panel-title">
+            Painel do leiloeiro
+          </h1>
+          <p className="panel-lede">
+            Lotes da Casa Ágora, do acervo ao arremate.
+          </p>
         </div>
         <Summary state={dashboard.summary} onRetry={dashboard.retrySummary} />
       </section>
-      {showNew && <NewLot onCreated={dashboard.reload} />}
+      <NewLot onCreated={dashboard.showCreated} />
       <Ledger
         state={dashboard.book}
         filter={dashboard.filter}
@@ -50,34 +34,49 @@ export function DashboardPage() {
         onTurn={dashboard.turn}
         onRetry={dashboard.retryBook}
         onChanged={dashboard.reload}
-        onOpenNew={() => toggleNew(true)}
       />
     </div>
   );
 }
 
+function publishedText(lot: CreatedLot): string {
+  return `${lotLabel(lot.number)} publicado. Ele aparece na vitrine como Agendado, abrindo em ${formatShortDate(lot.startsAt)}.`;
+}
+
 function NewLot({ onCreated }: { onCreated: () => void }) {
   const [artwork, setArtwork] = useState<Artwork | null>(null);
+  const [published, setPublished] = useState<string | null>(null);
 
-  useEffect(() => {
-    document.getElementById('q')?.focus();
-  }, []);
+  function pick(next: Artwork) {
+    setArtwork(next);
+    setPublished(null);
+  }
+
+  function created(lot: CreatedLot) {
+    setArtwork(null);
+    setPublished(publishedText(lot));
+    onCreated();
+  }
 
   return (
-    <section
-      id="novo-lote"
-      className="panel-section"
-      aria-labelledby="novo-title"
-    >
+    <section className="panel-section" aria-labelledby="novo-title">
       <header className="ag-section panel-section-head">
         <h2 id="novo-title" className="ag-section__title panel-section-title">
           Novo lote a partir do acervo
         </h2>
         <div className="ag-meander panel-section-meander" />
       </header>
-      <CatalogSearch selected={artwork} onPick={setArtwork} />
+      <div role="status">
+        {published && (
+          <p className="panel-success">
+            <span aria-hidden="true">✓</span>
+            <span>{published}</span>
+          </p>
+        )}
+      </div>
+      <CatalogSearch selected={artwork} onPick={pick} />
       {artwork && (
-        <LotForm key={artwork.id} artwork={artwork} onCreated={onCreated} />
+        <LotForm key={artwork.id} artwork={artwork} onCreated={created} />
       )}
     </section>
   );

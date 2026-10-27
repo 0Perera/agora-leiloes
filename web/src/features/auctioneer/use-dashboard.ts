@@ -81,6 +81,14 @@ export function useDashboard() {
     setBookAttempt((current) => current + 1);
   }, []);
 
+  const showCreated = useCallback(() => {
+    setBook((current) => ({ ...current, status: 'loading' }));
+    setFilter('all');
+    setPage(1);
+    setSummaryAttempt((current) => current + 1);
+    setBookAttempt((current) => current + 1);
+  }, []);
+
   return {
     summary,
     book,
@@ -91,5 +99,6 @@ export function useDashboard() {
     retryBook,
     choose,
     turn,
+    showCreated,
   };
 }
