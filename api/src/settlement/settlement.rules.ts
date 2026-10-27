@@ -19,12 +19,33 @@ export type Skip = {
   reason: 'CANCELLED' | 'ALREADY_SETTLED' | 'NOT_ENDED';
 };
 
-type Close = { settle: true };
+export type WalletMove = { userId: number; balance: number; committed: number };
+
+export type Close = {
+  settle: true;
+  winner: Movement | null;
+  moves: WalletMove[];
+};
 
 export type SettlementDecision = Close | Skip;
 
 export function decide(state: SettlementState): SettlementDecision {
-  return skip(state) ?? { settle: true };
+  return skip(state) ?? close(state);
+}
+
+// Vencedor e valor só do último lance da cadeia, nunca de currentBid (D-042).
+function close({ lot, last }: SettlementState): Close {
+  if (!last) return { settle: true, winner: null, moves: [] };
+  const winner = { userId: last.userId, amount: last.amount };
+  return { settle: true, winner, moves: movesOf(winner, lot.auctioneerId) };
+}
+
+function movesOf(winner: Movement, auctioneerId: number): WalletMove[] {
+  const { userId, amount } = winner;
+  return [
+    { userId, balance: -amount, committed: -amount },
+    { userId: auctioneerId, balance: amount, committed: 0 },
+  ];
 }
 
 // A ordem define o motivo devolvido quando mais de uma checagem falharia.
