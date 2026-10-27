@@ -3,7 +3,8 @@ export type DomainCode =
   | 'EMAIL_TAKEN'
   | 'INVALID_CREDENTIALS'
   | 'ROLE_NOT_ALLOWED'
-  | 'BALANCE_LIMIT_EXCEEDED';
+  | 'BALANCE_LIMIT_EXCEEDED'
+  | 'CATALOG_UNAVAILABLE';
 
 export class DomainException extends Error {
   constructor(readonly code: DomainCode) {

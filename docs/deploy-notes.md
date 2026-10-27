@@ -62,6 +62,7 @@ API (Render Web Service):
 - `JWT_SECRET`
 - `BID_HMAC_SECRET`
 - `WEB_ORIGIN`: URL do Static Site
+- `CLEVELAND_API_URL`: `https://openaccess-api.clevelandart.org/api`
 
 Front (Render Static Site, valores usados no build):
 - `VITE_API_URL`: URL da API

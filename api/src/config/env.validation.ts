@@ -38,6 +38,13 @@ export class Env extends DatabaseEnv {
 
   @MinLength(32)
   JWT_SECRET!: string;
+
+  @IsUrl({
+    require_tld: false,
+    require_protocol: true,
+    protocols: ['http', 'https'],
+  })
+  CLEVELAND_API_URL!: string;
 }
 
 // As mensagens citam só o nome da variável, nunca o valor (a URL do banco tem senha).
