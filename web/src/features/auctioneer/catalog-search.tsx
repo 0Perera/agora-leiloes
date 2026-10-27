@@ -9,7 +9,7 @@ import type {
 import { FieldError } from '../../shared/ui/field-error';
 import { DepartmentPicker } from './department-picker';
 import { departments } from './departments';
-import { Pager } from './pager';
+import { Pager } from '../../shared/ui/pager';
 
 type Query = { q: string; department: CatalogDepartment; page: number };
 

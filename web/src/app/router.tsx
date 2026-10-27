@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router';
 import { DashboardPage } from '../features/auctioneer/dashboard-page';
 import { LoginPage } from '../features/auth/login-page';
 import { SignupPage } from '../features/auth/signup-page';
+import { RoomPage } from '../features/live-room/room-page';
 import { HomePage } from '../features/lots/home-page';
 import { WalletPage } from '../features/wallet/wallet-page';
 import { GuestOnly } from './guest-only';
@@ -13,6 +14,7 @@ export const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: '/', element: <HomePage /> },
+      { path: '/lots/:id', element: <RoomPage /> },
       {
         element: <GuestOnly />,
         children: [

@@ -64,6 +64,8 @@ _(regras que podem surpreender, uma linha cada, com o porquê)_
 - O leiloeiro só cancela lote próprio, agendado ou ao vivo e sem lances, como pede o enunciado: com lance responde `LOT_HAS_BIDS` e encerrado `LOT_ENDED`. Cancelar com lances exigiria estornar o saldo comprometido do líder, e o cancelamento com estorno é um opcional que não entrou (D-018). Lote de outro leiloeiro responde 404, sem revelar que existe.
 - O número do lote só aparece depois da criação: a sequência é global, e outro leiloeiro pode pegar o número enquanto a ficha está aberta (D-053).
 - O número do lote aparece em romano com o número comum ao lado ("Lote XIV · nº 14"); acima de 3999, onde o romano padrão acaba, aparece só o número comum (D-054).
+- O destaque da página inicial é escolhido ao abrir a página e não troca de lote enquanto ela está aberta, mesmo que outro lote passe a ter o maior lance: a troca no meio da leitura tiraria a obra da frente do visitante.
+- Na busca da vitrine, "7", "VII" e "lote vii" procuram o número do lote; romano em minúscula sem o "lote " vai como texto, porque o acervo tem nomes como "Agnolo di Cosimo". A busca abre a primeira aba com resultado (Ao vivo, Agendados, Encerrados), para o visitante não achar que nada existe só porque a aba atual está vazia.
 
 ## Testes
 

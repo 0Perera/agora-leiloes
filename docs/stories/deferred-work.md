@@ -23,3 +23,9 @@
 - source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`
   summary: na 3.7, adicionar a ação "Abrir sala" na coluna Ação do livro de lotes do painel.
   evidence: a rota `/lots/:id` só existe a partir da 3.7; o usuário pediu para registrar aqui.
+
+## Polimento visual
+
+- source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`
+  summary: no painel do leiloeiro em modo cartão (abaixo de 1220px), o selo de estado e o botão "Cancelar lote" ocupam toda a largura da coluna; devem ter a largura do próprio conteúdo (`justify-self: start`), com o botão em largura total só abaixo de 480px. Alinhar a miniatura da obra com o título. Conferir em 360, 768 e 1000px.
+  evidence: pedido do usuário durante a implementação da 3.6.

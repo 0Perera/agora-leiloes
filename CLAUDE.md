@@ -225,6 +225,8 @@ Nomes de teste:
 - Regra de negócio fica no backend; o front só exibe estado e traduz códigos de erro.
 - Toda tela que busca dados trata os três estados: **carregando**, **vazio** e **erro** (com ação para tentar de novo quando fizer sentido).
 - Layout responsivo: nenhuma tela quebra ou gera rolagem horizontal a partir de 360px de largura.
+- Selos, badges e botões têm a largura do próprio conteúdo (`justify-self: start` ou `width: fit-content`) dentro de grids e listas.
+  Largura total só abaixo de 480px, quando o design pedir.
 
 ## Lint
 
@@ -362,4 +364,6 @@ Ruins: `update`, `ajustes`, `wip`, `fix: vários bugs`, `feat: cria lances, cart
 - [ ] Entrada em `docs/ai-log.md`
 - [ ] Decisões novas registradas em `docs/decisions.md`
 - [ ] Comentários revisados: só "porquê", nenhum que repete o código
+- [ ] Stories de tela: conferido em 360, 768, 1024 e 1280px, sem elemento esticado, vazando ou sobreposto.
+  Como o agente não abre o navegador, o relatório final lista essas quatro larguras para eu conferir
 - [ ] PR aberta com descrição e checklist

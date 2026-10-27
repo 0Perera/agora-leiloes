@@ -10,7 +10,7 @@ import type { Fresh } from './ledger-row';
 import { LoadError } from './load-error';
 import { cancelError } from './lot-errors';
 import type { Notice } from './lot-errors';
-import { Pager } from './pager';
+import { Pager } from '../../shared/ui/pager';
 import type { Load } from './use-dashboard';
 
 const filters: { id: BookFilter; label: string; empty: string }[] = [

@@ -141,14 +141,6 @@
   color: var(--ink-muted);
 }
 
-.panel-pager {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3) var(--space-4);
-}
-
 /* busca no acervo */
 .panel-search {
   display: flex;
