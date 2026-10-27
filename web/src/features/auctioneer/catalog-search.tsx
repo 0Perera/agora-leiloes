@@ -94,25 +94,24 @@ export function CatalogSearch({ selected, onPick }: Props) {
             message={empty ? 'Digite um termo para buscar no acervo.' : ''}
           />
         </label>
-        <label className="ag-field panel-search-department" htmlFor="dept">
-          <span className="ag-field__label">Departamento</span>
-          <span className="ag-input">
-            <select
-              id="dept"
-              className="ag-input__control panel-text panel-select"
-              value={department}
-              onChange={(event) =>
-                setDepartment(event.target.value as CatalogDepartment)
-              }
-            >
-              {departments.map((item) => (
-                <option key={item.value} value={item.value}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
-          </span>
-        </label>
+        <fieldset className="ag-field panel-search-department">
+          <legend className="ag-field__label panel-legend">Departamento</legend>
+          <div className="ag-input panel-segments">
+            {departments.map((item) => (
+              <label key={item.value} className="panel-segment">
+                <input
+                  className="sr-only"
+                  type="radio"
+                  name="department"
+                  value={item.value}
+                  checked={department === item.value}
+                  onChange={() => setDepartment(item.value)}
+                />
+                <span className="panel-segment-text">{item.label}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
         <button
           className="ag-btn ag-btn--secondary panel-search-submit"
           type="submit"
