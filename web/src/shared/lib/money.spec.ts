@@ -47,8 +47,8 @@ describe('parseAmount', () => {
 });
 
 describe('formatMoney', () => {
-  it('mostra valor inteiro sem centavos', () => {
-    expect(formatMoney(1240000)).toBe('R$ 12.400');
+  it('mostra valor inteiro com ,00', () => {
+    expect(formatMoney(1240000)).toBe('R$ 12.400,00');
   });
 
   it('mostra valor com centavos em duas casas', () => {

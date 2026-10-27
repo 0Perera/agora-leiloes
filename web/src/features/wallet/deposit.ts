@@ -6,8 +6,8 @@ export const maxDeposit = 10_000_000;
 
 const messages = {
   empty: 'Informe o valor do depósito.',
-  min: 'O depósito mínimo é R$ 1.',
-  max: 'O limite por depósito simulado é R$ 100.000.',
+  min: 'O depósito mínimo é R$ 1,00.',
+  max: 'O limite por depósito simulado é R$ 100.000,00.',
   format: 'Use só números, com até dois centavos. Ex.: 1.500,50',
   balanceLimit: 'Com esse depósito, o saldo passaria do limite da carteira.',
   connection: 'Não foi possível conectar. Tente de novo.',

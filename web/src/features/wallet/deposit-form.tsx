@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { api } from '../../shared/api/client';
-import type { Wallet } from '../../shared/api/types';
 import { formatMoney, maskAmount } from '../../shared/lib/money';
 import { FieldError } from '../../shared/ui/field-error';
 import { depositError, validateAmount } from './deposit';
@@ -9,26 +8,18 @@ import { useWallet } from './use-wallet';
 
 const chips = [50000, 100000, 500000];
 
-function successMessage(amount: number, wallet: Wallet): string {
-  return (
-    `Depósito de ${formatMoney(amount)} confirmado. ` +
-    `Novo saldo total: ${formatMoney(wallet.balance)}. ` +
-    `Disponível para lances: ${formatMoney(wallet.available)}.`
-  );
-}
-
 export function DepositForm() {
   const { update } = useWallet();
   const input = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [deposited, setDeposited] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   function change(next: string) {
     setValue(maskAmount(next));
     setError('');
-    setSuccess('');
+    setDeposited(null);
   }
 
   function fail(message: string) {
@@ -45,7 +36,7 @@ export function DepositForm() {
       const wallet = await api.deposit(result.amount);
       update(wallet);
       setValue('');
-      setSuccess(successMessage(result.amount, wallet));
+      setDeposited(result.amount);
     } catch (caught) {
       fail(depositError(caught));
     } finally {
@@ -94,7 +85,7 @@ export function DepositForm() {
             />
           </span>
           <span id="dep-help" className="ag-field__hint">
-            De R$ 1 a R$ 100.000 por depósito.
+            De R$ 1,00 a R$ 100.000,00 por depósito.
           </span>
           <FieldError id="dep-err" message={error} />
         </label>
@@ -116,13 +107,16 @@ export function DepositForm() {
           ))}
         </div>
         <div role="status">
-          {success && (
-            <p className="wallet-deposit-success">
-              <span className="wallet-deposit-mark" aria-hidden="true">
+          {deposited !== null && (
+            <div className="ag-notice ag-notice--success">
+              <span className="ag-notice__mark" aria-hidden="true">
                 ✓
               </span>
-              <span>{success}</span>
-            </p>
+              <p className="ag-notice__title">Depósito confirmado</p>
+              <p className="ag-notice__text">
+                {formatMoney(deposited)} adicionados ao seu saldo.
+              </p>
+            </div>
           )}
         </div>
         <button

@@ -12,11 +12,11 @@ function validation(rule: string): ApiError {
 describe('validateAmount', () => {
   it.each([
     ['vazio', '  ', 'Informe o valor do depósito.'],
-    ['abaixo do mínimo', '0,99', 'O depósito mínimo é R$ 1.'],
+    ['abaixo do mínimo', '0,99', 'O depósito mínimo é R$ 1,00.'],
     [
       'acima do máximo',
       '100.000,01',
-      'O limite por depósito simulado é R$ 100.000.',
+      'O limite por depósito simulado é R$ 100.000,00.',
     ],
   ])('recusa valor %s', (_case, text, error) => {
     expect(validateAmount(text)).toEqual({ error });
@@ -25,11 +25,11 @@ describe('validateAmount', () => {
 
 describe('depositError', () => {
   it.each<[string, unknown, string]>([
-    ['regra min', validation('min'), 'O depósito mínimo é R$ 1.'],
+    ['regra min', validation('min'), 'O depósito mínimo é R$ 1,00.'],
     [
       'regra max',
       validation('max'),
-      'O limite por depósito simulado é R$ 100.000.',
+      'O limite por depósito simulado é R$ 100.000,00.',
     ],
     [
       'regra isInt',

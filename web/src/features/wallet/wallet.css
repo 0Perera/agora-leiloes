@@ -228,23 +228,6 @@
   background: var(--marble-200);
 }
 
-.wallet-deposit-success {
-  margin: 0;
-  display: flex;
-  gap: var(--space-2);
-  padding: 10px var(--space-3);
-  border: 1px solid var(--malachite);
-  background-color: var(--malachite-soft);
-  color: var(--malachite);
-  font-size: 16px;
-  line-height: 22px;
-}
-
-.wallet-deposit-mark {
-  font-family: var(--font-display);
-  font-weight: 700;
-}
-
 .wallet-deposit-submit {
   width: 100%;
   min-height: 52px;

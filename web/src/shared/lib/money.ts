@@ -2,10 +2,9 @@ const grouped = /^\d{1,3}(\.\d{3})+(,\d{1,2})?$/;
 const plain = /^\d+(,\d{1,2})?$/;
 
 export function formatMoney(cents: number): string {
-  const digits = cents % 100 === 0 ? 0 : 2;
   const reais = (cents / 100).toLocaleString('pt-BR', {
-    minimumFractionDigits: digits,
-    maximumFractionDigits: digits,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   });
   return `R$ ${reais}`;
 }
