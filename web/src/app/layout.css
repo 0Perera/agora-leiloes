@@ -15,7 +15,6 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-3) 20px;
 }
 
@@ -68,6 +67,7 @@
 }
 
 .header-actions {
+  margin-left: auto;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -78,11 +78,73 @@
   min-height: 44px;
 }
 
-.header-user {
+.account {
+  position: relative;
+}
+
+.account-monogram {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background-color: var(--ink);
+  box-shadow:
+    inset 0 0 0 2px var(--ink),
+    inset 0 0 0 3px var(--gold-300);
+  color: var(--gold-300);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.account-monogram:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.account-panel {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: 10;
+  width: max-content;
+  min-width: 200px;
+  max-width: min(280px, calc(100vw - 32px));
+  padding: var(--space-4);
+  background-color: var(--marble-000);
+  border: 1px solid var(--gold-500);
+  box-shadow:
+    inset 0 0 0 4px var(--marble-000),
+    inset 0 0 0 5px var(--vein),
+    0 12px 24px -12px rgba(43, 37, 32, 0.45);
+}
+
+.account-panel[hidden] {
+  display: none;
+}
+
+.account-name {
+  margin: 0;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 24px;
+  overflow-wrap: anywhere;
+}
+
+.account-role {
+  margin: 0 0 var(--space-3);
   font-size: 15px;
   line-height: 20px;
   color: var(--ink-muted);
-  overflow-wrap: anywhere;
+}
+
+.account-leave {
+  min-height: 44px;
 }
 
 .header-meander {
@@ -92,11 +154,43 @@
   border-bottom: 1px solid var(--gold-500);
 }
 
-/* celular: menu numa linha que rola para o lado, em vez de ocupar várias linhas */
+/* celular: logo e monograma na primeira linha, carteira na segunda e o menu, que rola
+   para o lado, na terceira */
 @media (max-width: 760px) {
+  .header-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'brand actions'
+      'wallet wallet'
+      'nav nav';
+  }
+
+  .header-brand {
+    grid-area: brand;
+  }
+
+  .header-actions {
+    display: contents;
+  }
+
+  .header-actions--guest {
+    grid-area: wallet;
+    display: flex;
+    margin-left: 0;
+  }
+
+  .header-actions .account {
+    grid-area: actions;
+  }
+
+  .header-actions .wallet-scroll {
+    grid-area: wallet;
+    justify-self: start;
+  }
+
   .header-nav {
-    order: 3;
-    width: 100%;
+    grid-area: nav;
     flex-wrap: nowrap;
     overflow-x: auto;
     gap: 0 20px;
