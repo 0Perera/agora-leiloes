@@ -6,7 +6,7 @@ import {
   toArtworkDetail,
   toArtworkPage,
 } from './artwork.mapper';
-import { ClevelandClient } from './cleveland.client';
+import { ClevelandClient, type ImageFile } from './cleveland.client';
 import { type Department, isDepartment } from './departments';
 import { SearchCache } from './search.cache';
 
@@ -59,6 +59,14 @@ export class CatalogService {
     const artwork = toArtworkDetail(raw);
     if (!artwork || !isDepartment(artwork.department)) return null;
     return artwork;
+  }
+
+  async image(url: string): Promise<ImageFile> {
+    try {
+      return await this.client.download(url);
+    } catch {
+      throw new DomainException('IMAGE_DOWNLOAD_FAILED');
+    }
   }
 
   private async call(request: () => Promise<unknown>): Promise<unknown> {
