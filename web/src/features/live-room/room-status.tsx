@@ -1,10 +1,8 @@
-import { useEffect, useRef } from 'react';
 import type { BidHistoryItem, LotDetail } from '../../shared/api/types';
 import { formatShortDate } from '../../shared/lib/date';
-import { formatMoney } from '../../shared/lib/money';
-import { useWallet } from '../wallet/use-wallet';
-import { minimumOf, situationOf } from './room-bids';
-import type { Situation } from './room-bids';
+import { minimumOf, situationOf } from '../../shared/lib/live-bids';
+import { BidSituation } from '../../shared/ui/bid-situation';
+import { useWalletRefresh } from '../wallet/use-wallet-refresh';
 
 type Props = {
   lot: LotDetail;
@@ -28,49 +26,13 @@ export function RoomSituation({ lot, me, top }: Props) {
 
   return (
     <div className="room__status">
-      {situation === 'winning' && (
-        <div className="ag-bidstatus ag-bidstatus--winning" role="status">
-          <span className="ag-bidstatus__mark" aria-hidden="true">
-            ▲
-          </span>
-          <div>
-            <p className="ag-bidstatus__title">Você está ganhando</p>
-            <p className="ag-bidstatus__text">
-              O valor fica reservado na sua carteira enquanto você liderar.
-            </p>
-          </div>
-        </div>
-      )}
-      {situation === 'outbid' && (
-        <div className="ag-bidstatus ag-bidstatus--outbid" role="status">
-          <span className="ag-bidstatus__mark" aria-hidden="true">
-            ▼
-          </span>
-          <div>
-            <p className="ag-bidstatus__title">Você foi superado</p>
-            <p className="ag-bidstatus__text">
-              Para cobrir, ofereça ao menos {formatMoney(minimumOf(lot))}.
-            </p>
-          </div>
-        </div>
-      )}
-      {situation === 'none' && (
+      {situation === 'none' ? (
         <p className="room-plain room-plain--muted">
           Você ainda não deu lance neste lote.
         </p>
+      ) : (
+        <BidSituation situation={situation} minimum={minimumOf(lot)} />
       )}
     </div>
   );
-}
-
-// a situação muda o comprometido: relê a carteira sem piscar o resumo do cabeçalho
-function useWalletRefresh(situation: Situation) {
-  const { refresh } = useWallet();
-  const previous = useRef(situation);
-
-  useEffect(() => {
-    if (previous.current === situation) return;
-    previous.current = situation;
-    refresh();
-  }, [situation, refresh]);
 }

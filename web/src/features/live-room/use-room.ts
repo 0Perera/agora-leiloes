@@ -2,10 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, api } from '../../shared/api/client';
 import type { BidEvent, BidHistory, LotDetail } from '../../shared/api/types';
 import { clockOffset } from '../../shared/lib/countdown';
-import { appendPage, mergeBid, mergeRoom } from './room-bids';
-import type { LiveRoom } from './room-bids';
+import { mergeBid, mergeRoom } from '../../shared/lib/live-bids';
+import type { LiveRoom } from '../../shared/lib/live-bids';
+import { useLotStream } from '../../shared/lib/use-lot-stream';
+import { appendPage } from './room-bids';
 import { retryTurn } from './room-summary';
-import { useStream } from './use-stream';
 
 export type ReadyRoom = LiveRoom & { status: 'ready'; offset: number };
 
@@ -112,7 +113,7 @@ export function useRoom(id: number) {
 
   useTurn(id, room, setRoom);
   const streaming = room.status === 'ready' && room.lot.status !== 'ended';
-  const connection = useStream(id, streaming, {
+  const connection = useLotStream(id, streaming, {
     onBid: placed,
     onSync: sync,
     onMissing: missing,

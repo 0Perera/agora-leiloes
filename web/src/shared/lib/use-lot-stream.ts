@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ApiError, api, openLotStream } from '../../shared/api/client';
-import type { BidEvent, BidHistory, LotDetail } from '../../shared/api/types';
+import { ApiError, api, openLotStream } from '../api/client';
+import type { BidEvent, BidHistory, LotDetail } from '../api/types';
 import { connectionAfter } from './connection';
 import type { Connection, StreamSignal } from './connection';
 
@@ -17,7 +17,7 @@ function isMissing(caught: unknown): boolean {
 }
 
 // o stream só avisa: ao conectar e ao reconectar, o estado completo vem dos GETs
-export function useStream(
+export function useLotStream(
   id: number,
   active: boolean,
   handlers: Handlers,

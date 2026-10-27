@@ -2,12 +2,13 @@ import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { ApiError, api } from '../../shared/api/client';
 import type { BidEvent, LotDetail } from '../../shared/api/types';
+import { minimumOf } from '../../shared/lib/live-bids';
 import { formatMoney, maskAmount, parseAmount } from '../../shared/lib/money';
 import '../../shared/ui/field.css';
 import { useWallet } from '../wallet/use-wallet';
 import { bidError, emptyAmount } from './bid-errors';
 import type { BidNotice } from './bid-errors';
-import { minimumOf, shortcuts } from './room-bids';
+import { shortcuts } from './room-bids';
 
 type Props = {
   lot: LotDetail;

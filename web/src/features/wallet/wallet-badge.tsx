@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router';
 import { formatMoney } from '../../shared/lib/money';
+import { gaugeOf } from './gauge';
 import { useWallet } from './use-wallet';
 import './wallet.css';
 
@@ -8,6 +9,7 @@ export function WalletBadge() {
   if (state.status !== 'ready') return null;
   const free = formatMoney(state.wallet.available);
   const held = formatMoney(state.wallet.committed);
+  const gauge = gaugeOf(state.wallet);
 
   return (
     <NavLink
@@ -21,6 +23,16 @@ export function WalletBadge() {
         <span className="wallet-scroll-rows">
           <span className="wallet-scroll-label">Disponível</span>
           <span className="wallet-scroll-free">{free}</span>
+          <span className="wallet-scroll-gauge" aria-hidden="true">
+            <span
+              className="wallet-scroll-gauge-free"
+              style={{ width: `${gauge.free}%` }}
+            />
+            <span
+              className="wallet-scroll-gauge-held"
+              style={{ width: `${gauge.held}%` }}
+            />
+          </span>
           <span className="wallet-scroll-label">Em lances</span>
           <span className="wallet-scroll-held">{held}</span>
         </span>

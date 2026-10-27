@@ -35,6 +35,7 @@ export type CommittedLot = {
   number: number;
   title: string;
   amount: number;
+  endsAt: string;
 };
 
 export type Wallet = WalletBalance & {

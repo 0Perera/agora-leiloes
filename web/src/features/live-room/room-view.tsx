@@ -7,6 +7,7 @@ import type {
   LotDetail,
 } from '../../shared/api/types';
 import { artworkType } from '../../shared/lib/artwork-type';
+import type { Connection } from '../../shared/lib/connection';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel } from '../../shared/lib/roman';
@@ -15,7 +16,6 @@ import { olderPage } from './room-bids';
 import { RoomHistory } from './room-history';
 import { RoomOpening, RoomSituation } from './room-status';
 import { RoomSummary } from './room-timing';
-import type { Connection } from './connection';
 import type { ReadyRoom } from './use-room';
 
 type Props = {

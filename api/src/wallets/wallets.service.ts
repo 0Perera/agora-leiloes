@@ -40,6 +40,7 @@ export class WalletsService {
       .addSelect('lot.number', 'number')
       .addSelect('lot.title', 'title')
       .addSelect('bid.amount', 'amount')
+      .addSelect('lot.endsAt', 'endsAt')
       .addSelect('COUNT(*) OVER()::int', 'total')
       .where('bid.userId = :userId', { userId })
       .andWhere('lot.settledAt IS NULL')
@@ -51,11 +52,12 @@ export class WalletsService {
       .limit(COMMITTED_LIMIT)
       .getRawMany<{ total: number } & CommittedLotDto>();
     return {
-      lots: rows.map(({ id, number, title, amount }) => ({
+      lots: rows.map(({ id, number, title, amount, endsAt }) => ({
         id,
         number,
         title,
         amount,
+        endsAt,
       })),
       total: rows[0]?.total ?? 0,
     };
