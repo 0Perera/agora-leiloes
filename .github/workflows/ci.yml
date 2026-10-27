@@ -29,6 +29,7 @@ jobs:
   # Postgres real via Testcontainers, no Docker do próprio runner.
   api-e2e:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: api
