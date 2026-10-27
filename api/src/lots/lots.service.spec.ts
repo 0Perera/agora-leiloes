@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { DataSource, IsNull, Repository } from 'typeorm';
+import { GENESIS, sealLot } from '../audit/chain';
 import { Bid } from '../bids/bid.entity';
 import type { ArtworkDetail } from '../catalog/artwork.mapper';
 import { NotFoundException } from '@nestjs/common';
@@ -64,6 +65,47 @@ describe('LotsService.create', () => {
       new DomainException('IMAGE_DOWNLOAD_FAILED'),
     );
     expect(dataSource.transaction).not.toHaveBeenCalled();
+  });
+
+  it('grava o selo vazio do lote na mesma transação da criação', async () => {
+    const catalog = {
+      find: () => Promise.resolve(makeArtwork()),
+      image: () =>
+        Promise.resolve({ contentType: 'image/jpeg', bytes: Buffer.from('x') }),
+    };
+    const lots = {
+      find: jest.fn().mockResolvedValue([]),
+      insert: jest.fn().mockResolvedValue({
+        identifiers: [{ id: 5 }],
+        generatedMaps: [{ number: 1 }],
+      }),
+      update: jest.fn().mockResolvedValue(undefined),
+    };
+    const images = { insert: jest.fn().mockResolvedValue(undefined) };
+    const manager = {
+      query: jest.fn().mockResolvedValue(undefined),
+      getRepository: (entity: unknown) => (entity === Lot ? lots : images),
+    };
+    const dataSource = {
+      transaction: (fn: (manager: unknown) => Promise<unknown>) => fn(manager),
+    };
+    const service = new LotsService(
+      dataSource as unknown as DataSource,
+      catalog as unknown as CatalogService,
+      { now: () => NOW },
+      {} as Repository<LotImage>,
+      {} as Repository<Lot>,
+      config,
+    );
+
+    await service.create(1, makeDto());
+
+    expect(lots.update).toHaveBeenCalledWith(
+      { id: 5 },
+      {
+        seal: sealLot('test-secret', { lotId: 5, count: 0, lastHash: GENESIS }),
+      },
+    );
   });
 });
 
@@ -203,6 +245,33 @@ describe('LotsService.cancel', () => {
       new DomainException('LOT_HAS_BIDS'),
     );
     expect(bids.exists).toHaveBeenCalledWith({ where: { lotId: 1 } });
+  });
+
+  it('verifica lances em bids depois de travar o lote', async () => {
+    const lot = { id: 1, endsAt: new Date('2026-10-28T12:00:00Z') };
+    const { service, repository, bids } = makeCancel(lot);
+
+    await service.cancel(2, 1);
+
+    expect(repository.findOne.mock.invocationCallOrder[0]).toBeLessThan(
+      bids.exists.mock.invocationCallOrder[0],
+    );
+  });
+
+  it('cancela lote com bid_count acima de zero e sem lances em bids', async () => {
+    const lot = {
+      id: 1,
+      endsAt: new Date('2026-10-28T12:00:00Z'),
+      bidCount: 3,
+    };
+    const { service, repository } = makeCancel(lot);
+
+    await service.cancel(2, 1);
+
+    expect(repository.update).toHaveBeenCalledWith(
+      { id: 1 },
+      { cancelledAt: NOW },
+    );
   });
 
   it('cancela lote agendado sem lances e grava cancelled_at com o now do Clock', async () => {
