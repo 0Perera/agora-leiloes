@@ -82,7 +82,7 @@ context:
 |---|---|---|
 | Lote que encerra durante o laço de `settle` fica fora do `next(MoreThan(t1))` | medium | `run` consulta `due(t0)` e `schedule` usa um `now` posterior; patch: `next` com o `now` do `due` |
 | `refresh` atrasado cancela o handle cujo alvo já venceu | medium | `arm` sempre faz `clear`; com o laço de eventos ocupado, `next(now > alvo)` pula o lote; patch: não cancelar handle vencido |
-| Falha no `next` deixa o timer desarmado até o próximo lance ou lote | medium | real, mas o gatilho por acesso cobre e o retry seria comportamento novo; defer |
+| Falha no `next` deixa o timer desarmado até o próximo lance ou lote | medium | defer recusado pelo usuário: log e nova tentativa a cada 30 s, com timer à parte, até conseguir |
 | `due` sem limite após longo sono | low | lista só de ids, lotes vencidos são poucos no escopo do desafio; rejeitado |
 | Lote travado (D-064) é tentado de novo a cada disparo | low | comportamento esperado e documentado no README (D-064); rejeitado |
 | Destroy no meio do laço continua liquidando | low | erros são capturados e logados no shutdown; rejeitado |

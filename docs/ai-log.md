@@ -610,7 +610,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - O recálculo do timer depois de cada lance aceito e de cada lote criado, sem atrasar a resposta.
 - O tratamento do limite do relógio do Node: lote que termina daqui a mais de 24 dias dispara no limite e reagenda o resto.
 - As duas consultas do timer (lotes vencidos e próximo fim) junto da liquidação.
-- Catorze testes unitários com relógio falso (dois deles cobrindo falhas de agendamento achadas na revisão) e cinco testes de integração com banco real.
+- Quinze testes unitários com relógio falso (três deles cobrindo falhas de agendamento achadas na revisão) e cinco testes de integração com banco real.
 
 **O que revisei e pedi para mudar:**
 - Pedi que o timer só aponte para lotes com fim no futuro, com um teste provando que um lote que não liquida (selo inválido) não faz o timer disparar em laço.
@@ -620,6 +620,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi que o timer não liquide lotes no meio dos testes de integração; aprovei desligá-lo lá, trocando por um falso que só conta os recálculos.
 - Aprovei os 16 casos de teste propostos e pedi um a mais: erro ao liquidar no boot vai para o log e a API termina de subir com o timer armado.
 - Aprovei o recálculo por substituição, em que só vale o pedido mais recente, e as consultas do timer no serviço de liquidação.
+- Recusei adiar a falha da consulta do próximo fim: pedi registrar no log e tentar de novo a cada 30 s até conseguir, com um teste em que a primeira consulta falha e a segunda arma o timer.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma.
+- Deixar para depois a nova tentativa quando a consulta do próximo fim falha: recusei, porque sem ela o timer para até o próximo lance ou lote criado.
