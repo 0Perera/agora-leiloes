@@ -25,14 +25,17 @@ context:
 - Número com `lotLabel` (D-054), valores com `formatMoney` (D-048), datas no fuso do navegador com `formatShortDate`.
 - Contagem com `clockOffset`/`secondsLeft`/`splitLeft` de `shared/lib/countdown.ts` (offset medido no `serverTime` do `GET`); nenhum helper de tempo novo. Um timer de 1s só com o lote ao vivo.
 - **Layout sem os blocos do épico 4:** desktop em duas colunas, obra no nicho à esquerda e, à direita, cabeçalho, resumo e "Sobre a obra e o lote" (áreas `"art head" "art summary" "art info"`). Abaixo de 880px (decisão do usuário, mesmo padrão do destaque da página inicial): obra primeiro, com o arco limitado a ~55vh, depois cabeçalho, resumo e "Sobre"; sem miniatura no cabeçalho. Nenhum espaço reservado para lance, situação ou histórico.
-- **Cabeçalho:** selo (Ao vivo / Agendado / Encerrado), `lotLabel`, título em `h1`, linha "artista, data · técnica" só com as partes não vazias.
+- **Cabeçalho:** selo (Ao vivo / Agendado / Encerrado), `lotLabel`, título em `h1`, linha "artista, data" só com as partes não vazias; a técnica fica só em "Sobre a obra e o lote" (ajuste do usuário).
 - **Resumo** (`.summary`): rótulo "Lance atual" (ao vivo com lance), "Lance vencedor" (encerrado com lance) ou "Lance inicial" (sem lance), valor, e linha "N lances" / "1 lance" / "Nenhum lance ainda" (ao vivo ou agendado sem lance) / "Sem lances" (encerrado sem lance). Ao vivo e encerrado: `ag-countdown` (Min:Seg, Horas:Min a partir de 1h) com nota "Lances nos últimos 2 minutos estendem o fim em +2 min."; abaixo de 2 min `--urgent` e "Últimos minutos: um lance agora estende o fim em +2 min."; encerrado 00:00 e "Lote encerrado.". Agendado: bloco "Abre em {data}" + "Os lances só são aceitos a partir daí.", sem contagem.
-- **Virada de estado com a página aberta:** quando o relógio corrigido passa de `startsAt` (agendado) ou `endsAt` (ao vivo), refaz o `GET /lots/:id` uma vez, sem esqueleto, e o status vem da API. O front não calcula status.
-- **Sobre a obra e o lote:** descrição (se houver) e `dl` com Artista, Data, Técnica, Dimensões (só os não vazios), Lance inicial, Aumento mínimo, Início, Fim previsto.
+- **Virada de estado com a página aberta:** quando o relógio corrigido passa de `startsAt` (agendado) ou `endsAt` (ao vivo), refaz o `GET /lots/:id`, sem esqueleto, e o status vem da API. O front não calcula status. Se o status vier igual, tenta de novo a cada 2 s, no máximo 3 vezes (ajuste do usuário depois da primeira entrega).
+- **Sobre a obra e o lote:** descrição (se houver) e `dl` com Artista, Data, Tipo, Técnica, Dimensões (só os não vazios), Lance inicial, Aumento mínimo, Início, Fim previsto.
 - Imagem só de `lotImageUrl(id)`, no nicho (`object-fit: contain`, moldura como na 3.6).
-- **Estados:** carregando (esqueleto do canvas só com cabeçalho, resumo e obra + `sr-only` "Carregando a sala do lote."); 404 ou id que não é inteiro positivo (sem chamar a API) → "Lote não encontrado" com o texto do canvas e "Voltar à vitrine"; outro erro → aviso "Não foi possível abrir a sala do lote" + "Tentar de novo" e "Voltar à vitrine". Responsivo a partir de 360px.
+- **Estados:** carregando (esqueleto do canvas só com cabeçalho, resumo e obra + `sr-only` "Carregando a sala do lote."); 404 ou id que não é inteiro positivo (sem chamar a API) → "Lote não encontrado" com o texto do canvas e "Voltar à vitrine"; outro erro → aviso "Não foi possível abrir a sala do lote" com o texto neutro "Não foi possível carregar o lote. Verifique a conexão e tente de novo." (ajuste do usuário) + "Tentar de novo" e "Voltar à vitrine". Responsivo a partir de 360px.
 - **Painel:** na coluna Ação do livro, link `ag-btn--quiet` "Abrir sala" para `/lots/:id` em todo lote não cancelado (ao vivo, agendado e encerrado), sumindo durante a confirmação de cancelamento (decisão do usuário).
 **Casos de teste (aprovados pelo usuário):** `room-summary.spec.ts` (`features/live-room`): (31) ao vivo sem lance mostra "Lance inicial"; (32) ao vivo com lance mostra "Lance atual"; (33) encerrado com lance mostra "Lance vencedor"; (34) encerrado sem lance mostra "Sem lances"; (35) nota fica de "Últimos minutos" abaixo de 2 min; (36) id não numérico não vira busca na API. A correção pelo `serverTime` já está coberta pelo caso (22) do `countdown.spec.ts`.
+
+- **Tipo da obra** (ajuste do usuário): traduzido por mapa fixo `artworkType` em `shared/lib/artwork-type.ts` (Painting → Pintura, Sculpture → Escultura, Drawing → Desenho, Print → Gravura e os tipos dos dois departamentos da D-050); fora do mapa, aparece como veio. Vale na sala e na busca do acervo do Painel (resultados e ficha); o card da vitrine continua sem tipo e a API não muda. Os demais dados da obra ficam em inglês (D-038), com uma linha no README.
+- Casos novos: (37) `retryTurn` repete a busca no máximo 3 vezes enquanto o status não muda; (38) `artworkType` traduz o tipo do acervo para português.
 
 - `room-page.tsx` provisória é substituída; a rota em `router.tsx` continua pública.
 
@@ -78,6 +81,8 @@ context:
 ## Implementation Notes
 
 ## Spec Change Log
+
+- Depois da primeira entrega (commits `9d42333` e `0aef37a`), o usuário pediu: repetir a busca da virada até 3 vezes a cada 2 s; texto de erro neutro, sem menção a lance; cabeçalho só com artista e data; tipo da obra traduzido na sala e na busca do Painel (não no card, sem mudar a API); linha no README sobre os dados em inglês. KEEP: layout, estados, "Abrir sala" e o 404 na virada continuam como estão.
 
 ## Review Triage Log
 
