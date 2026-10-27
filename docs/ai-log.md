@@ -269,6 +269,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Aprovei os casos de teste 1 a 10.
 - Pedi para conferir no log do Postgres que `GET /dashboard/lots` e `GET /dashboard/summary` disparam número fixo de queries.
 - Pedi só o revisor de casos de borda e `npm run lint:check` antes do commit.
+- Pedi para ajustar a frase do README sobre o cancelamento: só lote sem lances, como pede o enunciado, porque cancelar com lances exigiria estorno, opcional que não entrou (D-018).
+- Pedi para confirmar o registro da troca por `EXISTS` (D-042) para a 4.3 em `deferred-work.md`.
+- Pedi para apagar o banco de rascunho `agora_scratch34` e desligar o log de queries.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma.
+- *Justificativa do cancelamento no README ("quem deu lance já tem saldo comprometido"):* pedi a regra do enunciado e o motivo real, o estorno fora do escopo (D-018).

@@ -96,7 +96,7 @@ context:
 - Teste extra fora dos casos aprovados: as linhas `LOT_HAS_BIDS` 409 e `LOT_ENDED` 422 no `it.each` já existente de `domain-exception.filter.spec.ts`.
 - Linhas da matriz sem teste automático (livro só com os próprios e `number DESC`, papel, cancelar alheio/já cancelado/`abc`): conferidas à mão com curl num banco de rascunho (`agora_scratch34`, `log_statement=all`). Queries: livro 2, resumo 1, cancelamento 2 (`SELECT ... FOR UPDATE` + `UPDATE`). O e2e entra na 4.4.
 - O caso (9) usa query builder falso; o SQL do resumo foi conferido só à mão.
-- Banco `agora_scratch34` ficou no container `agora-postgres` (não apagado sem autorização).
+- Banco `agora_scratch34` apagado a pedido do usuário; o `log_statement=all` era só desse banco (`ALTER DATABASE`), então saiu junto.
 
 ## Spec Change Log
 
