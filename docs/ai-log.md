@@ -479,6 +479,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Aprovei a extração do `setup(app)` num commit separado.
 - Aprovei os casos 1 a 22.
 - Pedi registrar no `deferred-work.md` a unificação do CSS repetido entre telas e um padrão único de chamada à API no front.
+- Depois da revisão, pedi dois casos novos: saldo devolvido ao licitante superado e prorrogação de 2 min no fim do lote.
+- Pedi que o caso dos lances empatados conferisse também carteiras, cadeia e selo, e que o do lote cancelado conferisse a contagem da aba.
+- Pedi limite de 15 min no job do CI, catálogo falso tipado e o caso dos lances empatados independente dos outros.
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta story.
