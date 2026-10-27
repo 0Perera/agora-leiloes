@@ -11,10 +11,12 @@ export type BidLink = {
   prevHash: string | null;
 };
 
-// Prefixo de domínio: uma assinatura de um contexto nunca vale em outro.
+export type SignPrefix = 'bid' | 'seal' | 'alias' | 'receipt';
+
+// Prefixo de domínio: uma assinatura de um contexto nunca vale em outro (D-056).
 export function sign(
   secret: string,
-  prefix: string,
+  prefix: SignPrefix,
   fields: (string | number)[],
 ): string {
   return createHmac('sha256', secret)
