@@ -248,3 +248,27 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - *Destaque desempatado só pelo fim mais próximo:* pedi também o número do lote, para o desempate ser determinístico.
 - *Busca escapando só `%` e `_`:* pedi a barra invertida também, porque ela é o caractere de escape do `LIKE` no Postgres.
+
+## Story 3.4: Painel do leiloeiro na API
+
+**O que a IA gerou:**
+- `STATUS_SQL` e `STATUS_WHERE` movidos para `lots/lot-status.ts`, em commit `refactor` separado, para o painel reusar o cálculo da vitrine.
+- `POST /lots/:id/cancel`: lote travado com `FOR UPDATE` filtrando por dono e `cancelled_at IS NULL` (alheio, inexistente ou já cancelado dão 404), regra pura `assertCancellable` (encerrado `LOT_ENDED` antes de `LOT_HAS_BIDS`) e 204; duas queries.
+- Códigos `LOT_HAS_BIDS` (409) e `LOT_ENDED` (422) no `DomainCode` e no filter.
+- `GET /dashboard/lots`: livro paginado de 20, `number DESC`, status com `cancelled`, contagem dos cinco filtros, em duas queries.
+- `GET /dashboard/summary`: ao vivo com soma dos lances atuais, agendados com próximo início e encerrados com quantos sem lance, numa query.
+- DTOs de resposta como classes, tipos `BookStatus`, `DashboardLot`, `DashboardBook` e `DashboardSummary` no front e linhas do README.
+- Testes aprovados na spec: cinco de `assertCancellable`, três de `LotsService.cancel` com manager falso, status fora da lista no DTO e resumo sem lotes.
+
+**O que revisei e pedi para mudar:**
+- Pedi a branch da story a partir da `main` atualizada, com a 3.3 marcada como done antes de começar.
+- Pedi o `LotIdPipe` (D-052) em toda rota com `:id` de lote.
+- Aprovei as escolhas da spec: livro em `number DESC`, 20 por página, contagem dos cinco filtros, 204 no cancelamento, 404 para lote já cancelado e `LOT_ENDED` antes de `LOT_HAS_BIDS`.
+- Decidi que "tem lance" no cancelamento sai do `bid_count` da linha travada por enquanto, e pedi para registrar em `deferred-work.md` a troca por `EXISTS` em `bids` na 4.3, porque `bid_count` é só cache de exibição.
+- Pedi o caso de teste (10): cancela lote agendado sem lances e grava `cancelled_at` com o `now` do `Clock`.
+- Aprovei os casos de teste 1 a 10.
+- Pedi para conferir no log do Postgres que `GET /dashboard/lots` e `GET /dashboard/summary` disparam número fixo de queries.
+- Pedi só o revisor de casos de borda e `npm run lint:check` antes do commit.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma.

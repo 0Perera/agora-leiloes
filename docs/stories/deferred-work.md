@@ -16,3 +16,6 @@
 - source_spec: `docs/stories/spec-3-3-vitrine-destaque-e-detalhe-do-lote-na-api.md`
   summary: comportamento conhecido aceito: GET /lots/:id/image continua servindo a imagem de lote cancelado, enquanto GET /lots/:id responde 404.
   evidence: achado da revisão da 3.3; comportamento vindo da 3.2, a imagem é de acervo público e tem cache imutável. O usuário aceitou como está.
+- source_spec: `docs/stories/spec-3-4-painel-do-leiloeiro-na-api.md`
+  summary: na story 4.3, trocar a checagem "tem lance" do cancelamento (POST /lots/:id/cancel) de `bid_count > 0` para `EXISTS` na tabela `bids`, depois do lock do lote.
+  evidence: decisão do usuário na aprovação da 3.4; `bid_count` é só cache de exibição e a tabela `bids` ainda não existe.
