@@ -194,3 +194,25 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - *Só European Painting and Sculpture, sem seletor:* troquei por um seletor com Greek and Roman Art, porque estátuas e mármore fazem parte do tema.
 - *Acervo inteiro:* foge do tema de arte clássica europeia (D-050).
+
+## Story 3.2: Criação de lote com snapshot e imagem
+
+**O que a IA gerou:**
+- `Clock` injetável em `common/`, códigos `IMAGE_DOWNLOAD_FAILED` (502) e `ARTWORK_ALREADY_LISTED` (409) no exception filter.
+- `ClevelandClient.download` e `CatalogService.image`: timeout de 5s, só `image/jpeg`, `image/png` ou `image/webp`, até 5 MB contados nos bytes lidos do stream, qualquer falha virando `IMAGE_DOWNLOAD_FAILED`.
+- Entidades `Lot` (snapshot, condições, `number` por sequência com `UNIQUE`, índices em `starts_at`, `ends_at`, `artwork_id` e `auctioneer_id`, `CHECK` de período, valores e `bid_count`) e `LotImage` (`bytea`), com a migration gerada pelo CLI.
+- Regras puras em `lot.rules.ts` (início até 1 min no passado, fim depois do início, peça já em lote ativo) e `LotsService.create`: valida as datas, busca a peça, baixa a imagem fora da transação e grava lote e imagem numa transação com `pg_advisory_xact_lock(artwork_id)`.
+- `POST /lots` só para leiloeiro e `GET /lots/:id/image` público, com `Cache-Control` longo e `X-Content-Type-Options: nosniff`.
+- Tipos `CreateLotRequest` e `CreatedLot` e a tradução de `ARTWORK_ALREADY_LISTED` no front, D-051 e linhas do README e do `CLAUDE.md`.
+- Testes aprovados na spec: datas e peça listada nas regras, download com `fetch` falso, falha da imagem sem gravar lote no service e limites no DTO.
+
+**O que revisei e pedi para mudar:**
+- Escolhi responder 400 `VALIDATION_FAILED` com `fields.artworkId: 'notFound'` para peça inexistente ou de outro departamento.
+- Decidi que uma peça só fica em um lote agendado ou ao vivo por vez, com 409 `ARTWORK_ALREADY_LISTED` traduzido no front; encerrado ou cancelado libera a peça (D-051).
+- Aprovei os limites: lance inicial de R$ 1 a R$ 10 mi e incremento de R$ 1 a R$ 1 mi.
+- Aprovei os nove casos de teste propostos e pedi mais um: recusa peça em lote agendado ou ao vivo e aceita se o lote anterior foi cancelado ou encerrou.
+- Aprovei as decisões da spec (campo extra descartado pelo `whitelist`, só JPEG/PNG/WebP, download antes da transação, `auctioneer_id` já nesta story, índice de `current_bid` na 3.3).
+- Pedi a regra no `CLAUDE.md` de rodar `npm run lint:check` antes de commitar, em vez de `npm run lint`, que corrige sozinho e esconde erro de formatação.
+
+**Sugestões rejeitadas e por quê:**
+- *Permitir a mesma peça em vários lotes ao mesmo tempo:* recusei, porque venderia a mesma obra duas vezes; a peça só fica em um lote ativo por vez (D-051).

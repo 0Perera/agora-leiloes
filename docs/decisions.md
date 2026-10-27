@@ -516,3 +516,14 @@ Story: 3.1
 **Por quê:** a Cleveland não aceita dois departamentos na mesma chamada (vírgula, `|` e `;` devolvem zero resultados; parâmetro repetido usa só o último; `department[]` é ignorado). Escolher o departamento mantém o tema da casa e a paginação exata da Cleveland.
 **Alternativas descartadas:** acervo inteiro (foge do tema de arte clássica europeia); duas chamadas juntando os resultados (dobra a latência e o risco de timeout, e a paginação e o total combinados ficam inexatos).
 **Consequência:** a tela do leiloeiro (3.5) precisa de um seletor de departamento. A criação de lote aceita peça de qualquer um dos dois departamentos; peça de outro departamento é tratada como inexistente.
+
+## D-051: Peça em um lote ativo por vez
+
+Status: Aceita
+Data: 2026-10-26
+Story: 3.2
+
+**Decisão:** uma peça do acervo só pode estar em um lote agendado ou ao vivo (não cancelado e `now < ends_at`) por vez. A criação de outro lote da mesma peça devolve 409 `ARTWORK_ALREADY_LISTED`; lote encerrado ou cancelado libera a peça.
+**Por quê:** dois lotes simultâneos da mesma obra significariam vender a mesma peça duas vezes e confundiriam a vitrine.
+**Alternativas descartadas:** permitir lotes simultâneos da mesma peça (venda duplicada); bloquear a peça para sempre depois do primeiro lote (peça encerrada sem lance ou cancelada nunca voltaria ao leilão).
+**Consequência:** a checagem roda dentro da transação da criação, depois de `pg_advisory_xact_lock(artwork_id)`, para duas criações simultâneas da mesma peça não passarem juntas; `lots.artwork_id` tem índice.

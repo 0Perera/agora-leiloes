@@ -82,7 +82,8 @@ dto/place-bid.dto.ts
 - Erros de negócio são exceções de domínio com código estável, mapeadas por um exception filter:
   `BID_BELOW_MINIMUM`, `INSUFFICIENT_BALANCE`, `ALREADY_WINNING`, `LOT_NOT_STARTED`, `LOT_ENDED`, `ROLE_NOT_ALLOWED`,
   `EMAIL_TAKEN`, `INVALID_CREDENTIALS` (o mesmo para e-mail inexistente e senha errada).
-  `CATALOG_UNAVAILABLE` (503), `IMAGE_DOWNLOAD_FAILED` (502), `LOT_HAS_BIDS` (409).
+  `CATALOG_UNAVAILABLE` (503), `IMAGE_DOWNLOAD_FAILED` (502), `LOT_HAS_BIDS` (409),
+  `ARTWORK_ALREADY_LISTED` (409): peça já em lote agendado ou ao vivo.
   `BALANCE_LIMIT_EXCEEDED` (422): depósito que levaria o saldo acima do teto do `integer`.
   O front traduz o código; o backend não devolve texto livre para essas recusas.
 - Erro de validação de DTO no formato `{ code: 'VALIDATION_FAILED', fields: { <campo>: <regra> } }`, para o front traduzir por campo.
@@ -344,6 +345,7 @@ Ruins: `update`, `ajustes`, `wip`, `fix: vários bugs`, `feat: cria lances, cart
 - Ficar no escopo da story. Se algo fora dela parecer necessário, avisar em vez de implementar.
 - Perguntar antes de adicionar dependência nova.
 - Diffs pequenos. Antes de dizer que terminou: lint, testes e build passando.
+- Antes de commitar, rodar `npm run lint:check` (o mesmo do CI), não `npm run lint`, que corrige sozinho e esconde erro de formatação.
 - Ao propor uma solução com trade-off relevante, explicar a alternativa em uma ou duas frases.
 - Revisão: só o revisor de casos de borda. Os três revisores só nas stories 4.1, 4.2, 4.3, 4.4, 5.1, 5.2 e 5.5.
 - Correções da revisão: corrige sozinho só os achados graves (bug, segurança, regra de negócio). Os de estilo ou opcionais, lista em uma linha cada e não corrige.
