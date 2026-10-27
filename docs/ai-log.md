@@ -591,10 +591,14 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Seis testes de integração com banco real, três deles avisados como extras (lote sem lances, link só para o vencedor, aviso no tempo real).
 
 **O que revisei e pedi para mudar:**
-- Aprovei os 6 casos de teste da assinatura do comprovante.
-- Pedi o teste de dois acessos simultâneos liquidando o lote uma vez só.
-- Pedi o teste de vencedor e valor tirados do último lance mesmo com o lance atual alterado no banco.
-- Pedi o teste de selo inválido: o lote não é liquidado e a página do lote continua respondendo.
+- Pedi que a liquidação conferisse o selo do lote antes de mover saldo e, com selo inválido, não liquidasse e só registrasse o motivo no log (virou a D-064).
+- Pedi a mesma ordem de travas do lance: primeiro o lote, depois as carteiras em ordem.
+- Pedi que uma falha na liquidação nunca derrubasse a página do lote.
+- Pedi que a data da liquidação viesse do relógio do servidor, lida depois da trava, e entrasse na assinatura no formato da D-056.
+- Pedi o link do comprovante aleatório, nunca derivado do número do lote, e o aviso de encerramento só depois de gravar, com apelido e valor.
+- Aprovei os 5 casos de teste da assinatura e pedi um sexto, conferindo com uma assinatura montada à mão, para fixar o formato.
+- Pedi três testes com banco real: dois acessos simultâneos liquidando uma vez só, cobrança pelo último lance mesmo com o lance atual alterado no banco, e selo inválido sem liquidar.
+- Pedi os três revisores, por ser uma story crítica.
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta etapa.
