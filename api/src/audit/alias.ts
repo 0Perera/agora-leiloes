@@ -1,4 +1,4 @@
-import { sign } from './chain';
+import { sign } from './sign';
 
 const BASE32 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 

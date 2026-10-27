@@ -1,5 +1,5 @@
 import { timingSafeEqual } from 'node:crypto';
-import { sign as signFields } from '../audit/chain';
+import { sign as signFields } from '../audit/sign';
 
 export type ReceiptFields = {
   lotId: number;
