@@ -32,10 +32,10 @@ context:
 - "Cancelar lote" só em agendado ou ao vivo com `bidCount = 0`; confirmação na linha "Tirar o lote da vitrine?" / "Sim, cancelar" / "Manter". 204 → recarrega livro e resumo. `LOT_HAS_BIDS` → aviso "Cancelamento recusado" do canvas e recarrega; `LOT_ENDED` e 404 → aviso e recarrega.
 - Estados carregando, vazio (livro vazio com "Criar o primeiro lote"; vazio por filtro) e erro com "Tentar de novo" no resumo, no livro e na busca. Responsivo a partir de 360px (livro vira cartões com `data-label`, ficha em uma coluna).
 - Cabeçalho do leiloeiro ganha "Criar lote", que leva a `/dashboard` com a seção de novo lote aberta.
-- Helpers novos com teste em `shared/lib`: `toRoman` (só ida; a leitura do romano entra na story que usar primeiro) e datas (`24 out, 19h` formatado com `timeZone: 'America/Sao_Paulo'` explícito; `datetime-local` ↔ ISO). Licitante/visitante já são redirecionados por `RequireRole`.
+- Helpers novos com teste em `shared/lib`: `toRoman` (só ida; a leitura do romano entra na story que usar primeiro) e datas (`24 out, 19h` no fuso do navegador, o mesmo dos campos de início e fim; `datetime-local` ↔ ISO). Os testes fixam `TZ=America/Sao_Paulo` na config do vitest, não no código. Licitante/visitante já são redirecionados por `RequireRole`.
 - Ficha sem Dimensões e Nº no acervo: a busca não devolve esses campos e a API não muda (decisão do usuário).
 
-**Casos de teste (aprovados pelo usuário):** `roman.spec.ts`: (1) converte 1, 4, 9, 14, 40, 90, 400 e 3999 para romano. `date.spec.ts`: (4) formata a data curta `24 out, 19h` e `24 out, 19h30` em `America/Sao_Paulo`; (5) converte `datetime-local` para ISO UTC e volta. `lot-form.spec.ts` (`validateLot`): (6) recusa lance inicial vazio; (7) recusa lance acima do teto; (8) recusa início mais de 1 min no passado; (9) recusa fim antes ou igual ao início; (10) devolve centavos e ISO para ficha válida. `lot-errors.spec.ts`: (11) traduz `IMAGE_DOWNLOAD_FAILED`; (12) traduz `VALIDATION_FAILED` por campo; (13) traduz `LOT_HAS_BIDS`; (14) traduz `LOT_ENDED`.
+**Casos de teste (aprovados pelo usuário):** `roman.spec.ts`: (1) converte 1, 4, 9, 14, 40, 90, 400 e 3999 para romano. `date.spec.ts`: (4) formata a data curta `24 out, 19h` e `24 out, 19h30` (com o `TZ` fixo do vitest); (5) converte `datetime-local` para ISO UTC e volta. `lot-form.spec.ts` (`validateLot`): (6) recusa lance inicial vazio; (7) recusa lance acima do teto; (8) recusa início mais de 1 min no passado; (9) recusa fim antes ou igual ao início; (10) devolve centavos e ISO para ficha válida. `lot-errors.spec.ts`: (11) traduz `IMAGE_DOWNLOAD_FAILED`; (12) traduz `VALIDATION_FAILED` por campo; (13) traduz `LOT_HAS_BIDS`; (14) traduz `LOT_ENDED`.
 
 **Never:** mostrar o próximo número; mudar a API; total recebido, arrematante, alias, "Abrir sala" ou "Ver comprovante" (3.7 e épico 5); regra de negócio nova no front (ex.: aumento ≤ lance inicial); dependência nova; imagem de lote do CDN.
 
@@ -84,9 +84,9 @@ context:
 - Dica da busca com exemplos em inglês ("portrait, marble, Rome"): a Cleveland só encontra termos em inglês.
 - Livro vira cartões abaixo de 1180px (canvas: 1080px): entre 1080 e 1230px a tabela gerava rolagem horizontal.
 - Datas da ficha começam em amanhã 19h–21h, como no canvas; valores começam vazios.
-- `datetime-local` usa o fuso do navegador; as datas exibidas usam `America/Sao_Paulo`. Para quem está fora de Brasília, a hora digitada e a exibida podem diferir.
+- Pedido do usuário depois da revisão: datas exibidas passaram para o fuso do navegador, igual aos campos; `TZ=America/Sao_Paulo` fixado em `web/vite.config.ts` (`test.env`). Conferido: sem essa config o `date.spec.ts` falha em `TZ=UTC`; com ela passa em UTC e `Asia/Tokyo`.
 - Linhas da matriz sem teste automático (criar, acervo fora, cancelar): sem biblioteca de teste de componente (seria dependência nova). As traduções de erro têm teste (11–14); o fluxo foi conferido com curl contra a API do compose. Navegador real e 360px ainda não conferidos.
-- Dados de teste deixados no banco de dev pelo subagente: usuário `leiloeiro35@example.com` e lote nº 4 (cancelado). Não apagados sem autorização.
+- Dados de teste deixados no banco de dev pelo subagente (usuário `leiloeiro35@example.com` e os lotes dele): apagados com autorização do usuário.
 
 ## Spec Change Log
 

@@ -291,7 +291,8 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi que a ficha não mostrasse o número que o lote vai receber, porque o número é global e sequencial e outro leiloeiro pode pegá-lo no meio; o romano aparece só na confirmação, com o valor devolvido pelo `POST /lots` (D-053).
 - Pedi valores sempre com centavos (D-048) e o visual do canvas Painel com as classes `ag-*`.
 - Escolhi omitir Dimensões e Nº no acervo da ficha, em vez de acrescentar os campos à busca da API.
-- Pedi que a data curta fosse formatada com `timeZone: 'America/Sao_Paulo'` explícito, para o teste passar igual no CI (UTC) e na máquina local.
+- Pedi que a data curta fosse testada em `America/Sao_Paulo`, para o teste passar igual no CI (UTC) e na máquina local.
+- Depois da revisão, pedi que as datas exibidas usassem o fuso do navegador, igual aos campos de início e fim, com `TZ=America/Sao_Paulo` fixado na config do vitest, não no código.
 - Recusei os casos de leitura do romano e a própria função de leitura: a 3.5 só exibe, e a leitura entra na story que usar primeiro.
 - Pedi dois casos a mais em `lot-errors.spec.ts`: traduz `LOT_HAS_BIDS` e traduz `LOT_ENDED`.
 - Aprovei as outras escolhas da spec: seletor de departamento, resumo em três cartões, livro sem alias, arrematante, "Abrir sala" e comprovante, sem a regra "aumento não maior que o lance inicial" do canvas e com os limites da API.
@@ -300,4 +301,5 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - *Casos (2) e (3), leitura do romano de volta e recusa de romano inválido:* recusei, a tela só exibe o romano.
-- *Caso (4) com o fuso do ambiente:* mudei para `America/Sao_Paulo` explícito, para o resultado não depender da máquina.
+- *Caso (4) com o fuso do ambiente:* pedi o fuso fixo nos testes, para o resultado não depender da máquina.
+- *Datas exibidas sempre em `America/Sao_Paulo`, diferente dos campos da ficha:* recusei; pedi o fuso do navegador nos dois.
