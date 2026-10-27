@@ -310,6 +310,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi trocar a faixa de sucesso por uma janela modal no estilo da ficha, com título "Lote VI · nº 6 publicado", miniatura e título da obra, estado e abertura, e os botões "Ver no livro" e "Criar outro lote"; a ficha só é limpa quando a janela fecha; `role="dialog"`, foco preso, Esc fecha e o foco volta para a busca; em 360px, largura da tela com margem.
 - Pedi destacar por alguns segundos a linha do lote recém-criado, com fundo dourado que some, respeitando `prefers-reduced-motion`.
 - Pedi os cartões da busca com `repeat(auto-fill, minmax(200px, 1fr))` e conferência com 1, 5 e 12 resultados e em 360px.
+- Pedi trocar os dois botões de departamento por uma lista suspensa (cascata) e tirar a borda azul que aparecia em volta dela com o mouse.
 
 **Sugestões rejeitadas e por quê:**
 - *Faixa de sucesso dentro da seção de novo lote:* recusei; pedi uma janela modal com ações para ver o lote no livro ou criar outro.
