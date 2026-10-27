@@ -198,4 +198,45 @@ describe('BidRules.decide', () => {
       });
     });
   });
+
+  describe('saldo comprometido', () => {
+    it('compromete o valor do lance na carteira do novo líder', () => {
+      const bid = makeBid({
+        last: { userId: RIVAL, amount: 10_000 },
+        amount: 11_000,
+      });
+
+      expect(decide(bid)).toMatchObject({
+        commit: { userId: BIDDER, amount: 11_000 },
+      });
+    });
+
+    it('libera o valor do líder anterior', () => {
+      const bid = makeBid({
+        last: { userId: RIVAL, amount: 10_000 },
+        amount: 11_000,
+      });
+
+      expect(decide(bid)).toMatchObject({
+        release: { userId: RIVAL, amount: 10_000 },
+      });
+    });
+
+    it('primeiro lance não libera saldo de ninguém', () => {
+      const bid = makeBid({ amount: 10_000 });
+
+      expect(decide(bid)).toMatchObject({ accepted: true, release: null });
+    });
+
+    it('compromete o valor cheio do novo lance de quem foi superado e volta, não a diferença', () => {
+      const bid = makeBid({
+        last: { userId: RIVAL, amount: 11_000 },
+        amount: 12_000,
+      });
+
+      expect(decide(bid)).toMatchObject({
+        commit: { userId: BIDDER, amount: 12_000 },
+      });
+    });
+  });
 });
