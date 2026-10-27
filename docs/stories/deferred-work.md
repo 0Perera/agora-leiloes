@@ -23,6 +23,7 @@
 - source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`
   summary: na 3.7, adicionar a ação "Abrir sala" na coluna Ação do livro de lotes do painel.
   evidence: a rota `/lots/:id` só existe a partir da 3.7; o usuário pediu para registrar aqui.
+  status: feito na 3.7 (`spec-3-7-tela-sala-do-lote-ao-vivo-leitura.md`).
 
 ## Polimento visual
 
