@@ -123,6 +123,27 @@ describe('SettlementTimer.onApplicationBootstrap', () => {
     expect(errors).toHaveBeenCalledWith(expect.stringContaining('lot 1'));
     expect(jest.getTimerCount()).toBe(1);
   });
+
+  it('tenta de novo em 30 s quando a consulta do próximo fim falha', async () => {
+    const { timer, settlement } = makeTimer([
+      makeLot({ id: 1, endsAt: at(10) }),
+    ]);
+    timers.push(timer);
+    settlement.next.mockRejectedValueOnce(new Error('db down'));
+
+    timer.onApplicationBootstrap();
+    await flush();
+    expect(errors).toHaveBeenCalledWith(
+      expect.stringContaining('next lot lookup failed'),
+    );
+
+    await jest.advanceTimersByTimeAsync(30_000);
+    expect(settlement.next).toHaveBeenCalledTimes(2);
+
+    await until(at(10));
+
+    expect(settlement.settle).toHaveBeenCalledWith(1);
+  });
 });
 
 describe('SettlementTimer.run', () => {

@@ -9,6 +9,7 @@ import { SettlementService } from './settlement.service';
 
 // Maior atraso aceito pelo setTimeout; acima disso o Node dispara na hora.
 const MAX_DELAY_MS = 2 ** 31 - 1;
+const RETRY_MS = 30_000;
 
 // Um timer só, para o próximo ends_at, sem cron (D-009).
 @Injectable()
@@ -18,6 +19,7 @@ export class SettlementTimer
   private readonly logger = new Logger(SettlementTimer.name);
   private handle: NodeJS.Timeout | null = null;
   private target: Date | null = null;
+  private retry: NodeJS.Timeout | null = null;
   private generation = 0;
   private stopped = false;
 
@@ -35,6 +37,7 @@ export class SettlementTimer
     this.stopped = true;
     this.generation += 1;
     this.clear();
+    this.cancelRetry();
   }
 
   refresh(): void {
@@ -70,10 +73,27 @@ export class SettlementTimer
     const generation = this.generation;
     try {
       const next = await this.settlement.next(from ?? this.clock.now());
-      if (generation === this.generation) this.arm(next);
+      if (generation !== this.generation) return;
+      this.cancelRetry();
+      this.arm(next);
     } catch (error) {
       this.logger.error(`next lot lookup failed: ${reason(error)}`);
+      if (generation === this.generation) this.retryLater();
     }
+  }
+
+  // Timer à parte: o disparo já armado continua valendo enquanto o banco não responde.
+  private retryLater(): void {
+    this.cancelRetry();
+    this.retry = setTimeout(() => {
+      this.retry = null;
+      void this.schedule();
+    }, RETRY_MS);
+  }
+
+  private cancelRetry(): void {
+    if (this.retry) clearTimeout(this.retry);
+    this.retry = null;
   }
 
   private arm(next: Date | null): void {
