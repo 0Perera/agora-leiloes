@@ -362,7 +362,7 @@ Story: 1.1 · Substitui a parte da D-030 que adiava o compose para uma story pr�
 
 ## D-036: Número do lote sequencial, exibido em romano
 
-Status: Aceita
+Status: Substituída por D-054
 Data: 2026-10-24
 Story: planejamento
 
@@ -549,3 +549,14 @@ Story: 3.5
 **Por quê:** o número é gerado por sequência global no banco; prever o próximo na tela mostraria um número errado sempre que outro leiloeiro criasse um lote antes, ou quando uma criação falhasse e consumisse a sequência.
 **Alternativas descartadas:** endpoint com o próximo número (continua sujeito a corrida e a buracos da sequência, e muda a API); reservar o número ao abrir a ficha (exige estado de rascunho no banco).
 **Consequência:** a ficha só mostra dados da obra e as condições; o leiloeiro vê o número na faixa de sucesso e no livro de lotes.
+
+## D-054: Número do lote em romano com o número comum ao lado
+
+Status: Aceita
+Data: 2026-10-27
+Story: 3.5 · Substitui D-036
+
+**Decisão:** o número do lote aparece sempre em romano com o número comum ao lado: "Lote DXXXVII · nº 537". Acima de 3999, onde o romano padrão acaba, aparece só o número comum ("Lote nº 4000"). O número continua sequencial, global, único e imutável, e a busca aceita "537" ou "DXXXVII".
+**Por quê:** o romano fica longo e difícil de ler com o crescimento da numeração (888 vira DCCCLXXXVIII), quem não lê romano não sabe qual número digitar na busca, e a notação padrão não passa de 3999.
+**Alternativas descartadas:** só o número comum (perde a identidade visual do tema); romano só nos destaques e número comum nas listas (dois formatos na mesma interface).
+**Consequência:** toda tela usa o `lotLabel` de `web/src/shared/lib/roman.ts`; o `toRoman` devolve `null` fora de 1 a 3999.
