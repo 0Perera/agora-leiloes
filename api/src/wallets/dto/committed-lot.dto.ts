@@ -3,4 +3,5 @@ export class CommittedLotDto {
   number!: number;
   title!: string;
   amount!: number;
+  endsAt!: Date;
 }

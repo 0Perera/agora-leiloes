@@ -22,7 +22,7 @@ type History = {
 
 type WalletBody = {
   committed: number;
-  lots: { id: number; amount: number }[];
+  lots: { id: number; amount: number; endsAt: string }[];
   lotsTotal: number;
 };
 
@@ -234,5 +234,13 @@ describe('tempo real, histórico e situação do licitante', () => {
 
     expect(body.lots).toHaveLength(20);
     expect(body.lotsTotal).toBe(21);
+  });
+
+  it('carteira traz o fim de cada lote comprometido', async () => {
+    await test.bid(bidder, lotId, STARTING_BID).expect(201);
+
+    const body = await wallet(bidder);
+
+    expect(body.lots[0].endsAt).toBe(at(24 * 60).toISOString());
   });
 });
