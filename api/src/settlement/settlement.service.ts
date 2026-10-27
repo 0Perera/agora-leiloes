@@ -79,6 +79,7 @@ export class SettlementService {
     };
     await manager.getRepository(Receipt).insert({
       ...receipt,
+      winnerUserId: last.userId,
       token: randomBytes(32).toString('base64url'),
       signature: sign(this.secret, receipt),
     });

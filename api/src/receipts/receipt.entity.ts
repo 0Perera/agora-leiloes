@@ -8,6 +8,7 @@ import {
   Unique,
 } from 'typeorm';
 import { Lot } from '../lots/lot.entity';
+import { User } from '../users/user.entity';
 
 // UNIQUE (lot_id): timer e acesso disparando juntos nunca liquidam o lote duas vezes (D-009).
 @Entity('receipts')
@@ -24,6 +25,14 @@ export class Receipt {
   @ManyToOne(() => Lot)
   @JoinColumn({ name: 'lot_id' })
   lot!: Lot;
+
+  // Reconhece o vencedor no GET do lote; fica fora da resposta e da assinatura.
+  @Column({ name: 'winner_user_id', type: 'integer' })
+  winnerUserId!: number;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'winner_user_id' })
+  winner!: User;
 
   @Column({ type: 'varchar', length: 43 })
   token!: string;
