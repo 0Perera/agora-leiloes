@@ -339,6 +339,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi só o revisor de casos de borda na revisão.
 - Pedi para registrar no `deferred-work.md`, numa seção de polimento visual, o ajuste do painel no modo cartão (selo e botão na largura do conteúdo, miniatura alinhada ao título).
 - Pedi, depois de conferir a tela, a imagem do destaque antes do texto quando o destaque empilha, com o arco limitado a ~55vh para o título e o botão ficarem perto; lado a lado acima disso.
+- Pedi que a busca abra a primeira aba com resultado pelas contagens da resposta (Ao vivo, Agendados, Encerrados), fique na aba atual sem resultado e volte para Ao vivo ao limpar, com um caso de teste para a escolha da aba.
 - Pedi duas regras no `CLAUDE.md`: selos, badges e botões com a largura do próprio conteúdo em grids e listas, e a conferência das telas em 360, 768, 1024 e 1280px na Definition of Done.
 
 **Sugestões rejeitadas e por quê:**

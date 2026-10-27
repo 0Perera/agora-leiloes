@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../../shared/api/client';
 import type { LotShowcase, LotStatus } from '../../shared/api/types';
-import { parseSearch } from './showcase-search';
+import { parseSearch, searchTab } from './showcase-search';
 
 export type Load<T> =
   | { status: 'loading'; data: T | null }
@@ -20,6 +20,7 @@ export function useShowcase() {
   const [text, setText] = useState('');
   const [term, setTerm] = useState('');
   const [attempt, setAttempt] = useState(0);
+  const picking = useRef(false);
   const filter = parseSearch(term);
 
   const startLoading = useCallback(
@@ -32,8 +33,10 @@ export function useShowcase() {
     if (next === term) return;
     const timer = setTimeout(() => {
       startLoading();
+      picking.current = next !== '';
       setTerm(next);
       setPage(1);
+      if (next === '') setTab('live');
     }, searchDelay);
     return () => clearTimeout(timer);
   }, [text, term, startLoading]);
@@ -45,8 +48,12 @@ export function useShowcase() {
     api.lots(tab, page, current).then(
       (data) => {
         if (!active) return;
+        // busca nova abre a primeira aba com resultado; depois disso a aba é do visitante
+        const picked = picking.current ? searchTab(data.counts, tab) : tab;
+        picking.current = false;
+        if (picked !== tab) setTab(picked);
         // a última página pode esvaziar quando lotes mudam de aba com o tempo
-        if (data.items.length === 0 && page > 1) setPage(page - 1);
+        else if (data.items.length === 0 && page > 1) setPage(page - 1);
         else setShowcase({ status: 'ready', data });
       },
       () =>
@@ -60,6 +67,7 @@ export function useShowcase() {
   const choose = useCallback(
     (next: LotStatus) => {
       startLoading();
+      picking.current = false;
       setTab(next);
       setPage(1);
       setAttempt((current) => current + 1);
@@ -83,8 +91,10 @@ export function useShowcase() {
 
   const clear = useCallback(() => {
     startLoading();
+    picking.current = false;
     setText('');
     setTerm('');
+    setTab('live');
     setPage(1);
     setAttempt((current) => current + 1);
   }, [startLoading]);

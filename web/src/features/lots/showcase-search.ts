@@ -1,4 +1,4 @@
-import type { LotFilter } from '../../shared/api/types';
+import type { LotFilter, LotStatus } from '../../shared/api/types';
 import { fromRoman } from '../../shared/lib/roman';
 
 const maxNumber = 2_147_483_647;
@@ -17,4 +17,13 @@ export function parseSearch(text: string): LotFilter | null {
     : fromRoman(prefixed ? rest.toUpperCase() : rest);
   if (number === null) return { q: term };
   return number >= 1 && number <= maxNumber ? { number } : null;
+}
+
+const tabOrder: LotStatus[] = ['live', 'scheduled', 'ended'];
+
+export function searchTab(
+  counts: Record<LotStatus, number>,
+  current: LotStatus,
+): LotStatus {
+  return tabOrder.find((tab) => counts[tab] > 0) ?? current;
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseSearch } from './showcase-search';
+import { parseSearch, searchTab } from './showcase-search';
 
 describe('parseSearch', () => {
   it('lê "7" como número do lote', () => {
@@ -28,5 +28,13 @@ describe('parseSearch', () => {
 
   it.each(['di', 'mix'])('envia "%s" como texto', (term) => {
     expect(parseSearch(term)).toEqual({ q: term });
+  });
+});
+
+describe('searchTab', () => {
+  it('abre a primeira aba com resultado, na ordem das abas', () => {
+    expect(searchTab({ live: 0, scheduled: 2, ended: 1 }, 'ended')).toBe(
+      'scheduled',
+    );
   });
 });
