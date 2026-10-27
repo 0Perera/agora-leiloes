@@ -5,7 +5,8 @@ export type DomainCode =
   | 'ROLE_NOT_ALLOWED'
   | 'BALANCE_LIMIT_EXCEEDED'
   | 'CATALOG_UNAVAILABLE'
-  | 'IMAGE_DOWNLOAD_FAILED';
+  | 'IMAGE_DOWNLOAD_FAILED'
+  | 'ARTWORK_ALREADY_LISTED';
 
 export class DomainException extends Error {
   constructor(readonly code: DomainCode) {
