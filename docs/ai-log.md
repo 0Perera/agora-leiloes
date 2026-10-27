@@ -624,3 +624,25 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Deixar para depois a nova tentativa quando a consulta do próximo fim falha: recusei, porque sem ela o timer para até o próximo lance ou lote criado.
+
+## Story 5.4: Comprovante, meus lances e resultado do painel na API
+
+**O que a IA gerou:**
+- A rota pública do comprovante, que confere a assinatura a cada consulta e mostra o comprovante adulterado como inválido, sem escondê-lo.
+- A recusa de link de comprovante malformado antes de consultar o banco.
+- A rota Meus lances, com as seções em andamento, arrematados e não arrematados, paginadas e com a contagem de cada uma, em duas consultas.
+- O total recebido e o resultado de cada lote encerrado no painel do leiloeiro, sem consulta a mais.
+- Os tipos novos no front, sete testes unitários e dezessete testes de integração com banco real.
+
+**O que revisei e pedi para mudar:**
+- Pedi que arrematados e não arrematados reconheçam o vencedor pelo id gravado no comprovante, nunca pelo apelido.
+- Pedi que lote encerrado e ainda não liquidado fique em "em andamento", marcado como aguardando liquidação, para nenhum lote sumir das três seções.
+- Pedi que a situação (ganhando ou superado) venha do dono do último lance, calculada na API.
+- Pedi que o comprovante adulterado continue aparecendo, marcado como inválido, e que link com formato impossível dê 404 sem consultar o banco.
+- Pedi que nenhuma resposta traga id, nome ou e-mail de usuário.
+- Pedi a conferência do índice com EXPLAIN e do número fixo de consultas por rota.
+- Pedi testes de integração das três seções, com o lote aguardando liquidação, e do comprovante adulterado no banco.
+- Aprovei a spec, com os 17 casos de teste propostos pelo agente, sem parar para revisá-la.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma.
