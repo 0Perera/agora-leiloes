@@ -1,5 +1,5 @@
 import { ApiError } from '../../shared/api/client';
-import { toRoman } from '../../shared/lib/roman';
+import { lotLabel } from '../../shared/lib/roman';
 import { lotMessages } from './lot-validation';
 import type { LotErrors, LotField } from './lot-validation';
 
@@ -68,7 +68,7 @@ function isLotField(field: string): field is LotField {
 }
 
 export function cancelError(error: unknown, number: number): Notice {
-  const lot = `Lote ${toRoman(number)}`;
+  const lot = lotLabel(number);
   const title = 'Cancelamento recusado';
   if (!(error instanceof ApiError))
     return { title: 'Não foi possível cancelar', text: messages.connection };

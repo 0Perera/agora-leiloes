@@ -2,7 +2,7 @@ import { lotImageUrl } from '../../shared/api/client';
 import type { DashboardLot } from '../../shared/api/types';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
-import { toRoman } from '../../shared/lib/roman';
+import { lotLabel, toRoman } from '../../shared/lib/roman';
 
 type Props = {
   lot: DashboardLot;
@@ -27,8 +27,13 @@ export function LedgerRow({ lot, ...actions }: Props) {
       className={cancelled ? 'panel-lrow is-cancelled' : 'panel-lrow'}
       role="row"
     >
-      <div className="panel-num" role="cell">
-        {toRoman(lot.number)}
+      <div className="panel-num" role="cell" aria-label={lotLabel(lot.number)}>
+        <span aria-hidden="true">{toRoman(lot.number) ?? lot.number}</span>
+        {toRoman(lot.number) && (
+          <span className="panel-num-plain" aria-hidden="true">
+            nº {lot.number}
+          </span>
+        )}
       </div>
       <div className="panel-obra" role="cell">
         <span className="panel-thumb" aria-hidden="true">
@@ -143,7 +148,7 @@ function Action({
     <span
       className="panel-confirm"
       role="group"
-      aria-label={`Confirmar cancelamento do lote ${toRoman(lot.number)}`}
+      aria-label={`Confirmar cancelamento do ${lotLabel(lot.number)}`}
     >
       <span>Tirar o lote da vitrine?</span>
       <span className="panel-confirm-buttons">

@@ -14,7 +14,11 @@ const numerals: [number, string][] = [
   [1, 'I'],
 ];
 
-export function toRoman(value: number): string {
+// o romano padrão vai só até 3999 (D-054)
+const maxRoman = 3999;
+
+export function toRoman(value: number): string | null {
+  if (!Number.isInteger(value) || value < 1 || value > maxRoman) return null;
   let rest = value;
   let result = '';
   for (const [amount, symbol] of numerals) {
@@ -24,4 +28,9 @@ export function toRoman(value: number): string {
     }
   }
   return result;
+}
+
+export function lotLabel(number: number): string {
+  const roman = toRoman(number);
+  return roman ? `Lote ${roman} · nº ${number}` : `Lote nº ${number}`;
 }
