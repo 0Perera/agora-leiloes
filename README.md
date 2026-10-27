@@ -61,7 +61,7 @@ _(regras que podem surpreender, uma linha cada, com o porquê)_
 - A busca no acervo mostra só pintura e escultura europeia ou arte grega e romana, um departamento por vez (tema da casa, D-050), e só peças com imagem.
 - Uma peça só fica em um lote agendado ou ao vivo por vez; lote encerrado ou cancelado libera a peça para outro lote (D-051).
 - Lote cancelado some da vitrine e do destaque, e o link direto dele responde 404 (lote não encontrado).
-- O leiloeiro só cancela lote próprio, agendado ou ao vivo e sem lances: com lance responde `LOT_HAS_BIDS` e encerrado `LOT_ENDED`, porque quem deu lance já tem saldo comprometido. Lote de outro leiloeiro responde 404, sem revelar que existe.
+- O leiloeiro só cancela lote próprio, agendado ou ao vivo e sem lances, como pede o enunciado: com lance responde `LOT_HAS_BIDS` e encerrado `LOT_ENDED`. Cancelar com lances exigiria estornar o saldo comprometido do líder, e o cancelamento com estorno é um opcional que não entrou (D-018). Lote de outro leiloeiro responde 404, sem revelar que existe.
 
 ## Testes
 
