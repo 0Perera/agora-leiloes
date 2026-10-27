@@ -389,3 +389,27 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta story.
+
+## Story 4.2: Cadeia de HMAC, selo e alias (TDD)
+
+**O que a IA gerou:**
+- Funções puras em `api/src/audit/`: `hashBid` e `sealLot` em `chain.ts` e `forLot` em `alias.ts`, recebendo o segredo por parâmetro, só com `node:crypto`.
+- Serialização canônica com prefixo de domínio (`bid:`, `seal:`, `alias:`), campos separados por `|`, data em milissegundos UTC e `GENESIS` no lugar do hash anterior ausente.
+- Encoder de base32 (RFC 4648) dos 30 primeiros bits do HMAC para o alias.
+- Casos 1 a 8 e 12 em dois pares de commits `test(audit)` (vermelho) e `feat(audit)` (verde); o caso 5 foi para o segundo par porque compara com o selo.
+- Env `BID_HMAC_SECRET` obrigatória com 32 caracteres ou mais, no `.env.example`, no compose e no `render.yaml`, com o teste do caso 13.
+
+**O que revisei e pedi para mudar:**
+- Aprovei os casos 1 a 11 e pedi dois a mais: hash diferente quando dígitos passam de um campo para o vizinho (12) e recusa do segredo ausente ou curto (13).
+- Pedi o segredo obrigatório com tamanho mínimo, no `.env.example`, no compose e no `render.yaml`.
+- Pedi registrar no `deploy-notes.md` que o segredo nunca muda depois do seed e que, no dia da entrega, o banco é recriado mantendo o segredo.
+- Pedi registrar para a 4.3 que o `created_at` do lance vem do `Clock` da aplicação, nunca do `now()` do banco, porque o Postgres guarda microssegundos e o hash usa milissegundos.
+- Depois da revisão, aprovei os casos 14, 15 e 16: alias diferente por licitante no mesmo lote, hash conferido contra um valor conhecido e env válida sem o valor do segredo na mensagem de erro.
+- Pedi registrar o formato da serialização como decisão (D-056), com o caso 15 como o teste que o fixa, e tipar o prefixo do `sign()` com os quatro contextos.
+- Pedi incluir o `lotId` no selo, com os casos 17 (selos de lotes vazios diferentes não coincidem) e 18 (selo muda com o `lotId`) em TDD.
+
+**Erro da IA que peguei:**
+- O selo sem o `lotId` deixava todos os lotes sem lances com o mesmo selo: quem apagasse todos os lances de um lote poderia copiar o selo de outro lote vazio e a auditoria mostraria o lote como íntegro.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma nesta story.

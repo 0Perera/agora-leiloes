@@ -571,3 +571,14 @@ Story: 4.1
 **Por quê:** o histórico da branch serve de evidência do TDD (D-019). O squash merge (D-021) garante que a `main` nunca recebe commit vermelho: os commits `test` vermelhos ficam só na branch, e o CI roda no topo da PR, que fica verde.
 **Alternativas descartadas:** teste e código no mesmo commit (o histórico não mostra que o teste veio antes).
 **Consequência:** `git bisect` na branch de uma story TDD encontra commits vermelhos de propósito; na `main` isso não acontece.
+
+## D-056: Formato canônico do conteúdo assinado
+
+Status: Aceita
+Data: 2026-10-27
+Story: 4.2
+
+**Decisão:** todo conteúdo assinado é `<prefixo>:` seguido dos campos em ordem fixa, separados por `|`, com HMAC-SHA256 em hex. Prefixos: `bid:` (`lot_id|seq|user_id|valor|data|hash anterior`), `seal:` (`lot_id|contagem|último hash`), `alias:` (`user_id|lot_id`) e `receipt:`. Data em ISO 8601 UTC com milissegundos (`toISOString()`), valor inteiro em centavos, e o primeiro lance (ou o lote sem lances) usa o `GENESIS` (64 zeros) como hash anterior.
+**Por quê:** a mesma entrada precisa gerar sempre o mesmo texto, senão a verificação falha sem adulteração nenhuma. O separador impede que dígitos passem de um campo para o vizinho sem mudar o hash (caso 12), e o prefixo impede que uma assinatura valha em outro contexto (D-029). O `lot_id` no selo impede que lotes sem lances tenham selos iguais: sem ele, quem apagasse todos os lances de um lote poderia copiar o selo de qualquer lote vazio e a auditoria mostraria o lote como íntegro.
+**Alternativas descartadas:** JSON canônico (depende da ordem das chaves e da serialização de números); campos com prefixo de tamanho (mais robusto para texto livre, desnecessário com números, ISO e hex); data em epoch ms (menos legível na auditoria).
+**Consequência:** o formato não muda depois do seed, pelo mesmo motivo do segredo: todas as assinaturas gravadas deixariam de bater e a auditoria acusaria todos os lotes. O caso 15 (`chain.spec.ts`, valor conhecido) fixa o formato do lance e o caso 8 fixa o do selo: qualquer mudança neles quebra o teste.
