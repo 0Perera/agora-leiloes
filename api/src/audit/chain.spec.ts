@@ -1,4 +1,6 @@
-import { BidLink, GENESIS, hashBid } from './chain';
+import { createHmac } from 'node:crypto';
+
+import { BidLink, GENESIS, hashBid, sealLot } from './chain';
 
 const SECRET = 'test-secret-with-at-least-32-chars!';
 
@@ -44,9 +46,36 @@ describe('chain.hashBid', () => {
     );
   });
 
+  it('não coincide com um selo de mesmo conteúdo', () => {
+    const bid = makeBid();
+    const rest = `${bid.seq}|${bid.userId}|${bid.amount}|${bid.createdAt.toISOString()}|${bid.prevHash}`;
+
+    expect(hashBid(SECRET, bid)).not.toBe(sealLot(SECRET, bid.lotId, rest));
+  });
+
   it('muda o hash quando dígitos passam de um campo para o vizinho', () => {
     expect(hashBid(SECRET, makeBid({ lotId: 1, seq: 23 }))).not.toBe(
       hashBid(SECRET, makeBid({ lotId: 12, seq: 3 })),
+    );
+  });
+});
+
+describe('chain.sealLot', () => {
+  it('muda o selo quando muda a contagem de lances', () => {
+    expect(sealLot(SECRET, 3, 'a'.repeat(64))).not.toBe(
+      sealLot(SECRET, 2, 'a'.repeat(64)),
+    );
+  });
+
+  it('muda o selo quando muda o último hash', () => {
+    expect(sealLot(SECRET, 3, 'a'.repeat(64))).not.toBe(
+      sealLot(SECRET, 3, 'b'.repeat(64)),
+    );
+  });
+
+  it('selo de lote sem lances usa contagem zero e o hash genesis', () => {
+    expect(sealLot(SECRET, 0, null)).toBe(
+      createHmac('sha256', SECRET).update(`seal:0|${GENESIS}`).digest('hex'),
     );
   });
 });
