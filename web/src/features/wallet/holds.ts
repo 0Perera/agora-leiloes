@@ -10,9 +10,7 @@ export function moreLots(total: number, shown: number): string | null {
 
 export function heldNote(count: number): string {
   if (count === 0) return 'nada reservado agora';
-  return count === 1
-    ? 'reservado em 1 lote que você lidera'
-    : `reservado em ${count} lotes que você lidera`;
+  return count === 1 ? 'reservado em 1 lote' : `reservado em ${count} lotes`;
 }
 
 // lote vencido continua comprometido até a liquidação (épico 5)

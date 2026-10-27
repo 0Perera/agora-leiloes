@@ -21,11 +21,11 @@ describe('heldNote', () => {
   });
 
   it('conta um lote no singular', () => {
-    expect(heldNote(1)).toBe('reservado em 1 lote que você lidera');
+    expect(heldNote(1)).toBe('reservado em 1 lote');
   });
 
   it('conta os lotes no plural', () => {
-    expect(heldNote(2)).toBe('reservado em 2 lotes que você lidera');
+    expect(heldNote(2)).toBe('reservado em 2 lotes');
   });
 });
 
