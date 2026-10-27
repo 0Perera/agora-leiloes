@@ -485,3 +485,24 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - O Claude sugeriu remover o `.then((r) => r)` e o `PORT` do teste; testei e os dois são necessários: o supertest só envia a requisição no `then`, e a validação das variáveis exige `PORT` no CI.
+
+## Story 4.5: Tempo real, histórico e situação do licitante na API
+
+**O que a IA gerou:**
+- Stream em memória por lote (`LotEventsService`) e a rota pública `GET /lots/:id/stream`, com heartbeat a cada 25 s e o ouvinte removido ao fechar a conexão.
+- Evento do lance emitido depois que a transação termina, fora dela; recusa e falha na transação não emitem.
+- Histórico `GET /lots/:id/bids?page=` numa query, do mais recente ao mais antigo, com 404 para lote cancelado ou inexistente.
+- `OptionalAuthGuard` reaproveitando a verificação do token, e `me.alias` no detalhe do lote só para licitante.
+- Lotes comprometidos em `GET /wallet` numa query, com o índice `bids_user_id` que o `EXPLAIN` mostrou ser necessário.
+- Os casos de teste aprovados (unitários e a suíte e2e `realtime`), tipos do front e README.
+
+**O que revisei e pedi para mudar:**
+- Decidi a lista de comprometidos com teto de 20 lotes e o total, sem paginação.
+- Decidi que o evento do stream traz também a data do lance.
+- Decidi que `me` só aparece para licitante.
+- Decidi o histórico com 20 por página, paginado pelo índice da cadeia, sem depender da contagem copiada no lote (D-042).
+- Decidi criar o índice por licitante só se o `EXPLAIN` mostrasse necessidade, com a saída registrada na spec.
+- Aprovei os casos de teste da story.
+
+**Sugestões rejeitadas e por quê:**
+- Recusei a paginação do histórico por faixa de `seq` a partir da contagem copiada no lote: dependeria dessa cópia (D-042) e quebraria com buracos na sequência; pedi `ORDER BY seq DESC` com `LIMIT` e `OFFSET`.
