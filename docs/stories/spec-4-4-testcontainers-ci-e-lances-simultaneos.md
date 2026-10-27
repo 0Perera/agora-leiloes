@@ -118,6 +118,7 @@ context:
 - Depois da revisão, pedidos do usuário: casos novos "devolve o comprometido do licitante superado" e "lance nos últimos 2 min prorroga o fim em 2 min" (`bids.e2e-spec.ts`); caso 15 confere carteiras, cadeia e selo e virou `describe` próprio com `reset()`; caso 20 confere `counts.scheduled`; `timeout-minutes: 15` no job; `FakeCatalog implements Pick<CatalogService, 'find' | 'image'>`. Total: 26 testes.
 - Mantidos, ao contrário do pedido: `PORT` no `globalSetup` (exigido pela validação das envs; sem `.env` no CI a app não sobe) e o `.then()` no `race()` (o supertest só envia a requisição no `then`; sem ele, "0 of 10" na barreira). Ambos com comentário do porquê.
 - Variável de módulo `test` renomeada para `api` em `concurrency.e2e-spec.ts`: no topo do arquivo, o lint barra atribuir ao global do Jest.
+- Antes do merge, pedido do usuário: caso "mesmo licitante em dois lotes com saldo para um só lance" com a barreira na carteira (`lockWallet`); `lockLot` e `lockWallet` usam o mesmo `hold()`, e `race()` delega a `contend()`. Total: 27 testes.
 
 ## Review Triage Log
 

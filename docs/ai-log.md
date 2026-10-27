@@ -476,12 +476,12 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **O que revisei e pedi para mudar:**
 - Decidi usar um catálogo falso nos testes, devolvendo a peça e a imagem, sem chamar a Cleveland (D-060).
 - Decidi um container só para a execução inteira, com suítes em série e tabelas limpas no começo de cada uma (D-061).
-- Aprovei a extração do `setup(app)` num commit separado.
-- Aprovei os casos 1 a 22.
+- Aprovei os casos 1 a 22 e a extração do `setup(app)` num commit separado.
 - Pedi registrar no `deferred-work.md` a unificação do CSS repetido entre telas e um padrão único de chamada à API no front.
 - Depois da revisão, pedi dois casos novos: saldo devolvido ao licitante superado e prorrogação de 2 min no fim do lote.
 - Pedi que o caso dos lances empatados conferisse também carteiras, cadeia e selo, e que o do lote cancelado conferisse a contagem da aba.
+- Pedi um caso de lances simultâneos do mesmo licitante em dois lotes, com saldo para um só, travando a carteira dele.
 - Pedi limite de 15 min no job do CI, catálogo falso tipado e o caso dos lances empatados independente dos outros.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma nesta story.
+- O Claude sugeriu remover o `.then((r) => r)` e o `PORT` do teste; testei e os dois são necessários: o supertest só envia a requisição no `then`, e a validação das variáveis exige `PORT` no CI.
