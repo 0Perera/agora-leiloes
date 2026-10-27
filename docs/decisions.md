@@ -483,3 +483,25 @@ Story: 2.3
 **Por quê:** com o JWT no header (D-006), o token precisa ficar acessível ao JavaScript; o `localStorage` faz a sessão sobreviver ao recarregamento. Conferir o `exp` localmente evita chamar `/auth/me` no boot, que travaria o app durante o cold start do Render.
 **Alternativas descartadas:** cookie httpOnly (front e API em domínios diferentes, descartado na D-006); token só em memória (recarregar a página desloga); `sessionStorage` (cada aba pede login de novo).
 **Consequência:** um XSS poderia ler o token. A mitigação é o escape padrão do React (nada de `dangerouslySetInnerHTML`) e a validade de 8h do token.
+
+## D-048: Valores sempre com centavos
+
+Status: Aceita
+Data: 2026-10-26
+Story: 2.4
+
+**Decisão:** o front formata todo valor em reais com duas casas decimais (R$ 1,00, R$ 100.000,00): saldos, avisos de limite, mensagens de erro e de confirmação e botões de atalho.
+**Por quê:** a API e os lances aceitam centavos (D-015), e o campo de valor mostra centavos; esconder ",00" nos textos deixava a tela inconsistente.
+**Alternativas descartadas:** omitir ",00" em valores inteiros (mais curto, mas mistura dois formatos na mesma tela).
+**Consequência:** toda tela nova usa o `formatMoney` de `web/src/shared/lib/money.ts`; nada de formatar moeda à mão.
+
+## D-049: Saldo atualizado só depois da confirmação da API
+
+Status: Aceita
+Data: 2026-10-26
+Story: 2.4
+
+**Decisão:** a atualização do saldo é pessimista: tela e cabeçalho só mudam com a carteira devolvida pela API depois do depósito.
+**Por quê:** com dinheiro, não se mostra saldo que a API ainda não confirmou; se o depósito falhar, a tela nunca exibiu um valor errado.
+**Alternativas descartadas:** atualização otimista (resposta instantânea, mas exige desfazer o valor exibido quando a API recusa).
+**Consequência:** o botão fica em "Depositando…" até a resposta; no cold start do Render isso pode levar até 1 min.

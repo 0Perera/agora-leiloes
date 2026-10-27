@@ -5,24 +5,24 @@
 .layout-main {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 40px 24px 72px;
+  padding: 40px var(--space-5) var(--space-8);
 }
 
 .header-bar {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 10px 24px;
+  padding: 10px var(--space-5);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px 20px;
+  gap: var(--space-3) 20px;
 }
 
 .header-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   min-height: 44px;
   text-decoration: none;
   color: var(--ink);
@@ -43,14 +43,14 @@
 .header-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 20px;
+  gap: var(--space-1) 20px;
 }
 
 .nav-link {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding: 0 4px;
+  padding: 0 var(--space-1);
   border-bottom: 2px solid transparent;
   font-family: var(--font-display);
   font-weight: 600;
@@ -71,7 +71,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .header-btn {
@@ -111,10 +111,10 @@
 
 @media (max-width: 420px) {
   .layout-main {
-    padding: 24px 16px 48px;
+    padding: var(--space-5) var(--space-4) var(--space-7);
   }
 
   .header-bar {
-    padding: 10px 16px;
+    padding: 10px var(--space-4);
   }
 }

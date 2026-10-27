@@ -24,6 +24,16 @@ export type LoginRequest = {
   password: string;
 };
 
+export type Wallet = {
+  balance: number;
+  committed: number;
+  available: number;
+};
+
+export type DepositRequest = {
+  amount: number;
+};
+
 export type ApiErrorBody = {
   code?: string;
   fields?: Record<string, string>;

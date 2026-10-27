@@ -3,6 +3,7 @@ import { DashboardPage } from '../features/auctioneer/dashboard-page';
 import { LoginPage } from '../features/auth/login-page';
 import { SignupPage } from '../features/auth/signup-page';
 import { HomePage } from '../features/lots/home-page';
+import { WalletPage } from '../features/wallet/wallet-page';
 import { GuestOnly } from './guest-only';
 import { Layout } from './layout';
 import { RequireRole } from './require-role';
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
       {
         element: <RequireRole role="AUCTIONEER" />,
         children: [{ path: '/dashboard', element: <DashboardPage /> }],
+      },
+      {
+        element: <RequireRole role="BIDDER" />,
+        children: [{ path: '/wallet', element: <WalletPage /> }],
       },
     ],
   },

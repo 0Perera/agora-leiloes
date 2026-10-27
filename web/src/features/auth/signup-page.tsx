@@ -2,7 +2,8 @@ import { Link } from 'react-router';
 import { api } from '../../shared/api/client';
 import type { Role, SignupRequest } from '../../shared/api/types';
 import { AuthCard } from './auth-card';
-import { FieldError, FormNotice, TextField } from './form-parts';
+import { FieldError } from '../../shared/ui/field-error';
+import { FormNotice, TextField } from './form-parts';
 import { PasswordField } from './password-field';
 import { useAuthForm } from './use-auth-form';
 

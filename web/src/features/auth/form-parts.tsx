@@ -1,23 +1,6 @@
 import type { ReactNode } from 'react';
+import { FieldError } from '../../shared/ui/field-error';
 import type { Notice } from './auth-errors';
-
-type FieldErrorProps = {
-  id: string;
-  message?: string;
-};
-
-export function FieldError({ id, message }: FieldErrorProps) {
-  return (
-    <span id={id}>
-      {message && (
-        <span className="field-error">
-          <span aria-hidden="true">✕</span>
-          <span>{message}</span>
-        </span>
-      )}
-    </span>
-  );
-}
 
 type TextFieldProps = {
   id: string;
