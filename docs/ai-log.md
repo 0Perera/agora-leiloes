@@ -385,12 +385,19 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Função pura `decide` em `api/src/bids/bid.rules.ts`: recebe lote, último lance, licitante, disponível, valor e `now` e devolve aceite (novo `endsAt`, valor a comprometer e valor a liberar) ou recusa (código e detalhe), como união discriminada para a 4.3 mapear sem `as`.
 - Checagens em funções pequenas, na ordem status do lote, líder, valor e saldo; a primeira que falha decide. Início inclusivo e fim exclusivo, como o `STATUS_SQL`.
 - Anti-sniping somando 2 min ao fim atual quando faltam 2 min ou menos (D-011); recusa nunca prorroga.
-- Os 27 casos aprovados em `bid.rules.spec.ts`, em seis pares de commits `test(bids)` (vermelho) e `feat(bids)` (verde), um por grupo.
+- Contexto do épico 4 (`docs/stories/epic-4-context.md`) e a spec da story.
+- Os 29 casos aprovados em `bid.rules.spec.ts`, em seis pares de commits `test(bids)` (vermelho) e `feat(bids)` (verde), um por grupo.
 
 **O que revisei e pedi para mudar:**
-- Aprovei os 27 casos de teste da spec, agrupados em status do lote, líder, valor, saldo, saldo comprometido e anti-sniping.
-- Pedi TDD com o commit do teste antes do commit da implementação em cada grupo, para o histórico mostrar a ordem.
-- Decidi que a recusa é retornada pela regra e convertida em exceção de domínio só na 4.3.
+- Aprovei os casos 1 a 24 propostos no épico.
+- Pedi três casos a mais: recusa por valor antes de checar o saldo, recusa por saldo informando o disponível e recusa por lote não iniciado informando o início.
+- Pedi TDD com cada `it` escrito antes da implementação, em commits que mostram o teste vindo antes do código.
+- Pedi os três revisores, por ser story crítica.
+- Pedi `npm run lint:check` antes de cada commit.
+- Pedi para marcar a 3.7 como concluída e compilar o contexto do épico 4 uma vez, para as próximas stories.
+- Aprovei a spec já com os casos aprovados, sem parada para revisão.
+- Aprovei dois casos a mais sugeridos na revisão: recusa por status antes de checar a liderança e antes de checar o valor, porque inverter a ordem no código não quebrava nenhum teste.
+- Pedi registrar os commits de teste vermelhos como decisão (D-055), citando que o squash merge (D-021) mantém a `main` sem commit vermelho e que eles servem de evidência do TDD (D-019), e atualizar a regra de atomicidade do CLAUDE.md com a exceção.
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta story.
