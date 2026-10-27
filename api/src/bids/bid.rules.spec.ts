@@ -1,4 +1,4 @@
-import { BidLot, BidState, decide } from './bid.rules';
+import { BidDecision, BidLot, BidState, decide } from './bid.rules';
 
 const NOW = new Date('2026-10-26T12:00:00Z');
 const MINUTE = 60 * 1000;
@@ -20,6 +20,11 @@ function makeLot(override: Partial<BidLot> = {}): BidLot {
   };
 }
 
+function endsAtOf(decision: BidDecision): Date {
+  if (!decision.accepted) throw new Error(decision.code);
+  return decision.endsAt;
+}
+
 function makeBid(override: Partial<BidState> = {}): BidState {
   return {
     lot: makeLot(),
@@ -32,7 +37,7 @@ function makeBid(override: Partial<BidState> = {}): BidState {
   };
 }
 
-describe('BidRules.decide', () => {
+describe('decide', () => {
   describe('status do lote', () => {
     it('recusa lance antes do início', () => {
       const bid = makeBid({ lot: makeLot({ startsAt: at(MINUTE) }) });
@@ -280,15 +285,17 @@ describe('BidRules.decide', () => {
     });
 
     it('acumula prorrogação sobre um fim já prorrogado', () => {
-      const extended = at(MINUTE + 2 * MINUTE);
-      const bid = makeBid({
+      const first = makeBid({ lot: makeLot({ endsAt: at(MINUTE) }) });
+      const extended = endsAtOf(decide(first));
+      const second = makeBid({
         lot: makeLot({ endsAt: extended }),
-        last: { userId: RIVAL, amount: 10_000 },
+        last: { userId: BIDDER, amount: 10_000 },
+        userId: RIVAL,
         amount: 11_000,
         now: at(2 * MINUTE),
       });
 
-      expect(decide(bid)).toMatchObject({ endsAt: at(5 * MINUTE) });
+      expect(decide(second)).toMatchObject({ endsAt: at(5 * MINUTE) });
     });
 
     it('lance recusado não prorroga', () => {
@@ -297,7 +304,11 @@ describe('BidRules.decide', () => {
         amount: 9_000,
       });
 
-      expect(decide(bid)).not.toHaveProperty('endsAt');
+      expect(decide(bid)).toEqual({
+        accepted: false,
+        code: 'BID_BELOW_MINIMUM',
+        minimum: 10_000,
+      });
     });
   });
 });
