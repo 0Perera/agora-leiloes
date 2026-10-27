@@ -406,6 +406,18 @@
   color: var(--gold-700);
 }
 
+/* no cabeçalho compacto só cabe o disponível; o valor em lances fica na tela Carteira */
+@media (max-width: 519px) {
+  .wallet-scroll-label,
+  .wallet-scroll-held {
+    display: none;
+  }
+
+  .wallet-scroll-rows {
+    grid-template-columns: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wallet-skel {
     animation: none;
