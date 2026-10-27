@@ -4,8 +4,8 @@ Registro de onde e como usei IA no projeto, o que revisei e pedi para mudar e o 
 
 ## Ferramentas
 
-- **Claude (app):** apoio de pesquisa e consulta durante o planejamento e na revisão das propostas do agente, junto com buscas no Google e na documentação oficial. As decisões registradas em "O que revisei e pedi para mudar" foram minhas.
-- **Claude Code:** implementação e commits. Todo commit feito por ele leva o trailer `Co-Authored-By`, então dá para ver no histórico do Git o que passou pela IA.
+- **Claude (app):** apoio de pesquisa e consulta durante o planejamento e na revisão das propostas do agente, junto com buscas no Google e na documentação oficial. Parte dos ajustes pedidos nas revisões veio de sugestões dele, que conferi contra as decisões antes de pedir; algumas recusei. As decisões registradas em "O que revisei e pedi para mudar" foram minhas.
+- **Claude Code:** implementação e commits. Os commits das branches das stories, que nunca são apagadas, levam o trailer `Co-Authored-By`; a partir da 4.1, a mensagem do squash na `main` também leva. Assim dá para ver no histórico do Git o que passou pela IA.
 
 ## Modelo de entrada
 
@@ -46,7 +46,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - *Pinger externo para evitar cold start:* preferi aceitar o cold start e avisar no README.
 - *Imagens do seed versionadas no repositório:* não quero binários no repo. O seed baixa as imagens pelo fluxo normal.
 - *Socket.IO:* resolveria a autenticação do stream, mas o custo em tempo não cabia no prazo.
-- *Regras extras de lint (`no-explicit-any`, `no-floating-promises`):* fiquei com o padrão do Nest mais o limite de complexidade.
+- *Regra extra de lint `no-floating-promises`:* fiquei com o padrão do Nest, o limite de complexidade e o `no-explicit-any` (D-028).
 - *Cancelamento com estorno e dark mode:* fora do escopo, por causa do prazo.
 
 **Erro da IA que peguei:**
@@ -276,6 +276,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - *Justificativa do cancelamento no README ("quem deu lance já tem saldo comprometido"):* pedi a regra do enunciado e o motivo real, o estorno fora do escopo (D-018).
 
+**Erro da IA que peguei:**
+- O Claude (app) sugeriu usar o `bid_count` de forma definitiva na checagem de "tem lance" do cancelamento. Apontei que contrariava a D-042: o contador não está na cadeia de HMAC e poderia ser alterado direto no banco para burlar a regra.
+
 ## Story 3.5: Tela Painel do leiloeiro
 
 **O que a IA gerou:**
@@ -289,28 +292,13 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **O que revisei e pedi para mudar:**
 - Pedi que a ficha não mostrasse o número que o lote vai receber, porque o número é global e sequencial e outro leiloeiro pode pegá-lo no meio; o romano aparece só na confirmação, com o valor devolvido pelo `POST /lots` (D-053).
-- Pedi valores sempre com centavos (D-048) e o visual do canvas Painel com as classes `ag-*`.
-- Escolhi omitir Dimensões e Nº no acervo da ficha, em vez de acrescentar os campos à busca da API.
-- Pedi que a data curta fosse testada em `America/Sao_Paulo`, para o teste passar igual no CI (UTC) e na máquina local.
-- Depois da revisão, pedi que as datas exibidas usassem o fuso do navegador, igual aos campos de início e fim, com `TZ=America/Sao_Paulo` fixado na config do vitest, não no código.
-- Recusei os casos de leitura do romano e a própria função de leitura: a 3.5 só exibe, e a leitura entra na story que usar primeiro.
-- Pedi dois casos a mais em `lot-errors.spec.ts`: traduz `LOT_HAS_BIDS` e traduz `LOT_ENDED`.
-- Aprovei as outras escolhas da spec: seletor de departamento, resumo em três cartões, livro sem alias, arrematante, "Abrir sala" e comprovante, sem a regra "aumento não maior que o lance inicial" do canvas e com os limites da API.
-- Pedi para registrar em `deferred-work.md` a ação "Abrir sala" no livro para a 3.7.
+- Decidi mostrar romano e número comum juntos ("Lote DXXXVII · nº 537"), só o número comum acima de 3999, numa decisão que substitui a D-036 (D-054), com uma linha no README sobre o formato.
+- Escolhi omitir Dimensões e Nº no acervo da ficha e recusei a leitura do romano, porque a 3.5 só exibe.
+- Pedi as datas exibidas no fuso do navegador, igual aos campos de início e fim, com `TZ=America/Sao_Paulo` fixado na config do vitest para o teste passar igual no CI e na máquina local.
+- Pedi a busca no acervo sempre visível, o livro vazio só com texto e, depois de criar, uma janela modal ("Lote VI · nº 6 publicado", "Ver no livro" e "Criar outro lote") que limpa a ficha ao fechar, com `role="dialog"`, foco preso e Esc.
+- Pedi os ajustes visuais do painel: valores sempre com centavos (D-048) e classes `ag-*` do canvas, departamento em lista suspensa sem a borda azul, cartões da busca em `auto-fill` de 200px, coluna Nº centralizada e destaque dourado do lote recém-criado respeitando `prefers-reduced-motion`.
+- Pedi dois casos a mais em `lot-errors.spec.ts` (`LOT_HAS_BIDS` e `LOT_ENDED`), aprovei as outras escolhas da spec e pedi registrar "Abrir sala" no livro para a 3.7 em `deferred-work.md`.
 - Pedi só o revisor de casos de borda e `npm run lint:check` antes do commit.
-- Na conferência no navegador, apontei que o seletor de departamento abria a lista genérica do navegador; aprovei a troca por dois botões de opção.
-- Perguntei por que o primeiro lote da minha conta saiu com o número 5 (a sequência é global e não reaproveita números de lotes apagados).
-- Perguntei se o romano vira problema com muitos lotes e para quem não lê romano; decidi mostrar romano e número comum juntos ("Lote DXXXVII · nº 537"), só o número comum acima de 3999, numa decisão nova que substitui a D-036 (D-054).
-- Pedi a busca no acervo sempre visível no painel, sem o link "Criar lote" no cabeçalho nem modo separado de criação.
-- Pedi o estado vazio sem botão, com o texto "Busque uma obra no acervo para criar seu primeiro lote".
-- Pedi que, depois de criar, a ficha feche, a obra e os campos sejam limpos, a mensagem de sucesso mostre o número e o livro volte para Todos, página 1.
-- Pedi uma linha no README sobre o formato do número e o limite de 3999.
-- Autorizei apagar do banco local o usuário de teste `leiloeiro35@example.com` e o lote dele.
-- Pedi a coluna Nº do livro centralizada na vertical e alinhada com o cabeçalho "Nº".
-- Pedi trocar a faixa de sucesso por uma janela modal no estilo da ficha, com título "Lote VI · nº 6 publicado", miniatura e título da obra, estado e abertura, e os botões "Ver no livro" e "Criar outro lote"; a ficha só é limpa quando a janela fecha; `role="dialog"`, foco preso, Esc fecha e o foco volta para a busca; em 360px, largura da tela com margem.
-- Pedi destacar por alguns segundos a linha do lote recém-criado, com fundo dourado que some, respeitando `prefers-reduced-motion`.
-- Pedi os cartões da busca com `repeat(auto-fill, minmax(200px, 1fr))` e conferência com 1, 5 e 12 resultados e em 360px.
-- Pedi trocar os dois botões de departamento por uma lista suspensa (cascata) e tirar a borda azul que aparecia em volta dela com o mouse.
 
 **Sugestões rejeitadas e por quê:**
 - *Faixa de sucesso dentro da seção de novo lote:* recusei; pedi uma janela modal com ações para ver o lote no livro ou criar outro.
@@ -378,3 +366,26 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - *"Abrir sala" só em lote ao vivo, como no canvas do Painel:* recusei; pedi em todo lote não cancelado, para o leiloeiro abrir também agendados e encerrados.
 - *Nova busca da virada uma vez só:* mudei para até 3 tentativas a cada 2 s, para a sala não ficar parada em 00:00 se o servidor demorar a virar o status.
 - *Texto de erro do canvas ("Nenhum lance seu foi enviado ou perdido"):* recusei; pedi um texto neutro, porque ainda não há lance.
+
+## Story 4.1: Regras de lance, saldo comprometido e anti-sniping (TDD)
+
+**O que a IA gerou:**
+- Função pura `decide` em `api/src/bids/bid.rules.ts`: recebe lote, último lance, licitante, disponível, valor e `now` e devolve aceite (novo `endsAt`, valor a comprometer e valor a liberar) ou recusa (código e detalhe), como união discriminada para a 4.3 mapear sem `as`.
+- Escolha de devolver a recusa como valor, em vez de lançar exceção; a 4.3 converte em exceção de domínio.
+- Checagens em funções pequenas, na ordem status do lote, líder, valor e saldo; a primeira que falha decide. Início inclusivo e fim exclusivo, como o `STATUS_SQL`.
+- Anti-sniping somando 2 min ao fim atual quando faltam 2 min ou menos (D-011); recusa nunca prorroga.
+- Contexto do épico 4 (`docs/stories/epic-4-context.md`) e a spec da story.
+- Os 29 casos aprovados em `bid.rules.spec.ts`, em seis pares de commits `test(bids)` (vermelho) e `feat(bids)` (verde), um por grupo.
+
+**O que revisei e pedi para mudar:**
+- Aprovei os casos 1 a 24 do épico e pedi três a mais: recusa por valor antes de checar o saldo, recusa por saldo informando o disponível e recusa por lote não iniciado informando o início.
+- Pedi TDD com cada `it` escrito antes da implementação, em commits que mostram o teste vindo antes do código.
+- Pedi os três revisores, por ser story crítica, e `npm run lint:check` antes de cada commit.
+- Aprovei dois casos a mais sugeridos na revisão: recusa por status antes de checar a liderança e antes de checar o valor, porque inverter a ordem no código não quebrava nenhum teste.
+- Pedi registrar os commits de teste vermelhos como decisão (D-055), citando que o squash merge (D-021) mantém a `main` sem commit vermelho e que eles servem de evidência do TDD (D-019), com a exceção na regra de atomicidade do CLAUDE.md.
+- Pedi, antes do push: o caso 23 encadeando duas chamadas para provar o acúmulo, o caso 24 conferindo o código da recusa, apagar o comentário em `accept` que repetia o código e renomear o `describe` para `decide`.
+- Pedi registrar para a 4.3 o teste de serviço do licitante superado que volta com o valor cheio (o caso 19 não prova isso na regra pura) e a ligação dos códigos de recusa ao `DomainCode`.
+- Pedi que a escolha de devolver a recusa em vez de lançar ficasse em "O que a IA gerou", porque não foi decisão minha.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma nesta story.

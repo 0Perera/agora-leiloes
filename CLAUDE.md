@@ -313,9 +313,11 @@ Refs: story <epic>.<story>
   Diz o que muda, não como: `feat(bids): recusa lance abaixo do incremento mínimo`, não `feat(bids): altera if no service`.
 - **Corpo**: só quando o motivo não é óbvio pelo título. Explica o porquê, não repete o diff.
 - **Rodapé**: sempre `Refs: story X.Y`. Manter o trailer de coautoria do Claude Code (transparência sobre uso de IA).
+  A mensagem do squash na `main` também leva o trailer (a partir da 4.1).
 
 Atomicidade:
 - Um commit = uma mudança lógica que compila e passa nos testes sozinha.
+  Exceção: nas stories em TDD, o commit `test` vem vermelho antes do `feat` (ver D-055).
 - Teste vai no mesmo commit da funcionalidade que ele cobre. Migration vai no mesmo commit da entidade.
 - Nunca misturar `refactor` com `feat` ou `fix` no mesmo commit.
 - Adicionar arquivos explicitamente (nunca `git add .` às cegas) e revisar `git diff --staged` antes de commitar.
@@ -337,6 +339,8 @@ Ruins: `update`, `ajustes`, `wip`, `fix: vários bugs`, `feat: cria lances, cart
 - Na entrada, "O que revisei e pedi para mudar" lista tudo o que eu decidi ou pedi durante a story, tirado da conversa:
   casos de teste que pedi, perguntas que respondi, valores que defini, pedidos de correção e o motivo de cada um.
   Uma linha por item. Nunca inventar revisão que não aconteceu.
+- Cada seção da entrada tem no máximo 8 itens, só com decisões (perguntas e autorizações operacionais não entram).
+  Ajustes visuais da mesma tela viram um item só.
 - Nessa seção, só verbos do que eu fiz: decidi, escolhi, aprovei, recusei, pedi. Nunca "reescrevi", "acrescentei",
   "corrigi" ou "implementei": eu não escrevo código à mão, eu peço e o agente faz ("Pedi um caso de teste a mais").
 - "Sugestões rejeitadas" inclui tudo o que eu recusei ou mudei de uma proposta do agente.
