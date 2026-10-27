@@ -602,3 +602,25 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Reconhecer o vencedor comparando apelidos: recusei, porque dois licitantes do mesmo lote podem ter o mesmo apelido e o link iria para a pessoa errada.
+
+## Story 5.3: Timer de liquidação em memória
+
+**O que a IA gerou:**
+- Um timer único em memória que, ao subir a API, liquida os lotes vencidos e se arma para o próximo fim, sem job periódico.
+- O recálculo do timer depois de cada lance aceito e de cada lote criado, sem atrasar a resposta.
+- O tratamento do limite do relógio do Node: lote que termina daqui a mais de 24 dias dispara no limite e reagenda o resto.
+- As duas consultas do timer (lotes vencidos e próximo fim) junto da liquidação.
+- Quinze testes unitários com relógio falso (três deles cobrindo falhas de agendamento achadas na revisão) e cinco testes de integração com banco real.
+
+**O que revisei e pedi para mudar:**
+- Pedi que o timer só aponte para lotes com fim no futuro, com um teste provando que um lote que não liquida (selo inválido) não faz o timer disparar em laço.
+- Pedi que todo disparo registre o erro no log, sem nenhuma Promise sem tratamento.
+- Pedi que o timer seja limpo quando o módulo é destruído, para os testes de integração não ficarem pendurados.
+- Pedi o recálculo depois do commit do lance e da criação de lote, sem dependência circular entre os módulos.
+- Pedi que o timer não liquide lotes no meio dos testes de integração; aprovei desligá-lo lá, trocando por um falso que só conta os recálculos.
+- Aprovei os 16 casos de teste propostos e pedi um a mais: erro ao liquidar no boot vai para o log e a API termina de subir com o timer armado.
+- Aprovei o recálculo por substituição, em que só vale o pedido mais recente, e as consultas do timer no serviço de liquidação.
+- Recusei adiar a falha da consulta do próximo fim: pedi registrar no log e tentar de novo a cada 30 s até conseguir, com um teste em que a primeira consulta falha e a segunda arma o timer.
+
+**Sugestões rejeitadas e por quê:**
+- Deixar para depois a nova tentativa quando a consulta do próximo fim falha: recusei, porque sem ela o timer para até o próximo lance ou lote criado.

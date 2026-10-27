@@ -30,6 +30,7 @@ import { Clock } from '../common/clock';
 import { Env } from '../config/env.validation';
 import { Receipt } from '../receipts/receipt.entity';
 import { SettlementService } from '../settlement/settlement.service';
+import { SettlementTimer } from '../settlement/settlement.timer';
 import { CreateLotDto } from './dto/create-lot.dto';
 import { ListLotsQueryDto } from './dto/list-lots-query.dto';
 import {
@@ -130,6 +131,7 @@ export class LotsService {
     @InjectRepository(Lot) private readonly lots: Repository<Lot>,
     config: ConfigService<Env, true>,
     private readonly settlement: SettlementService,
+    private readonly timer: SettlementTimer,
   ) {
     this.secret = config.get('BID_HMAC_SECRET', { infer: true });
   }
@@ -202,9 +204,11 @@ export class LotsService {
     // Download fora da transação: nada de rede com transação aberta.
     const image = await this.catalog.image(artwork.imageUrl);
 
-    return this.dataSource.transaction((manager) =>
+    const created = await this.dataSource.transaction((manager) =>
       this.insert(manager, { auctioneerId, artwork, conditions, image }),
     );
+    this.timer.refresh();
+    return created;
   }
 
   // Lote alheio, inexistente ou já cancelado dá o mesmo 404: não revela que o lote existe.

@@ -7,6 +7,7 @@ import { DomainCode, DomainException } from '../common/domain.exception';
 import { Env } from '../config/env.validation';
 import { LotEventsService } from '../lots/lot-events.service';
 import { Lot } from '../lots/lot.entity';
+import { SettlementTimer } from '../settlement/settlement.timer';
 import { Wallet } from '../wallets/wallet.entity';
 import { Bid } from './bid.entity';
 import { BidsService } from './bids.service';
@@ -106,11 +107,13 @@ function makeService(
   };
   const clock = { now: jest.fn(() => NOW) };
   const events = { publish: jest.fn() };
+  const timer = { refresh: jest.fn() };
   const service = new BidsService(
     dataSource as unknown as DataSource,
     clock,
     events as unknown as LotEventsService,
     config,
+    timer as unknown as SettlementTimer,
   );
   return {
     service,

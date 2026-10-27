@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { LotEventsService } from '../src/lots/lot-events.service';
+import { SettlementService } from '../src/settlement/settlement.service';
 import {
   type Account,
   at,
@@ -261,5 +262,69 @@ describe('acesso que não liquida o lote', () => {
     expect(await receipts()).toHaveLength(1);
     expect(await settledAt()).toEqual(first);
     settled.mockRestore();
+  });
+});
+
+function cancel(id: number): request.Test {
+  return request(api.server)
+    .post(`/lots/${id}/cancel`)
+    .auth(auctioneer.token, { type: 'bearer' })
+    .expect(204);
+}
+
+function settlement(): SettlementService {
+  return api.app.get(SettlementService);
+}
+
+describe('SettlementService.due', () => {
+  it('inclui o lote que encerra no instante exato', async () => {
+    expect(await settlement().due(at(60))).toEqual([lotId]);
+  });
+
+  it('exclui o lote cancelado e o já liquidado', async () => {
+    const cancelled = await api.createLot(auctioneer, {
+      startsAt: BASE,
+      endsAt: at(30),
+    });
+    const settled = await api.createLot(auctioneer, {
+      startsAt: BASE,
+      endsAt: at(30),
+    });
+    await cancel(cancelled);
+    api.clock.set(at(30));
+    await settlement().settle(settled);
+
+    expect(await settlement().due(at(60))).toEqual([lotId]);
+  });
+});
+
+describe('SettlementService.next', () => {
+  it('devolve só o fim futuro de lote aberto', async () => {
+    await api.createLot(auctioneer, { startsAt: BASE, endsAt: at(30) });
+    const cancelled = await api.createLot(auctioneer, {
+      startsAt: BASE,
+      endsAt: at(40),
+    });
+    await cancel(cancelled);
+
+    expect(await settlement().next(at(30))).toEqual(at(60));
+  });
+});
+
+describe('SettlementTimer.refresh', () => {
+  it('é chamado depois de um lance aceito', async () => {
+    const before = api.timer.refreshes;
+
+    await api.bid(bidder, lotId, STARTING_BID).expect(201);
+
+    expect(api.timer.refreshes).toBe(before + 1);
+  });
+
+  it('é chamado depois da criação de um lote', async () => {
+    const before = api.timer.refreshes;
+
+    await api.createLot(auctioneer, { startsAt: BASE, endsAt: at(30) });
+
+    expect(api.timer.refreshes).toBe(before + 1);
   });
 });

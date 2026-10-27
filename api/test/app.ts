@@ -15,6 +15,7 @@ import { Clock } from '../src/common/clock';
 import { Env } from '../src/config/env.validation';
 import { DatabaseModule } from '../src/database/database.module';
 import { databaseOptions } from '../src/database/database.options';
+import { SettlementTimer } from '../src/settlement/settlement.timer';
 import type { Role } from '../src/users/user.entity';
 
 export const BASE = new Date('2026-11-01T12:00:00.000Z');
@@ -71,6 +72,15 @@ export class FakeCatalog implements Pick<CatalogService, 'find' | 'image'> {
       contentType: 'image/jpeg',
       bytes: Buffer.from([0xff, 0xd8, 0xff]),
     });
+  }
+}
+
+// Sem hooks de ciclo de vida: nada liquida por timer no e2e, só conta os recálculos.
+export class FakeTimer implements Pick<SettlementTimer, 'refresh'> {
+  refreshes = 0;
+
+  refresh(): void {
+    this.refreshes += 1;
   }
 }
 
@@ -158,6 +168,7 @@ export class TestApp {
     readonly clock: TestClock,
     readonly catalog: FakeCatalog,
     readonly db: DataSource,
+    readonly timer: FakeTimer,
   ) {}
 
   async reset(): Promise<void> {
@@ -247,6 +258,7 @@ export class TestApp {
 export async function start(): Promise<TestApp> {
   const clock = new TestClock();
   const catalog = new FakeCatalog();
+  const timer = new FakeTimer();
   const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
     .overrideModule(DatabaseModule)
     .useModule(TestDatabaseModule)
@@ -254,6 +266,8 @@ export async function start(): Promise<TestApp> {
     .useValue(clock)
     .overrideProvider(CatalogService)
     .useValue(catalog)
+    .overrideProvider(SettlementTimer)
+    .useValue(timer)
     .compile();
   const app = moduleRef.createNestApplication();
   setup(app);
@@ -264,6 +278,7 @@ export async function start(): Promise<TestApp> {
     clock,
     catalog,
     app.get(DataSource),
+    timer,
   );
 }
 
