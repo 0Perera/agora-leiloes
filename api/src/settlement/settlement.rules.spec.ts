@@ -145,28 +145,7 @@ describe('decide', () => {
       committed: 0,
     };
 
-    it('debita o valor do saldo do vencedor', () => {
-      expect(movesOf(decide(makeState({ last })))).toEqual([
-        winnerMove,
-        auctioneerMove,
-      ]);
-    });
-
-    it('libera o valor do comprometido do vencedor', () => {
-      expect(movesOf(decide(makeState({ last })))).toEqual([
-        winnerMove,
-        auctioneerMove,
-      ]);
-    });
-
-    it('credita o valor no saldo do leiloeiro', () => {
-      expect(movesOf(decide(makeState({ last })))).toEqual([
-        winnerMove,
-        auctioneerMove,
-      ]);
-    });
-
-    it('o comprometido do vencedor varia só pelo valor deste lote', () => {
+    it('move o valor do último lance do vencedor para o leiloeiro e mais nada', () => {
       expect(movesOf(decide(makeState({ last })))).toEqual([
         winnerMove,
         auctioneerMove,
