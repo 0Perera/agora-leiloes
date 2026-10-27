@@ -1,12 +1,15 @@
 import { Link } from 'react-router';
 import { lotImageUrl } from '../../shared/api/client';
-import type { LotDetail } from '../../shared/api/types';
+import type { BidHistoryItem, LotDetail } from '../../shared/api/types';
 import { secondsLeft, splitLeft } from '../../shared/lib/countdown';
 import { formatShortDate } from '../../shared/lib/date';
+import { minimumOf, situationOf } from '../../shared/lib/live-bids';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel } from '../../shared/lib/roman';
+import { BidSituation } from '../../shared/ui/bid-situation';
 import { LoadError } from '../../shared/ui/load-error';
-import type { Featured as FeaturedState } from './use-featured';
+import { useWalletRefresh } from '../wallet/use-wallet-refresh';
+import type { Featured as FeaturedState, ReadyFeatured } from './use-featured';
 
 const urgentSeconds = 120;
 
@@ -20,20 +23,12 @@ export function Featured({ state, now, onRetry }: Props) {
   if (state.status === 'none') return null;
   if (state.status === 'loading') return <FeaturedSkeleton />;
   if (state.status === 'error') return <FeaturedError onRetry={onRetry} />;
-  return <FeaturedLot lot={state.lot} now={now} offset={state.offset} />;
+  return <FeaturedLot room={state} now={now} />;
 }
 
-function FeaturedLot({
-  lot,
-  now,
-  offset,
-}: {
-  lot: LotDetail;
-  now: number;
-  offset: number;
-}) {
+function FeaturedLot({ room, now }: { room: ReadyFeatured; now: number }) {
+  const { lot, offset } = room;
   const live = lot.status === 'live';
-  const hasBids = lot.currentBid !== null;
 
   return (
     <section className="home-hero" aria-labelledby="hero-title">
@@ -58,26 +53,7 @@ function FeaturedLot({
         {lot.description && (
           <p className="home-hero__description">{lot.description}</p>
         )}
-        <div className="home-hero__facts">
-          <div>
-            <span className="ag-lot__label">
-              {hasBids ? 'Lance atual' : 'Lance inicial'}
-            </span>
-            <span className="home-hero__price">
-              {formatMoney(lot.currentBid ?? lot.startingBid)}
-            </span>
-          </div>
-          <div>
-            <span className="ag-lot__label">Aumento mínimo</span>
-            <span className="home-hero__fact home-hero__fact--gold">
-              + {formatMoney(lot.increment)}
-            </span>
-          </div>
-          <div>
-            <span className="ag-lot__label">Lances</span>
-            <span className="home-hero__fact">{lot.bidCount}</span>
-          </div>
-        </div>
+        <HeroFacts lot={lot} />
         <div className="home-hero__timing">
           {live ? (
             <HeroCountdown seconds={secondsLeft(lot.endsAt, now, offset)} />
@@ -90,6 +66,9 @@ function FeaturedLot({
             </div>
           )}
         </div>
+        {live && lot.me && (
+          <FeaturedSituation lot={lot} me={lot.me} top={room.bids[0]} />
+        )}
         <div>
           <Link className="ag-btn ag-btn--primary" to={`/lots/${lot.id}`}>
             {live ? 'Entrar na sala do lote' : 'Ver o lote'}
@@ -108,6 +87,54 @@ function FeaturedLot({
         </div>
       </div>
     </section>
+  );
+}
+
+function HeroFacts({ lot }: { lot: LotDetail }) {
+  const hasBids = lot.currentBid !== null;
+
+  return (
+    <div className="home-hero__facts">
+      <div>
+        <span className="ag-lot__label">
+          {hasBids ? 'Lance atual' : 'Lance inicial'}
+        </span>
+        <span className="home-hero__price">
+          {formatMoney(lot.currentBid ?? lot.startingBid)}
+        </span>
+      </div>
+      <div>
+        <span className="ag-lot__label">Aumento mínimo</span>
+        <span className="home-hero__fact home-hero__fact--gold">
+          + {formatMoney(lot.increment)}
+        </span>
+      </div>
+      <div>
+        <span className="ag-lot__label">Lances</span>
+        <span className="home-hero__fact">{lot.bidCount}</span>
+      </div>
+    </div>
+  );
+}
+
+// só licitante recebe me, e só ele tem carteira para reler
+function FeaturedSituation({
+  lot,
+  me,
+  top,
+}: {
+  lot: LotDetail;
+  me: NonNullable<LotDetail['me']>;
+  top: BidHistoryItem | undefined;
+}) {
+  const situation = situationOf(me, top);
+  useWalletRefresh(situation);
+  if (situation === 'none') return null;
+
+  return (
+    <div className="home-hero__situation">
+      <BidSituation situation={situation} minimum={minimumOf(lot)} />
+    </div>
   );
 }
 

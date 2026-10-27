@@ -169,6 +169,10 @@
   color: var(--ink-muted);
 }
 
+.home-hero__situation {
+  max-width: 560px;
+}
+
 .home-hero__opens {
   display: flex;
   flex-direction: column;
