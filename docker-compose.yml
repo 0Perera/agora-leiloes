@@ -28,6 +28,7 @@ services:
       PORT: "3000"
       # Só para desenvolvimento local; no Render o valor é gerado.
       JWT_SECRET: dev-only-jwt-secret-change-me-0123456789
+      BID_HMAC_SECRET: dev-only-bid-hmac-secret-change-me-0123
       CLEVELAND_API_URL: https://openaccess-api.clevelandart.org/api
     ports:
       - "${API_PORT:-3000}:3000"

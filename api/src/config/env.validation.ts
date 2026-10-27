@@ -39,6 +39,9 @@ export class Env extends DatabaseEnv {
   @MinLength(32)
   JWT_SECRET!: string;
 
+  @MinLength(32)
+  BID_HMAC_SECRET!: string;
+
   @IsUrl({
     require_tld: false,
     require_protocol: true,
