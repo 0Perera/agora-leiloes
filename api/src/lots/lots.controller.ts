@@ -13,6 +13,7 @@ import type { AuthUser } from '../common/auth.guard';
 import { CurrentUser } from '../common/current-user.decorator';
 import { CreateLotDto } from './dto/create-lot.dto';
 import { LotResponseDto, toLotResponse } from './dto/lot-response.dto';
+import { LotIdPipe } from './lot-id.pipe';
 import { LotsService } from './lots.service';
 
 @Controller('lots')
@@ -31,10 +32,10 @@ export class LotsController {
   // Lote não é editável: a imagem de um id nunca muda, então o cache pode ser eterno.
   @Get(':id/image')
   async image(
-    @Param('id') id: string,
+    @Param('id', LotIdPipe) id: number,
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
-    const image = await this.lots.image(Number(id));
+    const image = await this.lots.image(id);
     response.set({
       'Cache-Control': 'public, max-age=31536000, immutable',
       'X-Content-Type-Options': 'nosniff',

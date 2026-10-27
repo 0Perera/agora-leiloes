@@ -15,8 +15,6 @@ import { LotImage } from './lot-image.entity';
 import { Lot } from './lot.entity';
 import { assertAvailable, scheduleErrors } from './lot.rules';
 
-const MAX_ID = 2_147_483_647;
-
 type Conditions = Pick<
   Lot,
   'startingBid' | 'increment' | 'startsAt' | 'endsAt'
@@ -47,9 +45,6 @@ export class LotsService {
   }
 
   async image(id: number): Promise<ImageFile> {
-    if (!Number.isInteger(id) || id < 1 || id > MAX_ID) {
-      throw new NotFoundException();
-    }
     const image = await this.images.findOne({
       select: { contentType: true, bytes: true },
       where: { lotId: id },
