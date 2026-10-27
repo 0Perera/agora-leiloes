@@ -56,24 +56,24 @@ export function DepositForm() {
   return (
     <section
       id="deposito"
-      className="corners deposit"
+      className="wallet-corners wallet-deposit"
       aria-labelledby="dep-title"
     >
       <div>
-        <h2 id="dep-title" className="deposit-title">
+        <h2 id="dep-title" className="wallet-deposit-title">
           Depositar
         </h2>
-        <p className="deposit-lede">O valor entra na hora.</p>
+        <p className="wallet-deposit-lede">O valor entra na hora.</p>
       </div>
       <div className="ag-rule" />
-      <form className="deposit-form" noValidate onSubmit={submit}>
+      <form className="wallet-deposit-form" noValidate onSubmit={submit}>
         <label className="ag-field" htmlFor="dep-amount">
           <span className="ag-field__label">Valor do depósito</span>
           <span
             className={
               error
-                ? 'ag-input deposit-input is-invalid'
-                : 'ag-input deposit-input'
+                ? 'ag-input wallet-deposit-input is-invalid'
+                : 'ag-input wallet-deposit-input'
             }
           >
             <span className="ag-input__prefix" aria-hidden="true">
@@ -98,11 +98,15 @@ export function DepositForm() {
           </span>
           <FieldError id="dep-err" message={error} />
         </label>
-        <div className="chips" role="group" aria-label="Valores sugeridos">
+        <div
+          className="wallet-chips"
+          role="group"
+          aria-label="Valores sugeridos"
+        >
           {chips.map((cents) => (
             <button
               key={cents}
-              className="chip"
+              className="wallet-chip"
               type="button"
               disabled={submitting}
               onClick={() => change(String(cents))}
@@ -113,8 +117,8 @@ export function DepositForm() {
         </div>
         <div role="status">
           {success && (
-            <p className="deposit-success">
-              <span className="deposit-mark" aria-hidden="true">
+            <p className="wallet-deposit-success">
+              <span className="wallet-deposit-mark" aria-hidden="true">
                 ✓
               </span>
               <span>{success}</span>
@@ -122,14 +126,14 @@ export function DepositForm() {
           )}
         </div>
         <button
-          className="ag-btn ag-btn--primary deposit-submit"
+          className="ag-btn ag-btn--primary wallet-deposit-submit"
           type="submit"
           disabled={submitting}
         >
           {submitting ? 'Depositando…' : 'Depositar'}
         </button>
       </form>
-      <p className="deposit-note">
+      <p className="wallet-deposit-note">
         Arremates são debitados do saldo total quando o lote encerra; lances
         superados nunca saem do saldo.
       </p>

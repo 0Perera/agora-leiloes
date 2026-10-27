@@ -12,33 +12,35 @@ export function BalanceEquation({ wallet }: { wallet: Wallet }) {
       <h2 id="saldo-title" className="sr-only">
         Saldo
       </h2>
-      <div className="equation" aria-live="polite">
-        <div className="term">
-          <span className="term-label">Saldo total</span>
-          <span className="term-value">{formatMoney(wallet.balance)}</span>
-          <span className="term-note">
+      <div className="wallet-equation" aria-live="polite">
+        <div className="wallet-term">
+          <span className="wallet-term-label">Saldo total</span>
+          <span className="wallet-term-value">
+            {formatMoney(wallet.balance)}
+          </span>
+          <span className="wallet-term-note">
             tudo o que você depositou, menos arremates
           </span>
         </div>
-        <span className="op" aria-hidden="true">
+        <span className="wallet-op" aria-hidden="true">
           −
         </span>
-        <div className="term">
-          <span className="term-label">Comprometido</span>
-          <span className="term-value term-value--held">
+        <div className="wallet-term">
+          <span className="wallet-term-label">Comprometido</span>
+          <span className="wallet-term-value wallet-term-value--held">
             {formatMoney(wallet.committed)}
           </span>
-          <span className="term-note">{heldNote}</span>
+          <span className="wallet-term-note">{heldNote}</span>
         </div>
-        <span className="op" aria-hidden="true">
+        <span className="wallet-op" aria-hidden="true">
           =
         </span>
-        <div className="term">
-          <span className="term-label">Disponível para lances</span>
-          <span className="term-value term-value--free">
+        <div className="wallet-term">
+          <span className="wallet-term-label">Disponível para lances</span>
+          <span className="wallet-term-value wallet-term-value--free">
             {formatMoney(wallet.available)}
           </span>
-          <span className="term-note">
+          <span className="wallet-term-note">
             o maior lance que você pode dar agora
           </span>
         </div>

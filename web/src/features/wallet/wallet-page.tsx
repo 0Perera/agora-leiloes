@@ -19,7 +19,7 @@ export function WalletPage() {
       {state.status === 'ready' && (
         <>
           <BalanceEquation wallet={state.wallet} />
-          <div className="cols">
+          <div className="wallet-cols">
             <Holds />
             <DepositForm />
           </div>
@@ -31,15 +31,15 @@ export function WalletPage() {
 
 function Holds() {
   return (
-    <section className="holds" aria-labelledby="hold-title">
-      <h2 id="hold-title" className="holds-title">
+    <section className="wallet-holds" aria-labelledby="hold-title">
+      <h2 id="hold-title" className="wallet-holds-title">
         Onde seu saldo está comprometido
       </h2>
-      <p className="holds-lede">
+      <p className="wallet-holds-lede">
         Enquanto você lidera um lote, o valor do lance fica reservado. Se for
         superado, ele volta na hora para o disponível.
       </p>
-      <p className="holds-empty">
+      <p className="wallet-holds-empty">
         Nenhum valor comprometido. Todo o seu saldo está livre para lances.
       </p>
     </section>
@@ -78,22 +78,22 @@ function Loading() {
         Carregando sua carteira.
       </p>
       <div className="wallet-skeleton" aria-hidden="true">
-        <div className="equation">
+        <div className="wallet-equation">
           {[1, 2, 3].map((term) => (
-            <div key={term} className="term">
-              <div className="skel skel--label" />
-              <div className="skel skel--value" />
+            <div key={term} className="wallet-term">
+              <div className="wallet-skel wallet-skel--label" />
+              <div className="wallet-skel wallet-skel--value" />
             </div>
           ))}
         </div>
-        <div className="cols">
-          <div className="skel-list">
-            <div className="skel skel--title" />
-            <div className="skel skel--row" />
-            <div className="skel skel--row" />
-            <div className="skel skel--row" />
+        <div className="wallet-cols">
+          <div className="wallet-skel-list">
+            <div className="wallet-skel wallet-skel--title" />
+            <div className="wallet-skel wallet-skel--row" />
+            <div className="wallet-skel wallet-skel--row" />
+            <div className="wallet-skel wallet-skel--row" />
           </div>
-          <div className="skel skel--card" />
+          <div className="wallet-skel wallet-skel--card" />
         </div>
       </div>
     </>

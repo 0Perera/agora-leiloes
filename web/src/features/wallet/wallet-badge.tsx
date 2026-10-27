@@ -15,17 +15,17 @@ export function WalletBadge() {
       to="/wallet"
       aria-label={`Carteira: ${free} disponíveis, ${held} em lances`}
     >
-      <span className="ws-roll" aria-hidden="true" />
-      <span className="ws-sheet">
+      <span className="wallet-scroll-roll" aria-hidden="true" />
+      <span className="wallet-scroll-sheet">
         <Coin />
-        <span className="ws-rows">
-          <span className="ws-lbl">Disponível</span>
-          <span className="ws-free">{free}</span>
-          <span className="ws-lbl">Em lances</span>
-          <span className="ws-held">{held}</span>
+        <span className="wallet-scroll-rows">
+          <span className="wallet-scroll-label">Disponível</span>
+          <span className="wallet-scroll-free">{free}</span>
+          <span className="wallet-scroll-label">Em lances</span>
+          <span className="wallet-scroll-held">{held}</span>
         </span>
       </span>
-      <span className="ws-roll" aria-hidden="true" />
+      <span className="wallet-scroll-roll" aria-hidden="true" />
     </NavLink>
   );
 }
@@ -33,7 +33,7 @@ export function WalletBadge() {
 function Coin() {
   return (
     <svg
-      className="ws-coin"
+      className="wallet-scroll-coin"
       width="34"
       height="34"
       viewBox="7 7 34 34"
