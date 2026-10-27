@@ -521,10 +521,16 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Os casos de teste aprovados, README e `deferred-work.md`.
 
 **O que revisei e pedi para mudar:**
-- Decidi a regra da situação: ganhando pelo último lance, superado só para quem já deu lance no lote.
-- Decidi que o detalhe do lote informa se o licitante já deu lance, na mesma query, em vez de a sala procurar no histórico.
-- Decidi manter no celular a ordem da 3.7, com a obra primeiro, em vez da ordem do canvas.
+- Pedi que a spec tratasse o evento `bid` do stream, a união do lance do POST com o do stream pelo `seq` e o botão travado durante o envio.
+- Pedi que esqueleto e erro com "Tentar de novo" fossem para `shared/ui` num commit de refatoração antes de usar, sem bloco novo com o nome da tela.
+- Escolhi que o detalhe do lote informe se o licitante já deu lance, num commit próprio com teste unitário e um caso e2e.
+- Decidi a regra da situação: ganhando pelo último lance; superado se já deu lance e o último é de outro; senão, ainda não deu lance.
+- Defini o texto da recusa por integridade: "Lances suspensos neste lote." e que o lance não foi registrado.
+- Pedi para manter no celular o layout da 3.7, com a obra primeiro e sem miniatura no cabeçalho.
 - Decidi deixar o link para a auditoria do lote para a 5.8.
-- Aprovei os casos de teste da story.
+- Aprovei os casos de teste e pedi os do "já deu lance".
 
 **Sugestões rejeitadas e por quê:**
+- Recusei derivar a situação só dos lances carregados: quem fosse superado por mais de 20 lances veria "ainda não deu lance".
+- Recusei a ordem do canvas no celular, com miniatura no cabeçalho: mantive a decidida na 3.7.
+- Mudei o texto proposto para a recusa por integridade, para dizer que o lance não foi registrado.

@@ -2,7 +2,7 @@
 title: 'Tela Sala do lote ao vivo (lances e tempo real)'
 type: 'feature'
 created: '2026-10-27'
-status: 'in-progress'
+status: 'done'
 baseline_commit: '539175e6c0d3ff95097e6eafa9dc903caa35f1f0'
 route: 'dispatch'
 review_loop_iteration: 0
@@ -89,13 +89,13 @@ Vitest ao lado do arquivo no front; Jest na API:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `docs/stories/sprint-status.yaml` -- 4-5 `done` (feito), 4-6 `in-progress`
-- [ ] `api/src/lots/*`, `api/test/realtime.e2e-spec.ts`, `web/src/shared/api/types.ts` -- commit `feat(lots)`: `me.hasBid`
-- [ ] `web/src/shared/ui/*`, `features/lots`, `features/auctioneer`, `features/live-room/room-page.tsx` -- commit `refactor(web)`: esqueleto e erro em `shared/ui`
-- [ ] `web/src/shared/api/client.ts`, `features/wallet/*` -- detalhe do erro, lance, histórico, stream, `refresh`
-- [ ] `web/src/features/live-room/*` -- funções puras + specs, hooks, componentes e CSS
-- [ ] `docs/stories/deferred-work.md` -- link "Auditar este lote" na sala para a 5.8; marcar `LOT_INTEGRITY_FAILED` como feito na 4.6
-- [ ] `README.md` (comportamento da sala, se couber), `docs/ai-log.md`, decisões se houver
+- [x] `docs/stories/sprint-status.yaml` -- 4-5 `done` (feito), 4-6 `in-progress`
+- [x] `api/src/lots/*`, `api/test/realtime.e2e-spec.ts`, `web/src/shared/api/types.ts` -- commit `feat(lots)`: `me.hasBid`
+- [x] `web/src/shared/ui/*`, `features/lots`, `features/auctioneer`, `features/live-room/room-page.tsx` -- commit `refactor(web)`: esqueleto e erro em `shared/ui`
+- [x] `web/src/shared/api/client.ts`, `features/wallet/*` -- detalhe do erro, lance, histórico, stream, `refresh`
+- [x] `web/src/features/live-room/*` -- funções puras + specs, hooks, componentes e CSS
+- [x] `docs/stories/deferred-work.md` -- link "Auditar este lote" na sala para a 5.8; marcar `LOT_INTEGRITY_FAILED` como feito na 4.6
+- [x] `README.md` (comportamento da sala, se couber), `docs/ai-log.md`, decisões se houver
 
 Commits na ordem, cada um compilando e passando sozinho, seguindo a seção Commits do `CLAUDE.md` (`Refs: story 4.6`, `npm run lint:check` antes): `chore` do sprint-status, `feat(lots)` do `hasBid`, `refactor(web)` de `shared/ui`, `feat(web)` da sala (com os docs). Sem push.
 
@@ -124,3 +124,18 @@ Mescla pelo `seq`: o maior `seq` conhecido manda no lance atual, no `bidCount` e
 ## Spec Change Log
 
 ## Review Triage Log
+
+| # | Achado | Veredito | Evidência |
+|---|---|---|---|
+| 1 | Lote cancelado com a sala aberta: stream 404 reabre a cada 3 s para sempre e a sala não vira "Lote não encontrado" (edge) | medium | `openLotStream` só reabre no CLOSED, sem consultar o lote; corrigido: ao cair, refaz os GETs e 404 leva à tela de lote não encontrado |
+| 2 | Reabertura do stream sem backoff (edge) | low | real, intervalo fixo de 3 s por aba; uso normal não chega lá e o backoff acrescenta estado; rejeitado e listado |
+| 3 | GETs do reconectar falhando com erro que não é 404 deixam a sala sem os lances perdidos (edge) | low | real só se a API cair de novo logo depois do `open`; os próximos eventos voltam a atualizar; retry acrescenta lógica; rejeitado e listado |
+| 4 | `synced` recalcula o `offset` e a limpeza do `useTurn` mata uma checagem em andamento (edge) | low | exige um reconectar do stream dentro da janela de retry da virada; rejeitado e listado |
+| 5 | `extended` não volta a falso: lance seguinte que não prorroga continua com "Prorrogado ... pelo último lance" (edge) | low | `mergeBid` só fazia OR; correção direta: o lance mais novo define o flag |
+| 6 | "O fim do lote foi prorrogado" comparando com o `endsAt` capturado no envio, que outro lance pode ter mudado (edge) | low | janela estreita (outro lance prorrogando durante o POST e o meu não prorrogando); rejeitado e listado |
+| 7 | Valor acima do teto do `integer` mostra "Informe o valor do lance." (edge) | false | é o resultado que a matriz aprovada define para `VALIDATION_FAILED` |
+| 8 | Código sem tradução (500 sem código) mostra "Verifique a conexão" (edge) | low | 401 já encerra a sessão pelo client e `ROLE_NOT_ALLOWED` não chega (leiloeiro não vê o formulário); só 500 cai aí; rejeitado e listado |
+| 9 | Licitante que entra com a sala aberta fica sem formulário (edge) | false | entrar exige ir a `/login`, que desmonta a sala; ao voltar, a sala busca o lote de novo com o token |
+| 10 | `createdAt` inválido no evento quebra o `Intl` (edge) | false | a API sempre manda ISO (`toISOString`); nenhum caminho mostra string inválida |
+| 11 | `hasBid` não vira true quando o `seq` já veio do GET (edge) | false | o mesmo GET que trouxe o lance traz `me.hasBid` true, e `mergeRoom` faz OR com o atual |
+| 12 | `refresh` antigo sobrescreve um `reload` mais novo ou a carteira de outro usuário (edge) | low | o provider é recriado por usuário (`key`), então não há troca de usuário; a corrida com `reload` exige depósito e mudança de situação ao mesmo tempo; rejeitado e listado |
