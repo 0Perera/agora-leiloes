@@ -49,6 +49,8 @@ npm run migration:revert                                              # desfaz a
 
 _(módulos, fluxo de um lance e liquidação)_
 
+**Fluxo de um lance** (`POST /lots/:id/bids`, só licitante): numa única transação, trava o lote (`FOR UPDATE`), lê a hora do servidor, busca o último lance da cadeia e trava as carteiras do licitante e do líder anterior em ordem de `id`. A regra decide (status, liderança, mínimo, saldo); recusa responde 422 com o código e o detalhe (`minimum`, `available`, `startsAt`) sem gravar nada. Aceito, o lance entra com o `seq` seguinte e o hash encadeado no anterior, o lote recebe o novo selo, lance atual, contagem e fim (prorrogado em 2 min quando faltam 2 min ou menos), e o comprometido sai do líder anterior para o novo lance. Liderança e mínimo vêm sempre do último lance em `bids`, nunca da cópia no lote (D-042).
+
 ## Auditoria
 
 _(como a técnica detecta alteração, remoção e inserção no histórico)_
@@ -79,6 +81,7 @@ cd web && npm test   # Vitest
 - **API:** regras de saldo e depósito, validação dos DTOs, hash de senha, cadastro e login, guards de token e de papel, filters de erro, `/health` e o logger que esconde parâmetros de query.
 - **Catálogo:** mapeamento da peça da Cleveland (artista com fallback para `culture`, descarte de peça sem imagem), cache da busca com TTL, falha da Cleveland virando `CATALOG_UNAVAILABLE` sem entrar no cache e download da imagem (só JPEG, PNG ou WebP, até 5 MB contados nos bytes lidos).
 - **Lotes:** datas de início e fim, peça já em lote ativo, limites de lance inicial e incremento, falha da imagem sem gravar lote, cadeia do destaque (maior lance, fim mais próximo, próximo agendado), filtros da vitrine e do painel, resumo do painel sem lotes e cancelamento (encerrado, com lance, lote alheio e trava da linha).
+- **Lances:** ordem das recusas, mínimo, saldo, anti-sniping, cadeia de HMAC, selo e alias; no serviço, ordem dos locks, hora lida depois do lock, encadeamento do `seq` e do hash, atualização do lote e movimento do comprometido.
 - **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito, rótulos e nota do resumo da sala do lote, id inválido na rota da sala, nova busca na virada de estado e tradução do tipo da obra.
 
 ## Stack e decisões

@@ -151,7 +151,20 @@ export type DashboardSummary = {
   ended: { count: number; withoutBids: number };
 };
 
+export type PlaceBidRequest = { amount: number };
+
+export type PlacedBid = {
+  seq: number;
+  amount: number;
+  alias: string;
+  createdAt: string;
+  endsAt: string;
+};
+
 export type ApiErrorBody = {
   code?: string;
   fields?: Record<string, string>;
+  startsAt?: string;
+  minimum?: number;
+  available?: number;
 };
