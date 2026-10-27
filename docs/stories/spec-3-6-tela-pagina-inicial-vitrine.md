@@ -2,7 +2,8 @@
 title: 'Tela Página inicial (vitrine)'
 type: 'feature'
 created: '2026-10-27'
-status: 'ready-for-dev'
+baseline_commit: 'e6b8fffc7f78e902b4c1371039080eacadf0a136'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -67,12 +68,12 @@ context:
 
 **Execution:**
 - [x] `docs/stories/sprint-status.yaml` -- 3.5 done (feito); 3.6 in-progress ao implementar.
-- [ ] `web/src/shared/lib/roman.ts`, `date.ts`, `countdown.ts` + specs -- helpers e casos aprovados.
-- [ ] `web/src/shared/ui/pager.tsx`, `pager.css` -- mover o `Pager` (refactor).
-- [ ] `web/src/shared/api/client.ts` -- `lots`, `featured`, `lot`.
-- [ ] `web/src/features/lots/` -- `showcase-search.ts` + spec, `use-showcase.ts`, `use-featured.ts`, `featured.tsx`, `showcase.tsx`, `lot-card.tsx`, `how-it-works.tsx`, `lots.css`, `home-page.tsx`.
-- [ ] `web/src/features/live-room/room-page.tsx`, `web/src/app/router.tsx` -- rota provisória "Sala do lote".
-- [ ] `README.md` (Comportamentos esperados: destaque não troca de lote na página), `docs/ai-log.md`.
+- [x] `web/src/shared/lib/roman.ts`, `date.ts`, `countdown.ts` + specs -- helpers e casos aprovados.
+- [x] `web/src/shared/ui/pager.tsx`, `pager.css` -- mover o `Pager` (refactor).
+- [x] `web/src/shared/api/client.ts` -- `lots`, `featured`, `lot`.
+- [x] `web/src/features/lots/` -- `showcase-search.ts` + spec, `use-showcase.ts`, `use-featured.ts`, `featured.tsx`, `showcase.tsx`, `lot-card.tsx`, `how-it-works.tsx`, `lots.css`, `home-page.tsx`.
+- [x] `web/src/features/live-room/room-page.tsx`, `web/src/app/router.tsx` -- rota provisória "Sala do lote".
+- [x] `README.md` (Comportamentos esperados: destaque não troca de lote na página), `docs/ai-log.md`.
 
 **Acceptance Criteria:**
 - Given um visitante em `/`, when a página carrega, then vê destaque, vitrine na aba Ao vivo com as três contagens e "Como funciona".
@@ -85,6 +86,13 @@ context:
 ## Spec Change Log
 
 ## Review Triage Log
+
+| # | Achado | Veredito | Evidência | Rota |
+|---|--------|----------|-----------|------|
+| 1 | `featured.tsx`: destaque agendado continua "Agendado / Abre em" depois de `startsAt` com a página aberta | low | Real, mas o destaque só é agendado sem nenhum lote ao vivo, e a spec proíbe refazer a busca por tempo; derivar o status no cliente poria regra no front. Recarregar corrige. | rejeitado |
+| 2 | `lot-card.tsx`: card agendado mostra "Abre em" com data passada até a lista ser buscada de novo | low | Real; mesma origem do 1. O status vem calculado pela API, e qualquer troca de aba, página ou busca atualiza. | rejeitado |
+| 3 | `lot-card.tsx`/`featured.tsx`: imagem quebrada se `GET /lots/:id/image` falhar | low | A imagem é snapshot no banco (`lot_images`), criada junto com o lote; o card só existe se a lista respondeu, então a API está de pé. Falha só por rede. | rejeitado |
+| 4 | `use-showcase.ts`: última página vazia pede `page - 1` sem guardar a resposta | false | O esqueleto fica até a página anterior responder, que é a próxima requisição; nenhuma contagem errada chega a aparecer. | rejeitado |
 
 ## Verification
 

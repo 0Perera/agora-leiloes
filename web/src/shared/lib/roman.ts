@@ -34,3 +34,32 @@ export function lotLabel(number: number): string {
   const roman = toRoman(number);
   return roman ? `Lote ${roman} · nº ${number}` : `Lote nº ${number}`;
 }
+
+const romanDigits = /^[IVXLCDM]+$/;
+
+// só aceita a forma canônica: "IIII" ou "IC" não são lidos
+export function fromRoman(text: string): number | null {
+  if (!romanDigits.test(text)) return null;
+  const value = sumRoman(text);
+  return toRoman(value) === text ? value : null;
+}
+
+const symbolValues: Record<string, number> = {
+  I: 1,
+  V: 5,
+  X: 10,
+  L: 50,
+  C: 100,
+  D: 500,
+  M: 1000,
+};
+
+function sumRoman(text: string): number {
+  let total = 0;
+  for (let index = 0; index < text.length; index++) {
+    const value = symbolValues[text[index]];
+    const next = symbolValues[text[index + 1]] ?? 0;
+    total += value < next ? -value : value;
+  }
+  return total;
+}

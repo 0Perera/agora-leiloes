@@ -10,6 +10,11 @@ import type {
   DashboardSummary,
   DepositRequest,
   LoginRequest,
+  LotCard,
+  LotDetail,
+  LotFilter,
+  LotShowcase,
+  LotStatus,
   SignupRequest,
   Wallet,
 } from './types';
@@ -123,6 +128,14 @@ export const api = {
     return request<DashboardBook>(`/dashboard/lots?${query}`);
   },
   dashboardSummary: () => request<DashboardSummary>('/dashboard/summary'),
+  lots: (status: LotStatus, page: number, filter: LotFilter) => {
+    const query = new URLSearchParams({ status, page: String(page) });
+    if (filter.q) query.set('q', filter.q);
+    if (filter.number) query.set('number', String(filter.number));
+    return request<LotShowcase>(`/lots?${query}`);
+  },
+  featured: () => request<LotCard | undefined>('/lots/featured'),
+  lot: (id: number) => request<LotDetail>(`/lots/${id}`),
 };
 
 export function lotImageUrl(id: number): string {

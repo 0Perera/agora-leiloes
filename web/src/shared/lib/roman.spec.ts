@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { lotLabel, toRoman } from './roman';
+import { fromRoman, lotLabel, toRoman } from './roman';
 
 describe('toRoman', () => {
   it.each([
@@ -23,5 +23,19 @@ describe('lotLabel', () => {
 
   it('mostra só o número comum acima de 3999', () => {
     expect(lotLabel(4000)).toBe('Lote nº 4000');
+  });
+});
+
+describe('fromRoman', () => {
+  it.each([
+    ['VII', 7],
+    ['XIV', 14],
+    ['MMMCMXCIX', 3999],
+  ])('lê %s como %i', (roman, value) => {
+    expect(fromRoman(roman)).toBe(value);
+  });
+
+  it.each(['IIII', 'VX', 'IC'])('recusa %s, fora do padrão', (roman) => {
+    expect(fromRoman(roman)).toBeNull();
   });
 });

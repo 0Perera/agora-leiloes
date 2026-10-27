@@ -95,6 +95,8 @@ export type LotShowcase = {
   counts: Record<LotStatus, number>;
 };
 
+export type LotFilter = { q?: string; number?: number };
+
 export type LotDetail = {
   id: number;
   number: number;

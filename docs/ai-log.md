@@ -319,3 +319,27 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - *Casos (2) e (3), leitura do romano de volta e recusa de romano inválido:* recusei, a tela só exibe o romano.
 - *Caso (4) com o fuso do ambiente:* pedi o fuso fixo nos testes, para o resultado não depender da máquina.
 - *Datas exibidas sempre em `America/Sao_Paulo`, diferente dos campos da ficha:* recusei; pedi o fuso do navegador nos dois.
+
+## Story 3.6: Tela Página inicial (vitrine)
+
+**O que a IA gerou:**
+- `/` em `features/lots`: destaque (`GET /lots/featured` + `GET /lots/:id` uma vez ao montar), vitrine com abas, busca e paginação, e a faixa escura "Como funciona", seguindo o canvas Página inicial.
+- Destaque ao vivo com contagem regressiva Min:Seg ou Horas:Min, urgente abaixo de 2 min, e agendado com "Abre em"; some com 204, 404 no detalhe ou lote encerrado; esqueleto e erro com "Tentar de novo".
+- Relógio único de 1s na página, corrigido pela diferença do `serverTime` do destaque.
+- Vitrine com abas `aria-pressed` e contagem, busca com espera de 300 ms, 12 por página, cards com imagem de `GET /lots/:id/image` no nicho em arco e link cobrindo o card; estados carregando, erro, aba vazia e "Nenhum lote encontrado" com "Limpar busca".
+- `parseSearch` em `showcase-search.ts` (número, romano, "lote ..." ou texto; número impossível não chama a API), `fromRoman`, `formatDay` e `countdown.ts` em `shared/lib`.
+- `Pager` movido para `shared/ui`, client com `lots`, `featured` e `lot`, e rota provisória `/lots/:id` "Sala do lote" até a 3.7.
+- Testes dos casos aprovados (17) a (30): `roman.spec.ts`, `date.spec.ts`, `countdown.spec.ts` e `showcase-search.spec.ts`.
+
+**O que revisei e pedi para mudar:**
+- Aprovei os casos de teste (17) a (30) da spec.
+- Decidi que só dígitos, romano canônico em maiúscula ou romano em qualquer caixa com o prefixo "lote " viram `number`; palavra solta em minúscula como "di" ou "mix" vai como texto.
+- Decidi o grid de cards com `repeat(auto-fill, minmax(250px, 1fr))`, igual ao painel, em vez de preencher a linha com poucos resultados.
+- Decidi a rota provisória `/lots/:id` com o título "Sala do lote" até a 3.7, porque o Render publica a main a cada merge e nenhum link pode cair em tela de erro.
+- Pedi só o revisor de casos de borda na revisão.
+- Pedi para registrar no `deferred-work.md`, numa seção de polimento visual, o ajuste do painel no modo cartão (selo e botão na largura do conteúdo, miniatura alinhada ao título).
+- Pedi duas regras no `CLAUDE.md`: selos, badges e botões com a largura do próprio conteúdo em grids e listas, e a conferência das telas em 360, 768, 1024 e 1280px na Definition of Done.
+
+**Sugestões rejeitadas e por quê:**
+- *Cards esticados para preencher a linha com poucos resultados:* recusei; pedi o mesmo grid do painel, com os cards no tamanho natural.
+

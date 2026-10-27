@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { formatShortDate, fromLocalInput, toLocalInput } from './date';
+import {
+  formatDay,
+  formatShortDate,
+  fromLocalInput,
+  toLocalInput,
+} from './date';
 
 describe('formatShortDate', () => {
   it('formata hora cheia', () => {
@@ -17,5 +22,11 @@ describe('fromLocalInput', () => {
     const iso = fromLocalInput('2026-10-24T19:00');
     expect(iso).toBe(local.toISOString());
     expect(toLocalInput(new Date(iso ?? ''))).toBe('2026-10-24T19:00');
+  });
+});
+
+describe('formatDay', () => {
+  it('mostra dia e mês abreviado', () => {
+    expect(formatDay('2026-10-20T22:00:00.000Z')).toBe('20 out');
   });
 });

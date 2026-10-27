@@ -27,3 +27,15 @@ export function toLocalInput(date: Date): string {
   const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
   return `${day}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
+
+const dayFormat = new Intl.DateTimeFormat('pt-BR', {
+  day: 'numeric',
+  month: 'short',
+});
+
+export function formatDay(iso: string): string {
+  const parts = dayFormat.formatToParts(new Date(iso));
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((item) => item.type === type)?.value ?? '';
+  return `${part('day')} ${part('month').replace('.', '')}`;
+}
