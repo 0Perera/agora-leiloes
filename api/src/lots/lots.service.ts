@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   DataSource,
@@ -16,11 +17,13 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
+import { GENESIS, sealLot } from '../audit/chain';
 import { Bid } from '../bids/bid.entity';
 import type { ArtworkDetail } from '../catalog/artwork.mapper';
 import { CatalogService } from '../catalog/catalog.service';
 import type { ImageFile } from '../catalog/cleveland.client';
 import { Clock } from '../common/clock';
+import { Env } from '../config/env.validation';
 import { CreateLotDto } from './dto/create-lot.dto';
 import { ListLotsQueryDto } from './dto/list-lots-query.dto';
 import {
@@ -87,13 +90,18 @@ type Conditions = Pick<
 
 @Injectable()
 export class LotsService {
+  private readonly secret: string;
+
   constructor(
     private readonly dataSource: DataSource,
     private readonly catalog: CatalogService,
     private readonly clock: Clock,
     @InjectRepository(LotImage) private readonly images: Repository<LotImage>,
     @InjectRepository(Lot) private readonly lots: Repository<Lot>,
-  ) {}
+    config: ConfigService<Env, true>,
+  ) {
+    this.secret = config.get('BID_HMAC_SECRET', { infer: true });
+  }
 
   async list(query: ListLotsQueryDto): Promise<LotShowcaseDto> {
     const now = this.clock.now();
@@ -252,6 +260,13 @@ export class LotsService {
     const id = Number(result.identifiers[0].id);
     const generated: unknown = result.generatedMaps[0]?.number;
     if (typeof generated !== 'number') throw new Error('lot number missing');
+    // Selo vazio desde a criação: selo nulo só existe em lote anterior à 4.3 (D-058).
+    const seal = sealLot(this.secret, {
+      lotId: id,
+      count: 0,
+      lastHash: GENESIS,
+    });
+    await lots.update({ id }, { seal });
 
     await manager.getRepository(LotImage).insert({
       lotId: id,

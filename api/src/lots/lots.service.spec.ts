@@ -1,9 +1,11 @@
+import { ConfigService } from '@nestjs/config';
 import { DataSource, IsNull, Repository } from 'typeorm';
 import { Bid } from '../bids/bid.entity';
 import type { ArtworkDetail } from '../catalog/artwork.mapper';
 import { NotFoundException } from '@nestjs/common';
 import { CatalogService } from '../catalog/catalog.service';
 import { DomainException } from '../common/domain.exception';
+import { Env } from '../config/env.validation';
 import { CreateLotDto } from './dto/create-lot.dto';
 import type { CardFields } from './dto/lot-card.dto';
 import { LotImage } from './lot-image.entity';
@@ -11,6 +13,10 @@ import { Lot } from './lot.entity';
 import { LotsService } from './lots.service';
 
 const NOW = new Date('2026-10-26T12:00:00Z');
+
+const config = {
+  get: () => 'test-secret',
+} as unknown as ConfigService<Env, true>;
 
 function makeArtwork(): ArtworkDetail {
   return {
@@ -51,6 +57,7 @@ describe('LotsService.create', () => {
       { now: () => NOW },
       {} as Repository<LotImage>,
       {} as Repository<Lot>,
+      config,
     );
 
     await expect(service.create(1, makeDto())).rejects.toThrow(
@@ -83,6 +90,7 @@ function makeFeatured(...results: (CardFields | null)[]) {
     { now: () => NOW },
     {} as Repository<LotImage>,
     { findOne } as unknown as Repository<Lot>,
+    config,
   );
   return { service, findOne };
 }
@@ -151,6 +159,7 @@ function makeCancel(
     { now: () => NOW },
     {} as Repository<LotImage>,
     {} as Repository<Lot>,
+    config,
   );
   return { service, repository, bids };
 }
