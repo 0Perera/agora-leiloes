@@ -99,6 +99,8 @@ Cada commit compila e passa sozinho, com `npm run lint:check` antes, `Refs: stor
 
 ## Implementation Notes
 
+- Depois da entrega, a pedido do usuário, a nota do comprometido passou a "reservado em N lotes" (sem "que você lidera"), porque a contagem inclui lotes arrematados aguardando liquidação.
+
 ## Spec Change Log
 
 ## Review Triage Log

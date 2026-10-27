@@ -71,6 +71,9 @@
 - source_spec: `docs/stories/spec-4-7-destaque-ao-vivo-e-lotes-comprometidos-na-carteira.md`
   summary: virada de status do destaque com a página aberta: o destaque agendado continua "Agendado / Abre em" com a data passada depois de `startsAt`, e o ao vivo continua "Ao vivo" com a contagem em 00:00 depois de `endsAt`; buscar o lote de novo na virada, como faz a sala.
   evidence: achado #1 da revisão da 3.6 (rejeitado na época); a 4.7 trouxe o stream ao destaque e manteve o status do carregamento, por decisão do usuário na spec.
+- source_spec: `docs/stories/spec-4-7-destaque-ao-vivo-e-lotes-comprometidos-na-carteira.md`
+  summary: na Carteira, lote comprometido que vence com a página aberta continua "Você lidera · encerra {data}" até recarregar, em vez de "Você arrematou · aguardando liquidação"; a hora é lida uma vez ao abrir a página.
+  evidence: achado #2 da revisão da 4.7; decisão do usuário de manter como está e registrar junto da virada de status do destaque.
 
 ## Revisão final (antes da 6.2)
 

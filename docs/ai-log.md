@@ -551,6 +551,8 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi o caso de teste da linha do lote encerrado mostrando "aguardando liquidação".
 - Aprovei os casos de teste da story.
 - Decidi deixar a virada de status do destaque com a página aberta para depois, num item só do `deferred-work.md` junto com o achado da revisão da 3.6.
+- Pedi para a nota do comprometido dizer só "reservado em N lotes", porque a contagem inclui lotes arrematados aguardando liquidação.
+- Decidi manter a linha "encerra" desatualizada com a Carteira aberta depois do fim, registrada no `deferred-work.md`.
 
 **Sugestões rejeitadas e por quê:**
 - Mudei a proposta da data de fim na Carteira: o lote já vencido e ainda não liquidado mostra "Você arrematou · aguardando liquidação" em vez da data.
