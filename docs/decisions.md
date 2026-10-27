@@ -637,3 +637,25 @@ Story: 4.4
 **Por quê:** um container só custa um boot do Postgres por execução, e as suítes em série não disputam o mesmo banco. O `TRUNCATE` deixa cada suíte independente da ordem.
 **Alternativas descartadas:** um container por suíte (vários segundos a mais por suíte, sem ganho de isolamento real); um banco por suíte no mesmo container (mais código de setup para paralelizar três suítes curtas); transação com rollback por teste (o teste de concorrência precisa de várias conexões vendo os commits umas das outras).
 **Consequência:** suíte nova começa com `reset()`. Rodar as suítes em paralelo exigiria um banco por suíte.
+
+## D-062: Data do lance no evento do stream
+
+Status: Aceita
+Data: 2026-10-27
+Story: 4.5
+
+**Decisão:** o evento `bid` do `GET /lots/:id/stream` traz `seq`, valor, alias, `createdAt` e `endsAt`.
+**Por quê:** a sala (4.6) mostra o horário de cada lance no histórico; com a data no evento, ela acrescenta a linha sem buscar o histórico de novo. A data já é pública no histórico e na auditoria.
+**Alternativas descartadas:** só `seq`, valor, alias e `endsAt` (a sala refaria `GET /lots/:id/bids` a cada lance, uma query por espectador por lance).
+**Consequência:** a lista de campos públicos do stream no CLAUDE.md inclui `createdAt`; qualquer campo novo no evento continua exigindo decisão.
+
+## D-063: Teto de 20 lotes comprometidos na carteira, sem paginação
+
+Status: Aceita
+Data: 2026-10-27
+Story: 4.5
+
+**Decisão:** `GET /wallet` traz até 20 lotes que comprometem saldo (os que terminam primeiro) e `lotsTotal` com a contagem de todos, sem parâmetro de página. É exceção declarada à regra "toda listagem é paginada".
+**Por quê:** a lista é um resumo dentro da carteira, limitado na prática pelo saldo do licitante; um teto com o total mantém a resposta pequena sem levar paginação para a tela da Carteira. 20 é o mesmo tamanho de página do histórico.
+**Alternativas descartadas:** sem teto (resposta sem limite, contra a regra); `?page=` no `/wallet` (paginação na Carteira por um caso raro).
+**Consequência:** com mais de 20 lotes, a Carteira (4.7) mostra os 20 primeiros e o total; ver todos exigiria uma rota própria.

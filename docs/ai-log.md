@@ -497,12 +497,14 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Os casos de teste aprovados (unitários e a suíte e2e `realtime`), tipos do front e README.
 
 **O que revisei e pedi para mudar:**
-- Decidi a lista de comprometidos com teto de 20 lotes e o total, sem paginação.
-- Decidi que o evento do stream traz também a data do lance.
+- Decidi a lista de comprometidos com teto de 20 lotes e o total, sem paginação, registrada como exceção à regra de paginação (D-063).
+- Decidi que o evento do stream traz também a data do lance (D-062).
 - Decidi que `me` só aparece para licitante.
 - Decidi o histórico com 20 por página, paginado pelo índice da cadeia, sem depender da contagem copiada no lote (D-042).
 - Decidi criar o índice por licitante só se o `EXPLAIN` mostrasse necessidade, com a saída registrada na spec.
-- Aprovei os casos de teste da story.
+- Aprovei os casos de teste da story e os três e2e a mais tirados da tabela de casos.
+- Decidi manter o depósito devolvendo só o saldo, com o front juntando o saldo novo à lista já carregada.
+- Pedi para corrigir o erro de tipo no setup do e2e e para o README dizer que o stream não limita conexões por lote.
 
 **Sugestões rejeitadas e por quê:**
 - Recusei a paginação do histórico por faixa de `seq` a partir da contagem copiada no lote: dependeria dessa cópia (D-042) e quebraria com buracos na sequência; pedi `ORDER BY seq DESC` com `LIMIT` e `OFFSET`.

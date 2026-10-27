@@ -106,6 +106,7 @@ dto/place-bid.dto.ts
 - **Proibido N+1**: nenhuma query dentro de loop. Relações carregadas com join/include explícito.
   Em dev, deixar o log de queries ligado e conferir quantas queries cada endpoint dispara.
 - Toda listagem é paginada e seleciona só as colunas que a tela usa.
+  Exceção: os lotes comprometidos em `GET /wallet` vêm com teto de 20 e o total, sem página (D-063).
 - Índice em toda coluna usada em filtro ou ordenação frequente (ex.: `lots.starts_at`, `lots.ends_at`, `bids.lot_id`).
 - Operações que mexem em saldo ou lance rodam numa **única transação**, com lock de linha (`FOR UPDATE`) no lote e nas carteiras.
   Carteiras sempre travadas na mesma ordem (por `id`) para evitar deadlock.
@@ -148,7 +149,7 @@ dto/place-bid.dto.ts
 
 - `GET /lots/:id/stream` com `@Sse`, **público e sem guard**. Um stream por lote, mesmo evento para todos.
 - Evento só é emitido **depois do commit** da transação, nunca dentro dela.
-- Payload só com dado público: `seq`, valor, alias do licitante, `endsAt`. Nunca `user_id`, nome ou e-mail.
+- Payload só com dado público: `seq`, valor, alias do licitante, `createdAt`, `endsAt` (D-062). Nunca `user_id`, nome ou e-mail.
 - Alias por lote, determinístico: HMAC de `user_id` + `lot_id`. O mesmo licitante tem aliases diferentes em lotes diferentes.
 - `GET /lots/:id` autenticado devolve `me.alias`. O front deriva "ganhando/superado" e a posição comparando com o alias do evento.
   Quando o status muda, o front busca `GET /wallet` de novo para atualizar o saldo.
