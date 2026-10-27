@@ -101,4 +101,55 @@ describe('BidRules.decide', () => {
       expect(decide(bid)).toEqual({ accepted: false, code: 'ALREADY_WINNING' });
     });
   });
+
+  describe('valor', () => {
+    it('aceita primeiro lance igual ao lance inicial', () => {
+      const bid = makeBid({ amount: 10_000 });
+
+      expect(decide(bid).accepted).toBe(true);
+    });
+
+    it('recusa primeiro lance abaixo do lance inicial', () => {
+      const bid = makeBid({ amount: 9_999 });
+
+      expect(decide(bid)).toMatchObject({
+        accepted: false,
+        code: 'BID_BELOW_MINIMUM',
+      });
+    });
+
+    it('aceita lance seguinte igual ao atual mais o incremento', () => {
+      const bid = makeBid({
+        last: { userId: RIVAL, amount: 10_000 },
+        amount: 11_000,
+      });
+
+      expect(decide(bid).accepted).toBe(true);
+    });
+
+    it('recusa lance seguinte abaixo do atual mais o incremento', () => {
+      const bid = makeBid({
+        last: { userId: RIVAL, amount: 10_000 },
+        amount: 10_999,
+      });
+
+      expect(decide(bid)).toMatchObject({
+        accepted: false,
+        code: 'BID_BELOW_MINIMUM',
+      });
+    });
+
+    it('informa o mínimo aceito na recusa por valor', () => {
+      const bid = makeBid({
+        last: { userId: RIVAL, amount: 10_000 },
+        amount: 10_500,
+      });
+
+      expect(decide(bid)).toEqual({
+        accepted: false,
+        code: 'BID_BELOW_MINIMUM',
+        minimum: 11_000,
+      });
+    });
+  });
 });
