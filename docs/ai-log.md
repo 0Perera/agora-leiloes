@@ -306,8 +306,13 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi que, depois de criar, a ficha feche, a obra e os campos sejam limpos, a mensagem de sucesso mostre o número e o livro volte para Todos, página 1.
 - Pedi uma linha no README sobre o formato do número e o limite de 3999.
 - Autorizei apagar do banco local o usuário de teste `leiloeiro35@example.com` e o lote dele.
+- Pedi a coluna Nº do livro centralizada na vertical e alinhada com o cabeçalho "Nº".
+- Pedi trocar a faixa de sucesso por uma janela modal no estilo da ficha, com título "Lote VI · nº 6 publicado", miniatura e título da obra, estado e abertura, e os botões "Ver no livro" e "Criar outro lote"; a ficha só é limpa quando a janela fecha; `role="dialog"`, foco preso, Esc fecha e o foco volta para a busca; em 360px, largura da tela com margem.
+- Pedi destacar por alguns segundos a linha do lote recém-criado, com fundo dourado que some, respeitando `prefers-reduced-motion`.
+- Pedi os cartões da busca com `repeat(auto-fill, minmax(200px, 1fr))` e conferência com 1, 5 e 12 resultados e em 360px.
 
 **Sugestões rejeitadas e por quê:**
+- *Faixa de sucesso dentro da seção de novo lote:* recusei; pedi uma janela modal com ações para ver o lote no livro ou criar outro.
 - *Seção de novo lote aberta pelo botão "Novo lote" e pelo link "Criar lote" no cabeçalho:* recusei; pedi a busca sempre visível no painel.
 - *Botão "Criar o primeiro lote" no livro vazio:* recusei; pedi só o texto orientando a busca.
 - *Casos (2) e (3), leitura do romano de volta e recusa de romano inválido:* recusei, a tela só exibe o romano.
