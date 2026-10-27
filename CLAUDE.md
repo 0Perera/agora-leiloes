@@ -344,6 +344,7 @@ Ruins: `update`, `ajustes`, `wip`, `fix: vários bugs`, `feat: cria lances, cart
 - Ficar no escopo da story. Se algo fora dela parecer necessário, avisar em vez de implementar.
 - Perguntar antes de adicionar dependência nova.
 - Diffs pequenos. Antes de dizer que terminou: lint, testes e build passando.
+- Antes de commitar, rodar `npm run lint:check` (o mesmo do CI), não `npm run lint`, que corrige sozinho e esconde erro de formatação.
 - Ao propor uma solução com trade-off relevante, explicar a alternativa em uma ou duas frases.
 - Revisão: só o revisor de casos de borda. Os três revisores só nas stories 4.1, 4.2, 4.3, 4.4, 5.1, 5.2 e 5.5.
 - Correções da revisão: corrige sozinho só os achados graves (bug, segurança, regra de negócio). Os de estilo ou opcionais, lista em uma linha cada e não corrige.
