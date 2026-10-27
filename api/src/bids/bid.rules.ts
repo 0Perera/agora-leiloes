@@ -22,10 +22,22 @@ type Refusal =
   | { accepted: false; code: 'BID_BELOW_MINIMUM'; minimum: number }
   | { accepted: false; code: 'INSUFFICIENT_BALANCE'; available: number };
 
-export type BidDecision = { accepted: true } | Refusal;
+type Acceptance = {
+  accepted: true;
+  commit: Movement;
+  release: Movement | null;
+};
+
+export type BidDecision = Acceptance | Refusal;
 
 export function decide(state: BidState): BidDecision {
-  return refuse(state) ?? { accepted: true };
+  return refuse(state) ?? accept(state);
+}
+
+// O valor cheio do novo lance fica comprometido e o do líder anterior volta inteiro.
+function accept({ last, userId, amount }: BidState): Acceptance {
+  const release = last && { userId: last.userId, amount: last.amount };
+  return { accepted: true, commit: { userId, amount }, release };
 }
 
 // A ordem define o código devolvido quando mais de uma checagem falharia.
