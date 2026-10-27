@@ -1,7 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'node:crypto';
-import { DataSource, EntityManager, QueryFailedError } from 'typeorm';
+import {
+  DataSource,
+  EntityManager,
+  IsNull,
+  LessThanOrEqual,
+  MoreThan,
+  QueryFailedError,
+} from 'typeorm';
 import { forLot } from '../audit/alias';
 import { expectedSeal } from '../audit/chain';
 import { Bid } from '../bids/bid.entity';
@@ -16,6 +23,8 @@ import { lockWallets, walletOf } from '../wallets/wallet.lock';
 import { decide, WalletMove } from './settlement.rules';
 
 type LastBid = Pick<Bid, 'seq' | 'userId' | 'amount' | 'hash'>;
+
+const OPEN = { cancelledAt: IsNull(), settledAt: IsNull() };
 
 type Sale = { lot: Pick<Lot, 'id'>; last: LastBid; now: Date };
 
@@ -38,6 +47,24 @@ export class SettlementService {
     const result = await this.transact(lotId).catch(ignoreDuplicate);
     // Fora da transação: evento só depois do commit, nunca de liquidação revertida.
     if (result) this.events.settled(lotId, result);
+  }
+
+  async due(now: Date): Promise<number[]> {
+    const lots = await this.dataSource.getRepository(Lot).find({
+      select: { id: true },
+      where: { ...OPEN, endsAt: LessThanOrEqual(now) },
+      order: { endsAt: 'ASC' },
+    });
+    return lots.map((lot) => lot.id);
+  }
+
+  async next(now: Date): Promise<Date | null> {
+    const lot = await this.dataSource.getRepository(Lot).findOne({
+      select: { id: true, endsAt: true },
+      where: { ...OPEN, endsAt: MoreThan(now) },
+      order: { endsAt: 'ASC' },
+    });
+    return lot?.endsAt ?? null;
   }
 
   private transact(lotId: number): Promise<SettledEventDto | null> {
