@@ -53,8 +53,8 @@ development_status:
   3-2-criacao-de-lote-com-snapshot-e-imagem: done
   3-3-vitrine-destaque-e-detalhe-do-lote-na-api: done
   3-4-painel-do-leiloeiro-na-api: done
-  3-5-tela-painel-do-leiloeiro: review
-  3-6-tela-pagina-inicial-vitrine: backlog
+  3-5-tela-painel-do-leiloeiro: done
+  3-6-tela-pagina-inicial-vitrine: ready-for-dev
   3-7-tela-sala-do-lote-ao-vivo-leitura: backlog
   epic-3-retrospective: optional
 
