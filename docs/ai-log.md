@@ -526,9 +526,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Escolhi que o detalhe do lote informe se o licitante já deu lance, num commit próprio, e pedi os testes desse caso junto com os aprovados.
 - Decidi a regra da situação: ganhando pelo último lance; superado se já deu lance e o último é de outro; senão, ainda não deu lance.
 - Defini o texto da recusa por integridade: "Lances suspensos neste lote." e que o lance não foi registrado.
-- Pedi para manter no celular o layout da 3.7, com a obra primeiro e sem miniatura no cabeçalho.
 - Ao conferir, apontei que a sala não avisava a queda da API; pedi o aviso "Conexão perdida. Reconectando…", o botão travado e a volta sem recarregar.
-- Pedi valor e contagem lado a lado no resumo, com o líder ao lado do número de lances, e os links do cabeçalho centralizados no celular.
+- Pedi ajustes visuais na sala: no celular, o layout da 3.7 com a obra primeiro; no resumo, valor e contagem lado a lado e alinhados pelo topo, a nota com a largura dos quadrinhos e o líder ao lado do número de lances.
+- Revi a decisão da 2.4, que deixou o cabeçalho sem o monograma: com mais itens no menu, pedi o monograma de volta, abrindo nome, papel e Sair, e os links alinhados à esquerda.
 
 **Sugestões rejeitadas e por quê:**
 - Recusei derivar a situação só dos lances carregados: quem fosse superado por mais de 20 lances veria "ainda não deu lance".
