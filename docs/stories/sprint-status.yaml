@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-25-2026 20:10
-last_updated: 10-27-2026 01:35
+last_updated: 10-27-2026 11:50
 project: Ágora
 project_key: NOKEY
 tracking_system: file-system
@@ -55,11 +55,11 @@ development_status:
   3-4-painel-do-leiloeiro-na-api: done
   3-5-tela-painel-do-leiloeiro: done
   3-6-tela-pagina-inicial-vitrine: done
-  3-7-tela-sala-do-lote-ao-vivo-leitura: review
+  3-7-tela-sala-do-lote-ao-vivo-leitura: done
   epic-3-retrospective: optional
 
-  epic-4: backlog
-  4-1-regras-de-lance-saldo-comprometido-e-anti-sniping-tdd: backlog
+  epic-4: in-progress
+  4-1-regras-de-lance-saldo-comprometido-e-anti-sniping-tdd: in-progress
   4-2-cadeia-de-hmac-selo-e-alias-tdd: backlog
   4-3-dar-lance-na-api: backlog
   4-4-testcontainers-ci-e-lances-simultaneos: backlog
