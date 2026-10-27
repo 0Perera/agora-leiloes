@@ -61,6 +61,7 @@ _(regras que podem surpreender, uma linha cada, com o porquê)_
 - A busca no acervo mostra só pintura e escultura europeia ou arte grega e romana, um departamento por vez (tema da casa, D-050), e só peças com imagem.
 - Uma peça só fica em um lote agendado ou ao vivo por vez; lote encerrado ou cancelado libera a peça para outro lote (D-051).
 - Lote cancelado some da vitrine e do destaque, e o link direto dele responde 404 (lote não encontrado).
+- O leiloeiro só cancela lote próprio, agendado ou ao vivo e sem lances: com lance responde `LOT_HAS_BIDS` e encerrado `LOT_ENDED`, porque quem deu lance já tem saldo comprometido. Lote de outro leiloeiro responde 404, sem revelar que existe.
 
 ## Testes
 
@@ -71,7 +72,7 @@ cd web && npm test   # Vitest
 
 - **API:** regras de saldo e depósito, validação dos DTOs, hash de senha, cadastro e login, guards de token e de papel, filters de erro, `/health` e o logger que esconde parâmetros de query.
 - **Catálogo:** mapeamento da peça da Cleveland (artista com fallback para `culture`, descarte de peça sem imagem), cache da busca com TTL, falha da Cleveland virando `CATALOG_UNAVAILABLE` sem entrar no cache e download da imagem (só JPEG, PNG ou WebP, até 5 MB contados nos bytes lidos).
-- **Lotes:** datas de início e fim, peça já em lote ativo, limites de lance inicial e incremento, falha da imagem sem gravar lote, cadeia do destaque (maior lance, fim mais próximo, próximo agendado) e filtros da vitrine.
+- **Lotes:** datas de início e fim, peça já em lote ativo, limites de lance inicial e incremento, falha da imagem sem gravar lote, cadeia do destaque (maior lance, fim mais próximo, próximo agendado), filtros da vitrine e do painel, resumo do painel sem lotes e cancelamento (encerrado, com lance, lote alheio e trava da linha).
 - **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito.
 
 ## Stack e decisões
