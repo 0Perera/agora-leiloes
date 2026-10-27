@@ -77,7 +77,7 @@
 
 - source_spec: `docs/stories/spec-5-1-regras-de-liquidacao-tdd.md`
   summary: na 5.2, conferir o selo do lote contra a cadeia antes de mover saldo (D-059); selo inválido não liquida e registra o motivo.
-  evidence: a regra da 5.1 confia no último lance recebido; quem apagasse o último lance direto no banco faria a liquidação cobrar o penúltimo licitante.
+  evidence: a regra da 5.1 confia no último lance recebido; quem apagasse o último lance direto no banco faria a liquidação cobrar o penúltimo licitante, cujo comprometido já foi liberado quando ele foi superado: a liquidação consumiria a reserva de outro lote dele ou falharia no `CHECK` do comprometido.
 
 ## Revisão final (antes da 6.2)
 

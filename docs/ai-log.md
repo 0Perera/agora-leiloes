@@ -570,6 +570,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **O que revisei e pedi para mudar:**
 - Aprovei os 15 casos de teste da story.
 - Pedi que a regra recebesse o leiloeiro do lote, para o caso do crédito no saldo dele.
-- Decidi a ordem dos motivos para não liquidar: cancelado, depois já liquidado, depois ainda não terminou, com dois casos fixando essa ordem.
+- Decidi a ordem dos motivos para não liquidar: cancelado, depois já liquidado, depois ainda não terminou.
+- Pedi dois casos a mais: lote cancelado e já vencido, e lote já liquidado e já vencido.
+- Pedi que a 5.2 confira o selo do lote antes de mover saldo, porque apagar o último lance direto no banco mudaria quem paga.
 
 **Sugestões rejeitadas e por quê:**
+- Nenhuma.
