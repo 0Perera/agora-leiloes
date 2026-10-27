@@ -579,3 +579,22 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Pedi para juntar os quatro testes de movimentos num só: a comparação da lista inteira, sugerida pelo Claude (app), tinha deixado os quatro idênticos.
+
+## Story 5.2: Liquidação e comprovante assinado na API
+
+**O que a IA gerou:**
+- A liquidação numa transação: trava o lote, confere o selo, move os saldos, grava o comprovante assinado e marca o lote como liquidado.
+- A assinatura do comprovante e a verificação dela, escritas depois dos 6 casos de teste, em dois pares de commits de teste e implementação.
+- A tabela de comprovantes, com um comprovante por lote e um link aleatório e único.
+- O gatilho no acesso ao lote: lote vencido é liquidado ao ser aberto, e a resposta traz o resultado; o link do comprovante vai só para o vencedor.
+- O aviso de encerramento no tempo real, só com o apelido do vencedor e o valor.
+- Seis testes de integração com banco real, três deles avisados como extras (lote sem lances, link só para o vencedor, aviso no tempo real).
+
+**O que revisei e pedi para mudar:**
+- Aprovei os 6 casos de teste da assinatura do comprovante.
+- Pedi o teste de dois acessos simultâneos liquidando o lote uma vez só.
+- Pedi o teste de vencedor e valor tirados do último lance mesmo com o lance atual alterado no banco.
+- Pedi o teste de selo inválido: o lote não é liquidado e a página do lote continua respondendo.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma nesta etapa.
