@@ -23,7 +23,7 @@ type LotRow = Pick<
   Lot,
   'id' | 'startsAt' | 'endsAt' | 'startingBid' | 'increment'
 > &
-  Partial<Pick<Lot, 'currentBid' | 'bidCount'>>;
+  Partial<Pick<Lot, 'currentBid' | 'bidCount' | 'seal'>>;
 type LastBid = Pick<Bid, 'seq' | 'userId' | 'amount' | 'hash'>;
 type WalletRow = Pick<Wallet, 'id' | 'userId' | 'balance' | 'committed'>;
 
@@ -56,6 +56,14 @@ function makeWallet(override: Partial<WalletRow> = {}): WalletRow {
   return { id: 1, userId: 10, balance: 500_000, committed: 0, ...override };
 }
 
+function sealOf(lotId: number, last: LastBid | null): string {
+  return sealLot(SECRET, {
+    lotId,
+    count: last?.seq ?? 0,
+    lastHash: last?.hash ?? null,
+  });
+}
+
 function makeService(
   state: {
     lot?: LotRow | null;
@@ -63,7 +71,9 @@ function makeService(
     wallets?: WalletRow[];
   } = {},
 ) {
-  const { lot = makeLot(), last = null, wallets = [makeWallet()] } = state;
+  const { last = null, wallets = [makeWallet()] } = state;
+  const lot = state.lot === undefined ? makeLot() : state.lot;
+  if (lot && lot.seal === undefined) lot.seal = sealOf(lot.id, last);
   const lots = {
     findOne: jest.fn().mockResolvedValue(lot),
     update: jest.fn().mockResolvedValue(undefined),
@@ -109,6 +119,19 @@ describe('BidsService.place', () => {
         lock: { mode: 'pessimistic_write' },
       }),
     );
+  });
+
+  it('recusa o lance quando o selo do lote não confere e não grava nada', async () => {
+    const { service, lots, bids, wallets } = makeService({
+      lot: makeLot({ seal: 'f'.repeat(64) }),
+    });
+
+    await expect(service.place(10, 1, 100_000)).rejects.toThrow(
+      new DomainException('LOT_INTEGRITY_FAILED'),
+    );
+    expect(bids.insert).not.toHaveBeenCalled();
+    expect(lots.update).not.toHaveBeenCalled();
+    expect(wallets.update).not.toHaveBeenCalled();
   });
 
   it('lê a hora do Clock depois de travar o lote', async () => {
