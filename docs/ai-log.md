@@ -413,3 +413,21 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta story.
+
+## Story 4.3: Dar lance na API
+
+**O que a IA gerou:**
+- `POST /lots/:id/bids` (`@Auth('BIDDER')`, `LotIdPipe`, `PlaceBidDto`) e `BidsService.place`: lock do lote, hora do `Clock` lida depois do lock, último lance por `seq DESC` e carteiras travadas numa query com `ORDER BY id`, tudo só com o `manager`.
+- Ligação de `decide()`, `hashBid()`, `sealLot()` e `forLot()`: lance gravado com o `seq` seguinte, `prev_hash` (`GENESIS` no primeiro) e `created_at` do `Clock`; lote atualizado num `UPDATE` (selo, lance atual, contagem, fim); comprometido liberado do líder anterior e comprometido no novo lance.
+- Entidade `Bid` e migration com FKs, `CHECK (seq >= 1 AND amount > 0)`, `UNIQUE (lot_id, seq)` e a coluna `lots.seal`.
+- `DomainException` com detalhe, quatro códigos novos (422) no filter e códigos da `Refusal` amarrados ao `DomainCode`.
+- Cancelamento com `EXISTS` em `bids` depois do lock e selo vazio gravado na criação do lote.
+- Os 14 casos aprovados, tipos `PlaceBidRequest`/`PlacedBid` no front e os campos de detalhe no `ApiErrorBody`.
+
+**O que revisei e pedi para mudar:**
+- Decidi manter só o `UNIQUE (lot_id, seq)`, sem índice separado em `lot_id`, como desvio consciente do critério (D-057).
+- Decidi gravar o selo vazio na criação do lote e tratar selo nulo como não íntegro na 5.5 (D-058).
+- Aprovei os casos 1 a 14 e pedi que o caso 8 conferisse os quatro campos do lote (`seal`, `current_bid`, `bid_count`, `ends_at`).
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma nesta story.

@@ -582,3 +582,25 @@ Story: 4.2
 **Por quê:** a mesma entrada precisa gerar sempre o mesmo texto, senão a verificação falha sem adulteração nenhuma. O separador impede que dígitos passem de um campo para o vizinho sem mudar o hash (caso 12), e o prefixo impede que uma assinatura valha em outro contexto (D-029). O `lot_id` no selo impede que lotes sem lances tenham selos iguais: sem ele, quem apagasse todos os lances de um lote poderia copiar o selo de qualquer lote vazio e a auditoria mostraria o lote como íntegro.
 **Alternativas descartadas:** JSON canônico (depende da ordem das chaves e da serialização de números); campos com prefixo de tamanho (mais robusto para texto livre, desnecessário com números, ISO e hex); data em epoch ms (menos legível na auditoria).
 **Consequência:** o formato não muda depois do seed, pelo mesmo motivo do segredo: todas as assinaturas gravadas deixariam de bater e a auditoria acusaria todos os lotes. O caso 15 (`chain.spec.ts`, valor conhecido) fixa o formato do lance e o caso 8 fixa o do selo: qualquer mudança neles quebra o teste.
+
+## D-057: Só o UNIQUE (lot_id, seq) indexa os lances por lote
+
+Status: Aceita
+Data: 2026-10-27
+Story: 4.3
+
+**Decisão:** a tabela `bids` tem o `UNIQUE (lot_id, seq)` e nenhum índice separado em `lot_id`. É um desvio consciente do critério da story, que pedia os dois.
+**Por quê:** o índice do `UNIQUE` começa por `lot_id`, então já atende às buscas por lote (último lance por `seq DESC`, histórico, auditoria, `EXISTS` do cancelamento). Um índice só em `lot_id` duplicaria o mesmo caminho e custaria escrita em todo lance.
+**Alternativas descartadas:** `bids_lot_id` além do `UNIQUE` (redundante para todas as consultas previstas).
+**Consequência:** consulta nova sobre `bids` que filtre por outra coluna (ex.: `user_id`, na carteira da 4.7) avalia o próprio índice.
+
+## D-058: Selo vazio gravado na criação do lote
+
+Status: Aceita
+Data: 2026-10-27
+Story: 4.3
+
+**Decisão:** o `POST /lots` grava o selo do lote sem lances (`lot_id`, contagem 0, `GENESIS`) na mesma transação da criação. A coluna `lots.seal` é nula só em lote criado antes desta migration.
+**Por quê:** com o selo desde o início, a auditoria (5.5) detecta também a remoção de todos os lances de um lote, e não só do final da cadeia.
+**Alternativas descartadas:** selo nulo até o primeiro lance (lote com todos os lances apagados ficaria igual a um lote que nunca recebeu lance); `NOT NULL` com selo calculado na migration (a migration precisaria do segredo).
+**Consequência:** na 5.5, selo nulo conta como não íntegro. Em produção o banco é recriado na entrega, então nenhum lote fica com selo nulo.
