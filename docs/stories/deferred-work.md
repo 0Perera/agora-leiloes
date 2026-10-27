@@ -75,6 +75,10 @@
   summary: na Carteira, lote comprometido que vence com a página aberta continua "Você lidera · encerra {data}" até recarregar, em vez de "Você arrematou · aguardando liquidação"; a hora é lida uma vez ao abrir a página.
   evidence: achado #2 da revisão da 4.7; decisão do usuário de manter como está e registrar junto da virada de status do destaque.
 
+- source_spec: `docs/stories/spec-5-1-regras-de-liquidacao-tdd.md`
+  summary: na 5.2, conferir o selo do lote contra a cadeia antes de mover saldo (D-059); selo inválido não liquida e registra o motivo.
+  evidence: a regra da 5.1 confia no último lance recebido; quem apagasse o último lance direto no banco faria a liquidação cobrar o penúltimo licitante, cujo comprometido já foi liberado quando ele foi superado: a liquidação consumiria a reserva de outro lote dele ou falharia no `CHECK` do comprometido.
+
 ## Revisão final (antes da 6.2)
 
 - source_spec: `docs/stories/spec-4-4-testcontainers-ci-e-lances-simultaneos.md`
