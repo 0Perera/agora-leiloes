@@ -284,7 +284,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Ficha só leitura (título, artista, data, técnica, tipo e imagem) com os quatro campos editáveis, máscara de maquininha nos valores, `datetime-local` convertido para ISO UTC, validação pura em `lot-validation.ts` com as faixas da API e resumo "Corrija N campos". Faixa de sucesso com o número em romano devolvido pela API (D-053).
 - `lot-errors.ts` com `createError` (`VALIDATION_FAILED` por campo, `IMAGE_DOWNLOAD_FAILED`, `ARTWORK_ALREADY_LISTED`, `CATALOG_UNAVAILABLE`, conexão) e `cancelError` (`LOT_HAS_BIDS`, `LOT_ENDED`, 404).
 - Livro com cinco filtros e contagem, 20 por página, miniatura de `GET /lots/:id/image`, carimbo "Cancelado", cancelamento com confirmação na linha e recarga de livro e resumo; vira cartões com `data-label` abaixo de 1180px.
-- Client tipado com `catalogSearch`, `createLot`, `cancelLot` (trata 204), `dashboardLots`, `dashboardSummary` e `lotImageUrl`; helpers `toRoman` e `formatShortDate`/`fromLocalInput`/`toLocalInput` em `shared/lib`; link "Criar lote" no cabeçalho do leiloeiro.
+- Client tipado com `catalogSearch`, `createLot`, `cancelLot` (trata 204), `dashboardLots`, `dashboardSummary` e `lotImageUrl`; helpers `toRoman`, `lotLabel` e `formatShortDate`/`fromLocalInput`/`toLocalInput` em `shared/lib`.
 - Testes dos casos aprovados: `roman.spec.ts`, `date.spec.ts`, `lot-validation.spec.ts` e `lot-errors.spec.ts`.
 
 **O que revisei e pedi para mudar:**
@@ -298,8 +298,18 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Aprovei as outras escolhas da spec: seletor de departamento, resumo em três cartões, livro sem alias, arrematante, "Abrir sala" e comprovante, sem a regra "aumento não maior que o lance inicial" do canvas e com os limites da API.
 - Pedi para registrar em `deferred-work.md` a ação "Abrir sala" no livro para a 3.7.
 - Pedi só o revisor de casos de borda e `npm run lint:check` antes do commit.
+- Na conferência no navegador, apontei que o seletor de departamento abria a lista genérica do navegador; aprovei a troca por dois botões de opção.
+- Perguntei por que o primeiro lote da minha conta saiu com o número 5 (a sequência é global e não reaproveita números de lotes apagados).
+- Perguntei se o romano vira problema com muitos lotes e para quem não lê romano; decidi mostrar romano e número comum juntos ("Lote DXXXVII · nº 537"), só o número comum acima de 3999, numa decisão nova que substitui a D-036 (D-054).
+- Pedi a busca no acervo sempre visível no painel, sem o link "Criar lote" no cabeçalho nem modo separado de criação.
+- Pedi o estado vazio sem botão, com o texto "Busque uma obra no acervo para criar seu primeiro lote".
+- Pedi que, depois de criar, a ficha feche, a obra e os campos sejam limpos, a mensagem de sucesso mostre o número e o livro volte para Todos, página 1.
+- Pedi uma linha no README sobre o formato do número e o limite de 3999.
+- Autorizei apagar do banco local o usuário de teste `leiloeiro35@example.com` e o lote dele.
 
 **Sugestões rejeitadas e por quê:**
+- *Seção de novo lote aberta pelo botão "Novo lote" e pelo link "Criar lote" no cabeçalho:* recusei; pedi a busca sempre visível no painel.
+- *Botão "Criar o primeiro lote" no livro vazio:* recusei; pedi só o texto orientando a busca.
 - *Casos (2) e (3), leitura do romano de volta e recusa de romano inválido:* recusei, a tela só exibe o romano.
 - *Caso (4) com o fuso do ambiente:* pedi o fuso fixo nos testes, para o resultado não depender da máquina.
 - *Datas exibidas sempre em `America/Sao_Paulo`, diferente dos campos da ficha:* recusei; pedi o fuso do navegador nos dois.
