@@ -2,6 +2,7 @@ import { INestApplication, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import type { AddressInfo } from 'node:net';
 import type { Server } from 'node:http';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
@@ -93,6 +94,52 @@ class TestDatabaseModule {}
 
 export type Account = { id: number; token: string };
 
+export type StreamEvent = { type: string; data: unknown };
+
+export type Stream = {
+  status: number;
+  events: StreamEvent[];
+  waitFor(count: number): Promise<StreamEvent[]>;
+  close(): void;
+};
+
+function parse(chunk: string): StreamEvent | null {
+  const lines = chunk.split('\n');
+  const type = lines.find((line) => line.startsWith('event: '))?.slice(7);
+  const data = lines.find((line) => line.startsWith('data: '))?.slice(6);
+  return type && data ? { type, data: JSON.parse(data) as unknown } : null;
+}
+
+async function read(response: Response, events: StreamEvent[]) {
+  if (!response.body) return;
+  const decoder = new TextDecoder();
+  let buffer = '';
+  try {
+    for await (const bytes of response.body) {
+      buffer += decoder.decode(bytes, { stream: true });
+      const chunks = buffer.split('\n\n');
+      buffer = chunks.pop() ?? '';
+      for (const event of chunks.map(parse)) if (event) events.push(event);
+    }
+  } catch {
+    return;
+  }
+}
+
+async function until<T>(check: () => T | undefined): Promise<T> {
+  const deadline = Date.now() + LOCK_TIMEOUT_MS;
+  for (;;) {
+    const value = check();
+    if (value !== undefined) return value;
+    if (Date.now() > deadline) throw new Error('condition not met in time');
+    await new Promise((resolve) => setTimeout(resolve, POLL_MS));
+  }
+}
+
+export function eventually(check: () => boolean): Promise<true> {
+  return until(() => (check() ? true : undefined));
+}
+
 export type LotDraft = {
   startsAt: Date;
   endsAt: Date;
@@ -171,6 +218,25 @@ export class TestApp {
       .post(`/lots/${lotId}/bids`)
       .auth(bidder.token, { type: 'bearer' })
       .send({ amount });
+  }
+
+  // fetch de verdade na porta do listen(0): o supertest espera a resposta terminar.
+  async stream(lotId: number): Promise<Stream> {
+    const { port } = this.server.address() as AddressInfo;
+    const controller = new AbortController();
+    const response = await fetch(
+      `http://127.0.0.1:${port}/lots/${lotId}/stream`,
+      { signal: controller.signal },
+    );
+    const events: StreamEvent[] = [];
+    void read(response, events);
+    return {
+      status: response.status,
+      events,
+      waitFor: (count) =>
+        until(() => (events.length >= count ? events : undefined)),
+      close: () => controller.abort(),
+    };
   }
 
   async close(): Promise<void> {
