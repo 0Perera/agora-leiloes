@@ -1,7 +1,11 @@
 import { Link } from 'react-router';
 import { useSession } from '../../app/use-session';
 import { lotImageUrl } from '../../shared/api/client';
-import type { BidEvent, LotDetail } from '../../shared/api/types';
+import type {
+  BidEvent,
+  BidHistoryItem,
+  LotDetail,
+} from '../../shared/api/types';
 import { artworkType } from '../../shared/lib/artwork-type';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
@@ -43,7 +47,12 @@ export function RoomView({ room, connection, onPlaced, onMissing }: Props) {
       )}
       <div className={layoutOf(lot, viewer)}>
         <RoomHead lot={lot} />
-        <RoomSummary lot={lot} offset={room.offset} extended={room.extended} />
+        <RoomSummary
+          lot={lot}
+          offset={room.offset}
+          extended={room.extended}
+          leader={leaderOf(lot, room.bids[0])}
+        />
         <RoomStatus lot={lot} viewer={viewer} room={room} />
         {open && (
           <section className="room__form" aria-label="Dar lance">
@@ -79,6 +88,14 @@ export function RoomView({ room, connection, onPlaced, onMissing }: Props) {
       </div>
     </>
   );
+}
+
+function leaderOf(
+  lot: LotDetail,
+  top: BidHistoryItem | undefined,
+): string | undefined {
+  if (!top) return undefined;
+  return top.alias === lot.me?.alias ? 'Você' : top.alias;
 }
 
 function useViewer(lot: LotDetail): Viewer {

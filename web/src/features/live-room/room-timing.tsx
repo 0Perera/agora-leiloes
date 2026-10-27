@@ -7,7 +7,9 @@ import { useNow } from './use-room';
 
 type Props = { lot: LotDetail; offset: number; extended: boolean };
 
-export function RoomSummary({ lot, offset, extended }: Props) {
+type SummaryProps = Props & { leader?: string };
+
+export function RoomSummary({ lot, offset, extended, leader }: SummaryProps) {
   const summary = summaryOf(lot);
 
   return (
@@ -15,12 +17,14 @@ export function RoomSummary({ lot, offset, extended }: Props) {
       className="room__summary room-summary"
       aria-label="Lance atual e tempo restante"
     >
-      <div>
+      <div className="room-summary__bid">
         <span className="ag-lot__label">{summary.label}</span>
         <span className="room-price" aria-live="polite">
           {formatMoney(summary.amount)}
         </span>
-        <span className="room-bids">{summary.bids}</span>
+        <span className="room-bids">
+          {leader ? `${leader} · ${summary.bids}` : summary.bids}
+        </span>
       </div>
       {lot.status === 'scheduled' ? (
         <RoomOpens startsAt={lot.startsAt} />
