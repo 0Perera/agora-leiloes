@@ -400,9 +400,11 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Env `BID_HMAC_SECRET` obrigatória com 32 caracteres ou mais, no `.env.example`, no compose e no `render.yaml`, com o teste do caso 13.
 
 **O que revisei e pedi para mudar:**
-- Aprovei os 13 casos de teste da story, incluindo o de dígitos que passam de um campo para o vizinho.
+- Aprovei os casos 1 a 11 e pedi dois a mais: hash diferente quando dígitos passam de um campo para o vizinho (12) e recusa do segredo ausente ou curto (13).
+- Pedi o segredo obrigatório com tamanho mínimo, no `.env.example`, no compose e no `render.yaml`.
 - Pedi registrar no `deploy-notes.md` que o segredo nunca muda depois do seed e que, no dia da entrega, o banco é recriado mantendo o segredo.
 - Pedi registrar para a 4.3 que o `created_at` do lance vem do `Clock` da aplicação, nunca do `now()` do banco, porque o Postgres guarda microssegundos e o hash usa milissegundos.
+- Depois da revisão, aprovei os casos 14, 15 e 16: alias diferente por licitante no mesmo lote, hash conferido contra um valor conhecido e env válida sem o valor do segredo na mensagem de erro.
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta story.

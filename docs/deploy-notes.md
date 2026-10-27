@@ -42,6 +42,7 @@ então qualquer mudança nelas é feita no dashboard. `DATABASE_URL` vem do banc
 - Roda **da máquina local**, apontando para a External Database URL do Render:
   `DATABASE_URL=<External Database URL> DB_SSL=true BID_HMAC_SECRET=<mesmo do Render> npm run seed`
 - O segredo de HMAC tem que ser **exatamente o mesmo** configurado no Render. Com um segredo diferente, os lances do seed ficam com hash inválido e a auditoria acusa adulteração.
+- Guardar uma cópia do `BID_HMAC_SECRET` fora do Render (é o mesmo valor usado para rodar o seed local): recriado o serviço, o Render geraria outro.
 - O segredo **nunca muda depois do seed**: trocar invalida todas as assinaturas gravadas (lances, selos, aliases e comprovantes) e a auditoria passa a acusar adulteração em todos os lotes.
 - `BID_HMAC_SECRET` está no `render.yaml` com `generateValue: true`, que só gera valor quando a variável ainda não existe. Criada à mão no dashboard antes do merge da 4.2, o sync do Blueprint não a substitui.
 

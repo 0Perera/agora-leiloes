@@ -37,6 +37,10 @@
   summary: na 4.3, o `created_at` do lance vem do `Clock` da aplicação e é gravado explicitamente, nunca do `now()` do banco.
   evidence: o Postgres guarda microssegundos e o hash usa `toISOString()` com milissegundos; com `now()`, a verificação da cadeia falharia em todo lance. Pedido do usuário.
 
+- source_spec: `docs/stories/spec-4-2-cadeia-de-hmac-selo-e-alias-tdd.md`
+  summary: na 5.5, o verificador aceita `GENESIS` como `prev_hash` só no primeiro lance (`seq` 1) e exige, em todos os outros, `prev_hash` igual ao hash do lance anterior.
+  evidence: achado da revisão da 4.2; `hashBid` trata `null` e `GENESIS` igual e não confere o `seq`, então essa checagem fica com o verificador.
+
 ## Polimento visual
 
 - source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`
