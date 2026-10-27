@@ -39,8 +39,8 @@ function closeOf(decision: SettlementDecision) {
   return decision;
 }
 
-function moveOf(decision: SettlementDecision, userId: number) {
-  return closeOf(decision).moves.find((move) => move.userId === userId);
+function movesOf(decision: SettlementDecision) {
+  return closeOf(decision).moves;
 }
 
 describe('decide', () => {
@@ -60,7 +60,9 @@ describe('decide', () => {
     it('liquida pelo fim prorrogado recebido', () => {
       const lot = makeLot({ endsAt: at(2 * MINUTE) });
 
-      expect(decide(makeState({ lot })).settle).toBe(false);
+      expect(decide(makeState({ lot, now: at(2 * MINUTE - 1) })).settle).toBe(
+        false,
+      );
       expect(decide(makeState({ lot, now: at(2 * MINUTE) })).settle).toBe(true);
     });
 
@@ -136,35 +138,39 @@ describe('decide', () => {
 
   describe('movimentos', () => {
     const last = { userId: WINNER, amount: 15_000 };
+    const winnerMove = { userId: WINNER, balance: -15_000, committed: -15_000 };
+    const auctioneerMove = {
+      userId: AUCTIONEER,
+      balance: 15_000,
+      committed: 0,
+    };
 
     it('debita o valor do saldo do vencedor', () => {
-      expect(moveOf(decide(makeState({ last })), WINNER)?.balance).toBe(
-        -15_000,
-      );
+      expect(movesOf(decide(makeState({ last })))).toEqual([
+        winnerMove,
+        auctioneerMove,
+      ]);
     });
 
     it('libera o valor do comprometido do vencedor', () => {
-      expect(moveOf(decide(makeState({ last })), WINNER)?.committed).toBe(
-        -15_000,
-      );
+      expect(movesOf(decide(makeState({ last })))).toEqual([
+        winnerMove,
+        auctioneerMove,
+      ]);
     });
 
     it('credita o valor no saldo do leiloeiro', () => {
-      expect(moveOf(decide(makeState({ last })), AUCTIONEER)).toEqual({
-        userId: AUCTIONEER,
-        balance: 15_000,
-        committed: 0,
-      });
+      expect(movesOf(decide(makeState({ last })))).toEqual([
+        winnerMove,
+        auctioneerMove,
+      ]);
     });
 
     it('o comprometido do vencedor varia só pelo valor deste lote', () => {
-      const decision = decide(makeState({ last }));
-
-      expect(moveOf(decision, WINNER)).toEqual({
-        userId: WINNER,
-        balance: -15_000,
-        committed: -15_000,
-      });
+      expect(movesOf(decide(makeState({ last })))).toEqual([
+        winnerMove,
+        auctioneerMove,
+      ]);
     });
   });
 });
