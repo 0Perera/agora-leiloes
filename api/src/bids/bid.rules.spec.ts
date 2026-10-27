@@ -239,4 +239,46 @@ describe('BidRules.decide', () => {
       });
     });
   });
+
+  describe('anti-sniping', () => {
+    it('prorroga 2 min quando faltam exatamente 2 min', () => {
+      const bid = makeBid({ lot: makeLot({ endsAt: at(2 * MINUTE) }) });
+
+      expect(decide(bid)).toMatchObject({ endsAt: at(4 * MINUTE) });
+    });
+
+    it('prorroga somando ao fim atual, não ao horário do lance', () => {
+      const bid = makeBid({ lot: makeLot({ endsAt: at(30_000) }) });
+
+      expect(decide(bid)).toMatchObject({ endsAt: at(30_000 + 2 * MINUTE) });
+    });
+
+    it('não prorroga quando faltam mais de 2 min', () => {
+      const endsAt = at(2 * MINUTE + 1);
+      const bid = makeBid({ lot: makeLot({ endsAt }) });
+
+      expect(decide(bid)).toMatchObject({ endsAt });
+    });
+
+    it('acumula prorrogação sobre um fim já prorrogado', () => {
+      const extended = at(MINUTE + 2 * MINUTE);
+      const bid = makeBid({
+        lot: makeLot({ endsAt: extended }),
+        last: { userId: RIVAL, amount: 10_000 },
+        amount: 11_000,
+        now: at(2 * MINUTE),
+      });
+
+      expect(decide(bid)).toMatchObject({ endsAt: at(5 * MINUTE) });
+    });
+
+    it('lance recusado não prorroga', () => {
+      const bid = makeBid({
+        lot: makeLot({ endsAt: at(MINUTE) }),
+        amount: 9_000,
+      });
+
+      expect(decide(bid)).not.toHaveProperty('endsAt');
+    });
+  });
 });
