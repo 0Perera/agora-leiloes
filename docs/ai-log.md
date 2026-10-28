@@ -742,3 +742,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Devolver o token do comprovante na auditoria para mostrar o link a qualquer pessoa: recusei, para o vencedor continuar decidindo quem vê o comprovante.
+
+**Erro encontrado na revisão:**
+- O passo 2 da auditoria dizia que o selo do lote nascia no encerramento, mas ele é gravado a cada lance.
+- O espaço que não quebra linha antes do horário no comprovante tinha virado um caractere invisível no código na refatoração; voltou a ser escrito de forma explícita.
