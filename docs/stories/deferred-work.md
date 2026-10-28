@@ -97,6 +97,9 @@
 - source_spec: `docs/stories/spec-4-6-tela-sala-do-lote-ao-vivo-lances-e-tempo-real.md`
   summary: no painel do leiloeiro, ao escolher uma obra no acervo, rolar até a ficha do lote e levar o foco ao primeiro campo; no celular, hoje é preciso rolar manualmente para encontrá-la.
   evidence: pedido do usuário na conferência da 4.6.
+- source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
+  summary: no painel do leiloeiro, ao lado do campo de busca do acervo, um ícone de sugestões que abre uma pequena lista de termos que dão resultado nos dois departamentos (ex.: "portrait", "Rembrandt", "Madonna", "marble", "amphora"); clicar num termo preenche o campo e faz a busca. Conferir antes, na API da Cleveland, que cada termo retorna obras com imagem.
+  evidence: pedido do usuário na conferência da 5.6.
 
 - source_spec: `docs/stories/spec-5-2-liquidacao-e-comprovante-assinado-na-api.md`
   summary: na 5.3, se o timer chamar a liquidação por um caminho sem o lock do lote, cobrir com teste o `ignoreDuplicate` (violação de `receipts_lot_id` termina sem erro e sem evento).
@@ -105,3 +108,23 @@
 - source_spec: `docs/stories/spec-5-3-timer-de-liquidacao-em-memoria.md`
   summary: na 6.1, o script do seed chama `app.close()` no final, inclusive em caso de erro (`try/finally`), e avalia trocar o `SettlementTimer` por um falso no contexto do seed, como no e2e.
   evidence: o seed sobe a aplicação e, com ela, o `SettlementTimer`; sem `app.close()`, o processo fica pendurado no timer do lote ao vivo de ~30 dias. Com o timer ligado, ele pode liquidar no meio da criação dos dados com o `Clock` deslocado (D-045).
+
+- source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
+  summary: na 5.8, adicionar o link "Auditar este lote" no comprovante (`/receipts/:token`, ao lado de "Copiar link", como no canvas Comprovante.dc.html) e na sala do lote, apontando para `/lots/:id/audit`.
+  evidence: a tela de auditoria só existe a partir da 5.8; a spec da 5.6 proíbe o link antes disso.
+
+- source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
+  summary: na 6.1, a tela Entrar ganha uma caixa "Contas de demonstração" com três botões (leiloeiro, licitante 1, licitante 2) que preenchem e-mail e senha das contas do seed, com um aviso curto de que são contas de demonstração e a dica de entrar com o outro licitante numa janela anônima para testar o tempo real. As credenciais vêm de um único lugar compartilhado com o seed e o README.
+  evidence: pedido do usuário na conferência da 5.6.
+
+- source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
+  summary: composição do seed da 6.1, tudo do mesmo leiloeiro e pelos services (D-020, D-045): 1 leiloeiro e 2 licitantes (Ana e Bia) com saldo; 4 lotes ao vivo terminando em ~30 dias (um disputado com ~8 lances alternados, um em que a Ana lidera, um em que a Bia lidera e um sem lances); 2 agendados abrindo em 2 e 7 dias; 3 encerrados e liquidados com o Clock no passado (um arrematado pela Ana, um pela Bia e um sem lances); 1 cancelado; obras dos dois departamentos.
+  evidence: pedido do usuário na conferência da 5.6.
+
+- source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
+  summary: na 6.1, o seed cria um lote extra encerrado e liquidado pelos services, com pelo menos 4 lances, e depois o adultera de propósito com um `UPDATE` direto no valor de um lance do meio. O passo é idempotente (só adultera se ainda não foi adulterado) e nunca toca em lote ao vivo; a auditoria desse lote precisa dar `tampered` apontando esse lance.
+  evidence: pedido do usuário na conferência da 5.6, para o avaliador ver a auditoria acusar uma adulteração sem precisar provocá-la.
+
+- source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
+  summary: na 6.1, o roteiro do README avisa qual lote do seed foi adulterado de propósito e por quê, e ganha uma seção curta "Testar a adulteração você mesmo" com 3 comandos SQL para o banco do docker compose (mudar o valor de um lance, apagar o último lance, mudar o valor de um comprovante), cada um com o resultado esperado na auditoria e no comprovante.
+  evidence: pedido do usuário na conferência da 5.6.

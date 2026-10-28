@@ -230,7 +230,11 @@
 
 .panel-results {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  /* no máximo 4 colunas: as páginas de 12 resultados sempre fecham a linha */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(max(200px, calc((100% - 3 * var(--space-4)) / 4)), 1fr)
+  );
   gap: var(--space-4);
 }
 

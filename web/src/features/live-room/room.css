@@ -196,44 +196,10 @@
   color: var(--ink-muted);
 }
 
-/* nicho em arco onde a obra fica exposta, inteira */
-.room-niche {
-  position: relative;
-  width: 100%;
+/* na sala, o nicho tem teto de largura e fica centrado na coluna */
+.room__art .arch {
   max-width: 520px;
-  aspect-ratio: 440 / 540;
   margin: 0 auto;
-  background-color: var(--marble-100);
-  border: 1px solid var(--gold-500);
-  border-bottom: 0;
-  border-radius: 999px 999px 0 0;
-  box-shadow:
-    inset 0 22px 30px -22px rgba(43, 37, 32, 0.3),
-    inset 0 0 0 6px var(--marble-100),
-    inset 0 0 0 7px var(--vein);
-}
-
-.room-niche__stage {
-  position: absolute;
-  top: 24%;
-  left: 11%;
-  right: 11%;
-  bottom: 7%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.room-niche__image {
-  box-sizing: border-box;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  border: 7px solid var(--gold-500);
-  background-color: var(--marble-200);
-  box-shadow:
-    0 0 0 1px var(--gold-700),
-    0 14px 18px -12px rgba(43, 37, 32, 0.55);
 }
 
 /* sobre a obra e o lote */
@@ -537,39 +503,6 @@
   height: 100%;
 }
 
-.room-missing {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-  max-width: 640px;
-  margin: 48px auto;
-  padding: 40px var(--space-5);
-  border-top: 3px double var(--gold-500);
-  border-bottom: 3px double var(--gold-500);
-  text-align: center;
-}
-
-.room-missing .room-kicker {
-  font-size: 12px;
-  line-height: 16px;
-}
-
-.room-missing__title {
-  margin: 0;
-  font-family: var(--font-serif);
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 38px;
-}
-
-.room-missing__text {
-  margin: 0;
-  font-size: 18px;
-  line-height: 27px;
-  color: var(--ink-muted);
-}
-
 .room-back {
   min-height: 44px;
 }
@@ -597,7 +530,7 @@
     gap: 20px;
   }
 
-  .room-niche {
+  .room__art .arch {
     width: min(100%, 520px, calc(55vh * 440 / 540));
   }
 }
@@ -630,9 +563,5 @@
 
   .room-history__time {
     grid-column: 1 / -1;
-  }
-
-  .room-missing {
-    padding: var(--space-6) var(--space-2);
   }
 }

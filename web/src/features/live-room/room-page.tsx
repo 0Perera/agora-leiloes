@@ -1,5 +1,7 @@
 import { Link, useParams } from 'react-router';
 import { LoadError } from '../../shared/ui/load-error';
+import { Niche } from '../../shared/ui/niche';
+import { NotFound } from '../../shared/ui/not-found';
 import { parseLotId } from './room-summary';
 import { RoomView } from './room-view';
 import { useRoom } from './use-room';
@@ -35,11 +37,9 @@ function RoomSkeleton() {
       </p>
       <div className="room" aria-hidden="true">
         <div className="room__art">
-          <div className="room-niche">
-            <div className="room-niche__stage">
-              <div className="skel room-skel--art" />
-            </div>
-          </div>
+          <Niche>
+            <div className="skel room-skel--art" />
+          </Niche>
         </div>
         <div className="room__main">
           <div className="room__head room-skel-head">
@@ -56,17 +56,12 @@ function RoomSkeleton() {
 
 function RoomMissing() {
   return (
-    <div className="room-missing" role="alert">
-      <p className="room-kicker">Sala do lote</p>
-      <h1 className="room-missing__title">Lote não encontrado</h1>
-      <p className="room-missing__text">
-        Este lote não existe ou foi cancelado pelo leiloeiro antes de receber
-        lances.
-      </p>
-      <Link className="ag-btn ag-btn--secondary" to="/">
-        Voltar à vitrine
-      </Link>
-    </div>
+    <NotFound
+      kicker="Sala do lote"
+      title="Lote não encontrado"
+      text="Este lote não existe ou foi cancelado pelo leiloeiro antes de receber lances."
+      back="Voltar à vitrine"
+    />
   );
 }
 

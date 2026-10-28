@@ -2,7 +2,7 @@ import type { LotDetail } from '../../shared/api/types';
 import { secondsLeft, splitLeft } from '../../shared/lib/countdown';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
-import { countNote, summaryOf } from './room-summary';
+import { awaitsSettlement, countNote, summaryOf } from './room-summary';
 import { useNow } from './use-room';
 
 type SummaryProps = {
@@ -40,9 +40,13 @@ export function RoomSummary({ lot, offset, extended, leader }: SummaryProps) {
           <RoomCountdown seconds={live ? seconds : 0} urgent={note.urgent} />
         )}
       </section>
-      <p className={note.urgent ? 'room-note room-note--urgent' : 'room-note'}>
-        {note.text}
-      </p>
+      {!awaitsSettlement(lot) && (
+        <p
+          className={note.urgent ? 'room-note room-note--urgent' : 'room-note'}
+        >
+          {note.text}
+        </p>
+      )}
     </div>
   );
 }

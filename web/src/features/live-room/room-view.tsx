@@ -11,10 +11,11 @@ import type { Connection } from '../../shared/lib/connection';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel } from '../../shared/lib/roman';
+import { Niche } from '../../shared/ui/niche';
 import { BidForm } from './bid-form';
 import { olderPage } from './room-bids';
 import { RoomHistory } from './room-history';
-import { RoomOpening, RoomSituation } from './room-status';
+import { BidderStatus, EndedStatus, RoomOpening } from './room-status';
 import { RoomSummary } from './room-timing';
 import type { ReadyRoom } from './use-room';
 
@@ -57,15 +58,13 @@ export function RoomView({
       )}
       <div className="room">
         <figure className="room__art">
-          <div className="room-niche">
-            <div className="room-niche__stage">
-              <img
-                className="room-niche__image"
-                src={lotImageUrl(lot.id)}
-                alt={`Imagem de ${lot.title}`}
-              />
-            </div>
-          </div>
+          <Niche>
+            <img
+              className="arch__image"
+              src={lotImageUrl(lot.id)}
+              alt={`Imagem de ${lot.title}`}
+            />
+          </Niche>
         </figure>
         <div className="room__main">
           <RoomHead lot={lot} />
@@ -133,8 +132,10 @@ function RoomStatus({
 }) {
   if (lot.status === 'scheduled')
     return <RoomOpening startsAt={lot.startsAt} />;
-  if (lot.status !== 'live' || viewer !== 'bidder' || !lot.me) return null;
-  return <RoomSituation lot={lot} me={lot.me} top={room.bids[0]} />;
+  if (viewer === 'bidder' && lot.me)
+    return <BidderStatus lot={lot} me={lot.me} top={room.bids[0]} />;
+  if (lot.status === 'ended') return <EndedStatus lot={lot} />;
+  return null;
 }
 
 function VisitorBox() {

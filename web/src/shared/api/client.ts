@@ -19,6 +19,7 @@ import type {
   LotStatus,
   PlaceBidRequest,
   PlacedBid,
+  Receipt,
   SignupRequest,
   Wallet,
   WalletBalance,
@@ -159,10 +160,13 @@ export const api = {
     const body: PlaceBidRequest = { amount };
     return request<PlacedBid>(`/lots/${id}/bids`, { method: 'POST', body });
   },
+  receipt: (token: string) =>
+    request<Receipt>(`/receipts/${encodeURIComponent(token)}`),
 };
 
 type StreamHandlers = {
   onBid: (bid: BidEvent) => void;
+  onSettled: () => void;
   onOpen: () => void;
   onLost: () => void;
   onDrop: () => void;
@@ -187,6 +191,7 @@ export function openLotStream(
       const bid = parseBidEvent(event.data);
       if (bid) handlers.onBid(bid);
     });
+    source.addEventListener('settled', handlers.onSettled);
     source.addEventListener('error', () => {
       if (closed) return;
       handlers.onLost();
