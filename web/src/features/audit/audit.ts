@@ -36,12 +36,16 @@ export function verdictOf(audit: LotAudit): Verdict {
 function truncatedText(count: number): string {
   if (count === 0)
     return 'Nenhum lance aparece no histórico, mas o selo do lote indica que houve lances. Isso indica que eles foram apagados.';
+  if (count === 1)
+    return 'O lance listado não confere com o selo do lote. Isso indica que lances foram apagados do final do histórico.';
   return `Os ${count} lances listados estão em sequência, mas o último não confere com o selo do lote. Isso indica que lances foram apagados do final do histórico.`;
 }
 
 function intactText(count: number): string {
   if (count === 0)
     return 'O lote ainda não recebeu lances. Quando receber, cada um entra na sequência e pode ser conferido aqui.';
+  if (count === 1)
+    return 'O único lance está registrado e confere com o selo do lote. Nada foi alterado, apagado ou incluído depois.';
   return `Os ${count} lances estão em sequência, sem nenhuma quebra, e o último confere com o selo do lote. Nada foi alterado, apagado ou incluído depois.`;
 }
 

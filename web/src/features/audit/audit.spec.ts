@@ -74,6 +74,22 @@ describe('verdictOf', () => {
     expect(verdict.title).toBe('Histórico adulterado: lances removidos do fim');
   });
 
+  it('declara íntegro o único lance no singular', () => {
+    const audit = makeAudit();
+    const verdict = verdictOf({ ...audit, bids: audit.bids.slice(0, 1) });
+    expect(verdict.text).toBe(
+      'O único lance está registrado e confere com o selo do lote. Nada foi alterado, apagado ou incluído depois.',
+    );
+  });
+
+  it('acusa no singular o lance listado que não confere com o selo', () => {
+    const audit = makeAudit({ result: 'truncated' });
+    const verdict = verdictOf({ ...audit, bids: audit.bids.slice(0, 1) });
+    expect(verdict.text).toBe(
+      'O lance listado não confere com o selo do lote. Isso indica que lances foram apagados do final do histórico.',
+    );
+  });
+
   it('explica a remoção de todos os lances', () => {
     const verdict = verdictOf(makeAudit({ result: 'truncated', bids: [] }));
     expect(verdict.text).toBe(
