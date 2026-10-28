@@ -96,6 +96,12 @@
   line-height: 40px;
 }
 
+.panel-tabula-value--total {
+  align-self: flex-start;
+  font-variant-numeric: tabular-nums;
+  border-bottom: 3px double var(--ink);
+}
+
 .panel-tabula-note {
   font-size: 15px;
   line-height: 20px;
@@ -766,6 +772,10 @@
   height: 40px;
   width: 40%;
   margin-top: 10px;
+}
+
+.panel-skel--total {
+  width: 70%;
 }
 
 .panel-skel--wall {
