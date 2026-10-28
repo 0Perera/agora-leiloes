@@ -670,3 +670,14 @@ Story: 5.2
 **Por quê:** apagar o último lance direto no banco faria cobrar o penúltimo licitante, cujo comprometido já foi liberado.
 **Alternativas descartadas:** liquidar mesmo assim e deixar a detecção para a auditoria (cobraria a pessoa errada).
 **Consequência:** o comprometido do vencedor fica preso, e cada acesso tenta de novo e loga, até alguém investigar.
+
+## D-065: Comprovante na auditoria do lote
+
+Status: Aceita
+Data: 2026-10-27
+Story: 5.5
+
+**Decisão:** a auditoria ganha um quarto resultado, `receipt_tampered`, para lote liquidado com lances cujo comprovante falta, tem hash final diferente do último lance ou assinatura inválida. Prioridade: `tampered` > `truncated` > `receipt_tampered`. Lote liquidado sem lances não tem comprovante e continua `intact`; selo nulo dá `truncated` (D-058).
+**Por quê:** apagar o último lance de um lote liquidado quebra o selo e o comprovante juntos; a prioridade mostra a causa (`truncated`) e não a consequência.
+**Alternativas descartadas:** `tampered` com `brokenSeq` nulo (o front distinguiria lance de comprovante só pelo nulo); `tampered` apontando o último lance (acusaria um lance íntegro).
+**Consequência:** a tela da 5.8 traduz quatro resultados.
