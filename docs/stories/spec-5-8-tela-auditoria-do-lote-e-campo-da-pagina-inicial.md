@@ -88,9 +88,10 @@ context:
 
 ## Implementation Notes
 
+- Conferência do usuário antes do push: códigos escondidos por padrão, com a frase "Guarde o código do último lance. Se o histórico for reescrito, esse código muda." quando visíveis; o botão de copiar já copiava o código completo (`bid.hash`).
 - Colunas do livro em 1280px: código com 290px (caixa de copiar) e verificação com 190px, para "Não verificável" caber numa linha.
 - Abaixo de 420px só a linha do código vai para baixo do rótulo; as outras ficam lado a lado, como no canvas.
-- Menu do cabeçalho no celular: rola para o lado sem barra visível, com esmaecido na borda direita (licitante precisa de 453px, leiloeiro de 511px, há 316px em 360).
+- Menu do cabeçalho abaixo de 480px: fonte 11px e letter-spacing 0 com 12px entre os links; 8px abaixo de 468px e 4px sem respiro lateral abaixo de 440px. O licitante cabe a partir de 360px; o leiloeiro ("Painel do leiloeiro") rola com esmaecido abaixo de 397px (faltam 37px em 360px e 7px em 390px). Acima de 480px nada muda.
 - `signText(false)` termina em "pode ter sido alterado."; a página acrescenta a frase com o link para a auditoria.
 
 ## Spec Change Log
@@ -102,10 +103,10 @@ context:
 | `truncated` sem nenhum lance: texto "Os 0 lances…" e sem a linha do selo | high, corrigido | Todos os lances apagados é a remoção que a auditoria existe para acusar. Texto próprio e linha "Selo do lote" mesmo com a lista vazia, com teste. |
 | Âncora malformada (`/#%E0`) derruba a página inicial | medium, corrigido | `decodeURIComponent` lançava dentro do efeito; agora cai no texto cru. Conferido no navegador. |
 | Seção rolada antes de a vitrine carregar sai da tela | false | Medido vindo da auditoria em 1280 e 768px: a posição da seção é a mesma em 0,3 s, 1,5 s e 4 s. |
-| Rolagem volta à âncora quando o destaque termina de carregar depois | low, não corrigido | Só num primeiro carregamento lento em que a pessoa já rolou. |
+| Rolagem volta à âncora quando o destaque termina de carregar depois | low, corrigido a pedido | Rolagem uma vez por navegação, cancelada por rolagem manual (`scrollTarget`, com teste). |
 | Busca do campo navega depois que a pessoa saiu da página | low, não corrigido | Só com a API dormindo e a pessoa trocando de tela no meio da busca. |
-| Falha no "Verificar de novo" troca o veredito pela tela de erro | low, não corrigido | A tela de erro traz "Tentar de novo"; nada se perde. |
-| Texto antigo do veredito fica sob "Verificando o histórico…" | low, não corrigido | Dura o tempo da requisição. |
+| Falha no "Verificar de novo" troca o veredito pela tela de erro | low, corrigido a pedido | O veredito anterior fica e o erro aparece abaixo do botão (`afterFailure`, `checkView`, com testes). |
+| Texto antigo do veredito fica sob "Verificando o histórico…" | low, corrigido a pedido | O veredito anterior fica inteiro e o botão mostra "Verificando…" desabilitado. |
 | `brokenSeq` nulo com resultado `tampered` | false | `verify` sempre devolve o `seq` do lance quebrado em `tampered` (`audit/chain.ts`). |
 
 ## Design Notes
