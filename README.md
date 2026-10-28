@@ -56,7 +56,14 @@ _(módulos, fluxo de um lance e liquidação)_
 
 ## Auditoria
 
-_(como a técnica detecta alteração, remoção e inserção no histórico)_
+Qualquer pessoa confere se o histórico de um lote foi mexido, sem login, em `GET /lots/:id/audit` (`GET /lots/number/:number` leva do número ao id). A técnica é uma cadeia de HMAC (D-012):
+
+- **Cada lance assina o anterior:** o lance guarda um HMAC do lote, da ordem, do licitante, do valor, da data e do hash do lance anterior. Mudar, inserir, apagar ou trocar a ordem de um lance quebra a cadeia, e só o servidor tem o segredo para assinar de novo.
+- **O selo do lote** guarda a contagem e o último hash, e acusa lances apagados do fim, que deixariam o resto da cadeia coerente.
+- **O comprovante assinado** aponta para o último lance da cadeia, e a assinatura dele é conferida a cada consulta (D-029).
+- Um segredo só, com um prefixo diferente para cada uso, em formato fixo, para uma assinatura nunca valer em outro lugar (D-056).
+- **Resultado:** `intact` (íntegro), `tampered` (lance adulterado, com o primeiro quebrado), `truncated` (lances apagados do fim) ou `receipt_tampered` (comprovante não confere), nessa prioridade (D-065). Cada lance aparece como íntegro, adulterado ou não verificável (depois do primeiro quebrado).
+- **Limitação:** restaurar o lote e os lances inteiros para um estado anterior não é detectado, porque o hash não é guardado fora do banco.
 
 ## Comportamentos esperados
 
@@ -75,6 +82,7 @@ _(regras que podem surpreender, uma linha cada, com o porquê)_
 - Lote cujo selo não confere com a cadeia de lances não é liquidado: nenhum saldo se move e a evidência fica para a auditoria. Cada acesso ao lote tenta liquidar de novo e registra o motivo no log, até alguém investigar (D-064).
 - Se o crédito da venda levar o saldo do leiloeiro acima do teto do `integer` (~R$ 21 mi), o lote não é liquidado e o erro vai para o log: saldos são inteiros em centavos, sem `bigint`.
 - Em Meus lances, lote encerrado fica em "Em andamento", marcado como aguardando liquidação, até o timer ou o primeiro acesso a ele liquidar: a listagem só lê, nunca liquida.
+- Consultar a auditoria não liquida o lote: lote vencido aparece encerrado e sem comprovante conferido até o timer ou o primeiro acesso à sala liquidá-lo.
 - Lote vencido e ainda não liquidado continua comprometendo o saldo do vencedor, e a Carteira mostra "Você arrematou · aguardando liquidação"; a lista mostra até 20 lotes e diz quantos faltam (D-063).
 - Na busca da vitrine, "7", "VII" e "lote vii" procuram o número do lote; romano em minúscula sem o "lote " vai como texto, porque o acervo tem nomes como "Agnolo di Cosimo". A busca abre a primeira aba com resultado (Ao vivo, Agendados, Encerrados), para o visitante não achar que nada existe só porque a aba atual está vazia.
 - A sala do lote não calcula o status no navegador: quando a contagem chega ao início ou ao fim, ela busca o lote de novo (e repete até 3 vezes, a cada 2 s, se o status ainda não mudou), porque a hora de referência é a do servidor.
@@ -96,6 +104,7 @@ cd web && npm test           # Vitest
 - **Lotes:** datas de início e fim, peça já em lote ativo, limites de lance inicial e incremento, falha da imagem sem gravar lote, cadeia do destaque (maior lance, fim mais próximo, próximo agendado), filtros da vitrine e do painel, resumo do painel sem lotes e cancelamento (encerrado, com lance, lote alheio e trava da linha).
 - **Lances:** ordem das recusas, mínimo, saldo, anti-sniping, cadeia de HMAC, selo e alias; no serviço, ordem dos locks, hora lida depois do lock, encadeamento do `seq` e do hash, atualização do lote, movimento do comprometido, resposta do lance, recusa quando o selo do lote não confere e evento emitido só depois da transação; stream por lote com heartbeat e campos fechados do evento e do histórico.
 - **Integração (e2e):** Postgres 17 de verdade via Testcontainers e a API inteira por HTTP, com relógio de teste e catálogo falso. Lance aceito, recusado, de leiloeiro e sem token, saldo devolvido ao superado e prorrogação nos últimos 2 min; evento no stream só do lance aceito e ouvinte removido ao fechar a conexão, histórico paginado, `me` no detalhe por papel e lotes comprometidos na carteira; 10 lances simultâneos parados no mesmo lock (cadeia, selo, `seq`, lote e carteiras íntegros) dois lances do mesmo mínimo e o mesmo licitante em dois lotes com saldo para um lance só; destaque, cancelamento, contagens e ordem das abas da vitrine.
+- **Auditoria:** verificação da cadeia, do selo e do comprovante (alteração, inserção, remoção, ordem trocada, selo nulo, comprovante divergente, ausente ou fora de lugar) e indicador por lance; no e2e, `UPDATE` no valor e no dono, `DELETE` do último lance e `UPDATE` no comprovante, aliases iguais aos da sala e duas queries por chamada.
 - **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito, rótulos e nota do resumo da sala do lote, id inválido na rota da sala, nova busca na virada de estado, tradução do tipo da obra e, na sala, união dos lances do POST, do stream e da reconexão pelo `seq`, situação do licitante, atalhos de valor e tradução das recusas de lance; na Carteira, os textos dos lotes comprometidos.
 
 ## Stack e decisões

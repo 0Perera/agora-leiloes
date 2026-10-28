@@ -107,6 +107,7 @@ dto/place-bid.dto.ts
   Em dev, deixar o log de queries ligado e conferir quantas queries cada endpoint dispara.
 - Toda listagem é paginada e seleciona só as colunas que a tela usa.
   Exceção: os lotes comprometidos em `GET /wallet` vêm com teto de 20 e o total, sem página (D-063).
+  Exceção: a auditoria (`GET /lots/:id/audit`) devolve a lista completa de lances, porque a verificação depende da cadeia inteira (D-066).
 - Índice em toda coluna usada em filtro ou ordenação frequente (ex.: `lots.starts_at`, `lots.ends_at`, `bids.lot_id`).
 - Operações que mexem em saldo ou lance rodam numa **única transação**, com lock de linha (`FOR UPDATE`) no lote e nas carteiras.
   Carteiras sempre travadas na mesma ordem (por `id`) para evitar deadlock.

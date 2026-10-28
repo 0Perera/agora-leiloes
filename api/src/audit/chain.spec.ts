@@ -1,8 +1,22 @@
 import { createHmac } from 'node:crypto';
 
-import { BidLink, GENESIS, hashBid, LotSeal, sealLot } from './chain';
+import { sign as signReceipt } from '../receipts/receipt.signature';
+import {
+  AuditInput,
+  BidLink,
+  ChainBid,
+  ChainReceipt,
+  expectedSeal,
+  GENESIS,
+  hashBid,
+  LotSeal,
+  sealLot,
+  verify,
+} from './chain';
 
 const SECRET = 'test-secret-with-at-least-32-chars!';
+const LOT = 7;
+const FORGED = 'f'.repeat(64);
 
 function makeBid(override: Partial<BidLink> = {}): BidLink {
   return {
@@ -105,5 +119,263 @@ describe('chain.sealLot', () => {
     expect(sealLot(SECRET, makeSeal({ lotId: 8 }))).not.toBe(
       sealLot(SECRET, makeSeal()),
     );
+  });
+});
+
+function signed(fields: Omit<ChainBid, 'hash'>): ChainBid {
+  return { ...fields, hash: hashBid(SECRET, { lotId: LOT, ...fields }) };
+}
+
+function makeChain(count = 3): ChainBid[] {
+  const bids: ChainBid[] = [];
+  for (let seq = 1; seq <= count; seq++) {
+    bids.push(
+      signed({
+        seq,
+        userId: 40 + (seq % 2),
+        amount: 100_000 + seq * 5_000,
+        createdAt: new Date(Date.UTC(2026, 10, 1, 12, seq)),
+        prevHash: bids.at(-1)?.hash ?? GENESIS,
+      }),
+    );
+  }
+  return bids;
+}
+
+function makeReceipt(
+  last: ChainBid,
+  override: Partial<ChainReceipt> = {},
+): ChainReceipt {
+  const fields = {
+    alias: 'Licitante ABCDEF',
+    amount: last.amount,
+    finalHash: last.hash,
+    settledAt: new Date('2026-11-01T13:00:00.000Z'),
+  };
+  return {
+    ...fields,
+    signature: signReceipt(SECRET, { lotId: LOT, ...fields }),
+    ...override,
+  };
+}
+
+function makeAudit(override: Partial<AuditInput> = {}): AuditInput {
+  const bids = override.bids ?? makeChain();
+  return {
+    lotId: LOT,
+    seal: expectedSeal(SECRET, LOT, bids.at(-1) ?? null),
+    settled: false,
+    bids,
+    receipt: null,
+    ...override,
+  };
+}
+
+function tamper(index: number, change: Partial<ChainBid>): ChainBid[] {
+  const bids = makeChain();
+  bids[index] = { ...bids[index], ...change };
+  return bids;
+}
+
+function check(override: Partial<AuditInput> = {}) {
+  const { result, brokenSeq } = verify(SECRET, makeAudit(override));
+  return { result, brokenSeq };
+}
+
+describe('chain.verify', () => {
+  it('declara íntegra a cadeia sem alteração', () => {
+    expect(check()).toEqual({ result: 'intact', brokenSeq: null });
+  });
+
+  it('declara íntegro o lote sem lances com selo intacto', () => {
+    expect(check({ bids: [] })).toEqual({ result: 'intact', brokenSeq: null });
+  });
+
+  it('aponta o lance com valor alterado', () => {
+    expect(check({ bids: tamper(1, { amount: 999_999 }) })).toEqual({
+      result: 'tampered',
+      brokenSeq: 2,
+    });
+  });
+
+  it('aponta o lance com dono trocado', () => {
+    expect(check({ bids: tamper(1, { userId: 99 }) })).toEqual({
+      result: 'tampered',
+      brokenSeq: 2,
+    });
+  });
+
+  it('aponta o lance com data alterada', () => {
+    const createdAt = new Date('2026-11-01T11:00:00.000Z');
+
+    expect(check({ bids: tamper(1, { createdAt }) })).toEqual({
+      result: 'tampered',
+      brokenSeq: 2,
+    });
+  });
+
+  it('aponta o lance seguinte a um lance removido do meio', () => {
+    const [first, , third] = makeChain();
+
+    expect(check({ bids: [first, third] })).toEqual({
+      result: 'tampered',
+      brokenSeq: 3,
+    });
+  });
+
+  it('aponta o lance inserido no meio da cadeia', () => {
+    const [first, second, third] = makeChain();
+    const inserted = { ...second, amount: 106_000, hash: FORGED };
+    const shifted = [
+      { ...second, seq: 3 },
+      { ...third, seq: 4 },
+    ];
+
+    expect(check({ bids: [first, inserted, ...shifted] })).toEqual({
+      result: 'tampered',
+      brokenSeq: 2,
+    });
+  });
+
+  it('aponta o lance acrescentado no fim sem assinatura válida', () => {
+    const bids = makeChain();
+    const appended = {
+      ...bids[2],
+      seq: 4,
+      amount: 200_000,
+      prevHash: bids[2].hash,
+      hash: FORGED,
+    };
+
+    expect(check({ bids: [...bids, appended] })).toEqual({
+      result: 'tampered',
+      brokenSeq: 4,
+    });
+  });
+
+  it('detecta lances removidos do fim pelo selo', () => {
+    const bids = makeChain();
+    const seal = expectedSeal(SECRET, LOT, bids[2]);
+
+    expect(check({ bids: bids.slice(0, 2), seal })).toEqual({
+      result: 'truncated',
+      brokenSeq: null,
+    });
+  });
+
+  it('aponta só o primeiro lance quebrado quando há vários', () => {
+    const bids = tamper(0, { amount: 1 });
+    bids[2] = { ...bids[2], amount: 1 };
+
+    expect(check({ bids })).toEqual({ result: 'tampered', brokenSeq: 1 });
+  });
+
+  it('detecta dois lances com a ordem trocada', () => {
+    const [first, second, third] = makeChain();
+    const swapped = [first, { ...third, seq: 2 }, { ...second, seq: 3 }];
+
+    expect(check({ bids: swapped })).toEqual({
+      result: 'tampered',
+      brokenSeq: 2,
+    });
+  });
+
+  it('prioriza adulteração quando a cadeia quebra e o selo também não bate', () => {
+    expect(
+      check({ bids: tamper(1, { amount: 999_999 }), seal: FORGED }),
+    ).toEqual({ result: 'tampered', brokenSeq: 2 });
+  });
+
+  it('aponta como adulterado um lance com seq maior que 1 e prev_hash igual ao GENESIS', () => {
+    const [first, second] = makeChain(2);
+    const restarted = signed({ ...second, prevHash: GENESIS });
+
+    expect(check({ bids: [first, restarted] })).toEqual({
+      result: 'tampered',
+      brokenSeq: 2,
+    });
+  });
+
+  it('conta o selo nulo como não íntegro', () => {
+    expect(check({ seal: null })).toEqual({
+      result: 'truncated',
+      brokenSeq: null,
+    });
+  });
+
+  it('não declara íntegro o lote liquidado com hash final do comprovante diferente do último lance', () => {
+    const bids = makeChain();
+
+    expect(
+      check({ bids, settled: true, receipt: makeReceipt(bids[1]) }),
+    ).toEqual({ result: 'receipt_tampered', brokenSeq: null });
+  });
+
+  it('não declara íntegro o lote liquidado com assinatura do comprovante inválida', () => {
+    const bids = makeChain();
+    const receipt = makeReceipt(bids[2], { signature: FORGED });
+
+    expect(check({ bids, settled: true, receipt })).toEqual({
+      result: 'receipt_tampered',
+      brokenSeq: null,
+    });
+  });
+
+  it('acusa o comprovante do lote liquidado com lances quando ele falta', () => {
+    expect(check({ settled: true, receipt: null })).toEqual({
+      result: 'receipt_tampered',
+      brokenSeq: null,
+    });
+  });
+
+  it('declara íntegro o lote liquidado sem lances e sem comprovante', () => {
+    expect(check({ bids: [], settled: true, receipt: null })).toEqual({
+      result: 'intact',
+      brokenSeq: null,
+    });
+  });
+
+  it('acusa o comprovante de lote não liquidado', () => {
+    const bids = makeChain();
+
+    expect(check({ bids, receipt: makeReceipt(bids[2]) })).toEqual({
+      result: 'receipt_tampered',
+      brokenSeq: null,
+    });
+  });
+
+  it('acusa o comprovante de lote liquidado sem lances', () => {
+    const receipt = makeReceipt(makeChain()[2]);
+
+    expect(check({ bids: [], settled: true, receipt })).toEqual({
+      result: 'receipt_tampered',
+      brokenSeq: null,
+    });
+  });
+
+  it('declara íntegro o lote liquidado com comprovante válido', () => {
+    const bids = makeChain();
+
+    expect(
+      check({ bids, settled: true, receipt: makeReceipt(bids[2]) }),
+    ).toEqual({ result: 'intact', brokenSeq: null });
+  });
+
+  it('marca todos os lances como íntegros na cadeia intacta', () => {
+    expect(verify(SECRET, makeAudit()).marks).toEqual([
+      'intact',
+      'intact',
+      'intact',
+    ]);
+  });
+
+  it('marca cada lance pela posição em relação ao primeiro quebrado', () => {
+    const audit = makeAudit({ bids: tamper(1, { amount: 999_999 }) });
+
+    expect(verify(SECRET, audit).marks).toEqual([
+      'intact',
+      'tampered',
+      'unverifiable',
+    ]);
   });
 });

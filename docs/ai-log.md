@@ -646,3 +646,27 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma.
+
+## Story 5.5: Auditoria da cadeia na API (TDD)
+
+**O que a IA gerou:**
+- A verificação da cadeia de lances, do selo do lote e do comprovante, escrita depois dos testes, que falharam primeiro.
+- O indicador por lance: íntegro antes do primeiro lance quebrado, adulterado nele e não verificável depois.
+- A rota pública de auditoria do lote, com apelidos e sem dado pessoal, em duas consultas para qualquer número de lances.
+- A rota que leva do número do lote ao id, sem lotes cancelados.
+- A separação da função de assinatura num arquivo próprio, para a verificação conferir o comprovante sem import circular.
+- Na revisão, a leitura do lote e dos lances no mesmo instante do banco: um lance chegando entre as duas leituras fazia um lote íntegro parecer adulterado.
+- A explicação da técnica de auditoria no README, os tipos novos no front e os testes unitários e de integração com banco real.
+
+**O que revisei e pedi para mudar:**
+- Aprovei os 12 casos de teste propostos e pedi mais quatro: lance com seq maior que 1 apontando para o início da cadeia, selo nulo, comprovante com hash final diferente e comprovante com assinatura inválida.
+- Pedi o indicador por lance: íntegro antes do primeiro quebrado, adulterado nele e não verificável nos seguintes.
+- Pedi que cada lance apareça com o apelido calculado do licitante, sem id, nome ou e-mail, e testes de integração que alterem o banco direto (valor, último lance apagado, hash final do comprovante).
+- Escolhi um quarto resultado para comprovante adulterado, com prioridade menor que lance quebrado e lances removidos do fim.
+- Decidi que lote liquidado com lances e sem comprovante é adulterado, pedi o caso do lote liquidado sem lances, que continua íntegro, e aprovei que o selo nulo conte como lances removidos do fim.
+- Depois da revisão, decidi que comprovante em lote não liquidado ou em lote liquidado sem lances também é adulterado (dois casos novos) e aprovei os três testes extras do agente.
+- Decidi registrar a lista completa de lances na auditoria como exceção à paginação, porque a verificação depende da cadeia inteira.
+- Pedi que a auditoria ganhasse um item próprio nos testes do README e uma linha dizendo que consultar a auditoria não liquida o lote.
+
+**Sugestões rejeitadas e por quê:**
+- Comparar o apelido e o valor do comprovante com o último lance: recusei, porque a assinatura já cobre os dois e forjá-la exige o segredo.

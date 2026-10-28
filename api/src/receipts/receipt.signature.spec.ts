@@ -1,6 +1,6 @@
 import { createHmac } from 'node:crypto';
 
-import { sign as signFields } from '../audit/chain';
+import { sign as signFields } from '../audit/sign';
 import { ReceiptFields, sign, verify } from './receipt.signature';
 
 const SECRET = 'test-secret-with-at-least-32-chars!';

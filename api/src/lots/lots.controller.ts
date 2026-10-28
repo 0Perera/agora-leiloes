@@ -22,6 +22,7 @@ import { CreateLotDto } from './dto/create-lot.dto';
 import { ListLotsQueryDto } from './dto/list-lots-query.dto';
 import { LotCardDto } from './dto/lot-card.dto';
 import { LotDetailDto } from './dto/lot-detail.dto';
+import { LotIdDto } from './dto/lot-id.dto';
 import { LotResponseDto, toLotResponse } from './dto/lot-response.dto';
 import { LotShowcaseDto } from './dto/lot-showcase.dto';
 import { LotEventsService } from './lot-events.service';
@@ -58,6 +59,12 @@ export class LotsController {
     if (lot) return lot;
     response.status(204);
     return undefined;
+  }
+
+  // Campo da página inicial: o número leva ao id da auditoria. Mesmo limite do id.
+  @Get('number/:number')
+  byNumber(@Param('number', LotIdPipe) number: number): Promise<LotIdDto> {
+    return this.lots.byNumber(number);
   }
 
   // Público e sem guard: o mesmo stream por lote para todos, só com dado público.

@@ -189,6 +189,33 @@ export type Receipt = {
   valid: boolean;
 };
 
+export type AuditResult =
+  'intact' | 'tampered' | 'truncated' | 'receipt_tampered';
+
+export type BidMark = 'intact' | 'tampered' | 'unverifiable';
+
+export type AuditBid = {
+  seq: number;
+  alias: string;
+  amount: number;
+  createdAt: string;
+  hash: string;
+  mark: BidMark;
+};
+
+export type LotAudit = {
+  id: number;
+  number: number;
+  title: string;
+  status: LotStatus;
+  result: AuditResult;
+  // Seq do primeiro lance quebrado; nulo fora de 'tampered'.
+  brokenSeq: number | null;
+  bids: AuditBid[];
+};
+
+export type LotId = { id: number };
+
 export type MyBidsSection = 'ongoing' | 'won' | 'lost';
 
 export type OngoingBid = {
