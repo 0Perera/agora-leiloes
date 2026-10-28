@@ -118,7 +118,17 @@ function Figures({ lot }: { lot: DashboardLot }) {
           >
             {result.text}
           </span>
-          {result.sub && <span className="panel-sub">{result.sub}</span>}
+          {result.sub && (
+            <span className="panel-sub">
+              {result.sub}
+              {result.who && (
+                <>
+                  {' '}
+                  <span className="panel-who">{result.who}</span>
+                </>
+              )}
+            </span>
+          )}
         </span>
       </div>
       <div className="panel-money" role="cell" data-label="Lances">
@@ -203,12 +213,14 @@ function Action({
 
 function ReceiptLink({ lot, token }: { lot: DashboardLot; token: string }) {
   return (
-    <Link
-      className="ag-btn ag-btn--quiet panel-open"
-      to={`/receipts/${token}`}
-      aria-label={`Ver comprovante do ${lotLabel(lot.number)}`}
-    >
-      Ver comprovante
-    </Link>
+    <span className="panel-actions">
+      <Link
+        className="ag-btn ag-btn--quiet panel-open"
+        to={`/receipts/${token}`}
+        aria-label={`Ver comprovante do ${lotLabel(lot.number)}`}
+      >
+        Ver comprovante
+      </Link>
+    </span>
   );
 }

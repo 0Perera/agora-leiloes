@@ -3,7 +3,12 @@ import { formatMoney } from '../../shared/lib/money';
 
 type ResultLot = Pick<DashboardLot, 'status' | 'currentBid' | 'result'>;
 
-export type Result = { text: string; sub: string; muted: boolean };
+export type Result = {
+  text: string;
+  sub: string;
+  muted: boolean;
+  who?: string;
+};
 
 export function resultOf(lot: ResultLot): Result {
   if (lot.status === 'scheduled')
@@ -24,8 +29,9 @@ function endedResult(result: DashboardLot['result']): Result {
     return { text: 'Sem lances', sub: '', muted: true };
   return {
     text: formatMoney(result.amount),
-    sub: `arrematado por ${result.alias}`,
+    sub: 'arrematado por',
     muted: false,
+    who: result.alias,
   };
 }
 

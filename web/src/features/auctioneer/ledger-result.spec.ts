@@ -21,8 +21,9 @@ describe('resultOf', () => {
   it('mostra o valor e o apelido do vencedor no lote liquidado', () => {
     expect(resultOf(makeLot())).toEqual({
       text: 'R$ 9.750,00',
-      sub: 'arrematado por Licitante #A7F2',
+      sub: 'arrematado por',
       muted: false,
+      who: 'Licitante #A7F2',
     });
   });
 
