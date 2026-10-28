@@ -55,6 +55,20 @@ export function checkedText(checkedAt: Date): string {
   return `Verificado agora, às\u00a0${clock}.`;
 }
 
+export type CheckView = { label: string; busy: boolean; error: string | null };
+
+// durante a nova conferência o veredito anterior fica na tela; o botão é o aviso
+export function checkView(checking: boolean, failed: boolean): CheckView {
+  if (checking) return { label: 'Verificando…', busy: true, error: null };
+  return {
+    label: 'Verificar de novo',
+    busy: false,
+    error: failed
+      ? 'Não foi possível verificar de novo agora. O resultado acima é o da última verificação.'
+      : null,
+  };
+}
+
 export type Row = { bid: AuditBid; label: string; note: string | null };
 
 const labels: Record<BidMark, string> = {

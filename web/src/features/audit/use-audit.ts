@@ -6,11 +6,24 @@ export type AuditState =
   | { status: 'loading' }
   | { status: 'missing' }
   | { status: 'error' }
-  | { status: 'ready'; audit: LotAudit; checkedAt: Date; checking: boolean };
+  | {
+      status: 'ready';
+      audit: LotAudit;
+      checkedAt: Date;
+      checking: boolean;
+      failed: boolean;
+    };
 
 function failure(caught: unknown): AuditState {
   const missing = caught instanceof ApiError && caught.status === 404;
   return { status: missing ? 'missing' : 'error' };
+}
+
+// falha no "Verificar de novo" mantém o veredito anterior e só avisa abaixo do botão
+export function afterFailure(current: AuditState, caught: unknown): AuditState {
+  if (current.status === 'ready' && current.checking)
+    return { ...current, checking: false, failed: true };
+  return failure(caught);
 }
 
 export function useAudit(id: number) {
@@ -27,8 +40,10 @@ export function useAudit(id: number) {
           audit,
           checkedAt: new Date(),
           checking: false,
+          failed: false,
         }),
-      (caught: unknown) => active && setState(failure(caught)),
+      (caught: unknown) =>
+        active && setState((current) => afterFailure(current, caught)),
     );
     return () => {
       active = false;
@@ -40,10 +55,11 @@ export function useAudit(id: number) {
     setAttempt((current) => current + 1);
   }, []);
 
-  // verificar de novo mantém a lista na tela enquanto a nova conferência chega
   const recheck = useCallback(() => {
     setState((current) =>
-      current.status === 'ready' ? { ...current, checking: true } : current,
+      current.status === 'ready'
+        ? { ...current, checking: true, failed: false }
+        : current,
     );
     setAttempt((current) => current + 1);
   }, []);

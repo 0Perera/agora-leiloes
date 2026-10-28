@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { AuditBid, BidMark, LotAudit } from '../../shared/api/types';
-import { missingText, parseLookup, rowsOf, verdictOf } from './audit';
+import {
+  checkView,
+  missingText,
+  parseLookup,
+  rowsOf,
+  verdictOf,
+} from './audit';
 
 function makeBid(seq: number, mark: BidMark = 'intact'): AuditBid {
   return {
@@ -81,6 +87,22 @@ describe('verdictOf', () => {
       intact: false,
       title: 'Comprovante não confere com o histórico',
     });
+  });
+});
+
+describe('checkView', () => {
+  it('mostra verificando no botão desabilitado durante a nova conferência', () => {
+    expect(checkView(true, false)).toEqual({
+      label: 'Verificando…',
+      busy: true,
+      error: null,
+    });
+  });
+
+  it('avisa abaixo do botão quando o verificar de novo falhou', () => {
+    expect(checkView(false, true).error).toBe(
+      'Não foi possível verificar de novo agora. O resultado acima é o da última verificação.',
+    );
   });
 });
 

@@ -7,7 +7,14 @@ import { HashCopy } from '../../shared/ui/hash-copy';
 import { LoadError } from '../../shared/ui/load-error';
 import { NotFound } from '../../shared/ui/not-found';
 import { parseLotId } from '../live-room/room-summary';
-import { checkedText, countText, type Row, rowsOf, verdictOf } from './audit';
+import {
+  checkView,
+  checkedText,
+  countText,
+  type Row,
+  rowsOf,
+  verdictOf,
+} from './audit';
 import { useAudit } from './use-audit';
 import './audit.css';
 
@@ -61,6 +68,7 @@ function AuditScreen({ id }: { id: number }) {
         audit={state.audit}
         checkedAt={state.checkedAt}
         checking={state.checking}
+        failed={state.failed}
         onRecheck={recheck}
       />
       <AuditBids audit={state.audit} />
@@ -89,17 +97,26 @@ type VerdictProps = {
   audit: LotAudit;
   checkedAt: Date;
   checking: boolean;
+  failed: boolean;
   onRecheck: () => void;
 };
 
-function AuditVerdict({ audit, checkedAt, checking, onRecheck }: VerdictProps) {
+function AuditVerdict({
+  audit,
+  checkedAt,
+  checking,
+  failed,
+  onRecheck,
+}: VerdictProps) {
   const verdict = verdictOf(audit);
+  const check = checkView(checking, failed);
   const tone = verdict.intact ? 'intact' : 'tampered';
   return (
     <section
       className={`audit-verdict audit-verdict--${tone}`}
       aria-labelledby="verdict-title"
       aria-live="polite"
+      aria-busy={check.busy}
     >
       <div className={`ag-seal ag-seal--${tone}`}>
         <div className="ag-seal__core">
@@ -114,9 +131,9 @@ function AuditVerdict({ audit, checkedAt, checking, onRecheck }: VerdictProps) {
       <div className="audit-verdict__body">
         <h2
           id="verdict-title"
-          className={`audit-verdict__title${checking ? '' : ` audit-verdict__title--${tone}`}`}
+          className={`audit-verdict__title audit-verdict__title--${tone}`}
         >
-          {checking ? 'Verificando o histórico…' : verdict.title}
+          {verdict.title}
         </h2>
         <p className="audit-verdict__text">{verdict.text}</p>
         <div className="audit-verdict__check">
@@ -124,28 +141,34 @@ function AuditVerdict({ audit, checkedAt, checking, onRecheck }: VerdictProps) {
           <button
             className="ag-btn ag-btn--secondary audit-verdict__again"
             type="button"
-            disabled={checking}
+            disabled={check.busy}
             onClick={onRecheck}
           >
-            {checking ? 'Verificando…' : 'Verificar de novo'}
+            {check.label}
           </button>
         </div>
+        {check.error && (
+          <p className="audit-verdict__error" role="alert">
+            {check.error}
+          </p>
+        )}
       </div>
     </section>
   );
 }
 
 function AuditBids({ audit }: { audit: LotAudit }) {
-  const [showCodes, setShowCodes] = useState(true);
+  const [showCodes, setShowCodes] = useState(false);
   const rows = rowsOf(audit);
   const truncated = audit.result === 'truncated';
+  const hasRows = rows.length > 0;
   return (
     <section className="audit-bids" aria-labelledby="bids-title">
       <div className="audit-bids__head">
         <h2 id="bids-title" className="audit-subtitle">
           Todos os lances
         </h2>
-        {rows.length > 0 && (
+        {hasRows && (
           <button
             className="ag-btn ag-btn--quiet audit-quiet"
             type="button"
@@ -155,27 +178,52 @@ function AuditBids({ audit }: { audit: LotAudit }) {
           </button>
         )}
       </div>
-      {rows.length === 0 && (
-        <p className="audit-bids__empty">
-          {truncated
-            ? 'Nenhum lance aparece no histórico.'
-            : 'Nenhum lance registrado.'}
-        </p>
+      {hasRows ? (
+        showCodes && <CodesNote />
+      ) : (
+        <BidsEmpty truncated={truncated} />
       )}
-      {(rows.length > 0 || truncated) && (
-        <div
-          className={`audit-ledger${showCodes ? '' : ' audit-ledger--plain'}`}
-          role="table"
-          aria-label={`Lances do ${lotLabel(audit.number)} com verificação`}
-        >
-          {rows.length > 0 && <LedgerHead />}
-          {rows.map((row) => (
-            <LedgerRow key={row.bid.seq} row={row} />
-          ))}
-          {truncated && <SealRow />}
-        </div>
+      {(hasRows || truncated) && (
+        <Ledger audit={audit} rows={rows} showCodes={showCodes} />
       )}
     </section>
+  );
+}
+
+function CodesNote() {
+  return (
+    <p className="audit-bids__note">
+      Guarde o código do último lance. Se o histórico for reescrito, esse código
+      muda.
+    </p>
+  );
+}
+
+function BidsEmpty({ truncated }: { truncated: boolean }) {
+  return (
+    <p className="audit-bids__empty">
+      {truncated
+        ? 'Nenhum lance aparece no histórico.'
+        : 'Nenhum lance registrado.'}
+    </p>
+  );
+}
+
+type LedgerProps = { audit: LotAudit; rows: Row[]; showCodes: boolean };
+
+function Ledger({ audit, rows, showCodes }: LedgerProps) {
+  return (
+    <div
+      className={`audit-ledger${showCodes ? '' : ' audit-ledger--plain'}`}
+      role="table"
+      aria-label={`Lances do ${lotLabel(audit.number)} com verificação`}
+    >
+      {rows.length > 0 && <LedgerHead />}
+      {rows.map((row) => (
+        <LedgerRow key={row.bid.seq} row={row} />
+      ))}
+      {audit.result === 'truncated' && <SealRow />}
+    </div>
   );
 }
 
