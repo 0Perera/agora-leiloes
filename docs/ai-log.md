@@ -670,3 +670,25 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Comparar o apelido e o valor do comprovante com o último lance: recusei, porque a assinatura já cobre os dois e forjá-la exige o segredo.
+
+## Story 5.6: Sala encerrada e tela Comprovante de arremate
+
+**O que a IA gerou:**
+- O resultado na sala encerrada: "Você arrematou este lote" com o valor debitado e o link do comprovante para o vencedor, e o vencedor com o valor, ou "sem lances", para os demais.
+- A releitura da carteira do cabeçalho quando o lote encerra com a sala aberta, e a releitura do lote quando chega o aviso de encerramento do stream.
+- A tela pública do comprovante, seguindo o canvas: dados do arremate, imagem, selo válido ou inválido, código de verificação abreviado e cópia do código e do link, com cópia manual quando o navegador recusa.
+- A separação do nicho da obra e da tela de "não encontrado" em componentes compartilhados, usados pela sala e pelo comprovante.
+- Testes do resultado da sala, da data por extenso, do código abreviado, da cópia manual e do comprovante não encontrado.
+- Na conferência por capturas, a correção de uma colisão de nome entre o nicho compartilhado e o da vitrine, que deixava a imagem do comprovante achatada, e os ajustes de quebra e de espaço em 360, 768 e 1280px.
+
+**O que revisei e pedi para mudar:**
+- Pedi que o resultado venha da releitura do lote que a sala já faz na virada, e que lote encerrado sem resultado mostre "Lote encerrado, aguardando liquidação".
+- Pedi "Você arrematou" com o valor e o link do comprovante para o vencedor, com a carteira do cabeçalho relida, e o apelido do vencedor com o valor, ou "sem lances", para os demais.
+- Decidi deixar o link para a auditoria (no comprovante e na sala) para a 5.8.
+- Pedi que os botões de copiar mostrem o texto selecionado para cópia manual quando a área de transferência falhar.
+- Pedi que o comprovante inválido mostre todos os dados, com o selo "Comprovante inválido".
+- Pedi valores com centavos, datas no fuso do navegador e o número do lote no formato com romano.
+- Pedi a conferência visual: canvas e site lado a lado em 1280px, capturas em 360, 768, 1024 e 1280px, e reaproveitamento do que já existe em comum, sem bloco novo com o prefixo da tela.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma nesta story.
