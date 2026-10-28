@@ -56,7 +56,7 @@ _(módulos, fluxo de um lance e liquidação)_
 
 ## Auditoria
 
-Qualquer pessoa confere se o histórico de um lote foi mexido, sem login, em `GET /lots/:id/audit` (`GET /lots/number/:number` leva do número ao id). A técnica é uma cadeia de HMAC (D-012):
+Qualquer pessoa confere se o histórico de um lote foi mexido, sem login, na tela `/lots/:id/audit` (veredito e cada lance com o seu código), aberta pelo campo da página inicial (aceita 7 ou VII) ou pelo link "Auditar este lote" na vitrine, na sala e no comprovante. Na API: `GET /lots/:id/audit` e `GET /lots/number/:number`, que leva do número ao id. A técnica é uma cadeia de HMAC (D-012):
 
 - **Cada lance assina o anterior:** o lance guarda um HMAC do lote, da ordem, do licitante, do valor, da data e do hash do lance anterior. Mudar, inserir, apagar ou trocar a ordem de um lance quebra a cadeia, e só o servidor tem o segredo para assinar de novo.
 - **O selo do lote** guarda a contagem e o último hash, e acusa lances apagados do fim, que deixariam o resto da cadeia coerente.

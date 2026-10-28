@@ -718,3 +718,24 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - Rótulo "Você lidera" na situação: escolhi "Você está ganhando", o mesmo da sala e do destaque da página inicial.
 - Nota "em N lotes arrematados" no total recebido: um lote vencido e ainda não liquidado entraria na contagem sem estar no total, então a nota diz só "soma dos comprovantes dos lotes arrematados".
+
+## Story 5.8: Tela Auditoria do lote e campo da página inicial
+
+**O que a IA gerou:**
+- A tela pública da auditoria, com o veredito (Íntegro ou Adulterado) em linguagem simples, o botão de verificar de novo e a lista de todos os lances com apelido, valor, horário, código e verificação de cada um.
+- Os quatro resultados: histórico íntegro, lance alterado (com o ponto exato e os lances seguintes como não verificáveis), lances removidos do fim e comprovante que não confere.
+- O bloco "Leilões que qualquer pessoa pode conferir" na página inicial, com o campo do número do lote em algarismos ou romano.
+- Os links "Auditar este lote" na vitrine, no destaque, na sala, no comprovante e em Meus lances, e os itens Como funciona e Auditoria no cabeçalho, que rolam até a seção.
+- O artista na resposta da auditoria, na API.
+- A cópia do código como bloco compartilhado entre o comprovante e a auditoria.
+- Testes do veredito, da marcação de cada lance e da leitura do número do lote.
+
+**O que revisei e pedi para mudar:**
+- Pedi a tela seguindo o desenho da auditoria e o bloco da página inicial seguindo o desenho da página principal.
+- Decidi não pôr link para o comprovante na auditoria: o vencedor decide com quem compartilhar.
+- Decidi incluir o artista na resposta da auditoria, sem consulta nova ao banco.
+- Pedi o link de auditoria no card da vitrine só para lotes ao vivo e encerrados, como no desenho.
+- Pedi Como funciona e Auditoria no cabeçalho para todos, rolando até a seção também vindo de outra página.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma registrada.
