@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-25-2026 20:10
-last_updated: 2026-10-27
+last_updated: 2026-10-28
 project: Ágora
 project_key: NOKEY
 tracking_system: file-system
@@ -68,7 +68,7 @@ development_status:
   4-7-destaque-ao-vivo-e-lotes-comprometidos-na-carteira: done
   epic-4-retrospective: optional
 
-  epic-5: in-progress
+  epic-5: done
   5-1-regras-de-liquidacao-tdd: done
   5-2-liquidacao-e-comprovante-assinado-na-api: done
   5-3-timer-de-liquidacao-em-memoria: done
@@ -76,11 +76,14 @@ development_status:
   5-5-auditoria-da-cadeia-na-api-tdd: done
   5-6-sala-encerrada-e-tela-comprovante-de-arremate: done
   5-7-tela-meus-lances-e-resultado-no-painel: done
-  5-8-tela-auditoria-do-lote-e-campo-da-pagina-inicial: review
+  5-8-tela-auditoria-do-lote-e-campo-da-pagina-inicial: done
   epic-5-retrospective: optional
 
   epic-6: backlog
   6-1-seed-idempotente-e-compose-verificado: backlog
-  6-2-readme-final: backlog
-  6-3-documentacao-da-api-com-swagger-opcional: backlog
+  6-2-consistencia-da-api: backlog
+  6-3-consistencia-do-front: backlog
+  6-4-documentacao: backlog
+  6-5-polimento-final: backlog
+  6-6-readme-final: backlog
   epic-6-retrospective: optional

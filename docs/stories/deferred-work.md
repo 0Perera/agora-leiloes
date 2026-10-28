@@ -65,7 +65,7 @@
   evidence: a tela de auditoria do lote só existe a partir da 5.8; decisão do usuário na spec da 4.6.
 
 - source_spec: `docs/stories/spec-4-3-dar-lance-na-api.md`
-  summary: na 6.2, reescrever as entradas antigas do `docs/ai-log.md` no estilo novo: frases curtas, português corrente, detalhe técnico só quando for indispensável.
+  summary: na 6.4 (era a 6.2 antes do replanejamento do épico 6), reescrever as entradas antigas do `docs/ai-log.md` no estilo novo: frases curtas, português corrente, detalhe técnico só quando for indispensável.
   evidence: pedido do usuário na 4.3, junto com o "Resumo" do topo do ai-log e a regra nova no CLAUDE.md.
 
 - source_spec: `docs/stories/spec-4-7-destaque-ao-vivo-e-lotes-comprometidos-na-carteira.md`
@@ -79,7 +79,7 @@
   summary: na 5.2, conferir o selo do lote contra a cadeia antes de mover saldo (D-059); selo inválido não liquida e registra o motivo.
   evidence: a regra da 5.1 confia no último lance recebido; quem apagasse o último lance direto no banco faria a liquidação cobrar o penúltimo licitante, cujo comprometido já foi liberado quando ele foi superado: a liquidação consumiria a reserva de outro lote dele ou falharia no `CHECK` do comprometido.
 
-## Revisão final (antes da 6.2)
+## Revisão final (story 6.3, Consistência do front)
 
 - source_spec: `docs/stories/spec-4-4-testcontainers-ci-e-lances-simultaneos.md`
   summary: unificar o CSS duplicado entre telas como componentes em `shared/ui` (`Skeleton`, `ErrorState`, `Tabs`): esqueleto de carregamento (painel, sala, vitrine, carteira), estado de erro com "Tentar de novo" (as mesmas quatro) e abas (painel, login, vitrine), hoje reescritos com o prefixo de cada tela.
@@ -89,7 +89,7 @@
   summary: padrão único de chamada à API no front: hoje algumas telas usam hook (`use-dashboard`, `use-wallet`) e outras chamam a API direto no componente (`lot-form`, `catalog-search`, `ledger`, `deposit-form`); escolher um padrão e aplicar em todas.
   evidence: pedido do usuário na aprovação da 4.4.
 
-## Polimento visual
+## Polimento visual (story 6.5)
 
 - source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`
   summary: no painel do leiloeiro em modo cartão (abaixo de 1220px), o selo de estado e o botão "Cancelar lote" ocupam toda a largura da coluna; devem ter a largura do próprio conteúdo (`justify-self: start`), com o botão em largura total só abaixo de 480px. Alinhar a miniatura da obra com o título. Conferir em 360, 768 e 1000px.
@@ -132,3 +132,33 @@
 - source_spec: `docs/stories/spec-5-7-tela-meus-lances-e-resultado-no-painel.md`
   summary: na 5.8, adicionar o link "Auditar lote" na aba Não arrematados de Meus lances (ação da linha, como no canvas MeusLances.dc.html), apontando para `/lots/:id/audit`.
   evidence: a tela de auditoria só existe a partir da 5.8; a spec da 5.7 proíbe o link antes disso.
+
+- source_spec: none
+  summary: na 6.5, no painel do leiloeiro, depois de escolher a obra no acervo, rolar até os campos da ficha do lote.
+  evidence: pedido do usuário no replanejamento do épico 6 (2026-10-28); reforça o item de rolagem registrado na 4.6.
+
+- source_spec: none
+  summary: na 6.5, no livro de lotes do painel, tirar o botão "Abrir sala" e transformar o título do lote em link para a sala.
+  evidence: pedido do usuário no replanejamento do épico 6 (2026-10-28).
+
+- source_spec: none
+  summary: na 6.5, abaixo de ~420px, o menu do cabeçalho quebra em duas linhas, alinhado à esquerda, com o espaço normal entre os links (hoje fica com 4px).
+  evidence: pedido do usuário no replanejamento do épico 6 (2026-10-28).
+
+## Fora do escopo (README, story 6.6)
+
+- source_spec: none
+  summary: documentação da API com Swagger (antiga story 6.3, FR27) não será feita; declarar em "Fora do escopo" no README.
+  evidence: decisão do usuário no replanejamento do épico 6 (2026-10-28).
+
+- source_spec: none
+  summary: tema escuro não será feito; declarar em "Fora do escopo" no README.
+  evidence: decisão do usuário no replanejamento do épico 6 (2026-10-28).
+
+- source_spec: none
+  summary: cancelamento de lote com lances e estorno dos compromissos não será feito; declarar em "Fora do escopo" no README.
+  evidence: decisão do usuário no replanejamento do épico 6 (2026-10-28).
+
+- source_spec: none
+  summary: limite de tentativas no `POST /auth/login` não será feito (item registrado na 2.1); declarar em "Fora do escopo" no README.
+  evidence: decisão do usuário no replanejamento do épico 6 (2026-10-28).
