@@ -305,7 +305,11 @@
 
 .home-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  /* no máximo 4 colunas: as páginas de 12 cartões sempre fecham a linha */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(max(250px, calc((100% - 3 * var(--space-5)) / 4)), 1fr)
+  );
   gap: 28px var(--space-5);
 }
 
