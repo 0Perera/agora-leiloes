@@ -141,15 +141,21 @@ describe('GET /lots/:id/audit', () => {
     expect((await verdict(lotId)).result).toBe('intact');
   });
 
-  it('dispara duas queries para qualquer número de lances', async () => {
-    const lotId = await lotWithBids(4);
-    const spy = jest.spyOn(api.db.logger, 'logQuery');
+  it.each([1, 5])(
+    'dispara duas queries de leitura com %i lance(s)',
+    async (count) => {
+      const lotId = await lotWithBids(count);
+      const spy = jest.spyOn(api.db.logger, 'logQuery');
 
-    await audit(lotId).expect(200);
+      await audit(lotId).expect(200);
 
-    expect(spy).toHaveBeenCalledTimes(2);
-    spy.mockRestore();
-  });
+      const selects = spy.mock.calls.filter(([query]) =>
+        query.trimStart().toUpperCase().startsWith('SELECT'),
+      );
+      spy.mockRestore();
+      expect(selects).toHaveLength(2);
+    },
+  );
 
   it('responde 404 para lote inexistente', async () => {
     await audit(999).expect(404);

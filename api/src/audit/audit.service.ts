@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { Bid } from '../bids/bid.entity';
 import { Clock } from '../common/clock';
 import { Env } from '../config/env.validation';
@@ -34,8 +33,7 @@ export class AuditService {
   private readonly secret: string;
 
   constructor(
-    @InjectRepository(Lot) private readonly lots: Repository<Lot>,
-    @InjectRepository(Bid) private readonly bids: Repository<Bid>,
+    private readonly dataSource: DataSource,
     private readonly clock: Clock,
     config: ConfigService<Env, true>,
   ) {
@@ -44,12 +42,14 @@ export class AuditService {
 
   // Só lê: liquidar o lote vencido fica com o GET do lote e o timer.
   async find(id: number): Promise<AuditResponseDto> {
-    const lot = await this.lot(id);
-    const bids: BidRow[] = await this.bids.find({
-      select: ['seq', 'userId', 'amount', 'createdAt', 'prevHash', 'hash'],
-      where: { lotId: id },
-      order: { seq: 'ASC' },
-    });
+    // Mesmo snapshot nas duas leituras: um lance entre elas daria selo antigo contra lista nova.
+    const { lot, bids } = await this.dataSource.transaction(
+      'REPEATABLE READ',
+      async (manager) => ({
+        lot: await this.lot(manager, id),
+        bids: await chain(manager, id),
+      }),
+    );
     const verdict = verify(this.secret, {
       lotId: id,
       seal: lot.seal,
@@ -75,8 +75,9 @@ export class AuditService {
     };
   }
 
-  private async lot(id: number): Promise<LotRow> {
-    const row = await this.lots
+  private async lot(manager: EntityManager, id: number): Promise<LotRow> {
+    const row = await manager
+      .getRepository(Lot)
       .createQueryBuilder('lot')
       .leftJoin(Receipt, 'receipt', 'receipt.lotId = lot.id')
       .select('lot.id', 'id')
@@ -97,6 +98,14 @@ export class AuditService {
     if (!row) throw new NotFoundException();
     return row;
   }
+}
+
+function chain(manager: EntityManager, lotId: number): Promise<BidRow[]> {
+  return manager.getRepository(Bid).find({
+    select: ['seq', 'userId', 'amount', 'createdAt', 'prevHash', 'hash'],
+    where: { lotId },
+    order: { seq: 'ASC' },
+  });
 }
 
 // Colunas NOT NULL em receipts: o alias nulo só acontece quando o left join não achou comprovante.
