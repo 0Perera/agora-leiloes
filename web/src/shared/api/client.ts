@@ -19,6 +19,7 @@ import type {
   LotStatus,
   PlaceBidRequest,
   PlacedBid,
+  Receipt,
   SignupRequest,
   Wallet,
   WalletBalance,
@@ -159,6 +160,8 @@ export const api = {
     const body: PlaceBidRequest = { amount };
     return request<PlacedBid>(`/lots/${id}/bids`, { method: 'POST', body });
   },
+  receipt: (token: string) =>
+    request<Receipt>(`/receipts/${encodeURIComponent(token)}`),
 };
 
 type StreamHandlers = {

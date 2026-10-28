@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   formatDay,
+  formatLongDate,
   formatShortDate,
   fromLocalInput,
   toLocalInput,
@@ -28,5 +29,13 @@ describe('fromLocalInput', () => {
 describe('formatDay', () => {
   it('mostra dia e mês abreviado', () => {
     expect(formatDay('2026-10-20T22:00:00.000Z')).toBe('20 out');
+  });
+});
+
+describe('formatLongDate', () => {
+  it('mostra a data por extenso com a hora no fuso local', () => {
+    expect(formatLongDate('2026-10-21T00:00:00.000Z')).toBe(
+      '20 de outubro de 2026, 21h00',
+    );
   });
 });

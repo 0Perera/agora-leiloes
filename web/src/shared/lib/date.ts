@@ -39,3 +39,20 @@ export function formatDay(iso: string): string {
     parts.find((item) => item.type === type)?.value ?? '';
   return `${part('day')} ${part('month').replace('.', '')}`;
 }
+
+const longFormat = new Intl.DateTimeFormat('pt-BR', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  hourCycle: 'h23',
+});
+
+export function formatLongDate(iso: string): string {
+  const parts = longFormat.formatToParts(new Date(iso));
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((item) => item.type === type)?.value ?? '';
+  const when = `${part('day')} de ${part('month')} de ${part('year')}`;
+  return `${when}, ${Number(part('hour'))}h${part('minute')}`;
+}

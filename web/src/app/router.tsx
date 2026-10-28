@@ -4,6 +4,7 @@ import { LoginPage } from '../features/auth/login-page';
 import { SignupPage } from '../features/auth/signup-page';
 import { RoomPage } from '../features/live-room/room-page';
 import { HomePage } from '../features/lots/home-page';
+import { ReceiptPage } from '../features/receipts/receipt-page';
 import { WalletPage } from '../features/wallet/wallet-page';
 import { GuestOnly } from './guest-only';
 import { Layout } from './layout';
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
     children: [
       { path: '/', element: <HomePage /> },
       { path: '/lots/:id', element: <RoomPage /> },
+      { path: '/receipts/:token', element: <ReceiptPage /> },
       {
         element: <GuestOnly />,
         children: [
