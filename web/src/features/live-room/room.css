@@ -197,7 +197,7 @@
 }
 
 /* na sala, o nicho tem teto de largura e fica centrado na coluna */
-.room__art .niche {
+.room__art .arch {
   max-width: 520px;
   margin: 0 auto;
 }
@@ -530,7 +530,7 @@
     gap: 20px;
   }
 
-  .room__art .niche {
+  .room__art .arch {
     width: min(100%, 520px, calc(55vh * 440 / 540));
   }
 }

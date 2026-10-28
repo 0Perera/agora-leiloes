@@ -60,7 +60,7 @@ export function RoomView({
         <figure className="room__art">
           <Niche>
             <img
-              className="niche__image"
+              className="arch__image"
               src={lotImageUrl(lot.id)}
               alt={`Imagem de ${lot.title}`}
             />

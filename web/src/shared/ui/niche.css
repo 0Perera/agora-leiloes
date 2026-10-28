@@ -1,5 +1,5 @@
 /* nicho em arco onde a obra fica exposta, inteira */
-.niche {
+.arch {
   position: relative;
   width: 100%;
   aspect-ratio: 440 / 540;
@@ -13,7 +13,7 @@
     inset 0 0 0 7px var(--vein);
 }
 
-.niche__stage {
+.arch__stage {
   position: absolute;
   top: 24%;
   left: 11%;
@@ -24,7 +24,7 @@
   justify-content: center;
 }
 
-.niche__image {
+.arch__image {
   box-sizing: border-box;
   max-width: 100%;
   max-height: 100%;

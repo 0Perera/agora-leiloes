@@ -75,7 +75,7 @@ function ReceiptView({ receipt, checkedAt, url }: ViewProps) {
           <div className="receipt__cols">
             <Niche>
               <img
-                className="niche__image"
+                className="arch__image"
                 src={lotImageUrl(receipt.lotId)}
                 alt={`Imagem de ${receipt.title}`}
               />
