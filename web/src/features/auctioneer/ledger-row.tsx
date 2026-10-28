@@ -5,6 +5,7 @@ import type { DashboardLot } from '../../shared/api/types';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel, toRoman } from '../../shared/lib/roman';
+import { receiptOf, resultOf } from './ledger-result';
 
 export type Fresh = { id: number; reveal: boolean };
 
@@ -117,7 +118,17 @@ function Figures({ lot }: { lot: DashboardLot }) {
           >
             {result.text}
           </span>
-          {result.sub && <span className="panel-sub">{result.sub}</span>}
+          {result.sub && (
+            <span className="panel-sub">
+              {result.sub}
+              {result.who && (
+                <>
+                  {' '}
+                  <span className="panel-who">{result.who}</span>
+                </>
+              )}
+            </span>
+          )}
         </span>
       </div>
       <div className="panel-money" role="cell" data-label="Lances">
@@ -128,17 +139,6 @@ function Figures({ lot }: { lot: DashboardLot }) {
       </div>
     </>
   );
-}
-
-type Result = { text: string; sub: string; muted: boolean };
-
-function resultOf(lot: DashboardLot): Result {
-  if (lot.status === 'scheduled')
-    return { text: 'Aguardando', sub: '', muted: true };
-  if (lot.currentBid === null)
-    return { text: 'Sem lances', sub: '', muted: true };
-  const sub = lot.status === 'live' ? 'lance atual' : 'maior lance';
-  return { text: formatMoney(lot.currentBid), sub, muted: false };
 }
 
 function periodOf(lot: DashboardLot): string {
@@ -161,6 +161,8 @@ function Action({
 }: ActionProps) {
   if (lot.status === 'cancelled')
     return <span className="panel-sub">Fora da vitrine.</span>;
+  const receipt = receiptOf(lot);
+  if (receipt) return <ReceiptLink lot={lot} token={receipt} />;
   const cancellable = lot.status !== 'ended' && lot.bidCount === 0;
   if (!cancellable || !confirming)
     return (
@@ -205,6 +207,20 @@ function Action({
           Manter
         </button>
       </span>
+    </span>
+  );
+}
+
+function ReceiptLink({ lot, token }: { lot: DashboardLot; token: string }) {
+  return (
+    <span className="panel-actions">
+      <Link
+        className="ag-btn ag-btn--quiet panel-open"
+        to={`/receipts/${token}`}
+        aria-label={`Ver comprovante do ${lotLabel(lot.number)}`}
+      >
+        Ver comprovante
+      </Link>
     </span>
   );
 }

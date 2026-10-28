@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { writeClipboard } from './copy-button';
+import { writeClipboard } from './link-copy';
 
 describe('writeClipboard', () => {
   it('recusa a cópia quando o navegador não oferece a área de transferência', async () => {

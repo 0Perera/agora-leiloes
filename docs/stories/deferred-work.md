@@ -128,3 +128,7 @@
 - source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
   summary: na 6.1, o roteiro do README avisa qual lote do seed foi adulterado de propósito e por quê, e ganha uma seção curta "Testar a adulteração você mesmo" com 3 comandos SQL para o banco do docker compose (mudar o valor de um lance, apagar o último lance, mudar o valor de um comprovante), cada um com o resultado esperado na auditoria e no comprovante.
   evidence: pedido do usuário na conferência da 5.6.
+
+- source_spec: `docs/stories/spec-5-7-tela-meus-lances-e-resultado-no-painel.md`
+  summary: na 5.8, adicionar o link "Auditar lote" na aba Não arrematados de Meus lances (ação da linha, como no canvas MeusLances.dc.html), apontando para `/lots/:id/audit`.
+  evidence: a tela de auditoria só existe a partir da 5.8; a spec da 5.7 proíbe o link antes disso.

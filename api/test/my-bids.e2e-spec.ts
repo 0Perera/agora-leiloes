@@ -77,6 +77,7 @@ describe('GET /my-bids em andamento', () => {
     expect((await page('ongoing')).items).toEqual([
       expect.objectContaining({
         id: lotId,
+        artist: 'Artista de teste',
         situation: 'winning',
         awaitingSettlement: false,
         myBid: STARTING_BID,
@@ -119,6 +120,7 @@ describe('GET /my-bids encerrados', () => {
         id: lotId,
         number: expect.any(Number) as number,
         title: expect.any(String) as string,
+        artist: 'Artista de teste',
         amount: STARTING_BID,
         settledAt: at(30).toISOString(),
         receiptToken: await token(lotId),
@@ -143,6 +145,7 @@ describe('GET /my-bids encerrados', () => {
     expect((await page('lost', rival)).items).toEqual([
       expect.objectContaining({
         id: lotId,
+        artist: 'Artista de teste',
         amount: STARTING_BID + INCREMENT,
         myBid: STARTING_BID,
         settledAt: at(30).toISOString(),

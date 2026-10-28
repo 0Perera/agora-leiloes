@@ -1,0 +1,322 @@
+.bids-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
+.bids-eyebrow {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.bids-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(30px, 6vw, 42px);
+  line-height: 1.1;
+  letter-spacing: 0.03em;
+}
+
+.bids-lede {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20px;
+  line-height: 26px;
+  color: var(--ink-muted);
+}
+
+.bids-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.bids-empty {
+  margin: 0;
+  font-size: 17px;
+  line-height: 24px;
+  color: var(--ink-muted);
+}
+
+/* placa de cada lote, nas três abas */
+.bids-plaques {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.bids-plaque {
+  position: relative;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 28px;
+  padding: 28px;
+  background-color: var(--marble-100);
+  border: 1px solid var(--gold-500);
+  box-shadow:
+    inset 0 0 0 5px var(--marble-100),
+    inset 0 0 0 6px var(--vein);
+}
+
+.bids-plaque__tag {
+  position: absolute;
+  top: -1px;
+  right: 28px;
+  max-width: calc(100% - 56px);
+  box-sizing: border-box;
+  padding: var(--space-2) var(--space-3) 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bids-plaque__tag--blue {
+  background-color: var(--ultramarine);
+  color: var(--on-pigment);
+  box-shadow:
+    inset 0 0 0 3px var(--ultramarine),
+    inset 0 0 0 4px var(--gold-300);
+}
+
+.bids-plaque__tag--red {
+  background-color: var(--cinnabar);
+  color: var(--on-pigment);
+  box-shadow:
+    inset 0 0 0 3px var(--cinnabar),
+    inset 0 0 0 4px var(--gold-300);
+}
+
+.bids-plaque__tag--neutral {
+  background-color: var(--marble-200);
+  color: var(--ink-muted);
+  box-shadow:
+    inset 0 0 0 1px var(--vein),
+    inset 0 0 0 3px var(--marble-200),
+    inset 0 0 0 4px var(--vein);
+}
+
+.bids-plaque__wall {
+  box-sizing: border-box;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background-color: var(--marble-000);
+  border: 1px solid var(--vein);
+  box-shadow: inset 0 18px 24px -20px rgba(43, 37, 32, 0.35);
+}
+
+.bids-plaque__image {
+  box-sizing: border-box;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border: 6px solid var(--gold-500);
+  background-color: var(--marble-200);
+  box-shadow:
+    0 0 0 1px var(--gold-700),
+    0 12px 16px -12px rgba(43, 37, 32, 0.55);
+}
+
+.bids-plaque__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.bids-plaque__lot {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.bids-plaque__title {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 34px;
+  overflow-wrap: anywhere;
+}
+
+.bids-plaque__artist {
+  margin: var(--space-1) 0 0;
+  font-size: 17px;
+  line-height: 24px;
+  color: var(--ink-muted);
+  overflow-wrap: anywhere;
+}
+
+.bids-plaque__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  margin: 0;
+  padding: 14px 0;
+  border-top: 1px solid var(--gold-500);
+  border-bottom: 1px solid var(--gold-500);
+}
+
+/* largura mínima igual: os valores alinham entre placas vizinhas */
+.bids-plaque__facts > div {
+  min-width: 200px;
+}
+
+.bids-plaque__value {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-text);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 34px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bids-plaque__value--paid {
+  display: inline-block;
+  border-bottom: 3px double var(--ink);
+}
+
+.bids-plaque__value--plain {
+  font-weight: 400;
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+.bids-plaque__value--muted {
+  color: var(--ink-muted);
+}
+
+.bids-plaque__value--urgent {
+  color: var(--cinnabar-deep);
+}
+
+.bids-plaque__value .ag-badge {
+  vertical-align: middle;
+}
+
+.bids-plaque__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px var(--space-4);
+}
+
+/* as ações das placas com a mesma caixa, para alinhar entre placas vizinhas */
+.bids-action {
+  box-sizing: border-box;
+  min-width: 200px;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+/* em duas linhas, o sublinhado não encosta na linha de baixo */
+.bids-copy {
+  min-height: 44px;
+  padding: 0;
+  text-align: left;
+  line-height: 26px;
+}
+
+/* nenhum lance ainda */
+.bids-none {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: var(--space-7) var(--space-5);
+  border-top: 3px double var(--gold-500);
+  border-bottom: 3px double var(--gold-500);
+  text-align: center;
+}
+
+.bids-none__arch {
+  width: 96px;
+  height: 110px;
+  border: 1px solid var(--gold-500);
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+  background-color: var(--marble-100);
+  box-shadow:
+    inset 0 0 0 5px var(--marble-100),
+    inset 0 0 0 6px var(--vein);
+}
+
+.bids-none__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 36px;
+}
+
+.bids-none__text {
+  margin: 0;
+  max-width: 460px;
+  font-size: 18px;
+  line-height: 27px;
+  color: var(--ink-muted);
+}
+
+/* carregando */
+.bids-skel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.bids-skel--tabs {
+  height: 44px;
+  width: min(100%, 480px);
+  margin-bottom: var(--space-4);
+}
+
+.bids-skel--plaque {
+  height: 256px;
+}
+
+/* selo longo ("Você arrematou · aguardando liquidação") ganha uma faixa própria */
+@media (max-width: 1100px) {
+  .bids-plaque {
+    padding-top: 52px;
+  }
+}
+
+@media (max-width: 700px) {
+  .bids-plaque {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+
+  /* no fluxo da placa, o selo em duas linhas empurra o nicho em vez de cobri-lo */
+  .bids-plaque__tag {
+    position: static;
+    justify-self: end;
+    max-width: 100%;
+    margin-top: -21px;
+  }
+
+  .bids-plaque__wall {
+    height: 180px;
+  }
+}

@@ -7,7 +7,8 @@ import { lotLabel } from '../../shared/lib/roman';
 import { LoadError } from '../../shared/ui/load-error';
 import { Niche } from '../../shared/ui/niche';
 import { NotFound } from '../../shared/ui/not-found';
-import { HashCopy, LinkCopy } from './copy-button';
+import { LinkCopy } from '../../shared/ui/link-copy';
+import { HashCopy } from './copy-button';
 import { signText } from './receipt';
 import { useReceipt } from './use-receipt';
 import './receipt.css';
@@ -84,7 +85,12 @@ function ReceiptView({ receipt, checkedAt, url }: ViewProps) {
           </div>
           <ReceiptSign receipt={receipt} checkedAt={checkedAt} />
           <div className="receipt__actions">
-            <LinkCopy url={url} />
+            <LinkCopy
+              url={url}
+              label="Copiar link"
+              done="✓ Link do comprovante copiado"
+              className="ag-btn ag-btn--secondary"
+            />
           </div>
         </div>
         <div className="ag-meander receipt__band receipt__band--bottom" />
