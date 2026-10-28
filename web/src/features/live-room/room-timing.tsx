@@ -3,7 +3,7 @@ import { secondsLeft, splitLeft } from '../../shared/lib/countdown';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { awaitsSettlement, countNote, summaryOf } from './room-summary';
-import { useNow } from './use-room';
+import { useNow } from '../../shared/lib/use-now';
 
 type SummaryProps = {
   lot: LotDetail;

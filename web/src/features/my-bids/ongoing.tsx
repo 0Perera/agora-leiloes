@@ -1,27 +1,15 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import type { OngoingBid } from '../../shared/api/types';
 import { secondsLeft } from '../../shared/lib/countdown';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel } from '../../shared/lib/roman';
+import { useNow } from '../../shared/lib/use-now';
 import { actionOf, finalOf, leftOf, standingOf } from './my-bids';
 import { Plaque } from './plaque';
 import type { Fact } from './plaque';
 
-// /my-bids não traz serverTime: a contagem segue o relógio do navegador
-function useNow(ticking: boolean): number {
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    if (!ticking) return;
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
-  }, [ticking]);
-
-  return now;
-}
-
 export function Ongoing({ items }: { items: OngoingBid[] }) {
+  // /my-bids não traz serverTime: a contagem segue o relógio do navegador
   const now = useNow(items.some((bid) => !bid.awaitingSettlement));
 
   if (items.length === 0)
