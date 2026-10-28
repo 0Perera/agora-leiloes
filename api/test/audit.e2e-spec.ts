@@ -34,18 +34,24 @@ afterAll(async () => {
   await api.close();
 });
 
-async function lotWithBids(count: number): Promise<number> {
+async function lotWithBids(
+  count: number,
+): Promise<{ lotId: number; aliases: string[] }> {
   const lotId = await api.createLot(auctioneer, {
     startsAt: BASE,
     endsAt: at(30),
     startingBid: STARTING_BID,
     increment: INCREMENT,
   });
+  const aliases: string[] = [];
   for (let index = 0; index < count; index++) {
     const bidder = index % 2 === 0 ? first : second;
-    await api.bid(bidder, lotId, STARTING_BID + index * INCREMENT).expect(201);
+    const placed = await api
+      .bid(bidder, lotId, STARTING_BID + index * INCREMENT)
+      .expect(201);
+    aliases.push((placed.body as { alias: string }).alias);
   }
-  return lotId;
+  return { lotId, aliases };
 }
 
 function audit(lotId: number | string): request.Test {
@@ -59,7 +65,7 @@ async function verdict(lotId: number): Promise<Audit> {
 
 describe('GET /lots/:id/audit', () => {
   it('declara íntegro o lote sem alteração', async () => {
-    const lotId = await lotWithBids(3);
+    const { lotId } = await lotWithBids(3);
 
     const response = await audit(lotId).expect(200);
 
@@ -81,8 +87,25 @@ describe('GET /lots/:id/audit', () => {
     });
   });
 
+  it('identifica cada lance pelo alias do licitante no lote', async () => {
+    const { lotId, aliases } = await lotWithBids(3);
+
+    const body = await verdict(lotId);
+
+    expect(body.bids.map((bid) => bid.alias)).toEqual(aliases);
+  });
+
+  it('declara íntegro o lote recém-criado sem lances', async () => {
+    const { lotId } = await lotWithBids(0);
+
+    const body = await verdict(lotId);
+
+    expect(body.result).toBe('intact');
+    expect(body.bids).toEqual([]);
+  });
+
   it('não traz dado pessoal', async () => {
-    const lotId = await lotWithBids(2);
+    const { lotId } = await lotWithBids(2);
 
     const response = await audit(lotId).expect(200);
 
@@ -92,7 +115,7 @@ describe('GET /lots/:id/audit', () => {
   });
 
   it('acusa o valor alterado no banco', async () => {
-    const lotId = await lotWithBids(3);
+    const { lotId } = await lotWithBids(3);
     await api.db.query(
       'UPDATE bids SET amount = amount + 1 WHERE lot_id = $1 AND seq = 2',
       [lotId],
@@ -109,8 +132,21 @@ describe('GET /lots/:id/audit', () => {
     ]);
   });
 
+  it('acusa o dono trocado no banco', async () => {
+    const { lotId } = await lotWithBids(3);
+    await api.db.query(
+      'UPDATE bids SET user_id = $1 WHERE lot_id = $2 AND seq = 2',
+      [first.id, lotId],
+    );
+
+    const body = await verdict(lotId);
+
+    expect(body.result).toBe('tampered');
+    expect(body.brokenSeq).toBe(2);
+  });
+
   it('acusa o último lance apagado no banco', async () => {
-    const lotId = await lotWithBids(3);
+    const { lotId } = await lotWithBids(3);
     await api.db.query('DELETE FROM bids WHERE lot_id = $1 AND seq = 3', [
       lotId,
     ]);
@@ -122,7 +158,7 @@ describe('GET /lots/:id/audit', () => {
   });
 
   it('acusa o hash final do comprovante alterado no banco', async () => {
-    const lotId = await lotWithBids(2);
+    const { lotId } = await lotWithBids(2);
     api.clock.set(at(30));
     await api.app.get(SettlementService).settle(lotId);
     await api.db.query(
@@ -134,7 +170,7 @@ describe('GET /lots/:id/audit', () => {
   });
 
   it('declara íntegro o lote liquidado com comprovante', async () => {
-    const lotId = await lotWithBids(2);
+    const { lotId } = await lotWithBids(2);
     api.clock.set(at(30));
     await api.app.get(SettlementService).settle(lotId);
 
@@ -144,7 +180,7 @@ describe('GET /lots/:id/audit', () => {
   it.each([1, 5])(
     'dispara duas queries de leitura com %i lance(s)',
     async (count) => {
-      const lotId = await lotWithBids(count);
+      const { lotId } = await lotWithBids(count);
       const spy = jest.spyOn(api.db.logger, 'logQuery');
 
       await audit(lotId).expect(200);
@@ -162,7 +198,7 @@ describe('GET /lots/:id/audit', () => {
   });
 
   it('responde 404 para lote cancelado', async () => {
-    const lotId = await lotWithBids(0);
+    const { lotId } = await lotWithBids(0);
     await request(api.server)
       .post(`/lots/${lotId}/cancel`)
       .auth(auctioneer.token, { type: 'bearer' })
@@ -178,7 +214,7 @@ describe('GET /lots/number/:number', () => {
   }
 
   it('devolve o id do lote', async () => {
-    const lotId = await lotWithBids(0);
+    const { lotId } = await lotWithBids(0);
     const [{ number }] = await api.db.query<{ number: number }[]>(
       'SELECT number FROM lots WHERE id = $1',
       [lotId],
@@ -194,7 +230,7 @@ describe('GET /lots/number/:number', () => {
   });
 
   it('responde 404 para lote cancelado', async () => {
-    const lotId = await lotWithBids(0);
+    const { lotId } = await lotWithBids(0);
     const [{ number }] = await api.db.query<{ number: number }[]>(
       'SELECT number FROM lots WHERE id = $1',
       [lotId],
