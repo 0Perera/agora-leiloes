@@ -14,6 +14,7 @@ export class AuditResponseDto {
   id!: number;
   number!: number;
   title!: string;
+  artist!: string;
   status!: LotStatus;
   result!: AuditResult;
   brokenSeq!: number | null;

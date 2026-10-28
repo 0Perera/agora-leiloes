@@ -16,6 +16,7 @@ type LotRow = {
   id: number;
   number: number;
   title: string;
+  artist: string;
   status: LotStatus;
   seal: string | null;
   settledAt: Date | null;
@@ -61,6 +62,7 @@ export class AuditService {
       id: lot.id,
       number: lot.number,
       title: lot.title,
+      artist: lot.artist,
       status: lot.status,
       result: verdict.result,
       brokenSeq: verdict.brokenSeq,
@@ -83,6 +85,7 @@ export class AuditService {
       .select('lot.id', 'id')
       .addSelect('lot.number', 'number')
       .addSelect('lot.title', 'title')
+      .addSelect('lot.artist', 'artist')
       .addSelect(STATUS_SQL, 'status')
       .addSelect('lot.seal', 'seal')
       .addSelect('lot.settledAt', 'settledAt')
