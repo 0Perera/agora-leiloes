@@ -89,7 +89,7 @@
   summary: padrão único de chamada à API no front: hoje algumas telas usam hook (`use-dashboard`, `use-wallet`) e outras chamam a API direto no componente (`lot-form`, `catalog-search`, `ledger`, `deposit-form`); escolher um padrão e aplicar em todas.
   evidence: pedido do usuário na aprovação da 4.4.
 
-## Polimento visual (story 6.5)
+## Polimento visual (story 6.6)
 
 - source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`
   summary: no painel do leiloeiro em modo cartão (abaixo de 1220px), o selo de estado e o botão "Cancelar lote" ocupam toda a largura da coluna; devem ter a largura do próprio conteúdo (`justify-self: start`), com o botão em largura total só abaixo de 480px. Alinhar a miniatura da obra com o título. Conferir em 360, 768 e 1000px.
@@ -134,18 +134,34 @@
   evidence: a tela de auditoria só existe a partir da 5.8; a spec da 5.7 proíbe o link antes disso.
 
 - source_spec: none
-  summary: na 6.5, no painel do leiloeiro, depois de escolher a obra no acervo, rolar até os campos da ficha do lote.
+  summary: na 6.6, no painel do leiloeiro, depois de escolher a obra no acervo, rolar até os campos da ficha do lote.
   evidence: pedido do usuário no replanejamento do épico 6 (2026-10-28); reforça o item de rolagem registrado na 4.6.
 
 - source_spec: none
-  summary: na 6.5, no livro de lotes do painel, tirar o botão "Abrir sala" e transformar o título do lote em link para a sala.
+  summary: na 6.6, no livro de lotes do painel, tirar o botão "Abrir sala" e transformar o título do lote em link para a sala.
   evidence: pedido do usuário no replanejamento do épico 6 (2026-10-28).
 
 - source_spec: none
-  summary: na 6.5, abaixo de ~420px, o menu do cabeçalho quebra em duas linhas, alinhado à esquerda, com o espaço normal entre os links (hoje fica com 4px).
+  summary: na 6.6, abaixo de ~420px, o menu do cabeçalho quebra em duas linhas, alinhado à esquerda, com o espaço normal entre os links (hoje fica com 4px).
   evidence: pedido do usuário no replanejamento do épico 6 (2026-10-28).
 
-## Fora do escopo (README, story 6.6)
+- source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
+  summary: na 6.6, o ícone de sugestões ao lado da busca do acervo no painel (item registrado na 5.6, na seção acima).
+  evidence: pedido do usuário no segundo replanejamento do épico 6 (2026-10-28).
+
+## Cancelamento com estorno (story 6.5)
+
+- source_spec: none
+  summary: story 6.5 nova: leiloeiro cancela lote com lances e os compromissos dos licitantes são estornados; escopo e casos definidos na abertura da story.
+  evidence: decisão do usuário no segundo replanejamento do épico 6 (2026-10-28); sai da lista de "Fora do escopo".
+
+## README final (story 6.7)
+
+- source_spec: none
+  summary: na 6.7, o conteúdo de `docs/deploy-notes.md` é absorvido pelo README e o arquivo é apagado.
+  evidence: decisão do usuário no segundo replanejamento do épico 6 (2026-10-28).
+
+## Fora do escopo (README, story 6.7)
 
 - source_spec: none
   summary: documentação da API com Swagger (antiga story 6.3, FR27) não será feita; declarar em "Fora do escopo" no README.
@@ -153,10 +169,6 @@
 
 - source_spec: none
   summary: tema escuro não será feito; declarar em "Fora do escopo" no README.
-  evidence: decisão do usuário no replanejamento do épico 6 (2026-10-28).
-
-- source_spec: none
-  summary: cancelamento de lote com lances e estorno dos compromissos não será feito; declarar em "Fora do escopo" no README.
   evidence: decisão do usuário no replanejamento do épico 6 (2026-10-28).
 
 - source_spec: none

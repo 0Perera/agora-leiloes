@@ -139,7 +139,7 @@ Lote vencido é liquidado e o vencedor recebe o comprovante assinado; a sala mos
 **FRs:** FR9 (total recebido e resultado), FR18, FR19, FR20, FR22 · **UX:** DR6 (estados de encerramento), DR8, DR9, DR10
 
 ### Épico 6: Entrega
-Seed idempotente também no deploy, compose verificado num checkout limpo, consistência da API e do front, documentação, polimento final e README final.
+Seed idempotente também no deploy, compose verificado num checkout limpo, consistência da API e do front, documentação, cancelamento com estorno, polimento final e README final.
 **FRs:** FR25, FR26 · **NFR:** NFR10
 
 NFR3 a NFR9 são transversais: entram como critério de aceite nas stories que tocam cada ponto.
@@ -1173,7 +1173,7 @@ canvas **Auditoria do lote** e **Página inicial**.
 
 ## Épico 6: Entrega
 
-Seed idempotente também no deploy, compose verificado num checkout limpo, consistência da API e do front, documentação, polimento final e README final.
+Seed idempotente também no deploy, compose verificado num checkout limpo, consistência da API e do front, documentação, cancelamento com estorno, polimento final e README final.
 
 ### Story 6.1: Seed idempotente e compose verificado
 
@@ -1262,7 +1262,23 @@ e lista de códigos de erro do `CLAUDE.md`.
 **Then** refletem o sistema entregue, sem link quebrado
 **And** as entradas do `ai-log.md` seguem o estilo das regras do `CLAUDE.md`
 
-### Story 6.5: Polimento final
+### Story 6.5: Cancelamento com estorno
+
+Como leiloeiro,
+quero cancelar um lote que já recebeu lances,
+para retirar uma peça sem prender o saldo dos licitantes.
+
+**Notas:** hoje só lote sem lances é cancelável (`LOT_HAS_BIDS`). Os lances continuam na cadeia (tabela append-only);
+o estorno libera o saldo comprometido do licitante que lidera. Regra, códigos e casos de teste definidos na abertura da story.
+
+**Acceptance Criteria:**
+
+**Given** um lote ao vivo ou agendado com lances
+**When** o leiloeiro dono cancela
+**Then** o lote sai da vitrine, o comprometido do licitante que lidera é liberado na mesma transação, com lock do lote e das carteiras
+**And** a auditoria do lote continua íntegra
+
+### Story 6.6: Polimento final
 
 Como avaliador,
 quero as telas sem arestas de uso,
@@ -1277,7 +1293,7 @@ para percorrer o fluxo sem tropeçar em detalhe visual.
 **Then** cada um está feito ou declarado fora do escopo
 **And** as telas tocadas foram conferidas em 360, 768, 1024 e 1280px
 
-### Story 6.6: README final
+### Story 6.7: README final
 
 Como avaliador,
 quero um README que me deixe rodar, testar e entender o sistema,
@@ -1292,7 +1308,8 @@ para avaliar sem precisar ler o código primeiro.
 **Given** o README
 **When** a story termina
 **Then** tem as seções fixas na ordem do `CLAUDE.md`: Ágora, Testar agora, Rodar local, Arquitetura, Auditoria, Comportamentos esperados, Testes, Stack e decisões, Fora do escopo, Uso de IA
-**And** "Fora do escopo" declara Swagger, tema escuro, cancelamento com estorno e limite de tentativas no login (`deferred-work.md`)
+**And** "Fora do escopo" declara Swagger, tema escuro e limite de tentativas no login (`deferred-work.md`)
+**And** o conteúdo de `docs/deploy-notes.md` passa para o README e o arquivo é apagado
 **And** passa no job do CI de no máximo 300 linhas
 
 **Given** a seção Auditoria
