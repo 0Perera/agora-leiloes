@@ -677,7 +677,18 @@ Status: Aceita
 Data: 2026-10-27
 Story: 5.5
 
-**Decisão:** a auditoria ganha um quarto resultado, `receipt_tampered`, para lote liquidado com lances cujo comprovante falta, tem hash final diferente do último lance ou assinatura inválida. Prioridade: `tampered` > `truncated` > `receipt_tampered`. Lote liquidado sem lances não tem comprovante e continua `intact`; selo nulo dá `truncated` (D-058).
+**Decisão:** a auditoria ganha um quarto resultado, `receipt_tampered`, para lote liquidado com lances cujo comprovante falta, tem hash final diferente do último lance ou assinatura inválida. Prioridade: `tampered` > `truncated` > `receipt_tampered`. Comprovante em lote não liquidado ou em lote liquidado sem lances também dá `receipt_tampered`: comprovante só existe em lote liquidado com lances. Lote liquidado sem lances e sem comprovante continua `intact`; selo nulo dá `truncated` (D-058).
 **Por quê:** apagar o último lance de um lote liquidado quebra o selo e o comprovante juntos; a prioridade mostra a causa (`truncated`) e não a consequência.
 **Alternativas descartadas:** `tampered` com `brokenSeq` nulo (o front distinguiria lance de comprovante só pelo nulo); `tampered` apontando o último lance (acusaria um lance íntegro).
 **Consequência:** a tela da 5.8 traduz quatro resultados.
+
+## D-066: Lista completa de lances na auditoria, sem paginação
+
+Status: Aceita
+Data: 2026-10-27
+Story: 5.5
+
+**Decisão:** `GET /lots/:id/audit` devolve todos os lances do lote numa query só, sem página nem teto. É exceção à regra de toda listagem paginada, como a D-063.
+**Por quê:** a verificação depende da cadeia inteira: cada lance confere o hash do anterior e o selo confere o último, então não dá para verificar uma página isolada.
+**Alternativas descartadas:** verificar a cadeia inteira e paginar só a resposta (a tela mostraria o indicador de lances que o visitante não vê, e a lista lida continuaria completa); teto de lances (lote acima do teto não seria auditável).
+**Consequência:** o custo da rota cresce com o número de lances do lote (dois HMACs por lance). Aceito no escopo: um lote tem dezenas de lances, não milhares.
