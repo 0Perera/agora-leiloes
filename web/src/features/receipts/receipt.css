@@ -289,39 +289,6 @@
   border-top: 1px solid var(--vein);
 }
 
-.receipt-copied {
-  font-size: 16px;
-  color: var(--malachite);
-}
-
-/* cópia manual quando a área de transferência recusa */
-.receipt-manual {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  flex-basis: 100%;
-  width: 100%;
-  max-width: 560px;
-}
-
-.receipt-manual__label {
-  font-size: 15px;
-  line-height: 20px;
-  color: var(--ink-muted);
-}
-
-.receipt-manual__field {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 44px;
-  padding: 0 var(--space-3);
-  border: 1px solid var(--gold-500);
-  background-color: var(--marble-000);
-  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
-  font-size: 15px;
-  color: var(--ink);
-}
-
 /* carregando */
 .receipt-skel__head {
   display: flex;
