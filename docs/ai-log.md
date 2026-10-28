@@ -684,12 +684,12 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **O que revisei e pedi para mudar:**
 - Pedi que o resultado venha da releitura do lote que a sala já faz na virada, e que lote encerrado sem resultado mostre "Lote encerrado, aguardando liquidação".
 - Pedi "Você arrematou" com o valor e o link do comprovante para o vencedor, com a carteira do cabeçalho relida, e o apelido do vencedor com o valor, ou "sem lances", para os demais.
-- Decidi deixar para depois o link da auditoria no comprovante e na sala (5.8), as sugestões de termos na busca do acervo (polimento), a caixa de contas de demonstração na tela Entrar e a composição do seed (6.1).
+- Decidi deixar para depois o link da auditoria no comprovante e na sala (5.8), as sugestões de termos na busca do acervo (polimento), a caixa de contas de demonstração na tela Entrar e a composição do seed, com um lote adulterado de propósito e um roteiro de adulteração no README (6.1).
 - Pedi que os botões de copiar mostrem o texto selecionado para cópia manual quando a área de transferência falhar.
-- Pedi que o comprovante inválido mostre todos os dados, com o selo "Comprovante inválido".
-- Pedi valores com centavos, datas no fuso do navegador e o número do lote no formato com romano.
+- Pedi que o comprovante inválido mostre todos os dados, com o selo "Comprovante inválido", e valores com centavos, datas no fuso do navegador e o número do lote com romano.
 - Pedi a conferência visual: canvas e site lado a lado em 1280px, capturas em 360, 768, 1024 e 1280px, e reaproveitamento do que já existe em comum, sem bloco novo com o prefixo da tela.
 - Na conferência, pedi a frase de lote pendente uma vez só, a marca "Arrematou" ou "Último lance" no histórico do lote encerrado e as grades de cartões com no máximo 4 colunas, para as páginas de 12 sempre fecharem a linha.
+- Antes do merge, pedi que "Você arrematou" dependa só do token do comprovante, que a API envia apenas ao vencedor, e não do apelido; e que o comprovante válido diga que só a assinatura confere, indicando a auditoria para o histórico de lances.
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta story.
