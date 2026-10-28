@@ -61,7 +61,7 @@
 }
 
 .bids-row--ongoing {
-  grid-template-columns: 96px minmax(200px, 1.8fr) 190px 130px 130px 130px 150px;
+  grid-template-columns: 96px minmax(200px, 1.8fr) 210px 120px 120px 120px 150px;
 }
 
 .bids-row--lost {
@@ -238,8 +238,10 @@
   padding: 0;
 }
 
+/* em duas linhas, o sublinhado não encosta na linha de baixo */
 .bids-copy {
   text-align: left;
+  line-height: 26px;
 }
 
 /* placa de arremate */
@@ -347,6 +349,11 @@
   padding: 14px 0;
   border-top: 1px solid var(--gold-500);
   border-bottom: 1px solid var(--gold-500);
+}
+
+/* coluna do valor com largura mínima, para "Arrematado em" alinhar entre placas */
+.bids-plaque__facts > div:first-child {
+  min-width: 180px;
 }
 
 .bids-plaque__paid {
@@ -463,7 +470,7 @@
 
   .bids-row > [data-label] {
     display: grid;
-    grid-template-columns: 120px minmax(0, 1fr);
+    grid-template-columns: 132px minmax(0, 1fr);
     gap: var(--space-3);
     align-items: center;
   }
@@ -499,11 +506,5 @@
 
   .bids-plaque__lot {
     padding-right: 0;
-  }
-}
-
-@media (max-width: 420px) {
-  .bids-row > [data-label] {
-    grid-template-columns: 96px minmax(0, 1fr);
   }
 }
