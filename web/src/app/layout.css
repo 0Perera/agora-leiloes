@@ -304,6 +304,46 @@
   }
 }
 
+/* menu sem rolar a partir de 360px: fonte e letter-spacing primeiro, depois o espaço entre os links */
+@media (max-width: 480px) {
+  .header-nav {
+    gap: 0 12px;
+    mask-image: none;
+  }
+
+  .header-nav .nav-link {
+    font-size: 11px;
+    letter-spacing: 0;
+  }
+}
+
+@media (max-width: 468px) {
+  .header-nav {
+    gap: 0 8px;
+  }
+
+  .header-nav .nav-link {
+    padding-inline: 2px;
+  }
+}
+
+@media (max-width: 440px) {
+  .header-nav {
+    gap: 0 4px;
+  }
+
+  .header-nav .nav-link {
+    padding-inline: 0;
+  }
+}
+
+/* "Painel do leiloeiro" não cabe abaixo de 397px nem com a fonte em 11px: rola com esmaecido */
+@media (max-width: 396px) {
+  .header-nav--wide {
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  }
+}
+
 @media (max-width: 519px) {
   .header-actions {
     gap: var(--space-2);

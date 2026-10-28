@@ -20,7 +20,12 @@ export function Header() {
           <Logo />
           <span className="header-name">ÁGORA</span>
         </Link>
-        <nav className="header-nav" aria-label="Principal">
+        <nav
+          className={
+            isAuctioneer ? 'header-nav header-nav--wide' : 'header-nav'
+          }
+          aria-label="Principal"
+        >
           <NavLink className="nav-link" to="/" end>
             Vitrine
           </NavLink>
