@@ -56,15 +56,14 @@ _(módulos, fluxo de um lance e liquidação)_
 
 ## Auditoria
 
-`GET /lots/:id/audit` é público e responde `intact`, `tampered` (com o `seq` do primeiro lance quebrado), `truncated` ou `receipt_tampered`, com cada lance marcado. `GET /lots/number/:number` leva do número ao id. A técnica (D-012):
+Qualquer pessoa confere se o histórico de um lote foi mexido, sem login, em `GET /lots/:id/audit` (`GET /lots/number/:number` leva do número ao id). A técnica é uma cadeia de HMAC (D-012):
 
-- **Cadeia de HMAC:** cada lance guarda um HMAC-SHA256 de `lot_id`, `seq`, `user_id`, valor, data e o hash do lance anterior (o primeiro encadeia num hash fixo de zeros). O segredo fica só na variável de ambiente, então quem tem acesso ao banco não consegue recalcular um hash válido.
-- **Alteração:** mudar valor, dono ou data de um lance muda o HMAC recalculado, que deixa de bater com o gravado.
-- **Inserção e remoção no meio:** o `seq` tem que ser 1, 2, 3... sem buraco, e o `prev_hash` de cada lance tem que ser o hash do anterior. Lance inserido, removido ou trocado de ordem quebra um dos dois.
-- **Remoção do fim:** a cadeia que sobra continua coerente, então o lote guarda um selo (HMAC da contagem e do último hash). Selo que não bate, ou nulo, dá `truncated`.
-- **Comprovante:** no lote liquidado, o hash final do comprovante tem que ser o último da cadeia e a assinatura tem que valer; comprovante em lote não liquidado ou sem lances também é acusado.
-- Depois do primeiro lance quebrado, os seguintes aparecem como não verificáveis: o elo anterior já não prova nada.
-- Limite: restaurar lote, lances e comprovante inteiros para um estado anterior válido não é detectado, porque nada do hash é ancorado fora do banco.
+- **Cada lance assina o anterior:** o lance guarda um HMAC do lote, da ordem, do licitante, do valor, da data e do hash do lance anterior. Mudar, inserir, apagar ou trocar a ordem de um lance quebra a cadeia, e só o servidor tem o segredo para assinar de novo.
+- **O selo do lote** guarda a contagem e o último hash, e acusa lances apagados do fim, que deixariam o resto da cadeia coerente.
+- **O comprovante assinado** aponta para o último lance da cadeia, e a assinatura dele é conferida a cada consulta (D-029).
+- Um segredo só, com um prefixo diferente para cada uso, em formato fixo, para uma assinatura nunca valer em outro lugar (D-056).
+- **Resultado:** `intact` (íntegro), `tampered` (lance adulterado, com o primeiro quebrado), `truncated` (lances apagados do fim) ou `receipt_tampered` (comprovante não confere), nessa prioridade (D-065). Cada lance aparece como íntegro, adulterado ou não verificável (depois do primeiro quebrado).
+- **Limitação:** restaurar o lote e os lances inteiros para um estado anterior não é detectado, porque o hash não é guardado fora do banco.
 
 ## Comportamentos esperados
 
