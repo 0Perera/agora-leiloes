@@ -75,8 +75,8 @@ development_status:
   5-4-comprovante-meus-lances-e-resultado-do-painel-na-api: done
   5-5-auditoria-da-cadeia-na-api-tdd: done
   5-6-sala-encerrada-e-tela-comprovante-de-arremate: done
-  5-7-tela-meus-lances-e-resultado-no-painel: review
-  5-8-tela-auditoria-do-lote-e-campo-da-pagina-inicial: backlog
+  5-7-tela-meus-lances-e-resultado-no-painel: done
+  5-8-tela-auditoria-do-lote-e-campo-da-pagina-inicial: review
   epic-5-retrospective: optional
 
   epic-6: backlog

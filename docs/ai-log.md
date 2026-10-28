@@ -731,11 +731,14 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Testes do veredito, da marcação de cada lance e da leitura do número do lote.
 
 **O que revisei e pedi para mudar:**
-- Pedi a tela seguindo o desenho da auditoria e o bloco da página inicial seguindo o desenho da página principal.
-- Decidi não pôr link para o comprovante na auditoria: o vencedor decide com quem compartilhar.
-- Decidi incluir o artista na resposta da auditoria, sem consulta nova ao banco.
-- Pedi o link de auditoria no card da vitrine só para lotes ao vivo e encerrados, como no desenho.
-- Pedi Como funciona e Auditoria no cabeçalho para todos, rolando até a seção também vindo de outra página.
+- Pedi os quatro resultados da auditoria, cada um com selo e explicação simples, e o indicador de cada lance (íntegro, adulterado ou não verificável).
+- Pedi o link para a seção Auditoria do README na explicação da tela.
+- Pedi a cópia do código como bloco compartilhado, reaproveitado do comprovante.
+- Pedi que o campo da página inicial aceitasse "7", "VII" ou "vii" e mostrasse "lote não encontrado" junto do campo.
+- Pedi o link "Auditar este lote" na sala, no comprovante, na vitrine, no destaque e em Meus lances, com o do card acima da área que abre a sala.
+- Pedi o cabeçalho na ordem do desenho, com Como funciona e Auditoria rolando até a seção também vindo de outra página.
+- Decidi incluir o artista na resposta da auditoria.
+- Decidi não pôr link para o comprovante na auditoria: o token só chega ao vencedor e ao leiloeiro, e o vencedor decide com quem compartilhar.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma registrada.
+- Devolver o token do comprovante na auditoria para mostrar o link a qualquer pessoa: recusei, para o vencedor continuar decidindo quem vê o comprovante.
