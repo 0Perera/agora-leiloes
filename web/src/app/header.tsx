@@ -24,9 +24,20 @@ export function Header() {
           <NavLink className="nav-link" to="/" end>
             Vitrine
           </NavLink>
+          <Link className="nav-link" to="/#como-funciona">
+            Como funciona
+          </Link>
+          <Link className="nav-link" to="/#auditoria">
+            Auditoria
+          </Link>
           {isAuctioneer && (
-            <NavLink className="nav-link" to="/dashboard">
-              Painel do leiloeiro
+            <NavLink
+              className="nav-link"
+              to="/dashboard"
+              aria-label="Painel do leiloeiro"
+            >
+              <span className="nav-link__full">Painel do leiloeiro</span>
+              <span className="nav-link__short">Painel</span>
             </NavLink>
           )}
           {isBidder && (

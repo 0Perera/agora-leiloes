@@ -718,3 +718,31 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - Rótulo "Você lidera" na situação: escolhi "Você está ganhando", o mesmo da sala e do destaque da página inicial.
 - Nota "em N lotes arrematados" no total recebido: um lote vencido e ainda não liquidado entraria na contagem sem estar no total, então a nota diz só "soma dos comprovantes dos lotes arrematados".
+
+## Story 5.8: Tela Auditoria do lote e campo da página inicial
+
+**O que a IA gerou:**
+- A tela pública da auditoria, com o veredito (Íntegro ou Adulterado) em linguagem simples, o botão de verificar de novo e a lista de todos os lances com apelido, valor, horário, código e verificação de cada um.
+- Os quatro resultados: histórico íntegro, lance alterado (com o ponto exato e os lances seguintes como não verificáveis), lances removidos do fim e comprovante que não confere.
+- O bloco "Leilões que qualquer pessoa pode conferir" na página inicial, com o campo do número do lote em algarismos ou romano.
+- Os links "Auditar este lote" na vitrine, no destaque, na sala, no comprovante e em Meus lances, e os itens Como funciona e Auditoria no cabeçalho, que rolam até a seção.
+- O artista na resposta da auditoria, na API.
+- A cópia do código como bloco compartilhado entre o comprovante e a auditoria.
+- Testes do veredito, da marcação de cada lance e da leitura do número do lote.
+
+**O que revisei e pedi para mudar:**
+- Pedi os quatro resultados da auditoria, cada um com selo e explicação simples, e o indicador de cada lance (íntegro, adulterado ou não verificável).
+- Pedi o link para a seção Auditoria do README na explicação e a cópia do código como bloco compartilhado com o comprovante.
+- Pedi que o campo da página inicial aceitasse "7", "VII" ou "vii" e mostrasse "lote não encontrado" junto do campo.
+- Pedi o link "Auditar este lote" na sala, no comprovante, na vitrine, no destaque e em Meus lances, com o do card acima da área que abre a sala.
+- Pedi o cabeçalho na ordem do desenho, com Como funciona e Auditoria rolando até a seção também vindo de outra página.
+- Decidi incluir o artista na resposta da auditoria.
+- Decidi não pôr link para o comprovante na auditoria: o token só chega ao vencedor e ao leiloeiro, e o vencedor decide com quem compartilhar.
+- Pedi, antes do push, a rolagem até a seção uma vez só, o veredito mantido quando a nova verificação falha, os códigos escondidos por padrão com a frase para guardar o último código e o menu do celular sem rolagem a partir de 360px.
+
+**Sugestões rejeitadas e por quê:**
+- Devolver o token do comprovante na auditoria para mostrar o link a qualquer pessoa: recusei, para o vencedor continuar decidindo quem vê o comprovante.
+
+**Erro encontrado na revisão:**
+- O passo 2 da auditoria dizia que o selo do lote nascia no encerramento, mas ele é gravado a cada lance.
+- O espaço que não quebra linha antes do horário no comprovante tinha virado um caractere invisível no código na refatoração; voltou a ser escrito de forma explícita.

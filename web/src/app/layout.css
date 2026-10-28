@@ -65,6 +65,10 @@
   text-decoration: none;
 }
 
+.nav-link__short {
+  display: none;
+}
+
 .nav-link:hover,
 .nav-link[aria-current='page'] {
   border-bottom-color: var(--gold-500);
@@ -289,12 +293,62 @@
     flex-wrap: nowrap;
     overflow-x: auto;
     gap: 0 20px;
-    scrollbar-width: thin;
+    scrollbar-width: none;
+    /* sem barra visível: o esmaecido na borda mostra que há mais links para o lado */
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  }
+
+  .header-nav::-webkit-scrollbar {
+    display: none;
   }
 
   .header-nav a {
     white-space: nowrap;
     flex: none;
+  }
+}
+
+/* menu sem rolar a partir de 360px: fonte e letter-spacing primeiro, depois o espaço entre os links */
+@media (max-width: 480px) {
+  .header-nav {
+    gap: 0 12px;
+    mask-image: none;
+  }
+
+  .header-nav .nav-link {
+    font-size: 11px;
+    letter-spacing: 0;
+  }
+}
+
+@media (max-width: 468px) {
+  .header-nav {
+    gap: 0 8px;
+  }
+
+  .header-nav .nav-link {
+    padding-inline: 2px;
+  }
+}
+
+@media (max-width: 440px) {
+  .header-nav {
+    gap: 0 4px;
+  }
+
+  .header-nav .nav-link {
+    padding-inline: 0;
+  }
+}
+
+/* abaixo de 400px o nome completo do painel não cabe nem com a fonte em 11px */
+@media (max-width: 399px) {
+  .nav-link__full {
+    display: none;
+  }
+
+  .nav-link__short {
+    display: inline;
   }
 }
 

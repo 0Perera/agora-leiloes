@@ -207,6 +207,7 @@ export type LotAudit = {
   id: number;
   number: number;
   title: string;
+  artist: string;
   status: LotStatus;
   result: AuditResult;
   // Seq do primeiro lance quebrado; nulo fora de 'tampered'.

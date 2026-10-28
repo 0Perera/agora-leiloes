@@ -1,15 +1,16 @@
-import { ManualCopy, useCopy } from '../../shared/ui/link-copy';
-import { shortHash } from './receipt';
+import { shortHash } from '../lib/hash';
+import { ManualCopy, useCopy } from './link-copy';
+import './hash-copy.css';
 
 export function HashCopy({ hash }: { hash: string }) {
   const { state, copy } = useCopy(hash);
   return (
     <>
-      <span className="receipt-hash">
-        <code className="receipt-hash__code" title={hash}>
+      <span className="hash-copy">
+        <code className="hash-copy__code" title={hash}>
           {shortHash(hash)}
         </code>
-        <button className="receipt-hash__copy" type="button" onClick={copy}>
+        <button className="hash-copy__button" type="button" onClick={copy}>
           {state === 'copied' ? '✓ Copiado' : 'Copiar'}
         </button>
       </span>

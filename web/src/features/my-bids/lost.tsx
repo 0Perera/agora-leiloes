@@ -45,6 +45,13 @@ export function Lost({ items }: { items: LostBid[] }) {
           >
             Abrir sala
           </Link>
+          <Link
+            className="ag-btn ag-btn--quiet bids-audit"
+            to={`/lots/${bid.id}/audit`}
+            aria-label={`Auditar o ${lotLabel(bid.number)}`}
+          >
+            Auditar lote
+          </Link>
         </Plaque>
       ))}
     </div>

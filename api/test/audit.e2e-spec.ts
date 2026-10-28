@@ -73,6 +73,7 @@ describe('GET /lots/:id/audit', () => {
       id: lotId,
       number: expect.any(Number) as number,
       title: expect.any(String) as string,
+      artist: 'Artista de teste',
       status: 'live',
       result: 'intact',
       brokenSeq: null,

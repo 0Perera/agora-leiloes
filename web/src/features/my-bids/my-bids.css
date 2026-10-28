@@ -237,6 +237,11 @@
   line-height: 26px;
 }
 
+.bids-audit {
+  min-height: 44px;
+  padding: 0;
+}
+
 /* nenhum lance ainda */
 .bids-none {
   display: flex;

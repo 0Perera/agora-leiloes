@@ -246,40 +246,6 @@
   margin-bottom: -2px;
 }
 
-.receipt-hash {
-  display: inline-flex;
-  align-items: center;
-  max-width: 100%;
-  border: 1px solid var(--gold-500);
-  background-color: var(--marble-000);
-}
-
-.receipt-hash__code {
-  min-width: 0;
-  padding: 10px 14px;
-  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
-  font-size: 15px;
-  line-height: 20px;
-  color: var(--ink);
-  white-space: nowrap;
-}
-
-.receipt-hash__copy {
-  flex: none;
-  min-height: 44px;
-  padding: 0 14px;
-  border: 0;
-  border-left: 1px solid var(--gold-500);
-  background: transparent;
-  cursor: pointer;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--gold-700);
-}
-
 .receipt__actions {
   display: flex;
   flex-wrap: wrap;
@@ -287,6 +253,10 @@
   gap: var(--space-3) 20px;
   padding-top: 20px;
   border-top: 1px solid var(--vein);
+}
+
+.receipt__audit {
+  min-height: 44px;
 }
 
 /* carregando */
@@ -367,16 +337,6 @@
 
   .receipt-dl dd {
     margin-bottom: var(--space-3);
-  }
-
-  /* o código abreviado cabe numa linha só na folha de 360px */
-  .receipt-hash__code {
-    padding: 10px;
-    font-size: 14px;
-  }
-
-  .receipt-hash__copy {
-    padding: 0 10px;
   }
 }
 

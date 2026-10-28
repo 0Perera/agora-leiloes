@@ -14,7 +14,9 @@ import type {
   LoginRequest,
   LotCard,
   LotDetail,
+  LotAudit,
   LotFilter,
+  LotId,
   LotShowcase,
   LotStatus,
   MyBids,
@@ -168,6 +170,8 @@ export const api = {
   },
   receipt: (token: string) =>
     request<Receipt>(`/receipts/${encodeURIComponent(token)}`),
+  audit: (id: number) => request<LotAudit>(`/lots/${id}/audit`),
+  lotByNumber: (number: number) => request<LotId>(`/lots/number/${number}`),
 };
 
 type StreamHandlers = {
