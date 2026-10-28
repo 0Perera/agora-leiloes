@@ -289,7 +289,13 @@
     flex-wrap: nowrap;
     overflow-x: auto;
     gap: 0 20px;
-    scrollbar-width: thin;
+    scrollbar-width: none;
+    /* sem barra visível: o esmaecido na borda mostra que há mais links para o lado */
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  }
+
+  .header-nav::-webkit-scrollbar {
+    display: none;
   }
 
   .header-nav a {

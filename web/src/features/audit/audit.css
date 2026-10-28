@@ -153,9 +153,7 @@
 
 .audit-row {
   display: grid;
-  grid-template-columns:
-    64px minmax(150px, 1fr) 130px 110px minmax(180px, 1.2fr)
-    150px;
+  grid-template-columns: 64px minmax(150px, 1fr) 130px 110px 290px 190px;
   gap: 0 var(--space-4);
   align-items: center;
   min-height: 56px;
@@ -464,9 +462,9 @@
   }
 }
 
-/* na folha estreita o rótulo vai para cima do valor, e o código cabe numa linha */
+/* na folha estreita só o código vai para baixo do rótulo, para caber numa linha */
 @media (max-width: 420px) {
-  .audit-row > [data-label] {
+  .audit-row > .audit-row__code[data-label] {
     grid-template-columns: minmax(0, 1fr);
     gap: 2px;
   }
