@@ -693,3 +693,27 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Nenhuma nesta story.
+
+## Story 5.7: Tela Meus lances e resultado no painel
+
+**O que a IA gerou:**
+- A tela Meus lances, só para licitante, com as abas Em andamento, Arrematados e Não arrematados, a contagem de cada uma e paginação.
+- Em andamento: situação, lance atual, o seu lance, contagem regressiva e o botão de cobrir o lance ou abrir a sala; lote vencido sem liquidar aparece como aguardando liquidação.
+- Arrematados em placas com imagem, valor pago, data, link do comprovante e cópia do link; Não arrematados com o valor final e o seu maior lance.
+- O artista nos itens de Meus lances, na API.
+- No painel, o cartão "Total recebido" e o resultado de cada lote encerrado, com o link do comprovante quando arrematado.
+- As abas e a cópia de link como componentes compartilhados, usados pelo comprovante e por Meus lances.
+- Testes da situação, do tempo, da ação e do valor final em Meus lances e do resultado no painel.
+
+**O que revisei e pedi para mudar:**
+- Pedi as três seções em abas, com um componente de abas compartilhado que as outras telas vão usar depois.
+- Pedi que o botão de copiar o link do comprovante fosse reaproveitado, com cópia manual quando a área de transferência falhar.
+- Defini os textos do lote vencido sem liquidar ("Encerrado, aguardando liquidação" e "Você arrematou · aguardando liquidação") e o traço para valor final ausente.
+- Decidi incluir o artista na resposta de Meus lances, para a tela ficar como o desenho.
+- Decidi mostrar "Abrir sala" nos não arrematados e deixar o link de auditoria para a 5.8.
+- Pedi o cartão "Total recebido" no painel e o resultado de cada lote encerrado no livro.
+- Pedi a comparação com o desenho em 1280px e a conferência em 360, 768, 1024 e 1280px.
+
+**Sugestões rejeitadas e por quê:**
+- Rótulo "Você lidera" na situação: escolhi "Você está ganhando", o mesmo da sala e do destaque da página inicial.
+- Nota "em N lotes arrematados" no total recebido: um lote vencido e ainda não liquidado entraria na contagem sem estar no total, então a nota diz só "soma dos comprovantes dos lotes arrematados".
