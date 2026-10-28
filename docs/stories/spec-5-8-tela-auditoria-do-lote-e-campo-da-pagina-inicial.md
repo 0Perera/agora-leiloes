@@ -91,7 +91,8 @@ context:
 - Conferência do usuário antes do push: códigos escondidos por padrão, com a frase "Guarde o código do último lance. Se o histórico for reescrito, esse código muda." quando visíveis; o botão de copiar já copiava o código completo (`bid.hash`).
 - Colunas do livro em 1280px: código com 290px (caixa de copiar) e verificação com 190px, para "Não verificável" caber numa linha.
 - Abaixo de 420px só a linha do código vai para baixo do rótulo; as outras ficam lado a lado, como no canvas.
-- Menu do cabeçalho abaixo de 480px: fonte 11px e letter-spacing 0 com 12px entre os links; 8px abaixo de 468px e 4px sem respiro lateral abaixo de 440px. O licitante cabe a partir de 360px; o leiloeiro ("Painel do leiloeiro") rola com esmaecido abaixo de 397px (faltam 37px em 360px e 7px em 390px). Acima de 480px nada muda.
+- Menu do cabeçalho abaixo de 480px: fonte 11px e letter-spacing 0 com 12px entre os links; 8px abaixo de 468px e 4px sem respiro lateral abaixo de 440px. Abaixo de 400px o link do leiloeiro mostra "Painel" (nome completo no `aria-label`). Os dois papéis cabem sem rolagem e sem esmaecido de 360 a 480px; acima de 480px nada muda.
+- Passo 2 de "Como a verificação funciona" corrigido: o selo é recalculado a cada lance, não no encerramento.
 - `signText(false)` termina em "pode ter sido alterado."; a página acrescenta a frase com o link para a auditoria.
 
 ## Spec Change Log
