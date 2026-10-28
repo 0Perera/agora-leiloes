@@ -20,12 +20,7 @@ export function Header() {
           <Logo />
           <span className="header-name">ÁGORA</span>
         </Link>
-        <nav
-          className={
-            isAuctioneer ? 'header-nav header-nav--wide' : 'header-nav'
-          }
-          aria-label="Principal"
-        >
+        <nav className="header-nav" aria-label="Principal">
           <NavLink className="nav-link" to="/" end>
             Vitrine
           </NavLink>
@@ -36,8 +31,13 @@ export function Header() {
             Auditoria
           </Link>
           {isAuctioneer && (
-            <NavLink className="nav-link" to="/dashboard">
-              Painel do leiloeiro
+            <NavLink
+              className="nav-link"
+              to="/dashboard"
+              aria-label="Painel do leiloeiro"
+            >
+              <span className="nav-link__full">Painel do leiloeiro</span>
+              <span className="nav-link__short">Painel</span>
             </NavLink>
           )}
           {isBidder && (
