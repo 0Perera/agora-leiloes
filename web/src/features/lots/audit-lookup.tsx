@@ -58,7 +58,7 @@ export function AuditLookup() {
             Leilões que qualquer pessoa pode conferir
           </h2>
           <p className="home-audit__lede">
-            Cada lance recebe um selo ligado ao lance anterior. Se alguém
+            Cada lance recebe um código ligado ao lance anterior. Se alguém
             alterar, apagar ou incluir um lance depois, a auditoria mostra
             exatamente onde o histórico foi mexido. Os participantes aparecem só
             por apelido.
