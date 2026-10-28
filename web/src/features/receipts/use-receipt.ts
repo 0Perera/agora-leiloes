@@ -8,7 +8,7 @@ export type ReceiptState =
   | { status: 'error' }
   | { status: 'ready'; receipt: Receipt; checkedAt: Date };
 
-function failure(caught: unknown): ReceiptState {
+export function failure(caught: unknown): ReceiptState {
   const missing = caught instanceof ApiError && caught.status === 404;
   return { status: missing ? 'missing' : 'error' };
 }

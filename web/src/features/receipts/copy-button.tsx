@@ -6,7 +6,7 @@ type CopyState = 'idle' | 'copied' | 'manual';
 const copiedFor = 2500;
 
 // sem a API (contexto inseguro) ou com a permissão negada, cai na cópia manual
-function writeClipboard(text: string): Promise<void> {
+export function writeClipboard(text: string): Promise<void> {
   try {
     return navigator.clipboard.writeText(text);
   } catch (caught) {
