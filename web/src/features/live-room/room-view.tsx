@@ -11,6 +11,7 @@ import type { Connection } from '../../shared/lib/connection';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel } from '../../shared/lib/roman';
+import { Niche } from '../../shared/ui/niche';
 import { BidForm } from './bid-form';
 import { olderPage } from './room-bids';
 import { RoomHistory } from './room-history';
@@ -57,15 +58,13 @@ export function RoomView({
       )}
       <div className="room">
         <figure className="room__art">
-          <div className="room-niche">
-            <div className="room-niche__stage">
-              <img
-                className="room-niche__image"
-                src={lotImageUrl(lot.id)}
-                alt={`Imagem de ${lot.title}`}
-              />
-            </div>
-          </div>
+          <Niche>
+            <img
+              className="niche__image"
+              src={lotImageUrl(lot.id)}
+              alt={`Imagem de ${lot.title}`}
+            />
+          </Niche>
         </figure>
         <div className="room__main">
           <RoomHead lot={lot} />
