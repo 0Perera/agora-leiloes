@@ -55,17 +55,22 @@ describe('leftOf', () => {
 describe('actionOf', () => {
   it('oferece cobrir o lance a quem foi superado', () => {
     const row = { situation: 'outbid', awaitingSettlement: false } as const;
-    expect(actionOf(row)).toBe('Cobrir lance');
+    expect(actionOf(row, 95)).toBe('Cobrir lance');
   });
 
   it('oferece abrir a sala a quem lidera', () => {
     const row = { situation: 'winning', awaitingSettlement: false } as const;
-    expect(actionOf(row)).toBe('Abrir sala');
+    expect(actionOf(row, 95)).toBe('Abrir sala');
   });
 
   it('oferece abrir a sala no lote encerrado sem liquidar', () => {
     const row = { situation: 'outbid', awaitingSettlement: true } as const;
-    expect(actionOf(row)).toBe('Abrir sala');
+    expect(actionOf(row, 0)).toBe('Abrir sala');
+  });
+
+  it('oferece abrir a sala quando a contagem zera sem recarregar', () => {
+    const row = { situation: 'outbid', awaitingSettlement: false } as const;
+    expect(actionOf(row, 0)).toBe('Abrir sala');
   });
 });
 

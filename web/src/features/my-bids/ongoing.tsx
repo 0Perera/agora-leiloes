@@ -53,8 +53,9 @@ export function Ongoing({ items }: { items: OngoingBid[] }) {
 function OngoingRow({ bid, now }: { bid: OngoingBid; now: number }) {
   const standing = standingOf(bid);
   const winning = standing.tone === 'winning';
-  const left = leftOf(bid.awaitingSettlement, secondsLeft(bid.endsAt, now, 0));
-  const action = actionOf(bid);
+  const seconds = secondsLeft(bid.endsAt, now, 0);
+  const left = leftOf(bid.awaitingSettlement, seconds);
+  const action = actionOf(bid, seconds);
 
   return (
     <div className="bids-row bids-row--ongoing" role="row">

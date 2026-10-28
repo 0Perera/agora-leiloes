@@ -30,8 +30,11 @@ export function leftOf(awaitingSettlement: boolean, seconds: number): Left {
   return { text: formatLeft(seconds), urgent: seconds < urgentBelow };
 }
 
-export function actionOf({ situation, awaitingSettlement }: Row): string {
-  return situation === 'outbid' && !awaitingSettlement
+export function actionOf(
+  { situation, awaitingSettlement }: Row,
+  seconds: number,
+): string {
+  return situation === 'outbid' && !awaitingSettlement && seconds > 0
     ? 'Cobrir lance'
     : 'Abrir sala';
 }
