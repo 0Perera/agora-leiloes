@@ -335,6 +335,24 @@ describe('chain.verify', () => {
     });
   });
 
+  it('acusa o comprovante de lote não liquidado', () => {
+    const bids = makeChain();
+
+    expect(check({ bids, receipt: makeReceipt(bids[2]) })).toEqual({
+      result: 'receipt_tampered',
+      brokenSeq: null,
+    });
+  });
+
+  it('acusa o comprovante de lote liquidado sem lances', () => {
+    const receipt = makeReceipt(makeChain()[2]);
+
+    expect(check({ bids: [], settled: true, receipt })).toEqual({
+      result: 'receipt_tampered',
+      brokenSeq: null,
+    });
+  });
+
   it('declara íntegro o lote liquidado com comprovante válido', () => {
     const bids = makeChain();
 
