@@ -116,10 +116,12 @@ function integrity(
   if (audit.seal !== expectedSeal(secret, audit.lotId, last)) {
     return 'truncated';
   }
-  if (audit.settled && last && !receiptMatches(secret, audit, last.hash)) {
-    return 'receipt_tampered';
+  if (!last || !audit.settled) {
+    return audit.receipt ? 'receipt_tampered' : 'intact';
   }
-  return 'intact';
+  return receiptMatches(secret, audit, last.hash)
+    ? 'intact'
+    : 'receipt_tampered';
 }
 
 function receiptMatches(
