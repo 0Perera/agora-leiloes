@@ -56,7 +56,15 @@ _(módulos, fluxo de um lance e liquidação)_
 
 ## Auditoria
 
-_(como a técnica detecta alteração, remoção e inserção no histórico)_
+`GET /lots/:id/audit` é público e responde `intact`, `tampered` (com o `seq` do primeiro lance quebrado), `truncated` ou `receipt_tampered`, com cada lance marcado. `GET /lots/number/:number` leva do número ao id. A técnica (D-012):
+
+- **Cadeia de HMAC:** cada lance guarda um HMAC-SHA256 de `lot_id`, `seq`, `user_id`, valor, data e o hash do lance anterior (o primeiro encadeia num hash fixo de zeros). O segredo fica só na variável de ambiente, então quem tem acesso ao banco não consegue recalcular um hash válido.
+- **Alteração:** mudar valor, dono ou data de um lance muda o HMAC recalculado, que deixa de bater com o gravado.
+- **Inserção e remoção no meio:** o `seq` tem que ser 1, 2, 3... sem buraco, e o `prev_hash` de cada lance tem que ser o hash do anterior. Lance inserido, removido ou trocado de ordem quebra um dos dois.
+- **Remoção do fim:** a cadeia que sobra continua coerente, então o lote guarda um selo (HMAC da contagem e do último hash). Selo que não bate, ou nulo, dá `truncated`.
+- **Comprovante:** no lote liquidado, o hash final do comprovante tem que ser o último da cadeia e a assinatura tem que valer.
+- Depois do primeiro lance quebrado, os seguintes aparecem como não verificáveis: o elo anterior já não prova nada.
+- Limite: restaurar lote, lances e comprovante inteiros para um estado anterior válido não é detectado, porque nada do hash é ancorado fora do banco.
 
 ## Comportamentos esperados
 
@@ -94,8 +102,8 @@ cd web && npm test           # Vitest
 - **API:** regras de saldo e depósito, validação dos DTOs, hash de senha, cadastro e login, guards de token e de papel, filters de erro, `/health` e o logger que esconde parâmetros de query.
 - **Catálogo:** mapeamento da peça da Cleveland (artista com fallback para `culture`, descarte de peça sem imagem), cache da busca com TTL, falha da Cleveland virando `CATALOG_UNAVAILABLE` sem entrar no cache e download da imagem (só JPEG, PNG ou WebP, até 5 MB contados nos bytes lidos).
 - **Lotes:** datas de início e fim, peça já em lote ativo, limites de lance inicial e incremento, falha da imagem sem gravar lote, cadeia do destaque (maior lance, fim mais próximo, próximo agendado), filtros da vitrine e do painel, resumo do painel sem lotes e cancelamento (encerrado, com lance, lote alheio e trava da linha).
-- **Lances:** ordem das recusas, mínimo, saldo, anti-sniping, cadeia de HMAC, selo e alias; no serviço, ordem dos locks, hora lida depois do lock, encadeamento do `seq` e do hash, atualização do lote, movimento do comprometido, resposta do lance, recusa quando o selo do lote não confere e evento emitido só depois da transação; stream por lote com heartbeat e campos fechados do evento e do histórico.
-- **Integração (e2e):** Postgres 17 de verdade via Testcontainers e a API inteira por HTTP, com relógio de teste e catálogo falso. Lance aceito, recusado, de leiloeiro e sem token, saldo devolvido ao superado e prorrogação nos últimos 2 min; evento no stream só do lance aceito e ouvinte removido ao fechar a conexão, histórico paginado, `me` no detalhe por papel e lotes comprometidos na carteira; 10 lances simultâneos parados no mesmo lock (cadeia, selo, `seq`, lote e carteiras íntegros) dois lances do mesmo mínimo e o mesmo licitante em dois lotes com saldo para um lance só; destaque, cancelamento, contagens e ordem das abas da vitrine.
+- **Lances:** ordem das recusas, mínimo, saldo, anti-sniping, cadeia de HMAC, selo e alias; no serviço, ordem dos locks, hora lida depois do lock, encadeamento do `seq` e do hash, atualização do lote, movimento do comprometido, resposta do lance, recusa quando o selo do lote não confere e evento emitido só depois da transação; verificação da cadeia, do selo e do comprovante na auditoria; stream por lote com heartbeat e campos fechados do evento e do histórico.
+- **Integração (e2e):** Postgres 17 de verdade via Testcontainers e a API inteira por HTTP, com relógio de teste e catálogo falso. Lance aceito, recusado, de leiloeiro e sem token, saldo devolvido ao superado e prorrogação nos últimos 2 min; evento no stream só do lance aceito e ouvinte removido ao fechar a conexão, histórico paginado, `me` no detalhe por papel e lotes comprometidos na carteira; 10 lances simultâneos parados no mesmo lock (cadeia, selo, `seq`, lote e carteiras íntegros) dois lances do mesmo mínimo e o mesmo licitante em dois lotes com saldo para um lance só; destaque, cancelamento, contagens e ordem das abas da vitrine; auditoria contra `UPDATE` no valor, `DELETE` do último lance e `UPDATE` no comprovante, com duas queries por chamada.
 - **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito, rótulos e nota do resumo da sala do lote, id inválido na rota da sala, nova busca na virada de estado, tradução do tipo da obra e, na sala, união dos lances do POST, do stream e da reconexão pelo `seq`, situação do licitante, atalhos de valor e tradução das recusas de lance; na Carteira, os textos dos lotes comprometidos.
 
 ## Stack e decisões
