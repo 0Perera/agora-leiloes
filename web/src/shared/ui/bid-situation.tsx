@@ -40,7 +40,7 @@ export function BidSituation({ situation, minimum }: Props) {
 }
 
 type EndedProps =
-  | { outcome: 'won'; amount: number; token?: string }
+  | { outcome: 'won'; amount: number; token: string }
   | { outcome: 'closed'; text: string };
 
 export function EndedSituation(props: EndedProps) {
@@ -65,15 +65,10 @@ export function EndedSituation(props: EndedProps) {
       <div>
         <p className="ag-bidstatus__title">Você arrematou este lote</p>
         <p className="ag-bidstatus__text">
-          {formatMoney(props.amount)} foram debitados da sua carteira.
-          {props.token && (
-            <>
-              {' '}
-              <Link className="bid-won__link" to={`/receipts/${props.token}`}>
-                Ver comprovante
-              </Link>
-            </>
-          )}
+          {formatMoney(props.amount)} foram debitados da sua carteira.{' '}
+          <Link className="bid-won__link" to={`/receipts/${props.token}`}>
+            Ver comprovante
+          </Link>
         </p>
       </div>
     </div>

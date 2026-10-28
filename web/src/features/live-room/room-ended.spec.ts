@@ -29,6 +29,14 @@ describe('endedOf', () => {
     });
   });
 
+  it('mostra o lote encerrado ao licitante com o alias do resultado e sem token', () => {
+    const lot = makeLot({ me: { alias: 'Licitante #A7F2', hasBid: true } });
+    expect(endedOf(lot)).toEqual({
+      outcome: 'closed',
+      text: 'Arrematado por Licitante #A7F2 por R$ 9.750,00.',
+    });
+  });
+
   it('mostra o vencedor e o valor ao visitante', () => {
     const lot = makeLot({ me: undefined });
     expect(endedOf(lot)).toEqual({
