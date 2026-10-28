@@ -142,6 +142,12 @@ function ReceiptSign({ receipt, checkedAt }: Omit<ViewProps, 'url'>) {
           {valid ? 'Comprovante válido' : 'Comprovante inválido'}
         </h2>
         <p className="receipt-sign__text">{signText(valid, checkedAt)}</p>
+        {valid && (
+          <p className="receipt-sign__text">
+            Para conferir o histórico completo de lances, use a auditoria
+            pública do lote.
+          </p>
+        )}
         <div className="receipt-sign__code">
           <span className="ag-lot__label receipt-sign__label">
             Código de verificação
