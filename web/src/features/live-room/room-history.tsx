@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import type { BidHistoryItem, LotDetail } from '../../shared/api/types';
 import { formatMoney } from '../../shared/lib/money';
+import { lotLabel } from '../../shared/lib/roman';
 import { topMark } from './room-summary';
 
 type Props = {
@@ -29,6 +30,7 @@ export function RoomHistory({ lot, bids, total, older }: Props) {
         <Link
           className="ag-btn ag-btn--quiet room-history__audit"
           to={`/lots/${lot.id}/audit`}
+          aria-label={`Auditar o ${lotLabel(lot.number)}`}
         >
           Auditar este lote
         </Link>

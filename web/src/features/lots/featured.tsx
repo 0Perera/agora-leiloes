@@ -76,6 +76,7 @@ function FeaturedLot({ room, now }: { room: ReadyFeatured; now: number }) {
           <Link
             className="ag-btn ag-btn--quiet home-hero__audit"
             to={`/lots/${lot.id}/audit`}
+            aria-label={`Auditar o ${lotLabel(lot.number)}`}
           >
             Auditar este lote
           </Link>

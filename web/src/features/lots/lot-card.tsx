@@ -123,7 +123,11 @@ export function LotCard({ lot, now, offset }: Props) {
         </div>
         <div className="lot-audit-slot">
           {lot.status !== 'scheduled' && (
-            <Link className="lot-audit" to={`/lots/${lot.id}/audit`}>
+            <Link
+              className="lot-audit"
+              to={`/lots/${lot.id}/audit`}
+              aria-label={`Auditar o ${lotLabel(lot.number)}`}
+            >
               Auditar este lote
             </Link>
           )}
