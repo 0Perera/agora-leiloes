@@ -97,6 +97,9 @@
 - source_spec: `docs/stories/spec-4-6-tela-sala-do-lote-ao-vivo-lances-e-tempo-real.md`
   summary: no painel do leiloeiro, ao escolher uma obra no acervo, rolar até a ficha do lote e levar o foco ao primeiro campo; no celular, hoje é preciso rolar manualmente para encontrá-la.
   evidence: pedido do usuário na conferência da 4.6.
+- source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
+  summary: no painel do leiloeiro, ao lado do campo de busca do acervo, um ícone de sugestões que abre uma pequena lista de termos que dão resultado nos dois departamentos (ex.: "portrait", "Rembrandt", "Madonna", "marble", "amphora"); clicar num termo preenche o campo e faz a busca. Conferir antes, na API da Cleveland, que cada termo retorna obras com imagem.
+  evidence: pedido do usuário na conferência da 5.6.
 
 - source_spec: `docs/stories/spec-5-2-liquidacao-e-comprovante-assinado-na-api.md`
   summary: na 5.3, se o timer chamar a liquidação por um caminho sem o lock do lote, cobrir com teste o `ignoreDuplicate` (violação de `receipts_lot_id` termina sem erro e sem evento).
@@ -109,3 +112,11 @@
 - source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
   summary: na 5.8, adicionar o link "Auditar este lote" no comprovante (`/receipts/:token`, ao lado de "Copiar link", como no canvas Comprovante.dc.html) e na sala do lote, apontando para `/lots/:id/audit`.
   evidence: a tela de auditoria só existe a partir da 5.8; a spec da 5.6 proíbe o link antes disso.
+
+- source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
+  summary: na 6.1, a tela Entrar ganha uma caixa "Contas de demonstração" com três botões (leiloeiro, licitante 1, licitante 2) que preenchem e-mail e senha das contas do seed, com um aviso curto de que são contas de demonstração e a dica de entrar com o outro licitante numa janela anônima para testar o tempo real. As credenciais vêm de um único lugar compartilhado com o seed e o README.
+  evidence: pedido do usuário na conferência da 5.6.
+
+- source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
+  summary: composição do seed da 6.1, tudo do mesmo leiloeiro e pelos services (D-020, D-045): 1 leiloeiro e 2 licitantes (Ana e Bia) com saldo; 4 lotes ao vivo terminando em ~30 dias (um disputado com ~8 lances alternados, um em que a Ana lidera, um em que a Bia lidera e um sem lances); 2 agendados abrindo em 2 e 7 dias; 3 encerrados e liquidados com o Clock no passado (um arrematado pela Ana, um pela Bia e um sem lances); 1 cancelado; obras dos dois departamentos.
+  evidence: pedido do usuário na conferência da 5.6.
