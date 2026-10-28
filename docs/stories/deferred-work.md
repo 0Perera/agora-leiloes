@@ -105,3 +105,7 @@
 - source_spec: `docs/stories/spec-5-3-timer-de-liquidacao-em-memoria.md`
   summary: na 6.1, o script do seed chama `app.close()` no final, inclusive em caso de erro (`try/finally`), e avalia trocar o `SettlementTimer` por um falso no contexto do seed, como no e2e.
   evidence: o seed sobe a aplicação e, com ela, o `SettlementTimer`; sem `app.close()`, o processo fica pendurado no timer do lote ao vivo de ~30 dias. Com o timer ligado, ele pode liquidar no meio da criação dos dados com o `Clock` deslocado (D-045).
+
+- source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
+  summary: na 5.8, adicionar o link "Auditar este lote" no comprovante (`/receipts/:token`, ao lado de "Copiar link", como no canvas Comprovante.dc.html) e na sala do lote, apontando para `/lots/:id/audit`.
+  evidence: a tela de auditoria só existe a partir da 5.8; a spec da 5.6 proíbe o link antes disso.
