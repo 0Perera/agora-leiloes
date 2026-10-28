@@ -120,3 +120,11 @@
 - source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
   summary: composição do seed da 6.1, tudo do mesmo leiloeiro e pelos services (D-020, D-045): 1 leiloeiro e 2 licitantes (Ana e Bia) com saldo; 4 lotes ao vivo terminando em ~30 dias (um disputado com ~8 lances alternados, um em que a Ana lidera, um em que a Bia lidera e um sem lances); 2 agendados abrindo em 2 e 7 dias; 3 encerrados e liquidados com o Clock no passado (um arrematado pela Ana, um pela Bia e um sem lances); 1 cancelado; obras dos dois departamentos.
   evidence: pedido do usuário na conferência da 5.6.
+
+- source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
+  summary: na 6.1, o seed cria um lote extra encerrado e liquidado pelos services, com pelo menos 4 lances, e depois o adultera de propósito com um `UPDATE` direto no valor de um lance do meio. O passo é idempotente (só adultera se ainda não foi adulterado) e nunca toca em lote ao vivo; a auditoria desse lote precisa dar `tampered` apontando esse lance.
+  evidence: pedido do usuário na conferência da 5.6, para o avaliador ver a auditoria acusar uma adulteração sem precisar provocá-la.
+
+- source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
+  summary: na 6.1, o roteiro do README avisa qual lote do seed foi adulterado de propósito e por quê, e ganha uma seção curta "Testar a adulteração você mesmo" com 3 comandos SQL para o banco do docker compose (mudar o valor de um lance, apagar o último lance, mudar o valor de um comprovante), cada um com o resultado esperado na auditoria e no comprovante.
+  evidence: pedido do usuário na conferência da 5.6.
