@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router';
 import type { BidHistoryItem, LotDetail } from '../../shared/api/types';
 import { formatMoney } from '../../shared/lib/money';
 import { topMark } from './room-summary';
@@ -20,10 +21,18 @@ const timeFormat = new Intl.DateTimeFormat('pt-BR', {
 export function RoomHistory({ lot, bids, total, older }: Props) {
   return (
     <section className="room__history" aria-labelledby="room-history-title">
-      <h2 id="room-history-title" className="room-subtitle">
-        Histórico de lances{' '}
-        {total > 0 && <span className="room-history__count">({total})</span>}
-      </h2>
+      <div className="room-history__head">
+        <h2 id="room-history-title" className="room-subtitle">
+          Histórico de lances{' '}
+          {total > 0 && <span className="room-history__count">({total})</span>}
+        </h2>
+        <Link
+          className="ag-btn ag-btn--quiet room-history__audit"
+          to={`/lots/${lot.id}/audit`}
+        >
+          Auditar este lote
+        </Link>
+      </div>
       {bids.length > 0 ? (
         <ol className="room-history">
           {bids.map((bid, index) => (

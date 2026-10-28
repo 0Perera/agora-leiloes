@@ -255,6 +255,10 @@
   border-top: 1px solid var(--vein);
 }
 
+.receipt__audit {
+  min-height: 44px;
+}
+
 /* carregando */
 .receipt-skel__head {
   display: flex;

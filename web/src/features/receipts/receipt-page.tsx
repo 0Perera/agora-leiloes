@@ -1,4 +1,4 @@
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { lotImageUrl } from '../../shared/api/client';
 import type { Receipt } from '../../shared/api/types';
 import { formatLongDate } from '../../shared/lib/date';
@@ -91,6 +91,12 @@ function ReceiptView({ receipt, checkedAt, url }: ViewProps) {
               done="✓ Link do comprovante copiado"
               className="ag-btn ag-btn--secondary"
             />
+            <Link
+              className="ag-btn ag-btn--quiet receipt__audit"
+              to={`/lots/${receipt.lotId}/audit`}
+            >
+              Auditar este lote
+            </Link>
           </div>
         </div>
         <div className="ag-meander receipt__band receipt__band--bottom" />
@@ -147,11 +153,19 @@ function ReceiptSign({ receipt, checkedAt }: Omit<ViewProps, 'url'>) {
         >
           {valid ? 'Comprovante válido' : 'Comprovante inválido'}
         </h2>
-        <p className="receipt-sign__text">{signText(valid, checkedAt)}</p>
+        <p className="receipt-sign__text">
+          {signText(valid, checkedAt)}
+          {!valid && (
+            <>
+              {' '}
+              Confira a <AuditLink lotId={receipt.lotId} />.
+            </>
+          )}
+        </p>
         {valid && (
           <p className="receipt-sign__text">
-            Para conferir o histórico completo de lances, use a auditoria
-            pública do lote.
+            Para conferir o histórico completo de lances, use a{' '}
+            <AuditLink lotId={receipt.lotId} />.
           </p>
         )}
         <div className="receipt-sign__code">
@@ -163,6 +177,10 @@ function ReceiptSign({ receipt, checkedAt }: Omit<ViewProps, 'url'>) {
       </div>
     </section>
   );
+}
+
+function AuditLink({ lotId }: { lotId: number }) {
+  return <Link to={`/lots/${lotId}/audit`}>auditoria pública do lote</Link>;
 }
 
 function ReceiptSkeleton() {

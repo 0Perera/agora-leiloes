@@ -361,6 +361,19 @@
 }
 
 /* histórico */
+.room-history__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.room-history__audit {
+  min-height: 44px;
+  padding: 0;
+}
+
 .room-history__count {
   font-family: var(--font-text);
   font-weight: 400;

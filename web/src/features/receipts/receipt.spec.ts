@@ -10,7 +10,7 @@ describe('signText', () => {
 
   it('avisa que o comprovante inválido pode ter sido alterado', () => {
     expect(signText(false, new Date(2026, 9, 27, 9, 5))).toBe(
-      'Este comprovante não confere com o registro do lote e pode ter sido alterado. Confira a auditoria pública do lote.',
+      'Este comprovante não confere com o registro do lote e pode ter sido alterado.',
     );
   });
 });

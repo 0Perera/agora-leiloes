@@ -19,7 +19,11 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="home-how on-dark" aria-labelledby="como-title">
+    <section
+      id="como-funciona"
+      className="home-how on-dark"
+      aria-labelledby="como-title"
+    >
       <div className="home-how__head">
         <h2 id="como-title" className="home-how__title">
           Como funciona

@@ -121,6 +121,13 @@ export function LotCard({ lot, now, offset }: Props) {
             </span>
           </div>
         </div>
+        <div className="lot-audit-slot">
+          {lot.status !== 'scheduled' && (
+            <Link className="lot-audit" to={`/lots/${lot.id}/audit`}>
+              Auditar este lote
+            </Link>
+          )}
+        </div>
       </div>
     </article>
   );

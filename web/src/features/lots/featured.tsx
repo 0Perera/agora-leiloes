@@ -69,9 +69,15 @@ function FeaturedLot({ room, now }: { room: ReadyFeatured; now: number }) {
         {live && lot.me && (
           <FeaturedSituation lot={lot} me={lot.me} top={room.bids[0]} />
         )}
-        <div>
+        <div className="home-hero__actions">
           <Link className="ag-btn ag-btn--primary" to={`/lots/${lot.id}`}>
             {live ? 'Entrar na sala do lote' : 'Ver o lote'}
+          </Link>
+          <Link
+            className="ag-btn ag-btn--quiet home-hero__audit"
+            to={`/lots/${lot.id}/audit`}
+          >
+            Auditar este lote
           </Link>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router';
+import { AuditPage } from '../features/audit/audit-page';
 import { DashboardPage } from '../features/auctioneer/dashboard-page';
 import { LoginPage } from '../features/auth/login-page';
 import { SignupPage } from '../features/auth/signup-page';
@@ -17,6 +18,7 @@ export const router = createBrowserRouter([
     children: [
       { path: '/', element: <HomePage /> },
       { path: '/lots/:id', element: <RoomPage /> },
+      { path: '/lots/:id/audit', element: <AuditPage /> },
       { path: '/receipts/:token', element: <ReceiptPage /> },
       {
         element: <GuestOnly />,
