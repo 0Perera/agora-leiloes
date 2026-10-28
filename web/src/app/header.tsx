@@ -7,6 +7,7 @@ import { useSession } from './use-session';
 export function Header() {
   const { session } = useSession();
   const isAuctioneer = session?.user.role === 'AUCTIONEER';
+  const isBidder = session?.user.role === 'BIDDER';
 
   return (
     <header className="header">
@@ -26,6 +27,11 @@ export function Header() {
           {isAuctioneer && (
             <NavLink className="nav-link" to="/dashboard">
               Painel do leiloeiro
+            </NavLink>
+          )}
+          {isBidder && (
+            <NavLink className="nav-link" to="/my-bids">
+              Meus lances
             </NavLink>
           )}
         </nav>

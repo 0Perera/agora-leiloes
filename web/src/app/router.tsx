@@ -4,6 +4,7 @@ import { LoginPage } from '../features/auth/login-page';
 import { SignupPage } from '../features/auth/signup-page';
 import { RoomPage } from '../features/live-room/room-page';
 import { HomePage } from '../features/lots/home-page';
+import { MyBidsPage } from '../features/my-bids/my-bids-page';
 import { ReceiptPage } from '../features/receipts/receipt-page';
 import { WalletPage } from '../features/wallet/wallet-page';
 import { GuestOnly } from './guest-only';
@@ -30,7 +31,10 @@ export const router = createBrowserRouter([
       },
       {
         element: <RequireRole role="BIDDER" />,
-        children: [{ path: '/wallet', element: <WalletPage /> }],
+        children: [
+          { path: '/wallet', element: <WalletPage /> },
+          { path: '/my-bids', element: <MyBidsPage /> },
+        ],
       },
     ],
   },

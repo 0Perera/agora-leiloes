@@ -17,6 +17,8 @@ import type {
   LotFilter,
   LotShowcase,
   LotStatus,
+  MyBids,
+  MyBidsSection,
   PlaceBidRequest,
   PlacedBid,
   Receipt,
@@ -159,6 +161,10 @@ export const api = {
   placeBid: (id: number, amount: number) => {
     const body: PlaceBidRequest = { amount };
     return request<PlacedBid>(`/lots/${id}/bids`, { method: 'POST', body });
+  },
+  myBids: (section: MyBidsSection, page: number) => {
+    const query = new URLSearchParams({ section, page: String(page) });
+    return request<MyBids>(`/my-bids?${query}`);
   },
   receipt: (token: string) =>
     request<Receipt>(`/receipts/${encodeURIComponent(token)}`),
