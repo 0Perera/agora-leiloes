@@ -46,6 +46,7 @@ import {
   toLotDetail,
 } from './dto/lot-detail.dto';
 import type { CreatedLot } from './dto/lot-response.dto';
+import type { LotIdDto } from './dto/lot-id.dto';
 import { LotCountsDto, LotShowcaseDto } from './dto/lot-showcase.dto';
 import { LotImage } from './lot-image.entity';
 import { STATUS_SQL, STATUS_WHERE } from './lot-status';
@@ -192,6 +193,15 @@ export class LotsService {
       where: { id, cancelledAt: IsNull() },
     });
     if (!exists) throw new NotFoundException();
+  }
+
+  async byNumber(number: number): Promise<LotIdDto> {
+    const lot = await this.lots.findOne({
+      select: ['id'],
+      where: { number, cancelledAt: IsNull() },
+    });
+    if (!lot) throw new NotFoundException();
+    return { id: lot.id };
   }
 
   async create(auctioneerId: number, dto: CreateLotDto): Promise<CreatedLot> {

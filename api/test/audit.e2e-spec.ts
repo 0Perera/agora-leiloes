@@ -165,3 +165,43 @@ describe('GET /lots/:id/audit', () => {
     await audit(lotId).expect(404);
   });
 });
+
+describe('GET /lots/number/:number', () => {
+  function byNumber(number: number | string): request.Test {
+    return request(api.server).get(`/lots/number/${number}`);
+  }
+
+  it('devolve o id do lote', async () => {
+    const lotId = await lotWithBids(0);
+    const [{ number }] = await api.db.query<{ number: number }[]>(
+      'SELECT number FROM lots WHERE id = $1',
+      [lotId],
+    );
+
+    const response = await byNumber(number).expect(200);
+
+    expect(response.body).toEqual({ id: lotId });
+  });
+
+  it('responde 404 para número inexistente', async () => {
+    await byNumber(999).expect(404);
+  });
+
+  it('responde 404 para lote cancelado', async () => {
+    const lotId = await lotWithBids(0);
+    const [{ number }] = await api.db.query<{ number: number }[]>(
+      'SELECT number FROM lots WHERE id = $1',
+      [lotId],
+    );
+    await request(api.server)
+      .post(`/lots/${lotId}/cancel`)
+      .auth(auctioneer.token, { type: 'bearer' })
+      .expect(204);
+
+    await byNumber(number).expect(404);
+  });
+
+  it('responde 404 para número com formato inválido', async () => {
+    await byNumber('VII').expect(404);
+  });
+});
