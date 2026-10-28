@@ -313,7 +313,7 @@ function SealRow() {
 
 const steps = [
   'Cada lance recebe um código calculado a partir dos dados dele e do código do lance anterior. Assim, um lance fica preso ao outro.',
-  'Quando o lote encerra, o código do último lance vira o selo do lote. Se lances forem apagados do fim, o selo deixa de conferir.',
+  'A cada lance, o lote guarda um selo calculado a partir do código mais recente. Se lances forem apagados do fim, o selo deixa de conferir.',
   'Ao abrir esta página, conferimos todos os códigos de novo. Qualquer lance alterado, apagado ou incluído depois aparece aqui, no ponto exato.',
 ];
 
