@@ -22,7 +22,7 @@ export function verdictOf(audit: LotAudit): Verdict {
       return {
         intact: false,
         title: 'Histórico adulterado: lances removidos do fim',
-        text: `Os ${count} lances listados estão em sequência, mas o último não confere com o selo do lote. Isso indica que lances foram apagados do final do histórico.`,
+        text: truncatedText(count),
       };
     case 'receipt_tampered':
       return {
@@ -31,6 +31,12 @@ export function verdictOf(audit: LotAudit): Verdict {
         text: 'Os lances estão íntegros, mas o comprovante do lote não confere com o último lance. O comprovante pode ter sido alterado depois da liquidação.',
       };
   }
+}
+
+function truncatedText(count: number): string {
+  if (count === 0)
+    return 'Nenhum lance aparece no histórico, mas o selo do lote indica que houve lances. Isso indica que eles foram apagados.';
+  return `Os ${count} lances listados estão em sequência, mas o último não confere com o selo do lote. Isso indica que lances foram apagados do final do histórico.`;
 }
 
 function intactText(count: number): string {

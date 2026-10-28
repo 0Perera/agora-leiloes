@@ -138,6 +138,7 @@ function AuditVerdict({ audit, checkedAt, checking, onRecheck }: VerdictProps) {
 function AuditBids({ audit }: { audit: LotAudit }) {
   const [showCodes, setShowCodes] = useState(true);
   const rows = rowsOf(audit);
+  const truncated = audit.result === 'truncated';
   return (
     <section className="audit-bids" aria-labelledby="bids-title">
       <div className="audit-bids__head">
@@ -154,19 +155,24 @@ function AuditBids({ audit }: { audit: LotAudit }) {
           </button>
         )}
       </div>
-      {rows.length === 0 ? (
-        <p className="audit-bids__empty">Nenhum lance registrado.</p>
-      ) : (
+      {rows.length === 0 && (
+        <p className="audit-bids__empty">
+          {truncated
+            ? 'Nenhum lance aparece no histórico.'
+            : 'Nenhum lance registrado.'}
+        </p>
+      )}
+      {(rows.length > 0 || truncated) && (
         <div
           className={`audit-ledger${showCodes ? '' : ' audit-ledger--plain'}`}
           role="table"
           aria-label={`Lances do ${lotLabel(audit.number)} com verificação`}
         >
-          <LedgerHead />
+          {rows.length > 0 && <LedgerHead />}
           {rows.map((row) => (
             <LedgerRow key={row.bid.seq} row={row} />
           ))}
-          {audit.result === 'truncated' && <SealRow />}
+          {truncated && <SealRow />}
         </div>
       )}
     </section>

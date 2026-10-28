@@ -68,6 +68,13 @@ describe('verdictOf', () => {
     expect(verdict.title).toBe('Histórico adulterado: lances removidos do fim');
   });
 
+  it('explica a remoção de todos os lances', () => {
+    const verdict = verdictOf(makeAudit({ result: 'truncated', bids: [] }));
+    expect(verdict.text).toBe(
+      'Nenhum lance aparece no histórico, mas o selo do lote indica que houve lances. Isso indica que eles foram apagados.',
+    );
+  });
+
   it('acusa o comprovante que não confere com o histórico', () => {
     const verdict = verdictOf(makeAudit({ result: 'receipt_tampered' }));
     expect(verdict).toMatchObject({
