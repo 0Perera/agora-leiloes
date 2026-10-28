@@ -697,7 +697,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 ## Story 5.7: Tela Meus lances e resultado no painel
 
 **O que a IA gerou:**
-- A tela Meus lances, só para licitante, com as abas Em andamento, Arrematados e Não arrematados, a contagem de cada uma e paginação.
+- A tela Meus lances, só para licitante, com as abas Em andamento, Arrematados e Não arrematados, a contagem de cada uma, paginação e cada lote numa placa com selo, valores e ações.
 - Em andamento: situação, lance atual, o seu lance, contagem regressiva e o botão de cobrir o lance ou abrir a sala; lote vencido sem liquidar aparece como aguardando liquidação.
 - Arrematados em placas com imagem, valor pago, data, link do comprovante e cópia do link; Não arrematados com o valor final e o seu maior lance.
 - O artista nos itens de Meus lances, na API.
@@ -713,6 +713,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Decidi mostrar "Abrir sala" nos não arrematados e deixar o link de auditoria para a 5.8.
 - Pedi o cartão "Total recebido" no painel e o resultado de cada lote encerrado no livro.
 - Pedi a comparação com o desenho em 1280px e a conferência em 360, 768, 1024 e 1280px.
+- Pedi, na conferência, a placa de Arrematados nas três abas no lugar das tabelas, um subtítulo novo, valores sem versalete e botões de ação do mesmo tamanho.
 
 **Sugestões rejeitadas e por quê:**
 - Rótulo "Você lidera" na situação: escolhi "Você está ganhando", o mesmo da sala e do destaque da página inicial.

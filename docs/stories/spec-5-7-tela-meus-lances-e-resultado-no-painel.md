@@ -24,10 +24,12 @@ context:
 - Commit `refactor(web)` à parte, antes da tela: `Tabs` em `shared/ui` (botões com `aria-pressed`, rótulo e contagem opcional, visual do `.panel-tab`) e `LinkCopy` movido de `features/receipts` para `shared/ui` (com `useCopy`, `writeClipboard` e a cópia manual), com texto do botão, texto de sucesso e classe por props. O comprovante continua idêntico.
 - Commit `feat(bids)` à parte: `artist` nos três itens de `GET /my-bids` (select, DTO, teste e `types.ts`), sem query nova.
 - Meus lances: abas Em andamento, Arrematados, Não arrematados com a contagem `(n)` de `counts`; abre em Em andamento; cada aba busca `GET /my-bids?section=&page=` e pagina com `Pager`. Todas as contagens zero: só o vazio do canvas ("Você ainda não deu lances" + "Ver lotes ao vivo" → `/`), sem abas.
-- Em andamento: Nº (`lotLabel`/romano, D-054), obra (miniatura `/lots/:id/image` + título e artista), situação "Você está ganhando" (▲, azul) ou "Você foi superado" (▼, vermelho), lance atual, seu lance ("é o atual" quando lidera), "Encerra em" com contagem pelo relógio do navegador a cada segundo (`formatLeft`, vermelho abaixo de 2 min, "encerrando" ao zerar) e ação "Cobrir lance" (superado) ou "Abrir sala" (lidera) → `/lots/:id`.
-- `awaitingSettlement`: "Encerra em" vira "Encerrado, aguardando liquidação"; "Você está ganhando" vira "Você arrematou · aguardando liquidação"; ação sempre "Abrir sala".
-- Arrematados: placa do canvas com imagem, "Lote {nº}", título, artista, valor pago, "Arrematado em" (`formatLongDate`), "Ver comprovante" → `/receipts/:token` e `LinkCopy` "Copiar link de compartilhamento" / "✓ Link copiado".
-- Não arrematados: valor final (nulo → "—"), seu maior lance, "Encerrou" (`formatShortDate`), ação "Abrir sala".
+- As três abas usam uma placa só (`Plaque`, layout da placa de Arrematados do canvas): imagem no nicho, "Lote {nº}" (`lotLabel`, D-054), título, artista, linha de valores, linha de ações e selo no canto. Sem tabelas nesta tela. Subtítulo: "Acompanhe cada lote em que você deu lance, do primeiro lance ao arremate.". Valores em caixa normal ("2h 35min", "é o atual"), sem versalete.
+- Em andamento: selo "Você está ganhando" (azul) ou "Você foi superado" (vermelho); valores lance atual, seu lance ("é o atual" quando lidera) e "Encerra em" com contagem pelo relógio do navegador a cada segundo (`formatLeft`, vermelho abaixo de 2 min, "encerrando" ao zerar); ação "Cobrir lance" (superado) ou "Abrir sala" → `/lots/:id`.
+- `awaitingSettlement`: no lugar do tempo, selo neutro "Aguardando liquidação"; o selo do canto de quem lidera vira "Você arrematou · aguardando liquidação"; ação sempre "Abrir sala".
+- Arrematados: selo "Arrematado"; valor pago, "Arrematado em" (`formatLongDate`); "Ver comprovante" → `/receipts/:token` e `LinkCopy` "Copiar link de compartilhamento" / "✓ Link copiado".
+- Não arrematados: selo neutro "Não arrematado"; valor final (nulo → "—"), seu maior lance, "Encerrou em" (`formatLongDate`); ação "Abrir sala".
+- Botões de ação das placas ("Abrir sala", "Cobrir lance", "Ver comprovante") com a mesma largura mínima e a mesma altura, sempre dentro da placa, sem quebrar o texto.
 - Vazio por aba: "Nenhum lote em disputa agora." + link para a vitrine; "Você ainda não arrematou nenhum lote."; "Nenhum lote ficou com outro licitante.".
 - Carregando com `.skel`; erro com `LoadError` ("Não foi possível carregar seus lances" / "Seus lances continuam registrados nos lotes. Só a consulta falhou.").
 - Rota dentro de `RequireRole role="BIDDER"` (visitante → `/login`, leiloeiro → `/`); link "Meus lances" no cabeçalho só para licitante.
@@ -44,8 +46,8 @@ context:
 |---|---|---|
 | Liderando, ao vivo | `winning`, sem `awaitingSettlement` | "Você está ganhando", "é o atual", contagem, "Abrir sala" |
 | Superado | `outbid` | "Você foi superado", seu lance, "Cobrir lance" |
-| Vencido sem liquidar, liderando | `winning` + `awaitingSettlement` | "Você arrematou · aguardando liquidação", "Encerrado, aguardando liquidação" |
-| Vencido sem liquidar, superado | `outbid` + `awaitingSettlement` | "Você foi superado", "Encerrado, aguardando liquidação", "Abrir sala" |
+| Vencido sem liquidar, liderando | `winning` + `awaitingSettlement` | "Você arrematou · aguardando liquidação", selo "Aguardando liquidação" no lugar do tempo |
+| Vencido sem liquidar, superado | `outbid` + `awaitingSettlement` | "Você foi superado", selo "Aguardando liquidação", "Abrir sala" |
 | Perdido sem comprovante | `amount: null` | valor final "—" |
 | Livro, encerrado sem liquidar | `result: null` | "Aguardando liquidação" |
 
@@ -84,11 +86,15 @@ context:
 
 ## Implementation Notes
 
-- `features/my-bids/cells.tsx` reúne as células de número e obra das duas tabelas.
+- `features/my-bids/plaque.tsx` é a placa das três abas; as tabelas e `cells.tsx` saíram.
+- Abaixo de 700px o selo entra no fluxo da placa: em duas linhas ele empurra o nicho em vez de cobri-lo.
+- Valores com largura mínima de 200px e data sem quebra, para alinhar entre placas.
 - Classes da cópia viraram `copy-done` e `copy-manual*` em `shared/ui/link-copy.css`.
 - Em 360px, o botão "Copiar link de compartilhamento" fica alinhado à esquerda (quebrava em duas linhas centralizadas).
 
 ## Spec Change Log
+
+- Conferência do usuário: as três abas passam a usar a placa de Arrematados (sem tabelas), subtítulo novo, valores sem versalete, botões de ação com a mesma largura mínima e altura, "Aguardando liquidação" como selo neutro no lugar do tempo e "Encerrou em" com data longa. KEEP: abas, `Tabs`, `LinkCopy`, funções puras de `my-bids.ts`, painel.
 
 ## Review Triage Log
 
