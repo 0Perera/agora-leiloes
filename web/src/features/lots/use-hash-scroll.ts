@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router';
 
-// o roteador não rola até a âncora; a key muda também no clique repetido no mesmo link
+export type ScrollGate = { settled: boolean; done: boolean; manual: boolean };
+
 // âncora malformada (ex.: "#%E0") não pode derrubar a página
 function targetOf(hash: string): string {
   try {
@@ -11,11 +12,35 @@ function targetOf(hash: string): string {
   }
 }
 
+// uma rolagem só por navegação, depois do conteúdo de cima carregar, e nunca contra a do usuário
+export function scrollTarget(hash: string, gate: ScrollGate): string | null {
+  if (hash.length < 2 || !gate.settled || gate.done || gate.manual) return null;
+  return targetOf(hash);
+}
+
+const manualEvents = ['wheel', 'touchmove', 'keydown'] as const;
+
 export function useHashScroll(settled: boolean) {
   const { hash, key } = useLocation();
+  const gate = useRef({ key: '', done: false, manual: false });
 
   useEffect(() => {
-    if (hash.length < 2) return;
-    document.getElementById(targetOf(hash))?.scrollIntoView();
+    gate.current = { key, done: false, manual: false };
+    const stop = () => {
+      gate.current.manual = true;
+    };
+    manualEvents.forEach((name) =>
+      window.addEventListener(name, stop, { passive: true }),
+    );
+    return () =>
+      manualEvents.forEach((name) => window.removeEventListener(name, stop));
+  }, [key]);
+
+  useEffect(() => {
+    const target = scrollTarget(hash, { settled, ...gate.current });
+    const element = target ? document.getElementById(target) : null;
+    if (!element) return;
+    gate.current.done = true;
+    element.scrollIntoView();
   }, [hash, key, settled]);
 }
