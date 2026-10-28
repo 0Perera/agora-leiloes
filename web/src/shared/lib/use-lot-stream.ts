@@ -55,8 +55,10 @@ export function useLotStream(
       );
     };
 
+    // o resultado do encerramento vem do GET do lote, não do payload do evento
     const close = openLotStream(id, {
       onBid,
+      onSettled: sync,
       onOpen: () => {
         signal('open');
         sync();

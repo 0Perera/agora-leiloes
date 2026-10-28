@@ -15,7 +15,7 @@ import { Niche } from '../../shared/ui/niche';
 import { BidForm } from './bid-form';
 import { olderPage } from './room-bids';
 import { RoomHistory } from './room-history';
-import { RoomOpening, RoomSituation } from './room-status';
+import { BidderStatus, EndedStatus, RoomOpening } from './room-status';
 import { RoomSummary } from './room-timing';
 import type { ReadyRoom } from './use-room';
 
@@ -132,8 +132,10 @@ function RoomStatus({
 }) {
   if (lot.status === 'scheduled')
     return <RoomOpening startsAt={lot.startsAt} />;
-  if (lot.status !== 'live' || viewer !== 'bidder' || !lot.me) return null;
-  return <RoomSituation lot={lot} me={lot.me} top={room.bids[0]} />;
+  if (viewer === 'bidder' && lot.me)
+    return <BidderStatus lot={lot} me={lot.me} top={room.bids[0]} />;
+  if (lot.status === 'ended') return <EndedStatus lot={lot} />;
+  return null;
 }
 
 function VisitorBox() {

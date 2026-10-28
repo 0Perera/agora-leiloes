@@ -163,6 +163,7 @@ export const api = {
 
 type StreamHandlers = {
   onBid: (bid: BidEvent) => void;
+  onSettled: () => void;
   onOpen: () => void;
   onLost: () => void;
   onDrop: () => void;
@@ -187,6 +188,7 @@ export function openLotStream(
       const bid = parseBidEvent(event.data);
       if (bid) handlers.onBid(bid);
     });
+    source.addEventListener('settled', handlers.onSettled);
     source.addEventListener('error', () => {
       if (closed) return;
       handlers.onLost();
