@@ -101,6 +101,11 @@ context:
 | Achado | Veredito | Evidência |
 |---|---|---|
 | Contagem zera sem recarregar e a linha segue com "Cobrir lance" | low, corrigido | `actionOf` não olhava o tempo; o botão levava à sala encerrada. Agora recebe os segundos e devolve "Abrir sala" ao zerar, com teste. |
+| Data longa sem quebra estoura a placa em 360px | false | Medido em 360px: a data mais longa ("30 de dezembro de 2026, 23h59") tem 218px numa caixa de 286px, sem rolagem. |
+| Rótulo "Encerra em" no lote já encerrado aguardando liquidação | low, não corrigido | Texto; o selo "Aguardando liquidação" fica no lugar do tempo, como pedido. |
+| Selo absoluto acima de 1100px pode cobrir o número do lote | false | Em 1100px o selo mais longo começa em ~707px e o número termina em ~420px. |
+| Campo `mark` de `standingOf` ficou sem uso | low, não corrigido | Código morto, sem efeito na tela; o selo já traz a situação por escrito. |
+| Número do lote numa linha só, sem romano em destaque | false | Mudança intencional da placa (`lotLabel`, D-054). |
 
 ## Design Notes
 
