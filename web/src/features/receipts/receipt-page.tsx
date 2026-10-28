@@ -8,7 +8,7 @@ import { LoadError } from '../../shared/ui/load-error';
 import { Niche } from '../../shared/ui/niche';
 import { NotFound } from '../../shared/ui/not-found';
 import { LinkCopy } from '../../shared/ui/link-copy';
-import { HashCopy } from './copy-button';
+import { HashCopy } from '../../shared/ui/hash-copy';
 import { signText } from './receipt';
 import { useReceipt } from './use-receipt';
 import './receipt.css';
