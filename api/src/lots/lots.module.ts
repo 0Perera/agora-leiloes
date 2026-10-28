@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CatalogModule } from '../catalog/catalog.module';
-import { Clock } from '../common/clock';
 import { SettlementModule } from '../settlement/settlement.module';
 import { DashboardController } from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
@@ -19,6 +18,6 @@ import { LotsService } from './lots.service';
     SettlementModule,
   ],
   controllers: [LotsController, DashboardController],
-  providers: [LotsService, DashboardService, Clock],
+  providers: [LotsService, DashboardService],
 })
 export class LotsModule {}

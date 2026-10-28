@@ -4,6 +4,7 @@ import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
 import { BidsModule } from './bids/bids.module';
 import { CatalogModule } from './catalog/catalog.module';
+import { ClockModule } from './common/clock.module';
 import { Env, validateEnv } from './config/env.validation';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
@@ -20,6 +21,7 @@ import { WalletsModule } from './wallets/wallets.module';
       validate: (config) => validateEnv(Env, config),
     }),
     DatabaseModule,
+    ClockModule,
     HealthModule,
     UsersModule,
     AuthModule,
