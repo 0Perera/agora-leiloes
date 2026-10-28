@@ -47,204 +47,7 @@
   color: var(--ink-muted);
 }
 
-/* livro pautado com margem vermelha dupla, como o do painel */
-.bids-ledger {
-  border-top: 1px solid var(--gold-500);
-}
-
-.bids-row {
-  display: grid;
-  gap: 0 var(--space-4);
-  align-items: center;
-  min-height: 80px;
-  border-bottom: 1px solid var(--vein);
-}
-
-.bids-row--ongoing {
-  grid-template-columns: 96px minmax(200px, 1.8fr) 210px 120px 120px 120px 150px;
-}
-
-.bids-row--lost {
-  grid-template-columns: 96px minmax(220px, 1.8fr) 150px 160px 160px 150px;
-}
-
-.bids-head {
-  min-height: 46px;
-  border-bottom: 3px double var(--gold-500);
-  background-color: var(--marble-100);
-}
-
-.bids-head > div {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 14px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-muted);
-}
-
-.bids-num {
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  padding: 0 var(--space-2);
-  text-align: center;
-  border-right: 3px double var(--cinnabar);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 0.06em;
-  color: var(--gold-700);
-}
-
-.bids-head .bids-num {
-  color: var(--ink-muted);
-}
-
-.bids-num-plain {
-  font-family: var(--font-text);
-  font-weight: 400;
-  font-size: 14px;
-  letter-spacing: 0;
-  color: var(--ink-muted);
-}
-
-.bids-work {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-  padding: var(--space-2) 0;
-}
-
-.bids-thumb {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 72px;
-  height: 60px;
-}
-
-.bids-thumb-image {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  border: 3px solid var(--gold-500);
-  background-color: var(--marble-200);
-}
-
-.bids-work-text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.bids-work-title {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 19px;
-  line-height: 23px;
-  overflow-wrap: anywhere;
-}
-
-.bids-work-artist {
-  font-size: 15px;
-  line-height: 20px;
-  color: var(--ink-muted);
-  overflow-wrap: anywhere;
-}
-
-.bids-standing {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.bids-standing__mark {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  color: var(--on-pigment);
-  font-size: 11px;
-}
-
-.bids-standing--winning {
-  color: var(--ultramarine);
-}
-
-.bids-standing--winning .bids-standing__mark {
-  background-color: var(--ultramarine);
-}
-
-.bids-standing--outbid {
-  color: var(--cinnabar-deep);
-}
-
-.bids-standing--outbid .bids-standing__mark {
-  background-color: var(--cinnabar);
-}
-
-.bids-money {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 16px;
-  font-variant-numeric: tabular-nums;
-}
-
-.bids-money--muted {
-  color: var(--ink-muted);
-}
-
-.bids-money--urgent {
-  color: var(--cinnabar-deep);
-}
-
-.bids-note,
-.bids-date {
-  font-size: 15px;
-  line-height: 20px;
-}
-
-.bids-note {
-  color: var(--ink-muted);
-}
-
-.bids-action {
-  padding: var(--space-2) 0;
-}
-
-.bids-room {
-  min-height: 44px;
-  padding: 0 var(--space-4);
-}
-
-.bids-open,
-.bids-copy {
-  min-height: 44px;
-  padding: 0;
-}
-
-/* em duas linhas, o sublinhado não encosta na linha de baixo */
-.bids-copy {
-  text-align: left;
-  line-height: 26px;
-}
-
-/* placa de arremate */
+/* placa de cada lote, nas três abas */
 .bids-plaques {
   display: flex;
   flex-direction: column;
@@ -268,17 +71,40 @@
   position: absolute;
   top: -1px;
   right: 28px;
+  max-width: calc(100% - 56px);
+  box-sizing: border-box;
   padding: var(--space-2) var(--space-3) 10px;
-  background-color: var(--ultramarine);
-  color: var(--on-pigment);
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 12px;
+  line-height: 16px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.bids-plaque__tag--blue {
+  background-color: var(--ultramarine);
+  color: var(--on-pigment);
   box-shadow:
     inset 0 0 0 3px var(--ultramarine),
     inset 0 0 0 4px var(--gold-300);
+}
+
+.bids-plaque__tag--red {
+  background-color: var(--cinnabar);
+  color: var(--on-pigment);
+  box-shadow:
+    inset 0 0 0 3px var(--cinnabar),
+    inset 0 0 0 4px var(--gold-300);
+}
+
+.bids-plaque__tag--neutral {
+  background-color: var(--marble-200);
+  color: var(--ink-muted);
+  box-shadow:
+    inset 0 0 0 1px var(--vein),
+    inset 0 0 0 3px var(--marble-200),
+    inset 0 0 0 4px var(--vein);
 }
 
 .bids-plaque__wall {
@@ -314,7 +140,6 @@
 
 .bids-plaque__lot {
   margin: 0;
-  padding-right: 120px;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 12px;
@@ -345,33 +170,48 @@
 .bids-plaque__facts {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3) 40px;
+  gap: var(--space-3) var(--space-6);
+  margin: 0;
   padding: 14px 0;
   border-top: 1px solid var(--gold-500);
   border-bottom: 1px solid var(--gold-500);
 }
 
-/* coluna do valor com largura mínima, para "Arrematado em" alinhar entre placas */
-.bids-plaque__facts > div:first-child {
-  min-width: 180px;
+/* largura mínima igual: os valores alinham entre placas vizinhas */
+.bids-plaque__facts > div {
+  min-width: 200px;
 }
 
-.bids-plaque__paid {
-  display: inline-block;
-  margin-top: var(--space-1);
-  font-family: var(--font-display);
+.bids-plaque__value {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-text);
   font-weight: 600;
-  font-size: 28px;
+  font-size: 24px;
   line-height: 34px;
   font-variant-numeric: tabular-nums;
+}
+
+.bids-plaque__value--paid {
+  display: inline-block;
   border-bottom: 3px double var(--ink);
 }
 
-.bids-plaque__date {
-  display: block;
-  margin-top: var(--space-1);
+.bids-plaque__value--plain {
+  font-weight: 400;
   font-size: 18px;
-  line-height: 34px;
+  white-space: nowrap;
+}
+
+.bids-plaque__value--muted {
+  color: var(--ink-muted);
+}
+
+.bids-plaque__value--urgent {
+  color: var(--cinnabar-deep);
+}
+
+.bids-plaque__value .ag-badge {
+  vertical-align: middle;
 }
 
 .bids-plaque__actions {
@@ -379,6 +219,22 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 10px var(--space-4);
+}
+
+/* as ações das placas com a mesma caixa, para alinhar entre placas vizinhas */
+.bids-action {
+  box-sizing: border-box;
+  min-width: 200px;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+/* em duas linhas, o sublinhado não encosta na linha de baixo */
+.bids-copy {
+  min-height: 44px;
+  padding: 0;
+  text-align: left;
+  line-height: 26px;
 }
 
 /* nenhum lance ainda */
@@ -434,77 +290,33 @@
   margin-bottom: var(--space-4);
 }
 
-.bids-skel--row {
-  height: 80px;
+.bids-skel--plaque {
+  height: 256px;
 }
 
-/* abaixo da largura da tabela, cada lote vira um cartão com rótulos */
-@media (max-width: 1220px) {
-  .bids-head {
-    display: none;
-  }
-
-  .bids-row {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 6px;
-    min-height: 0;
-    margin-bottom: var(--space-3);
-    padding: 14px 0 14px 18px;
-    border-left: 3px double var(--cinnabar);
-    border-bottom: 1px solid var(--gold-500);
-  }
-
-  .bids-row--ongoing,
-  .bids-row--lost {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .bids-num {
-    flex-direction: row;
-    align-items: baseline;
-    justify-content: flex-start;
-    gap: var(--space-2);
-    padding: 0;
-    border-right: 0;
-  }
-
-  .bids-row > [data-label] {
-    display: grid;
-    grid-template-columns: 132px minmax(0, 1fr);
-    gap: var(--space-3);
-    align-items: center;
-  }
-
-  .bids-row > [data-label] > * {
-    justify-self: start;
-  }
-
-  .bids-row > [data-label]::before {
-    content: attr(data-label);
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-  }
-
-  .bids-action {
-    padding: 0;
+/* selo longo ("Você arrematou · aguardando liquidação") ganha uma faixa própria */
+@media (max-width: 1100px) {
+  .bids-plaque {
+    padding-top: 52px;
   }
 }
 
 @media (max-width: 700px) {
   .bids-plaque {
     grid-template-columns: minmax(0, 1fr);
-    padding: 44px 20px 20px;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  /* no fluxo da placa, o selo em duas linhas empurra o nicho em vez de cobri-lo */
+  .bids-plaque__tag {
+    position: static;
+    justify-self: end;
+    max-width: 100%;
+    margin-top: -21px;
   }
 
   .bids-plaque__wall {
     height: 180px;
-  }
-
-  .bids-plaque__lot {
-    padding-right: 0;
   }
 }

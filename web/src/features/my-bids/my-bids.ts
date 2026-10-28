@@ -25,7 +25,7 @@ export function standingOf({ situation, awaitingSettlement }: Row): Standing {
 
 export function leftOf(awaitingSettlement: boolean, seconds: number): Left {
   if (awaitingSettlement)
-    return { text: 'Encerrado, aguardando liquidação', urgent: false };
+    return { text: 'Aguardando liquidação', urgent: false };
   if (seconds <= 0) return { text: 'encerrando', urgent: false };
   return { text: formatLeft(seconds), urgent: seconds < urgentBelow };
 }

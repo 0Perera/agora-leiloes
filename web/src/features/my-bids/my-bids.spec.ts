@@ -44,9 +44,9 @@ describe('leftOf', () => {
     expect(leftOf(false, 0)).toEqual({ text: 'encerrando', urgent: false });
   });
 
-  it('mostra encerrado aguardando liquidação no lote vencido', () => {
+  it('mostra aguardando liquidação no lugar do tempo do lote vencido', () => {
     expect(leftOf(true, 0)).toEqual({
-      text: 'Encerrado, aguardando liquidação',
+      text: 'Aguardando liquidação',
       urgent: false,
     });
   });

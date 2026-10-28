@@ -25,8 +25,8 @@ export function MyBidsPage() {
         <p className="bids-eyebrow">Seus registros</p>
         <h1 className="bids-title">Meus lances</h1>
         <p className="bids-lede">
-          Lotes em disputa, obras arrematadas e os que ficaram com outro
-          licitante.
+          Acompanhe cada lote em que você deu lance, do primeiro lance ao
+          arremate.
         </p>
       </div>
       <Content {...myBids} />
@@ -151,8 +151,8 @@ function SectionSkeleton() {
 function Rows() {
   return (
     <>
-      {[1, 2, 3].map((row) => (
-        <div key={row} className="skel bids-skel--row" />
+      {[1, 2].map((row) => (
+        <div key={row} className="skel bids-skel--plaque" />
       ))}
     </>
   );
