@@ -1,6 +1,7 @@
 .bid-won__link {
   color: var(--on-pigment);
   text-underline-offset: 3px;
+  white-space: nowrap;
 }
 
 .bid-won__link:hover {

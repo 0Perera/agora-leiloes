@@ -80,6 +80,7 @@
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 12px;
+  line-height: 16px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--gold-700);
@@ -177,6 +178,7 @@
   font-size: clamp(30px, 6vw, 40px);
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
   overflow-wrap: normal;
 }
 
@@ -188,6 +190,11 @@
 }
 
 /* assinatura */
+/* o selo do canvas mede 152px por dentro da borda */
+.receipt-sign .ag-seal {
+  box-sizing: content-box;
+}
+
 .receipt-sign {
   display: flex;
   flex-wrap: wrap;
@@ -252,8 +259,9 @@
   padding: 10px 14px;
   font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
   font-size: 15px;
+  line-height: 20px;
   color: var(--ink);
-  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 
 .receipt-hash__copy {
@@ -360,7 +368,8 @@
   width: 60%;
 }
 
-@media (max-width: 760px) {
+/* com o nicho ao lado, abaixo de 900px a ficha fica estreita demais para títulos longos */
+@media (max-width: 900px) {
   .receipt__cols {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -370,9 +379,16 @@
     width: min(100%, 300px);
     margin: 0 auto;
   }
+}
 
+@media (max-width: 760px) {
   .receipt__frame {
     margin: 6px;
+  }
+
+  /* as cantoneiras ocupam até 44px da borda: o último bloco não encosta nelas */
+  .receipt__body {
+    padding-bottom: 48px;
   }
 }
 
@@ -386,6 +402,19 @@
     margin-bottom: var(--space-3);
   }
 
+  /* o código abreviado cabe numa linha só na folha de 360px */
+  .receipt-hash__code {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .receipt-hash__copy {
+    padding: 0 10px;
+  }
+}
+
+/* o número quebra em duas linhas antes de 640px, e os traços ficariam soltos no meio */
+@media (max-width: 640px) {
   .receipt__dash {
     display: none;
   }
