@@ -74,7 +74,8 @@ export class MyBidsService {
     const base = this.mine(userId)
       .select('lot.id', 'id')
       .addSelect('lot.number', 'number')
-      .addSelect('lot.title', 'title');
+      .addSelect('lot.title', 'title')
+      .addSelect('lot.artist', 'artist');
     const items = await section
       .order(section.select(base))
       .andWhere(SECTION_WHERE[query.section])

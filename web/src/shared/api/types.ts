@@ -222,6 +222,7 @@ export type OngoingBid = {
   id: number;
   number: number;
   title: string;
+  artist: string;
   currentBid: number | null;
   myBid: number;
   endsAt: string;
@@ -233,6 +234,7 @@ export type WonBid = {
   id: number;
   number: number;
   title: string;
+  artist: string;
   amount: number;
   settledAt: string;
   receiptToken: string;
@@ -242,6 +244,7 @@ export type LostBid = {
   id: number;
   number: number;
   title: string;
+  artist: string;
   amount: number | null;
   myBid: number;
   settledAt: string;

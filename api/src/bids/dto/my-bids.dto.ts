@@ -6,6 +6,7 @@ export class OngoingBidDto {
   id!: number;
   number!: number;
   title!: string;
+  artist!: string;
   currentBid!: number | null;
   myBid!: number;
   endsAt!: Date;
@@ -18,6 +19,7 @@ export class WonBidDto {
   id!: number;
   number!: number;
   title!: string;
+  artist!: string;
   amount!: number;
   settledAt!: Date;
   receiptToken!: string;
@@ -28,6 +30,7 @@ export class LostBidDto {
   id!: number;
   number!: number;
   title!: string;
+  artist!: string;
   amount!: number | null;
   myBid!: number;
   settledAt!: Date;
