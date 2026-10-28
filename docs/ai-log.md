@@ -661,11 +661,12 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **O que revisei e pedi para mudar:**
 - Aprovei os 12 casos de teste propostos e pedi mais quatro: lance com seq maior que 1 apontando para o início da cadeia, selo nulo, comprovante com hash final diferente e comprovante com assinatura inválida.
 - Pedi o indicador por lance: íntegro antes do primeiro quebrado, adulterado nele e não verificável nos seguintes.
-- Pedi que cada lance apareça com o apelido calculado do licitante, sem id, nome ou e-mail.
-- Pedi testes de integração que alterem o banco direto: valor de um lance, último lance apagado e hash final do comprovante.
+- Pedi que cada lance apareça com o apelido calculado do licitante, sem id, nome ou e-mail, e testes de integração que alterem o banco direto (valor, último lance apagado, hash final do comprovante).
 - Escolhi um quarto resultado para comprovante adulterado, com prioridade menor que lance quebrado e lances removidos do fim.
-- Decidi que lote liquidado com lances e sem comprovante é adulterado, e pedi o caso do lote liquidado sem lances, que continua íntegro.
-- Aprovei que o selo nulo conte como lances removidos do fim e que a função de assinatura vá para um arquivo próprio.
+- Decidi que lote liquidado com lances e sem comprovante é adulterado, pedi o caso do lote liquidado sem lances, que continua íntegro, e aprovei que o selo nulo conte como lances removidos do fim.
+- Depois da revisão, decidi que comprovante em lote não liquidado ou em lote liquidado sem lances também é adulterado (dois casos novos) e aprovei os três testes extras do agente.
+- Decidi registrar a lista completa de lances na auditoria como exceção à paginação, porque a verificação depende da cadeia inteira.
+- Pedi que a auditoria ganhasse um item próprio nos testes do README e uma linha dizendo que consultar a auditoria não liquida o lote.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma.
+- Comparar o apelido e o valor do comprovante com o último lance: recusei, porque a assinatura já cobre os dois e forjá-la exige o segredo.

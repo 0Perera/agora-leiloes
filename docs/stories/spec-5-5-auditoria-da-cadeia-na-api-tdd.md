@@ -117,3 +117,5 @@ Selo nulo dá `truncated`: com a cadeia íntegra, o selo é a única evidência 
 | Casos 17/18 e `receipt_tampered` sem entrada no decisions.md | medium | CLAUDE.md exige D-NNN para leitura de regra ambígua já decidida. patch: D-065 |
 | README: auditoria no item Lances dos Testes; linha em Comportamentos esperados | low | Estilo; listado ao usuário |
 | sprint-status `in-progress` vs spec `in-review` | false | O passo final do workflow sincroniza o status |
+
+Decisões do usuário depois da revisão: comprovante em lote não liquidado e em lote liquidado sem lances dão `receipt_tampered` (casos 19 e 20, D-065 atualizada); lista completa de lances registrada como exceção à paginação (D-066, CLAUDE.md); os três testes extras ficam; a comparação do alias do comprovante fica como está.
