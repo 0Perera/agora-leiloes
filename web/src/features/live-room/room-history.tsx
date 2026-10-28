@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { BidHistoryItem, LotDetail } from '../../shared/api/types';
 import { formatMoney } from '../../shared/lib/money';
+import { topMark } from './room-summary';
 
 type Props = {
   lot: LotDetail;
@@ -30,7 +31,7 @@ export function RoomHistory({ lot, bids, total, older }: Props) {
               key={bid.seq}
               bid={bid}
               mine={bid.alias === lot.me?.alias}
-              leads={index === 0}
+              mark={index === 0 ? topMark(lot) : null}
             />
           ))}
         </ol>
@@ -84,17 +85,17 @@ function OlderButton({ load }: { load: () => Promise<void> }) {
 function HistoryRow({
   bid,
   mine,
-  leads,
+  mark,
 }: {
   bid: BidHistoryItem;
   mine: boolean;
-  leads: boolean;
+  mark: string | null;
 }) {
   return (
     <li className={mine ? 'room-history__row is-mine' : 'room-history__row'}>
       <span className="room-history__who">
         <span className="room-history__alias">{mine ? 'Você' : bid.alias}</span>
-        {leads && <span className="room-history__leads">▲ Lidera</span>}
+        {mark && <span className="room-history__leads">▲ {mark}</span>}
       </span>
       <span className="room-history__amount">{formatMoney(bid.amount)}</span>
       <span className="room-history__time">

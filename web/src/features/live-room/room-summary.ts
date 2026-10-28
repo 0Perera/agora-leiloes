@@ -67,3 +67,15 @@ export function retryTurn(
 ): boolean {
   return after === before && retries < maxTurnRetries;
 }
+
+type SettlementLot = Pick<LotDetail, 'status' | 'result'>;
+
+// encerrado sem resultado: o selo não conferiu ou a liquidação ainda não aconteceu
+export function awaitsSettlement(lot: SettlementLot): boolean {
+  return lot.status === 'ended' && lot.result === null;
+}
+
+export function topMark(lot: SettlementLot): string {
+  if (lot.status !== 'ended') return 'Lidera';
+  return lot.result ? 'Arrematou' : 'Último lance';
+}
