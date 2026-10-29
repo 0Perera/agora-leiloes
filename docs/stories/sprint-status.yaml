@@ -79,8 +79,8 @@ development_status:
   5-8-tela-auditoria-do-lote-e-campo-da-pagina-inicial: done
   epic-5-retrospective: optional
 
-  epic-6: backlog
-  6-1-seed-idempotente-e-compose-verificado: backlog
+  epic-6: in-progress
+  6-1-seed-idempotente-e-compose-verificado: review
   6-2-consistencia-da-api: backlog
   6-3-consistencia-do-front: backlog
   6-4-documentacao: backlog

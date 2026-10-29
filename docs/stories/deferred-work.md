@@ -174,3 +174,7 @@
 - source_spec: none
   summary: limite de tentativas no `POST /auth/login` não será feito (item registrado na 2.1); declarar em "Fora do escopo" no README.
   evidence: decisão do usuário no replanejamento do épico 6 (2026-10-28).
+
+- source_spec: `docs/stories/spec-6-1-seed-idempotente-e-compose-verificado.md`
+  summary: atualizar no CLAUDE.md a regra "O lote ao vivo do seed termina em ~30 dias" para a janela decidida na 6.1 (ao vivo encerrando entre 7 e 10 dias depois do seed; agendados abrindo entre 5 e 6 dias).
+  evidence: achado da revisão da 6.1; a spec segue a decisão do usuário e o CLAUDE.md ficou com o valor antigo.
