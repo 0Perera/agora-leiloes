@@ -56,15 +56,15 @@ O seed cria 11 lotes: 4 ao vivo (um disputado, um liderado por cada licitante e 
 
 ## III · Regras do leilão
 
-A hora de referência é sempre a do servidor, e toda recusa volta com um código estável que o front traduz.
+A hora de referência é sempre a do servidor, e toda recusa volta com um código estável que o front traduz (D-043).
 
 - **Lance só ao vivo:** antes do início responde `LOT_NOT_STARTED`, depois do fim `LOT_ENDED`; o status sai do horário, não de coluna (D-010).
-- **Primeiro lance e incremento:** o primeiro lance vale ao menos o lance inicial; os seguintes, o lance atual mais o incremento do lote, senão `BID_BELOW_MINIMUM` (D-043).
-- **Líder não cobre o próprio lance:** responde `ALREADY_WINNING` (D-043).
-- **Saldo comprometido:** o valor do lance que lidera fica reservado na carteira; sem disponível, `INSUFFICIENT_BALANCE` (D-042).
+- **Primeiro lance e incremento:** o primeiro lance vale ao menos o lance inicial; os seguintes, o lance atual mais o incremento do lote, senão `BID_BELOW_MINIMUM`.
+- **Líder não cobre o próprio lance:** responde `ALREADY_WINNING`.
+- **Saldo comprometido:** o valor do lance que lidera fica reservado na carteira; sem disponível, `INSUFFICIENT_BALANCE`.
 - **Devolução ao superado:** o comprometido do líder anterior volta na mesma transação do lance que o cobre, com lock no lote e nas carteiras (D-014).
 - **Anti-sniping:** lance aceito com 2 min ou menos para o fim soma 2 min ao fim atual, e o novo fim chega pelo stream (D-011).
-- **Liquidação:** no fim, o vencedor é debitado, o leiloeiro creditado e o comprovante assinado, numa transação só (D-009, D-029).
+- **Liquidação:** no fim, o vencedor é debitado, o leiloeiro creditado e o comprovante assinado, numa transação só (D-014, D-029).
 - **Cancelamento com estorno:** o leiloeiro cancela lote próprio agendado ou ao vivo; com lances, o comprometido do líder é devolvido (D-070).
 
 <p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
@@ -141,7 +141,6 @@ A tela `/lots/:id/audit` dá um de quatro vereditos, nesta prioridade: íntegro,
 - Os cards da vitrine mostram o estado do carregamento da página; só o destaque atualiza ao vivo, porque um stream por card estouraria o limite de conexões do navegador.
 - O leiloeiro não tem tela de carteira: o arremate é creditado na carteira dele, e o painel mostra o total recebido pelos comprovantes (D-039).
 - O stream de lances vive na memória de uma instância só da API, o que basta no plano free, que roda uma instância.
-- O banco é recriado e o seed roda de novo no dia da entrega, porque o Postgres free expira 30 dias após a criação: nada depende de dados anteriores.
 
 <p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
 
@@ -192,7 +191,6 @@ Paleta: mármore `#f2ede3`, tinta `#2b2520`, ouro `#9a7529`, cinábrio `#b23a1f`
 
 ## XII · Fora do escopo
 
-- Documentação da API com Swagger.
 - Tema escuro (opcional do enunciado); o desenho existe em [`docs/design`](docs/design).
 - Cancelar lote já arrematado: desfaria a liquidação e o comprovante.
 - Extrato da carteira: ela mostra só saldo, comprometido e disponível.

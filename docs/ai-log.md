@@ -948,9 +948,12 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi na seção de testes uma linha explicando o squash e por que as branches das stories são mantidas.
 - Pedi mockups de monitor e celular no topo, no lugar dos prints soltos da página inicial.
 - Decidi que o README tem um único print, o da auditoria adulterada, e que "Testar agora" fica só em texto.
+- Decidi tirar o Swagger de "Fora do escopo" e a linha do banco recriado na entrega de "Comportamentos esperados".
+- Pedi para conferir os números de decisão citados nas regras do leilão, porque o saldo comprometido apontava para a decisão errada.
 
 **Sugestões rejeitadas e por quê:**
 - Nada a registrar.
 
 **Erro encontrado na revisão:**
 - Na conferência dos mockups, a ilha do celular cobria o botão Entrar; agora a tela começa abaixo dela.
+- Nas regras do leilão, quatro citações apontavam para decisões que tratam de outra coisa (o lance atual guardado no lote, o status das recusas e o timer da liquidação); agora cada regra cita a decisão certa ou fica sem número.

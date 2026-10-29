@@ -28,7 +28,7 @@ Parte 1, achados da revisão das stories 6.1 a 6.6:
 8. `describe('standingRules.standing')`.
 
 Parte 2, README:
-- Seções do `CLAUDE.md`, com Swagger e tema escuro em "Fora do escopo" e as linhas de "Comportamentos esperados" pedidas na story.
+- Seções do `CLAUDE.md`, com tema escuro em "Fora do escopo" e as linhas de "Comportamentos esperados" pedidas na story.
 - Na seção Testes, uma linha sobre o squash (D-021) e as branches mantidas (D-055).
 - `docs/desenvolvimento.md` com hot reload, migrations e seed fora do compose, levando do `deploy-notes.md` só a topologia, os limites do plano free e as armadilhas de configuração.
 - Imagens: banner, mockups de monitor e celular no topo (`preview-desktop.png`, `preview-mobile.png`, fundo transparente, até ~500 KB), divisores, `fluxo-do-lance.svg`, `modelo-de-dados.svg`, a Escola de Atenas e um único print, `audit-tampered.png`, na Auditoria. "Testar agora" fica só em texto. `scripts/screenshots.mjs` gera só o que é usado.
