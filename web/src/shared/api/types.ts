@@ -78,6 +78,7 @@ export type CreateLotRequest = {
 export type CreatedLot = {
   id: number;
   number: number;
+  artworkId: number;
   title: string;
   artist: string;
   startingBid: number;
@@ -91,6 +92,7 @@ export type LotStatus = 'live' | 'scheduled' | 'ended';
 export type LotCard = {
   id: number;
   number: number;
+  artworkId: number;
   title: string;
   artist: string;
   startingBid: number;
@@ -133,8 +135,18 @@ export type LotDetail = {
   serverTime: string;
   // nulo até a liquidação; alias e valor nulos quando o lote encerrou sem lances
   result: LotResult | null;
-  me?: { alias: string; hasBid: boolean; receiptToken?: string };
+  me?: LotViewer;
 };
+
+// standing só vem para quem já deu lance no lote
+export type LotViewer = {
+  alias: string;
+  hasBid: boolean;
+  receiptToken?: string;
+  standing?: Standing;
+};
+
+export type Standing = { highest: number; rank: number; bidders: number };
 
 export type LotResult = { alias: string | null; amount: number | null };
 
@@ -143,6 +155,7 @@ export type BookStatus = LotStatus | 'cancelled';
 export type DashboardLot = {
   id: number;
   number: number;
+  artworkId: number;
   title: string;
   artist: string;
   status: BookStatus;
@@ -180,6 +193,7 @@ export type DashboardSummary = {
 export type Receipt = {
   lotId: number;
   number: number;
+  artworkId: number;
   title: string;
   artist: string;
   amount: number;
@@ -222,6 +236,7 @@ export type MyBidsSection = 'ongoing' | 'won' | 'lost';
 export type OngoingBid = {
   id: number;
   number: number;
+  artworkId: number;
   title: string;
   artist: string;
   currentBid: number | null;
@@ -234,6 +249,7 @@ export type OngoingBid = {
 export type WonBid = {
   id: number;
   number: number;
+  artworkId: number;
   title: string;
   artist: string;
   amount: number;
@@ -244,6 +260,7 @@ export type WonBid = {
 export type LostBid = {
   id: number;
   number: number;
+  artworkId: number;
   title: string;
   artist: string;
   amount: number | null;

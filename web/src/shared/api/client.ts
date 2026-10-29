@@ -250,6 +250,7 @@ function isBidEvent(value: unknown): value is BidEvent {
   );
 }
 
-export function lotImageUrl(id: number): string {
-  return `${baseUrl}/lots/${id}/image`;
+// a imagem é immutable por 1 ano: com o banco recriado, o mesmo id pode virar outra obra
+export function lotImageUrl(id: number, artworkId: number): string {
+  return `${baseUrl}/lots/${id}/image?v=${artworkId}`;
 }

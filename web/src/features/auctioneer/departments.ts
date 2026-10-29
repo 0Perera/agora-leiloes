@@ -7,3 +7,15 @@ export const departments: { value: CatalogDepartment; label: string }[] = [
   },
   { value: 'Greek and Roman Art', label: 'Arte grega e romana' },
 ];
+
+// termos conferidos na API da Cleveland: todos trazem obras com imagem no departamento
+export const suggestions: Record<CatalogDepartment, string[]> = {
+  'European Painting and Sculpture': [
+    'portrait',
+    'Rembrandt',
+    'Madonna',
+    'landscape',
+    'marble',
+  ],
+  'Greek and Roman Art': ['portrait', 'amphora', 'vase', 'coin', 'marble'],
+};

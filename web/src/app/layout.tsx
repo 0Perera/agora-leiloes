@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router';
 import { WalletProvider } from '../features/wallet/wallet-provider';
+import { Footer } from './footer';
 import { Header } from './header';
 import { useSession } from './use-session';
 import './layout.css';
@@ -12,6 +13,7 @@ export function Layout() {
       <main className="layout-main">
         <Outlet />
       </main>
+      <Footer />
     </div>
   );
 

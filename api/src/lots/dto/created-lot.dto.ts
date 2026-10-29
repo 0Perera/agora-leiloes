@@ -3,6 +3,7 @@ import type { Lot } from '../lot.entity';
 export class CreatedLotDto {
   id!: number;
   number!: number;
+  artworkId!: number;
   title!: string;
   artist!: string;
   startingBid!: number;
@@ -15,6 +16,7 @@ export type CreatedLotFields = Pick<
   Lot,
   | 'id'
   | 'number'
+  | 'artworkId'
   | 'title'
   | 'artist'
   | 'startingBid'
@@ -27,6 +29,7 @@ export function toCreatedLot(lot: CreatedLotFields): CreatedLotDto {
   return {
     id: lot.id,
     number: lot.number,
+    artworkId: lot.artworkId,
     title: lot.title,
     artist: lot.artist,
     startingBid: lot.startingBid,

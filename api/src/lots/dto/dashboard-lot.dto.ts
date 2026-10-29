@@ -5,6 +5,7 @@ export type DashboardFields = Pick<
   Lot,
   | 'id'
   | 'number'
+  | 'artworkId'
   | 'title'
   | 'artist'
   | 'startingBid'
@@ -24,6 +25,7 @@ export class DashboardResultDto {
 export class DashboardLotDto {
   id!: number;
   number!: number;
+  artworkId!: number;
   title!: string;
   artist!: string;
   status!: LotState;
@@ -43,6 +45,7 @@ export function toDashboardLot(
   return {
     id: lot.id,
     number: lot.number,
+    artworkId: lot.artworkId,
     title: lot.title,
     artist: lot.artist,
     status,

@@ -40,7 +40,11 @@ export function BidderStatus({ lot, me, top, cancelled }: Props) {
           Você ainda não deu lance neste lote.
         </p>
       ) : (
-        <BidSituation situation={situation} minimum={minimumOf(lot)} />
+        <BidSituation
+          situation={situation}
+          minimum={minimumOf(lot)}
+          standing={me.standing}
+        />
       )}
     </div>
   );

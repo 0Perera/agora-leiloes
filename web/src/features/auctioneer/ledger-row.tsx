@@ -66,13 +66,19 @@ export function LedgerRow({ lot, fresh, ...actions }: Props) {
         <span className="panel-thumb" aria-hidden="true">
           <img
             className="panel-thumb-image"
-            src={lotImageUrl(lot.id)}
+            src={lotImageUrl(lot.id, lot.artworkId)}
             alt=""
             loading="lazy"
           />
         </span>
         <span className="panel-obra-text">
-          <span className="panel-obra-title">{lot.title}</span>
+          {cancelled ? (
+            <span className="panel-obra-title">{lot.title}</span>
+          ) : (
+            <Link className="panel-obra-title" to={`/lots/${lot.id}`}>
+              {lot.title}
+            </Link>
+          )}
           <span className="panel-obra-artist">{lot.artist}</span>
         </span>
       </div>
@@ -163,21 +169,13 @@ function Action({
   if (receipt) return <ReceiptLink lot={lot} token={receipt} />;
   const allowed = cancellable(lot);
   const warning = cancelWarning(lot);
-  if (!allowed || !confirming)
+  if (!allowed) return null;
+  if (!confirming)
     return (
       <span className="panel-actions">
-        <Link
-          className="ag-btn ag-btn--quiet panel-open"
-          to={`/lots/${lot.id}`}
-          aria-label={`Abrir sala do ${lotLabel(lot.number)}`}
-        >
-          Abrir sala
-        </Link>
-        {allowed && (
-          <button className="panel-cancel" type="button" onClick={onAsk}>
-            Cancelar lote
-          </button>
-        )}
+        <button className="panel-cancel" type="button" onClick={onAsk}>
+          Cancelar lote
+        </button>
       </span>
     );
 

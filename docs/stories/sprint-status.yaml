@@ -54,7 +54,7 @@ development_status:
   6-2-consistencia-da-api: done
   6-3-consistencia-do-front: done
   6-4-documentacao: done
-  6-5-cancelamento-com-estorno: review
-  6-6-polimento-final: backlog
+  6-5-cancelamento-com-estorno: done
+  6-6-polimento-final: review
   6-7-readme-final: backlog
   epic-6-retrospective: optional

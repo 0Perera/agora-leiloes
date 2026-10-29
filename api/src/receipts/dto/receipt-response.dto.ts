@@ -1,6 +1,7 @@
 export class ReceiptResponseDto {
   lotId!: number;
   number!: number;
+  artworkId!: number;
   title!: string;
   artist!: string;
   amount!: number;

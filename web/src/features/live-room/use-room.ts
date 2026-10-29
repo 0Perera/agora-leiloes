@@ -134,6 +134,7 @@ export function useRoom(id: number) {
   );
 
   useTurn(id, room, setRoom);
+  useStanding(id, room, setRoom);
   const streaming =
     room.status === 'ready' && room.lot.status !== 'ended' && !room.cancelled;
   const connection = useLotStream(id, streaming, {
@@ -190,4 +191,35 @@ function useTurn(id: number, room: Room, setRoom: SetRoom) {
       clearTimeout(timer);
     };
   }, [id, turn, status, offset, setRoom]);
+}
+
+// o evento não traz a posição: lance novo com o licitante na disputa refaz o GET, sem histórico
+function useStanding(id: number, room: Room, setRoom: SetRoom) {
+  const ready = room.status === 'ready';
+  const bidCount = ready ? room.lot.bidCount : null;
+  const watching =
+    ready &&
+    room.lot.status === 'live' &&
+    !room.cancelled &&
+    room.lot.me?.hasBid === true;
+  const known = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (bidCount === null) {
+      known.current = null;
+      return;
+    }
+    if (known.current !== null && bidCount <= known.current) return;
+    const first = known.current === null;
+    known.current = bidCount;
+    if (first || !watching) return;
+    let active = true;
+    api.lot(id).then(
+      (lot) => active && setRoom((current) => synced(current, lot)),
+      () => undefined,
+    );
+    return () => {
+      active = false;
+    };
+  }, [id, bidCount, watching, setRoom]);
 }

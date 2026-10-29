@@ -94,12 +94,15 @@
 - source_spec: `docs/stories/spec-3-5-tela-painel-do-leiloeiro.md`
   summary: no painel do leiloeiro em modo cartão (abaixo de 1220px), o selo de estado e o botão "Cancelar lote" ocupam toda a largura da coluna; devem ter a largura do próprio conteúdo (`justify-self: start`), com o botão em largura total só abaixo de 480px. Alinhar a miniatura da obra com o título. Conferir em 360, 768 e 1000px.
   evidence: pedido do usuário durante a implementação da 3.6.
+  status: feito na 6.6 (`spec-6-6-polimento-final.md`).
 - source_spec: `docs/stories/spec-4-6-tela-sala-do-lote-ao-vivo-lances-e-tempo-real.md`
   summary: no painel do leiloeiro, ao escolher uma obra no acervo, rolar até a ficha do lote e levar o foco ao primeiro campo; no celular, hoje é preciso rolar manualmente para encontrá-la.
   evidence: pedido do usuário na conferência da 4.6.
+  status: feito na 6.6 (`spec-6-6-polimento-final.md`).
 - source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
   summary: no painel do leiloeiro, ao lado do campo de busca do acervo, um ícone de sugestões que abre uma pequena lista de termos que dão resultado nos dois departamentos (ex.: "portrait", "Rembrandt", "Madonna", "marble", "amphora"); clicar num termo preenche o campo e faz a busca. Conferir antes, na API da Cleveland, que cada termo retorna obras com imagem.
   evidence: pedido do usuário na conferência da 5.6.
+  status: feito na 6.6 (`spec-6-6-polimento-final.md`).
 
 - source_spec: `docs/stories/spec-5-2-liquidacao-e-comprovante-assinado-na-api.md`
   summary: na 5.3, se o timer chamar a liquidação por um caminho sem o lock do lote, cobrir com teste o `ignoreDuplicate` (violação de `receipts_lot_id` termina sem erro e sem evento).
@@ -136,18 +139,22 @@
 - source_spec: none
   summary: na 6.6, no painel do leiloeiro, depois de escolher a obra no acervo, rolar até os campos da ficha do lote.
   evidence: pedido do usuário no replanejamento do épico 6 (2026-10-28); reforça o item de rolagem registrado na 4.6.
+  status: feito na 6.6 (`spec-6-6-polimento-final.md`).
 
 - source_spec: none
   summary: na 6.6, no livro de lotes do painel, tirar o botão "Abrir sala" e transformar o título do lote em link para a sala.
   evidence: pedido do usuário no replanejamento do épico 6 (2026-10-28).
+  status: feito na 6.6 (`spec-6-6-polimento-final.md`).
 
 - source_spec: none
   summary: na 6.6, abaixo de ~420px, o menu do cabeçalho quebra em duas linhas, alinhado à esquerda, com o espaço normal entre os links (hoje fica com 4px).
   evidence: pedido do usuário no replanejamento do épico 6 (2026-10-28).
+  status: feito na 6.6 (`spec-6-6-polimento-final.md`).
 
 - source_spec: `docs/stories/spec-5-6-sala-encerrada-e-tela-comprovante-de-arremate.md`
   summary: na 6.6, o ícone de sugestões ao lado da busca do acervo no painel (item registrado na 5.6, na seção acima).
   evidence: pedido do usuário no segundo replanejamento do épico 6 (2026-10-28).
+  status: feito na 6.6 (`spec-6-6-polimento-final.md`).
 
 ## Cancelamento com estorno (story 6.5)
 

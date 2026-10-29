@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { clockOffset, formatLeft, secondsLeft } from './countdown';
+import { clockOffset, formatLeft, secondsLeft, splitLeft } from './countdown';
 
 describe('formatLeft', () => {
   it('mostra minutos e segundos abaixo de 1h', () => {
@@ -8,6 +8,28 @@ describe('formatLeft', () => {
 
   it('mostra horas e minutos a partir de 1h', () => {
     expect(formatLeft(3905)).toBe('1h 05min');
+  });
+
+  it('mostra dias e horas acima de 48h', () => {
+    expect(formatLeft(604_380)).toBe('6d 23h');
+  });
+});
+
+describe('splitLeft', () => {
+  it('divide em dias e horas acima de 48h', () => {
+    expect(splitLeft(604_380)).toEqual({
+      first: '6',
+      second: '23',
+      unit: 'days',
+    });
+  });
+
+  it('divide em horas e minutos com exatamente 48h', () => {
+    expect(splitLeft(48 * 3600)).toEqual({
+      first: '48',
+      second: '00',
+      unit: 'hours',
+    });
   });
 });
 

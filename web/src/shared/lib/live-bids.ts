@@ -57,9 +57,10 @@ export function mergeRoom(
         endsAt: current.endsAt,
       }
     : lot;
+  const me = stale ? (current.me ?? lot.me) : lot.me;
   const hasBid = Boolean(current.me?.hasBid || lot.me?.hasBid);
   return {
-    lot: next.me ? { ...next, me: { ...next.me, hasBid } } : next,
+    lot: me ? { ...next, me: { ...me, hasBid } } : next,
     bids: unite(room.bids, history.items),
     total: Math.max(room.total, history.total),
     extended: room.extended || later(next.endsAt, current.endsAt),

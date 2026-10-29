@@ -16,7 +16,9 @@ import {
 import { forLot } from '../audit/alias';
 import { expectedSeal, GENESIS, sealLot } from '../audit/chain';
 import type { Movement } from '../bids/bid.rules';
+import { bidderTops } from '../bids/bidder-tops';
 import { lastBid } from '../bids/last-bid';
+import { standing } from '../bids/standing.rules';
 import type { ArtworkDetail } from '../catalog/artwork.mapper';
 import { CatalogService } from '../catalog/catalog.service';
 import type { ImageFile } from '../catalog/cleveland.client';
@@ -63,6 +65,7 @@ const STATUS_ORDER: Record<LotStatus, [string, 'ASC' | 'DESC']> = {
 const CARD_COLUMNS = [
   'id',
   'number',
+  'artworkId',
   'title',
   'artist',
   'startingBid',
@@ -73,7 +76,6 @@ const CARD_COLUMNS = [
 
 const DETAIL_COLUMNS = [
   ...CARD_COLUMNS,
-  'artworkId',
   'accessionNumber',
   'date',
   'type',
@@ -180,7 +182,7 @@ export class LotsService {
     }
     const result = toResult(row);
     const me =
-      bidderId === null ? undefined : this.viewer(id, bidderId, row.raw);
+      bidderId === null ? undefined : await this.viewer(id, bidderId, row.raw);
     return toLotDetail(row.lot, row.raw.status, now, { result, me });
   }
 
@@ -301,9 +303,18 @@ export class LotsService {
   }
 
   // Vencedor pelo id, nunca pelo alias: dois licitantes podem colidir nos 30 bits do alias.
-  private viewer(id: number, bidderId: number, raw: DetailRaw): LotViewerDto {
+  private async viewer(
+    id: number,
+    bidderId: number,
+    raw: DetailRaw,
+  ): Promise<LotViewerDto> {
     const alias = forLot(this.secret, bidderId, id);
     const me: LotViewerDto = { alias, hasBid: raw.hasBid };
+    if (raw.hasBid) {
+      const tops = await bidderTops(this.dataSource.manager, id);
+      const position = standing(tops, bidderId);
+      if (position) me.standing = position;
+    }
     if (raw.receiptToken && raw.receiptWinnerId === bidderId) {
       me.receiptToken = raw.receiptToken;
     }

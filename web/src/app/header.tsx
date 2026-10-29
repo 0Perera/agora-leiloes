@@ -1,6 +1,7 @@
 import { Link, NavLink } from 'react-router';
 import { WalletBadge } from '../features/wallet/wallet-badge';
 import { AccountMenu } from './account-menu';
+import { Logo } from './logo';
 import type { Session } from './session';
 import { useSession } from './use-session';
 
@@ -17,7 +18,7 @@ export function Header() {
           to="/"
           aria-label="Ágora, página inicial"
         >
-          <Logo />
+          <Logo className="header-logo" />
           <span className="header-name">ÁGORA</span>
         </Link>
         <nav className="header-nav" aria-label="Principal">
@@ -31,13 +32,8 @@ export function Header() {
             Auditoria
           </Link>
           {isAuctioneer && (
-            <NavLink
-              className="nav-link"
-              to="/dashboard"
-              aria-label="Painel do leiloeiro"
-            >
-              <span className="nav-link__full">Painel do leiloeiro</span>
-              <span className="nav-link__short">Painel</span>
+            <NavLink className="nav-link" to="/dashboard">
+              Painel do leiloeiro
             </NavLink>
           )}
           {isBidder && (
@@ -78,22 +74,5 @@ function Account({ session }: { session: Session }) {
       {session.user.role === 'BIDDER' && <WalletBadge />}
       <AccountMenu session={session} />
     </>
-  );
-}
-
-function Logo() {
-  return (
-    <svg
-      className="header-logo"
-      width="34"
-      height="34"
-      viewBox="0 0 34 34"
-      aria-hidden="true"
-    >
-      <rect x="1" y="1" width="32" height="48" rx="16" ry="16" fill="#1f4b96" />
-      <rect x="5" y="5" width="24" height="48" rx="12" ry="12" fill="#f2ede3" />
-      <rect x="8" y="8" width="18" height="48" rx="9" ry="9" fill="#9a7529" />
-      <rect x="12" y="12" width="10" height="48" rx="5" ry="5" fill="#b23a1f" />
-    </svg>
   );
 }
