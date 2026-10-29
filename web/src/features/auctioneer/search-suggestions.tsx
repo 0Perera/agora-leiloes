@@ -37,6 +37,7 @@ export function SearchSuggestions({ department, onPick }: Props) {
 
   function pick(term: string) {
     setOpen(false);
+    trigger.current?.focus();
     onPick(term);
   }
 
