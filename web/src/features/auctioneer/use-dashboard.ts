@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '../../shared/api/client';
 import type {
-  BookFilter,
-  DashboardBook,
+  DashboardFilter,
+  DashboardPage,
   DashboardSummary,
 } from '../../shared/api/types';
 import type { Load } from '../../shared/lib/load';
@@ -12,11 +12,11 @@ export function useDashboard() {
     status: 'loading',
     data: null,
   });
-  const [book, setBook] = useState<Load<DashboardBook>>({
+  const [book, setBook] = useState<Load<DashboardPage>>({
     status: 'loading',
     data: null,
   });
-  const [filter, setFilter] = useState<BookFilter>('all');
+  const [filter, setFilter] = useState<DashboardFilter>('all');
   const [page, setPage] = useState(1);
   const [summaryAttempt, setSummaryAttempt] = useState(0);
   const [bookAttempt, setBookAttempt] = useState(0);
@@ -64,7 +64,7 @@ export function useDashboard() {
     setBookAttempt((current) => current + 1);
   }, []);
 
-  const choose = useCallback((next: BookFilter) => {
+  const choose = useCallback((next: DashboardFilter) => {
     setBook((current) => ({ ...current, status: 'loading' }));
     setFilter(next);
     setPage(1);

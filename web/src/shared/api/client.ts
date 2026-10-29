@@ -3,12 +3,12 @@ import type {
   AuthResponse,
   BidEvent,
   BidHistory,
-  BookFilter,
+  DashboardFilter,
   CatalogDepartment,
   CatalogSearch,
   CreatedLot,
   CreateLotRequest,
-  DashboardBook,
+  DashboardPage,
   DashboardSummary,
   DepositRequest,
   LoginRequest,
@@ -149,9 +149,9 @@ export const api = {
     request<CreatedLot>('/lots', { method: 'POST', body }),
   cancelLot: (id: number) =>
     request<void>(`/lots/${id}/cancel`, { method: 'POST' }),
-  dashboardLots: (status: BookFilter, page: number) => {
+  dashboardLots: (status: DashboardFilter, page: number) => {
     const query = new URLSearchParams({ status, page: String(page) });
-    return request<DashboardBook>(`/dashboard/lots?${query}`);
+    return request<DashboardPage>(`/dashboard/lots?${query}`);
   },
   dashboardSummary: () => request<DashboardSummary>('/dashboard/summary'),
   lots: (status: LotStatus, page: number, filter: LotFilter) => {

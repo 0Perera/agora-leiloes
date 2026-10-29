@@ -150,7 +150,7 @@ export type Standing = { highest: number; rank: number; bidders: number };
 
 export type LotResult = { alias: string | null; amount: number | null };
 
-export type BookStatus = LotStatus | 'cancelled';
+export type LotState = LotStatus | 'cancelled';
 
 export type DashboardLot = {
   id: number;
@@ -158,29 +158,29 @@ export type DashboardLot = {
   artworkId: number;
   title: string;
   artist: string;
-  status: BookStatus;
+  status: LotState;
   startingBid: number;
   currentBid: number | null;
   bidCount: number;
   startsAt: string;
   endsAt: string;
-  result: BookResult | null;
+  result: DashboardResult | null;
 };
 
-export type BookResult = {
+export type DashboardResult = {
   alias: string | null;
   amount: number | null;
   receiptToken: string | null;
 };
 
-export type BookFilter = BookStatus | 'all';
+export type DashboardFilter = LotState | 'all';
 
-export type DashboardBook = {
+export type DashboardPage = {
   items: DashboardLot[];
   page: number;
   pageSize: number;
   total: number;
-  counts: Record<BookFilter, number>;
+  counts: Record<DashboardFilter, number>;
 };
 
 export type DashboardSummary = {
@@ -222,7 +222,7 @@ export type LotAudit = {
   number: number;
   title: string;
   artist: string;
-  status: BookStatus;
+  status: LotState;
   result: AuditResult;
   // seq do primeiro lance quebrado; nulo fora de 'tampered'
   brokenSeq: number | null;
@@ -294,10 +294,6 @@ export type PlacedBid = {
 };
 
 export type BidEvent = PlacedBid;
-
-export type SettledEvent = LotResult;
-
-export type CancelledEvent = { cancelledAt: string };
 
 export type BidHistoryItem = {
   seq: number;

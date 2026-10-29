@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { api } from '../../shared/api/client';
 import type {
-  BookFilter,
-  DashboardBook,
+  DashboardFilter,
+  DashboardPage,
   DashboardLot,
 } from '../../shared/api/types';
 import { LedgerRow } from './ledger-row';
@@ -14,7 +14,7 @@ import { Pager } from '../../shared/ui/pager';
 import { Tabs } from '../../shared/ui/tabs';
 import type { Load } from '../../shared/lib/load';
 
-const filters: { id: BookFilter; label: string; empty: string }[] = [
+const filters: { id: DashboardFilter; label: string; empty: string }[] = [
   { id: 'all', label: 'Todos', empty: 'no livro' },
   { id: 'live', label: 'Ao vivo', empty: 'ao vivo' },
   { id: 'scheduled', label: 'Agendados', empty: 'agendado' },
@@ -23,10 +23,10 @@ const filters: { id: BookFilter; label: string; empty: string }[] = [
 ];
 
 type Props = {
-  state: Load<DashboardBook>;
-  filter: BookFilter;
+  state: Load<DashboardPage>;
+  filter: DashboardFilter;
   fresh: Fresh | null;
-  onFilter: (filter: BookFilter) => void;
+  onFilter: (filter: DashboardFilter) => void;
   onTurn: (page: number) => void;
   onRetry: () => void;
   onChanged: () => void;
@@ -37,7 +37,7 @@ export function Ledger(props: Props) {
   const [refusal, setRefusal] = useState<Notice | null>(null);
   const counts = state.data?.counts;
 
-  function choose(next: BookFilter) {
+  function choose(next: DashboardFilter) {
     setRefusal(null);
     props.onFilter(next);
   }
@@ -175,7 +175,7 @@ function LedgerTable({ items, fresh, onCancel }: TableProps) {
 
 type EmptyProps = {
   bookEmpty: boolean;
-  filter: BookFilter;
+  filter: DashboardFilter;
 };
 
 function LedgerEmpty({ bookEmpty, filter }: EmptyProps) {

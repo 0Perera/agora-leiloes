@@ -3,7 +3,7 @@ import type { FormEvent } from 'react';
 import { api } from '../../shared/api/client';
 import { formatMoney, maskAmount } from '../../shared/lib/money';
 import { FieldError } from '../../shared/ui/field-error';
-import { depositError, validateAmount } from './deposit';
+import { depositError, maxDeposit, validateAmount } from './deposit';
 import { useWallet } from '../../shared/lib/use-wallet';
 
 const chips = [50000, 100000, 500000];
@@ -85,7 +85,7 @@ export function DepositForm() {
             />
           </span>
           <span id="dep-help" className="ag-field__hint">
-            De R$ 1,00 a R$ 10.000.000,00 por depósito.
+            De R$ 1,00 a {formatMoney(maxDeposit)} por depósito.
           </span>
           <FieldError id="dep-err" message={error} />
         </label>

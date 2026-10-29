@@ -8,7 +8,7 @@ function makeTop(userId: number, highest: number): BidderTop {
   return { userId, highest };
 }
 
-describe('standing', () => {
+describe('standingRules.standing', () => {
   it('devolve nulo para quem não deu lance', () => {
     const tops = [makeTop(BIA, 5_000)];
 
