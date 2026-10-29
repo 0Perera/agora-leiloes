@@ -79,6 +79,7 @@ export class MyBidsService {
     const base = this.mine(userId)
       .select('lot.id', 'id')
       .addSelect('lot.number', 'number')
+      .addSelect('lot.artworkId', 'artworkId')
       .addSelect('lot.title', 'title')
       .addSelect('lot.artist', 'artist');
     const items = await section

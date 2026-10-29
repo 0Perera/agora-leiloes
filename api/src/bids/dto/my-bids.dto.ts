@@ -5,6 +5,7 @@ export type Situation = 'winning' | 'outbid';
 export class OngoingBidDto {
   id!: number;
   number!: number;
+  artworkId!: number;
   title!: string;
   artist!: string;
   currentBid!: number | null;
@@ -18,6 +19,7 @@ export class OngoingBidDto {
 export class WonBidDto {
   id!: number;
   number!: number;
+  artworkId!: number;
   title!: string;
   artist!: string;
   amount!: number;
@@ -29,6 +31,7 @@ export class WonBidDto {
 export class LostBidDto {
   id!: number;
   number!: number;
+  artworkId!: number;
   title!: string;
   artist!: string;
   amount!: number | null;

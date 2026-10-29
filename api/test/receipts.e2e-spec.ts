@@ -63,6 +63,7 @@ describe('GET /receipts/:token', () => {
     expect(response.body).toEqual({
       lotId: sold.lotId,
       number: expect.any(Number) as number,
+      artworkId: expect.any(Number) as number,
       title: expect.any(String) as string,
       artist: 'Artista de teste',
       amount: STARTING_BID,

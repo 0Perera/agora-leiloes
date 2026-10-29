@@ -27,6 +27,7 @@ export class ReceiptsService {
       .innerJoin('receipt.lot', 'lot')
       .select('receipt.lotId', 'lotId')
       .addSelect('lot.number', 'number')
+      .addSelect('lot.artworkId', 'artworkId')
       .addSelect('lot.title', 'title')
       .addSelect('lot.artist', 'artist')
       .addSelect('receipt.amount', 'amount')

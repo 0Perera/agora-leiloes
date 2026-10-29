@@ -65,6 +65,7 @@ const STATUS_ORDER: Record<LotStatus, [string, 'ASC' | 'DESC']> = {
 const CARD_COLUMNS = [
   'id',
   'number',
+  'artworkId',
   'title',
   'artist',
   'startingBid',
@@ -75,7 +76,6 @@ const CARD_COLUMNS = [
 
 const DETAIL_COLUMNS = [
   ...CARD_COLUMNS,
-  'artworkId',
   'accessionNumber',
   'date',
   'type',

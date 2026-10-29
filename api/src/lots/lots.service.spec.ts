@@ -129,6 +129,7 @@ function makeCard(override: Partial<CardFields> = {}): CardFields {
   return {
     id: 1,
     number: 7,
+    artworkId: 135382,
     title: 'Portrait of a Lady',
     artist: 'Rembrandt van Rijn',
     startingBid: 100_000,

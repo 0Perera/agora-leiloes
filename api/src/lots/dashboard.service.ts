@@ -27,6 +27,7 @@ const DASHBOARD_WHERE: Record<DashboardFilter, string> = {
 const DASHBOARD_COLUMNS = [
   'id',
   'number',
+  'artworkId',
   'title',
   'artist',
   'startingBid',

@@ -5,6 +5,7 @@ export type CardFields = Pick<
   Lot,
   | 'id'
   | 'number'
+  | 'artworkId'
   | 'title'
   | 'artist'
   | 'startingBid'
@@ -16,6 +17,7 @@ export type CardFields = Pick<
 export class LotCardDto {
   id!: number;
   number!: number;
+  artworkId!: number;
   title!: string;
   artist!: string;
   startingBid!: number;
@@ -29,6 +31,7 @@ export function toLotCard(lot: CardFields, status: LotStatus): LotCardDto {
   return {
     id: lot.id,
     number: lot.number,
+    artworkId: lot.artworkId,
     title: lot.title,
     artist: lot.artist,
     startingBid: lot.startingBid,
