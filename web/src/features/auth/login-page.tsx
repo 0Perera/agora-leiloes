@@ -1,8 +1,10 @@
+import { useRef } from 'react';
 import { Link } from 'react-router';
 import { useSession } from '../../app/use-session';
 import { api } from '../../shared/api/client';
 import type { LoginRequest } from '../../shared/api/types';
 import { AuthCard } from './auth-card';
+import { DemoAccountsBox } from './demo-accounts-box';
 import { FormNotice, TextField } from './form-parts';
 import { PasswordField } from './password-field';
 import { useAuthForm } from './use-auth-form';
@@ -17,6 +19,13 @@ export function LoginPage() {
     api.login,
   );
   const showExpired = expired && !errors.notice;
+  const submitRef = useRef<HTMLButtonElement>(null);
+
+  function pick({ email, password }: LoginRequest) {
+    change('email', email);
+    change('password', password);
+    submitRef.current?.focus();
+  }
 
   return (
     <AuthCard>
@@ -51,6 +60,7 @@ export function LoginPage() {
           error={errors.fields.password}
         />
         <button
+          ref={submitRef}
           className="ag-btn ag-btn--primary auth-submit"
           type="submit"
           disabled={submitting}
@@ -61,6 +71,7 @@ export function LoginPage() {
           Ainda não tem conta? <Link to="/signup">Criar conta</Link>
         </p>
       </form>
+      <DemoAccountsBox onPick={pick} />
     </AuthCard>
   );
 }
