@@ -1,0 +1,220 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 860" width="1080" height="860" role="img" aria-label="Modelo de dados da Ágora: seis tabelas. users tem uma wallet e cria lots como leiloeiro; lots tem uma imagem em lot_images, recebe bids e gera no máximo um receipt ao ser liquidado; bids e receipts apontam para users. Lances são só inserção, com hash HMAC encadeado e UNIQUE (lot_id, seq); o lote guarda o selo da cadeia; dinheiro em centavos.">
+<defs>
+<pattern id="meander" width="28" height="14" patternUnits="userSpaceOnUse">
+ <path d="M1 13 V1 H21 V9 H9 V5 H17" fill="none" stroke="#9a7529" stroke-width="1.6"/>
+ <path d="M21 13 H27" fill="none" stroke="#9a7529" stroke-width="1.6"/><path d="M1 13 H21" fill="none" stroke="#9a7529" stroke-width="1.6"/>
+</pattern>
+<filter id="lift" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#2b2520" flood-opacity="0.16"/></filter>
+</defs>
+<rect width="1080" height="860" fill="#f2ede3"/>
+<path d="M-20 120 C 200 60, 380 220, 620 140 S 980 60, 1100 160" fill="none" stroke="#2b2520" stroke-opacity="0.07" stroke-width="1.2"/>
+<path d="M-20 520 C 160 600, 420 440, 700 560 S 960 640, 1100 520" fill="none" stroke="#2b2520" stroke-opacity="0.06" stroke-width="1.2"/>
+<path d="M200 880 C 320 720, 520 820, 760 700" fill="none" stroke="#2b2520" stroke-opacity="0.05" stroke-width="1.2"/>
+<rect x="40" y="24" width="1000" height="14" fill="url(#meander)"/>
+<text x="540.0" y="78" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="30" letter-spacing="6" fill="#2b2520">MODELO DE DADOS</text>
+<text x="540.0" y="104" text-anchor="middle" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="16" fill="#9a7529">Seis tabelas no PostgreSQL 17 · valores em centavos</text>
+<path d="M100 332 V470" fill="none" stroke="#9a7529" stroke-width="1.8"/>
+<text x="110" y="405.0" text-anchor="start" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="13" fill="#6b6157">uma carteira</text>
+<path d="M93 340 H107" stroke="#9a7529" stroke-width="1.8"/>
+<path d="M93 462 H107" stroke="#9a7529" stroke-width="1.8"/>
+<path d="M310 305.0 H390" fill="none" stroke="#9a7529" stroke-width="1.8"/>
+<text x="350.0" y="297.0" text-anchor="middle" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="13" fill="#6b6157">leiloeiro cria</text>
+<path d="M318 298.0 V312.0" stroke="#9a7529" stroke-width="1.8"/>
+<path d="M378 305.0 L390 298.0 M378 305.0 L390 305.0 M378 305.0 L390 312.0" stroke="#9a7529" stroke-width="1.8" fill="none"/>
+<path d="M720 223.0 H800" fill="none" stroke="#9a7529" stroke-width="1.8"/>
+<text x="760.0" y="215.0" text-anchor="middle" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="13" fill="#6b6157">recebe</text>
+<path d="M728 216.0 V230.0" stroke="#9a7529" stroke-width="1.8"/>
+<path d="M788 223.0 L800 216.0 M788 223.0 L800 223.0 M788 223.0 L800 230.0" stroke="#9a7529" stroke-width="1.8" fill="none"/>
+<path d="M260 150 V132 H1000 V150" fill="none" stroke="#9a7529" stroke-width="1.8"/>
+<text x="630.0" y="126" text-anchor="middle" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="13" fill="#6b6157">licitante dá lances</text>
+<path d="M253 142 H267" stroke="#9a7529" stroke-width="1.8"/>
+<path d="M1000 138 L993 150 M1000 138 L1000 150 M1000 138 L1007 150" stroke="#9a7529" stroke-width="1.8" fill="none"/>
+<path d="M555.0 442 V640" fill="none" stroke="#9a7529" stroke-width="1.8"/>
+<text x="565.0" y="545.0" text-anchor="start" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="13" fill="#6b6157">imagem guardada</text>
+<path d="M548.0 450 H562.0" stroke="#9a7529" stroke-width="1.8"/>
+<path d="M548.0 632 H562.0" stroke="#9a7529" stroke-width="1.8"/>
+<path d="M720 402 H760 V593.0 H800" fill="none" stroke="#9a7529" stroke-width="1.8"/>
+<text x="768" y="470" text-anchor="start" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="13" fill="#6b6157">gera ao liquidar</text>
+<path d="M728 395 V409" stroke="#9a7529" stroke-width="1.8"/>
+<path d="M792 586.0 V600.0" stroke="#9a7529" stroke-width="1.8"/>
+<circle cx="780" cy="593.0" r="4.5" fill="#f2ede3" stroke="#9a7529" stroke-width="1.6"/>
+<path d="M40 223.0 H20 V816 H925.0 V724" fill="none" stroke="#9a7529" stroke-width="1.8"/>
+<text x="170" y="808" text-anchor="middle" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="13" fill="#6b6157">vencedor</text>
+<path d="M32 216.0 V230.0" stroke="#9a7529" stroke-width="1.8"/>
+<path d="M925.0 736 L918.0 724 M925.0 736 L925.0 724 M925.0 736 L932.0 724" stroke="#9a7529" stroke-width="1.8" fill="none"/>
+<g filter="url(#lift)"><rect x="40" y="150" width="270" height="182" fill="#faf6ee" stroke="#9a7529" stroke-width="1.6"/></g>
+<rect x="44" y="154" width="262" height="174" fill="none" stroke="#c9a24e" stroke-width="0.8"/>
+<rect x="44" y="154" width="262" height="34" fill="#2b2520"/>
+<text x="56" y="178" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" letter-spacing="2" fill="#c9a24e">I</text>
+<text x="88" y="178" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="16" letter-spacing="2" fill="#f2ede3">USERS</text>
+<rect x="52" y="199" width="24" height="14" fill="none" stroke="#b23a1f" stroke-width="1"/>
+<text x="64" y="210" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#b23a1f">PK</text>
+<text x="84" y="211" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">id</text>
+<text x="298" y="211" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">int</text>
+<path d="M52 216 H298" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="84" y="233" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">name</text>
+<text x="298" y="233" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">varchar</text>
+<path d="M52 238 H298" stroke="#9a7529" stroke-opacity="0.18"/>
+<rect x="52" y="243" width="24" height="14" fill="none" stroke="#9a7529" stroke-width="1"/>
+<text x="64" y="254" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#9a7529">UQ</text>
+<text x="84" y="255" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">email</text>
+<text x="298" y="255" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">varchar · minúsculo</text>
+<path d="M52 260 H298" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="84" y="277" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">password_hash</text>
+<text x="298" y="277" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">scrypt</text>
+<path d="M52 282 H298" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="84" y="299" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">role</text>
+<text x="298" y="299" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">AUCTIONEER | BIDDER</text>
+<path d="M52 304 H298" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="84" y="321" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">created_at</text>
+<text x="298" y="321" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">timestamptz</text>
+<g filter="url(#lift)"><rect x="40" y="470" width="270" height="160" fill="#faf6ee" stroke="#9a7529" stroke-width="1.6"/></g>
+<rect x="44" y="474" width="262" height="152" fill="none" stroke="#c9a24e" stroke-width="0.8"/>
+<rect x="44" y="474" width="262" height="34" fill="#2b2520"/>
+<text x="56" y="498" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" letter-spacing="2" fill="#c9a24e">II</text>
+<text x="88" y="498" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="16" letter-spacing="2" fill="#f2ede3">WALLETS</text>
+<rect x="52" y="519" width="24" height="14" fill="none" stroke="#b23a1f" stroke-width="1"/>
+<text x="64" y="530" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#b23a1f">PK</text>
+<text x="84" y="531" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">id</text>
+<text x="298" y="531" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">int</text>
+<path d="M52 536 H298" stroke="#9a7529" stroke-opacity="0.18"/>
+<rect x="52" y="541" width="24" height="14" fill="none" stroke="#1f4b96" stroke-width="1"/>
+<text x="64" y="552" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#1f4b96">FK</text>
+<text x="84" y="553" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">user_id</text>
+<text x="298" y="553" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">UNIQUE</text>
+<path d="M52 558 H298" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="84" y="575" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">balance</text>
+<text x="298" y="575" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">centavos</text>
+<path d="M52 580 H298" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="84" y="597" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">committed</text>
+<text x="298" y="597" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">centavos</text>
+<text x="175.0" y="618" text-anchor="middle" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#b23a1f">CHECK balance ≥ committed ≥ 0</text>
+<g filter="url(#lift)"><rect x="390" y="150" width="330" height="292" fill="#faf6ee" stroke="#9a7529" stroke-width="1.6"/></g>
+<rect x="394" y="154" width="322" height="284" fill="none" stroke="#c9a24e" stroke-width="0.8"/>
+<rect x="394" y="154" width="322" height="34" fill="#2b2520"/>
+<text x="406" y="178" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" letter-spacing="2" fill="#c9a24e">III</text>
+<text x="438" y="178" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="16" letter-spacing="2" fill="#f2ede3">LOTS</text>
+<rect x="402" y="199" width="24" height="14" fill="none" stroke="#b23a1f" stroke-width="1"/>
+<text x="414" y="210" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#b23a1f">PK</text>
+<text x="434" y="211" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">id</text>
+<text x="708" y="211" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">int</text>
+<path d="M402 216 H708" stroke="#9a7529" stroke-opacity="0.18"/>
+<rect x="402" y="221" width="24" height="14" fill="none" stroke="#9a7529" stroke-width="1"/>
+<text x="414" y="232" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#9a7529">UQ</text>
+<text x="434" y="233" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">number</text>
+<text x="708" y="233" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">romano na tela</text>
+<path d="M402 238 H708" stroke="#9a7529" stroke-opacity="0.18"/>
+<rect x="402" y="243" width="24" height="14" fill="none" stroke="#1f4b96" stroke-width="1"/>
+<text x="414" y="254" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#1f4b96">FK</text>
+<text x="434" y="255" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">auctioneer_id</text>
+<text x="708" y="255" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">int</text>
+<path d="M402 260 H708" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="434" y="277" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">artwork_id</text>
+<text x="708" y="277" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">acervo Cleveland</text>
+<path d="M402 282 H708" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="434" y="299" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">title · artist · …</text>
+<text x="708" y="299" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">snapshot da obra</text>
+<path d="M402 304 H708" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="434" y="321" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">starting_bid · increment</text>
+<text x="708" y="321" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">centavos</text>
+<path d="M402 326 H708" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="434" y="343" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">starts_at · ends_at</text>
+<text x="708" y="343" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">timestamptz</text>
+<path d="M402 348 H708" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="434" y="365" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">cancelled_at · settled_at</text>
+<text x="708" y="365" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">nulos até ocorrer</text>
+<path d="M402 370 H708" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="434" y="387" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">current_bid · bid_count</text>
+<text x="708" y="387" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">só exibição</text>
+<path d="M402 392 H708" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="434" y="409" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">seal</text>
+<text x="708" y="409" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">HMAC do selo</text>
+<text x="555.0" y="430" text-anchor="middle" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#b23a1f">CHECK ends_at &gt; starts_at</text>
+<g filter="url(#lift)"><rect x="390" y="640" width="330" height="116" fill="#faf6ee" stroke="#9a7529" stroke-width="1.6"/></g>
+<rect x="394" y="644" width="322" height="108" fill="none" stroke="#c9a24e" stroke-width="0.8"/>
+<rect x="394" y="644" width="322" height="34" fill="#2b2520"/>
+<text x="406" y="668" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" letter-spacing="2" fill="#c9a24e">IV</text>
+<text x="438" y="668" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="16" letter-spacing="2" fill="#f2ede3">LOT_IMAGES</text>
+<rect x="402" y="689" width="24" height="14" fill="none" stroke="#b23a1f" stroke-width="1"/>
+<text x="414" y="700" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#b23a1f">PK</text>
+<text x="434" y="701" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">lot_id</text>
+<text x="708" y="701" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">FK para lots</text>
+<path d="M402 706 H708" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="434" y="723" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">content_type</text>
+<text x="708" y="723" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">jpeg | png | webp</text>
+<path d="M402 728 H708" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="434" y="745" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">bytes</text>
+<text x="708" y="745" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">bytea</text>
+<g filter="url(#lift)"><rect x="800" y="150" width="250" height="248" fill="#faf6ee" stroke="#9a7529" stroke-width="1.6"/></g>
+<rect x="804" y="154" width="242" height="240" fill="none" stroke="#c9a24e" stroke-width="0.8"/>
+<rect x="804" y="154" width="242" height="34" fill="#2b2520"/>
+<text x="816" y="178" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" letter-spacing="2" fill="#c9a24e">V</text>
+<text x="848" y="178" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="16" letter-spacing="2" fill="#f2ede3">BIDS</text>
+<rect x="812" y="199" width="24" height="14" fill="none" stroke="#b23a1f" stroke-width="1"/>
+<text x="824" y="210" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#b23a1f">PK</text>
+<text x="844" y="211" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">id</text>
+<text x="1038" y="211" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">int</text>
+<path d="M812 216 H1038" stroke="#9a7529" stroke-opacity="0.18"/>
+<rect x="812" y="221" width="24" height="14" fill="none" stroke="#1f4b96" stroke-width="1"/>
+<text x="824" y="232" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#1f4b96">FK</text>
+<text x="844" y="233" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">lot_id</text>
+<text x="1038" y="233" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">int</text>
+<path d="M812 238 H1038" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="844" y="255" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">seq</text>
+<text x="1038" y="255" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">1, 2, 3…</text>
+<path d="M812 260 H1038" stroke="#9a7529" stroke-opacity="0.18"/>
+<rect x="812" y="265" width="24" height="14" fill="none" stroke="#1f4b96" stroke-width="1"/>
+<text x="824" y="276" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#1f4b96">FK</text>
+<text x="844" y="277" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">user_id</text>
+<text x="1038" y="277" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">int</text>
+<path d="M812 282 H1038" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="844" y="299" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">amount</text>
+<text x="1038" y="299" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">centavos</text>
+<path d="M812 304 H1038" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="844" y="321" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">created_at</text>
+<text x="1038" y="321" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">do Clock</text>
+<path d="M812 326 H1038" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="844" y="343" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">prev_hash</text>
+<text x="1038" y="343" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">hash anterior</text>
+<path d="M812 348 H1038" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="844" y="365" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">hash</text>
+<text x="1038" y="365" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">HMAC encadeado</text>
+<text x="925.0" y="386" text-anchor="middle" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#b23a1f">UNIQUE (lot_id, seq) · só INSERT</text>
+<g filter="url(#lift)"><rect x="800" y="520" width="250" height="204" fill="#faf6ee" stroke="#9a7529" stroke-width="1.6"/></g>
+<rect x="804" y="524" width="242" height="196" fill="none" stroke="#c9a24e" stroke-width="0.8"/>
+<rect x="804" y="524" width="242" height="34" fill="#2b2520"/>
+<text x="816" y="548" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" letter-spacing="2" fill="#c9a24e">VI</text>
+<text x="848" y="548" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="16" letter-spacing="2" fill="#f2ede3">RECEIPTS</text>
+<rect x="812" y="569" width="24" height="14" fill="none" stroke="#b23a1f" stroke-width="1"/>
+<text x="824" y="580" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#b23a1f">PK</text>
+<text x="844" y="581" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">id</text>
+<text x="1038" y="581" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">int</text>
+<path d="M812 586 H1038" stroke="#9a7529" stroke-opacity="0.18"/>
+<rect x="812" y="591" width="24" height="14" fill="none" stroke="#1f4b96" stroke-width="1"/>
+<text x="824" y="602" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#1f4b96">FK</text>
+<text x="844" y="603" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">lot_id</text>
+<text x="1038" y="603" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">UNIQUE</text>
+<path d="M812 608 H1038" stroke="#9a7529" stroke-opacity="0.18"/>
+<rect x="812" y="613" width="24" height="14" fill="none" stroke="#1f4b96" stroke-width="1"/>
+<text x="824" y="624" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#1f4b96">FK</text>
+<text x="844" y="625" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">winner_user_id</text>
+<text x="1038" y="625" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">int</text>
+<path d="M812 630 H1038" stroke="#9a7529" stroke-opacity="0.18"/>
+<rect x="812" y="635" width="24" height="14" fill="none" stroke="#9a7529" stroke-width="1"/>
+<text x="824" y="646" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" letter-spacing="0.5" fill="#9a7529">UQ</text>
+<text x="844" y="647" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">token</text>
+<text x="1038" y="647" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">link público</text>
+<path d="M812 652 H1038" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="844" y="669" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">alias · amount</text>
+<text x="1038" y="669" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">do último lance</text>
+<path d="M812 674 H1038" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="844" y="691" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">final_hash</text>
+<text x="1038" y="691" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">fim da cadeia</text>
+<path d="M812 696 H1038" stroke="#9a7529" stroke-opacity="0.18"/>
+<text x="844" y="713" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#2b2520">signature</text>
+<text x="1038" y="713" text-anchor="end" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="12.5" fill="#6b6157">HMAC</text>
+<rect x="415" y="790" width="24" height="14" fill="none" stroke="#b23a1f"/><text x="427" y="801" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" fill="#b23a1f">PK</text><text x="445" y="801" font-family="'EB Garamond', Garamond, Georgia, serif" font-size="13" fill="#6b6157">chave primária</text>
+<rect x="565" y="790" width="24" height="14" fill="none" stroke="#1f4b96"/><text x="577" y="801" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" fill="#1f4b96">FK</text><text x="595" y="801" font-family="'EB Garamond', Garamond, Georgia, serif" font-size="13" fill="#6b6157">chave estrangeira</text>
+<rect x="715" y="790" width="24" height="14" fill="none" stroke="#9a7529"/><text x="727" y="801" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="8.5" fill="#9a7529">UQ</text><text x="745" y="801" font-family="'EB Garamond', Garamond, Georgia, serif" font-size="13" fill="#6b6157">única</text>
+<rect x="40" y="840" width="1000" height="14" fill="url(#meander)"/>
+</svg>
