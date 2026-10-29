@@ -31,6 +31,8 @@ context: []
 
 13. Teto por depósito passa de R$ 100.000,00 para R$ 10.000.000,00 (`1_000_000_000` centavos) no `DepositDto` (`api/src/wallets/dto/deposit.dto.ts`) e no `maxDeposit` do front (`web/src/features/wallet/deposit.ts`), com a mensagem de limite, a dica do formulário (`deposit-form.tsx:88`), os testes dos dois lados (`deposit.dto.spec.ts`, `deposit.spec.ts`) e a linha de `docs/screens.md:127`. O teto do saldo (`BALANCE_LIMIT_EXCEEDED`, D-015) não muda. O cabeçalho (comentário em `layout.css:369`, medido com R$ 100.000,00) é conferido em 360px com saldo de R$ 10.000.000,00.
 
+14. O rodapé vira um mapa das telas conforme o papel, pela mesma sessão do cabeçalho. Coluna "Navegar" (todos): Vitrine, Como funciona, Auditoria. Coluna "Sua conta": visitante vê Entrar e Criar conta; licitante vê Meus lances e Carteira; leiloeiro vê só Painel do leiloeiro (não tem tela de Carteira, a rota `/wallet` é só de licitante). O GitHub sai da navegação e vai para a linha de créditos, ao lado de "Projeto do desafio Elite Dev da Verzel". Títulos das colunas em versalete pequeno; no celular as colunas empilham. Screenshots do rodapé em 360 e 1280px nos três papéis.
+
 ## Boundaries & Constraints
 
 **Always:**

@@ -908,7 +908,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **O que a IA gerou:**
 - A posição do licitante na sala ("Seu maior lance · 2º de 3 licitantes"), com a regra escrita depois do teste, calculada pelo maior lance de cada um e atualizada a cada lance novo.
-- O rodapé em todas as telas e o menu do cabeçalho em duas linhas no celular.
+- O rodapé em todas as telas, com um mapa das telas conforme o papel, e o menu do cabeçalho em duas linhas no celular.
 - No painel: a ficha do lote aparece e recebe o foco ao escolher a obra, sugestões de busca por departamento, imagens do acervo com fade, título do lote como link para a sala e selo e botão do tamanho do conteúdo no modo cartão.
 - As contas de demonstração numa caixa que abre, os atalhos de valor da sala numa linha só e o tempo restante em dias e horas acima de 48 h.
 - A correção da imagem em cache: o endereço da imagem passa a levar a obra, para o banco recriado nunca mostrar a imagem de outra peça.
@@ -919,8 +919,8 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Escolhi a lista de sugestões por departamento, depois de ver que Rembrandt, Madonna e amphora só dão resultado num deles.
 - Aprovei os casos de teste da posição, o caso de integração do licitante superado, o crédito ao museu no rodapé e o ajuste do painel em modo cartão.
 - Pedi a caixa de contas de demonstração: fechada numa linha, aberta no estilo dos cartões, e o clique preenche, fecha e põe o foco no Entrar.
-- Pedi os três atalhos de valor da sala na mesma linha, mesmo com valores grandes.
-- Pedi uma função só para o tempo restante em dias e horas acima de 48 h, na sala, no destaque, nos cards e em Meus lances.
+- Pedi os três atalhos de valor da sala na mesma linha, mesmo com valores grandes, e o tempo restante em dias e horas acima de 48 h, com uma função só para todos os lugares.
+- Pedi o rodapé como mapa das telas conforme o papel, com o GitHub nos créditos, e decidi que o leiloeiro vê só o Painel, porque não tem tela de carteira.
 - Pedi o fade nas imagens do acervo e a correção do cache da imagem, depois de ver duas janelas com obras diferentes para o mesmo lote.
 - Decidi subir o teto por depósito para R$ 10.000.000,00, sem mudar o teto do saldo, porque os lotes do seed passam de R$ 100 mil.
 
