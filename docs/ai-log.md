@@ -798,3 +798,28 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Erro encontrado na revisão:**
 - Um cabeçalho da Cloudflare vazio faria todos esses clientes dividirem o mesmo limite; agora o vazio cai no endereço da conexão.
+
+## Story 6.3: Consistência do front
+
+**O que a IA gerou:**
+- Peças únicas compartilhadas para o selo de status, a contagem regressiva e as abas, usadas em todas as telas que repetiam o mesmo desenho.
+- Os esqueletos de carregamento da carteira e do painel no mesmo padrão das outras telas.
+- Um lugar só para as datas, os limites (como o maior número de lote) e a leitura do número do lote digitado.
+- A checagem de "não encontrado" e o formato dos estados de carregamento num lugar só.
+- A limpeza da folha de estilos do design system e dos comentários fora do padrão.
+- Os dados de teste repetidos num arquivo compartilhado, com apelidos no formato real.
+- Comparação por screenshots antes e depois da vitrine, do painel e de Meus lances.
+
+**O que revisei e pedi para mudar:**
+- Defini os 13 itens da story: o que unificar, onde, e que nada de comportamento ou visual mudasse além das abas.
+- Pedi screenshots antes e depois em 1280 e 360px para as abas da vitrine e do painel.
+- Decidi que a mensagem de lote não encontrado use o mesmo rótulo de lote das outras telas.
+- Pedi que nenhuma tela importe código de dentro de outra tela.
+- Pedi para não renomear classes de estilo em massa.
+- Aprovei a spec como estava, inclusive a saída dos ganchos da carteira para a pasta compartilhada.
+
+**Sugestões rejeitadas e por quê:**
+- Nenhuma.
+
+**Erro encontrado na revisão:**
+- Nenhum.
