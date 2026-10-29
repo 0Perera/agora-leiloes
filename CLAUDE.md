@@ -83,7 +83,7 @@ dto/place-bid.dto.ts
 - Erros de negócio são exceções de domínio com código estável, mapeadas por um exception filter:
   `BID_BELOW_MINIMUM`, `INSUFFICIENT_BALANCE`, `ALREADY_WINNING`, `LOT_NOT_STARTED`, `LOT_ENDED`, `ROLE_NOT_ALLOWED`,
   `EMAIL_TAKEN`, `INVALID_CREDENTIALS` (o mesmo para e-mail inexistente e senha errada).
-  `CATALOG_UNAVAILABLE` (503), `IMAGE_DOWNLOAD_FAILED` (502), `LOT_HAS_BIDS` (409),
+  `CATALOG_UNAVAILABLE` (503), `IMAGE_DOWNLOAD_FAILED` (502),
   `ARTWORK_ALREADY_LISTED` (409): peça já em lote agendado ou ao vivo.
   `BALANCE_LIMIT_EXCEEDED` (422): depósito que levaria o saldo acima do teto do `integer`.
   `LOT_INTEGRITY_FAILED` (409): selo do lote não confere, lance recusado sem gravar nada (D-059).
