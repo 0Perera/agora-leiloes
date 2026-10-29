@@ -903,3 +903,28 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - A contagem regressiva continuava correndo na sala depois do cancelamento; agora para.
 - Um lance enviado no instante do cancelamento trocava o aviso pela tela de lote não encontrado; agora o aviso fica.
 - O teste da devolução não distinguia devolver só o valor do lance de zerar todo o saldo comprometido; agora distingue.
+
+## Story 6.6: Polimento final
+
+**O que a IA gerou:**
+- A posição do licitante na sala ("Seu maior lance · 2º de 3 licitantes"), com a regra escrita depois do teste, calculada pelo maior lance de cada um e atualizada a cada lance novo.
+- O rodapé em todas as telas e o menu do cabeçalho em duas linhas no celular.
+- No painel: a ficha do lote aparece e recebe o foco ao escolher a obra, sugestões de busca por departamento, imagens do acervo com fade, título do lote como link para a sala e selo e botão do tamanho do conteúdo no modo cartão.
+- As contas de demonstração numa caixa que abre, os atalhos de valor da sala numa linha só e o tempo restante em dias e horas acima de 48 h.
+- A correção da imagem em cache: o endereço da imagem passa a levar a obra, para o banco recriado nunca mostrar a imagem de outra peça.
+- O novo teto por depósito, nos dois lados, com testes.
+
+**O que revisei e pedi para mudar:**
+- Defini a lista de itens da story: rodapé, posição do licitante, os ajustes do painel, menu do cabeçalho, contas de demonstração, atalhos da sala, tempo em dias, fade das imagens e o bug do cache da imagem.
+- Defini os casos de teste da posição, o caso de integração do licitante superado e os casos da divisão do tempo e do endereço da imagem.
+- Escolhi os termos de sugestão de cada departamento, conferidos no acervo.
+- Pedi o crédito "Imagens das obras: Cleveland Museum of Art." no rodapé.
+- Detalhei o visual da caixa de contas de demonstração: fechada numa linha, aberta no estilo dos cartões, uma linha por conta.
+- Pedi uma função só para dividir e formatar o tempo restante na sala, no destaque, nos cards e em Meus lances.
+- Decidi subir o teto por depósito para R$ 10.000.000,00, sem mudar o teto do saldo.
+
+**Sugestões rejeitadas e por quê:**
+- Nada a registrar.
+
+**Erro encontrado na revisão:**
+- Nada a registrar.
