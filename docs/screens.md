@@ -44,7 +44,7 @@ Os textos da obra aparecem em inglês, como no acervo (D-038).
 ## Dados do lote
 
 Número sequencial global e único (D-054), lance inicial, incremento mínimo, início, fim (com prorrogação),
-lance atual, quantidade de lances, status calculado (agendado, ao vivo, encerrado; cancelado só no painel).
+lance atual, quantidade de lances, status calculado (agendado, ao vivo, encerrado; cancelado só no painel, em Meus lances e na auditoria).
 
 Os dados da obra vêm **só** do acervo: o leiloeiro não edita título nem escreve observações. Isso impede anunciar uma peça com nome ou descrição falsos.
 
@@ -115,6 +115,7 @@ Os dados da obra vêm **só** do acervo: o leiloeiro não edita título nem escr
 - **Sobre a obra e o lote:** campos do snapshot, lance inicial, incremento, início e fim.
 - **Tempo real (SSE):** novo lance no histórico, lance atual, situação do licitante, fim prorrogado e aviso de encerramento.
   Queda da conexão: "Conexão perdida. Reconectando…" e botão travado; ao reconectar, recarrega o lote. A carteira do cabeçalho é relida quando a situação muda.
+- **Cancelamento com a sala aberta:** selo "Cancelado", sem formulário nem contagem, e o aviso "Lote cancelado pelo leiloeiro. Seu saldo comprometido foi devolvido." para quem estava ganhando (com a carteira relida) ou "Lote cancelado pelo leiloeiro." para os demais (D-070).
 - Estados: carregando, erro com "Tentar de novo", lote inexistente ou cancelado ("Lote não encontrado", com volta à vitrine).
 
 ## Carteira · `features/wallet` · rota `/wallet` (só licitante)
@@ -135,6 +136,7 @@ Os dados da obra vêm **só** do acervo: o leiloeiro não edita título nem escr
     Lote vencido sem liquidação: "Encerrado, aguardando liquidação" ou "Você arrematou · aguardando liquidação".
   - **Arrematados:** valor pago, data, link do comprovante e "Copiar link de compartilhamento".
   - **Não arrematados:** valor final, o seu maior lance, "Abrir sala" e "Auditar lote".
+    Lote cancelado: selo "Cancelado", o seu maior lance, a data do cancelamento e só "Auditar lote" (a sala dá 404).
 - Vazio geral: "Você ainda não deu lances", com link para a vitrine; cada aba tem o próprio texto de vazio.
 
 ## Comprovante de arremate · `features/receipts` · rota `/receipts/:token` (pública)
@@ -164,7 +166,7 @@ Os dados da obra vêm **só** do acervo: o leiloeiro não edita título nem escr
 - Lista completa dos lances (D-066): nº de sequência, alias, valor, horário, código (escondido por padrão, "Mostrar códigos") e a marca
   **Íntegro**, **Adulterado** (com nota no lance quebrado) ou **Não verificável** (os seguintes).
 - Explicação curta de como a verificação funciona, com link para a seção Auditoria do README. Sem link para o comprovante: o token só chega ao vencedor.
-- Sem login. Lote inexistente ou cancelado: "Lote não encontrado".
+- Sem login. Lote inexistente: "Lote não encontrado". Lote cancelado abre pelo link direto, com o selo "Cancelado" e o veredito normal (D-070).
 
 ## Painel do leiloeiro · `features/auctioneer` · rota `/dashboard` (só leiloeiro)
 
@@ -181,7 +183,7 @@ Os dados da obra vêm **só** do acervo: o leiloeiro não edita título nem escr
   - Depois de criar: janela "Lote … publicado", com "Ver no livro" e "Criar outro lote".
 - **Livro de lotes** (só os do leiloeiro): filtros Todos, Ao vivo, Agendados, Encerrados, Cancelados, com contagem; 20 por página.
   - Linha: número, obra, estado, lance inicial, resultado (arrematado por R$ X / sem lances / aguardando liquidação / lance atual), nº de lances, período.
-  - **Cancelar** só em lote sem lances, com confirmação ("Tirar o lote da vitrine?"). Se um lance chegar antes, a API recusa (`LOT_HAS_BIDS`) e a tela avisa.
+  - **Cancelar** em lote agendado ou ao vivo, com confirmação ("Tirar o lote da vitrine?"). Com lances, a confirmação avisa: "Os lances continuam na auditoria e o saldo comprometido volta para quem está ganhando." Lote que encerrou antes recebe `LOT_ENDED` (D-070).
   - "Abrir sala" em todo lote não cancelado; encerrado e arrematado: link para o comprovante.
 
 ---
