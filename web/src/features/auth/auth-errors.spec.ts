@@ -20,6 +20,18 @@ describe('authError', () => {
     expect(result.notice?.title).toBe('Não foi possível entrar');
   });
 
+  it('mostra aviso de muitas tentativas no login bloqueado', () => {
+    const result = authError(
+      new ApiError(429, { code: 'TOO_MANY_ATTEMPTS' }),
+      'login',
+      {},
+    );
+    expect(result.notice).toEqual({
+      title: 'Muitas tentativas.',
+      text: 'Aguarde um minuto e tente de novo.',
+    });
+  });
+
   it('mostra e-mail já cadastrado sob o e-mail', () => {
     const result = authError(
       new ApiError(409, { code: 'EMAIL_TAKEN' }),
