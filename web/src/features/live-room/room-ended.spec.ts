@@ -6,8 +6,8 @@ type EndedLot = Pick<LotDetail, 'result' | 'me'>;
 
 function makeLot(override: Partial<EndedLot> = {}): EndedLot {
   return {
-    result: { alias: 'Licitante #A7F2', amount: 975000 },
-    me: { alias: 'Licitante #A7F2', hasBid: true, receiptToken: 'token' },
+    result: { alias: 'Licitante K7QX2M', amount: 975000 },
+    me: { alias: 'Licitante K7QX2M', hasBid: true, receiptToken: 'token' },
     ...override,
   };
 }
@@ -22,18 +22,18 @@ describe('endedOf', () => {
   });
 
   it('mostra o vencedor e o valor a quem perdeu', () => {
-    const lot = makeLot({ me: { alias: 'Licitante #B3C1', hasBid: true } });
+    const lot = makeLot({ me: { alias: 'Licitante P4RT6N', hasBid: true } });
     expect(endedOf(lot)).toEqual({
       outcome: 'closed',
-      text: 'Arrematado por Licitante #A7F2 por R$ 9.750,00.',
+      text: 'Arrematado por Licitante K7QX2M por R$ 9.750,00.',
     });
   });
 
   it('mostra o lote encerrado ao licitante com o alias do resultado e sem token', () => {
-    const lot = makeLot({ me: { alias: 'Licitante #A7F2', hasBid: true } });
+    const lot = makeLot({ me: { alias: 'Licitante K7QX2M', hasBid: true } });
     expect(endedOf(lot)).toEqual({
       outcome: 'closed',
-      text: 'Arrematado por Licitante #A7F2 por R$ 9.750,00.',
+      text: 'Arrematado por Licitante K7QX2M por R$ 9.750,00.',
     });
   });
 
@@ -41,7 +41,7 @@ describe('endedOf', () => {
     const lot = makeLot({ me: undefined });
     expect(endedOf(lot)).toEqual({
       outcome: 'closed',
-      text: 'Arrematado por Licitante #A7F2 por R$ 9.750,00.',
+      text: 'Arrematado por Licitante K7QX2M por R$ 9.750,00.',
     });
   });
 

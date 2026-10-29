@@ -77,7 +77,7 @@ describe('awaitsSettlement', () => {
   });
 
   it('não aguarda no lote encerrado já liquidado', () => {
-    const result = { alias: 'Licitante #A7F2', amount: 975000 };
+    const result = { alias: 'Licitante K7QX2M', amount: 975000 };
     expect(awaitsSettlement({ status: 'ended', result })).toBe(false);
   });
 });
@@ -88,7 +88,7 @@ describe('topMark', () => {
   });
 
   it('marca o último lance como "Arrematou" no lote liquidado com vencedor', () => {
-    const result = { alias: 'Licitante #A7F2', amount: 975000 };
+    const result = { alias: 'Licitante K7QX2M', amount: 975000 };
     expect(topMark({ status: 'ended', result })).toBe('Arrematou');
   });
 
