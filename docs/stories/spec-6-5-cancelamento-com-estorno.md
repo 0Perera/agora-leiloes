@@ -97,7 +97,7 @@ context: []
 
 **Acceptance Criteria:**
 - Given uma sala aberta, when o leiloeiro cancela, then o evento chega depois do commit, o formulário some e a mensagem certa aparece.
-- Given o painel com um lote ao vivo com lances, when o leiloeiro clica em "Cancelar lote", then a confirmação diz "Os lances serão cancelados e o saldo comprometido volta para o licitante que está ganhando."
+- Given o painel com um lote ao vivo com lances, when o leiloeiro clica em "Cancelar lote", then a confirmação diz "Os lances continuam na auditoria e o saldo comprometido volta para quem está ganhando."
 - Given o líder estornado, when abre a carteira, then o lote não está entre os comprometidos e o comprometido caiu o valor do lance.
 
 ## Implementation Notes

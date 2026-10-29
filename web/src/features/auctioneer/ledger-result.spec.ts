@@ -93,7 +93,7 @@ describe('cancellable', () => {
 describe('cancelWarning', () => {
   it('com lances, avisa que o comprometido volta para o líder', () => {
     expect(cancelWarning({ bidCount: 2 })).toBe(
-      'Os lances serão cancelados e o saldo comprometido volta para o licitante que está ganhando.',
+      'Os lances continuam na auditoria e o saldo comprometido volta para quem está ganhando.',
     );
   });
 

@@ -48,6 +48,6 @@ export function cancelWarning(
   lot: Pick<DashboardLot, 'bidCount'>,
 ): string | null {
   return lot.bidCount > 0
-    ? 'Os lances serão cancelados e o saldo comprometido volta para o licitante que está ganhando.'
+    ? 'Os lances continuam na auditoria e o saldo comprometido volta para quem está ganhando.'
     : null;
 }
