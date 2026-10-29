@@ -84,7 +84,7 @@ export function LotCard({ lot, now, offset }: Props) {
         <div className="niche__stage">
           <img
             className="niche__image"
-            src={lotImageUrl(lot.id)}
+            src={lotImageUrl(lot.id, lot.artworkId)}
             alt={`Imagem de ${lot.title}`}
             loading="lazy"
           />

@@ -83,7 +83,7 @@ function FeaturedLot({ room, now }: { room: ReadyFeatured; now: number }) {
           <div className="niche__stage">
             <img
               className="niche__image"
-              src={lotImageUrl(lot.id)}
+              src={lotImageUrl(lot.id, lot.artworkId)}
               alt={`Imagem de ${lot.title}`}
             />
           </div>

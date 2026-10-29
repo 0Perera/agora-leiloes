@@ -27,6 +27,7 @@ function WonPlaque({ bid }: { bid: WonBid }) {
   return (
     <Plaque
       id={bid.id}
+      artworkId={bid.artworkId}
       number={bid.number}
       title={bid.title}
       artist={bid.artist}

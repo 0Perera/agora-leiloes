@@ -31,6 +31,7 @@ function LostPlaque({ bid }: { bid: LostBid }) {
   return (
     <Plaque
       id={bid.id}
+      artworkId={bid.artworkId}
       number={bid.number}
       title={bid.title}
       artist={bid.artist}
@@ -66,6 +67,7 @@ function CancelledPlaque({ bid, at }: { bid: LostBid; at: string }) {
   return (
     <Plaque
       id={bid.id}
+      artworkId={bid.artworkId}
       number={bid.number}
       title={bid.title}
       artist={bid.artist}

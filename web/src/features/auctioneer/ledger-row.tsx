@@ -66,7 +66,7 @@ export function LedgerRow({ lot, fresh, ...actions }: Props) {
         <span className="panel-thumb" aria-hidden="true">
           <img
             className="panel-thumb-image"
-            src={lotImageUrl(lot.id)}
+            src={lotImageUrl(lot.id, lot.artworkId)}
             alt=""
             loading="lazy"
           />

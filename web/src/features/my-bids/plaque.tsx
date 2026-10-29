@@ -16,6 +16,7 @@ export type Fact = {
 type Props = {
   id: number;
   number: number;
+  artworkId: number;
   title: string;
   artist: string;
   tag: { text: string; tone: Tone };
@@ -35,6 +36,7 @@ function valueClass(fact: Fact): string {
 export function Plaque({
   id,
   number,
+  artworkId,
   title,
   artist,
   tag,
@@ -52,7 +54,7 @@ export function Plaque({
       <div className="bids-plaque__wall">
         <img
           className="bids-plaque__image"
-          src={lotImageUrl(id)}
+          src={lotImageUrl(id, artworkId)}
           alt={`Imagem de ${title}`}
           loading="lazy"
         />

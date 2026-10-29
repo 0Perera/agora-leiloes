@@ -41,7 +41,11 @@ export function CreatedDialog({ lot, onClose }: Props) {
       </h2>
       <div className="panel-dialog-work">
         <span className="panel-thumb" aria-hidden="true">
-          <img className="panel-thumb-image" src={lotImageUrl(lot.id)} alt="" />
+          <img
+            className="panel-thumb-image"
+            src={lotImageUrl(lot.id, lot.artworkId)}
+            alt=""
+          />
         </span>
         <span className="panel-obra-text">
           <span className="panel-obra-title">{lot.title}</span>

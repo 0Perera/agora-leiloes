@@ -36,6 +36,7 @@ function OngoingPlaque({ bid, now }: { bid: OngoingBid; now: number }) {
   return (
     <Plaque
       id={bid.id}
+      artworkId={bid.artworkId}
       number={bid.number}
       title={bid.title}
       artist={bid.artist}
