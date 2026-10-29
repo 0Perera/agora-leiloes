@@ -5,6 +5,7 @@ import { clockOffset } from '../../shared/lib/countdown';
 import { mergeBid, mergeRoom } from '../../shared/lib/live-bids';
 import type { LiveRoom } from '../../shared/lib/live-bids';
 import { useLotStream } from '../../shared/lib/use-lot-stream';
+import { useOptionalWallet } from '../../shared/lib/use-wallet';
 
 export type ReadyFeatured = LiveRoom & { status: 'ready'; offset: number };
 
@@ -90,13 +91,18 @@ export function useFeatured() {
     [],
   );
   const onMissing = useCallback(() => setFeatured({ status: 'none' }), []);
+  const refresh = useOptionalWallet()?.refresh;
+  const onCancelled = useCallback(() => {
+    refresh?.();
+    onMissing();
+  }, [refresh, onMissing]);
 
   const id = featured.status === 'ready' ? featured.lot.id : 0;
   useLotStream(id, featured.status === 'ready', {
     onBid,
     onSync,
     onMissing,
-    onCancelled: onMissing,
+    onCancelled,
   });
 
   return { featured, retry };

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960" width="1000" height="960" role="img" aria-label="Fluxo de um lance. O licitante envia o lance. Numa transação única, a API trava o lote, lê o último lance e confere o selo (selo divergente recusa com 409), trava as carteiras em ordem de id, aplica a regra (recusa responde 422 sem gravar nada), grava o lance encadeado com o novo selo e move o saldo comprometido, e faz o COMMIT. Só depois avisa as outras salas pelo stream e responde 201 ao licitante.">
+<defs><pattern id="meander" width="28" height="14" patternUnits="userSpaceOnUse"><path d="M1 13 V1 H21 V9 H9 V5 H17" fill="none" stroke="#9a7529" stroke-width="1.6"/><path d="M1 13 H27" fill="none" stroke="#9a7529" stroke-width="1.6"/></pattern>
+<marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#9a7529"/></marker>
+<marker id="r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b23a1f"/></marker>
+<filter id="lift" x="-10%" y="-20%" width="120%" height="150%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#2b2520" flood-opacity="0.14"/></filter></defs>
+<rect width="1000" height="960" fill="#f2ede3"/>
+<path d="M-20 260 C 200 180, 420 360, 680 270 S 920 190, 1020 290" fill="none" stroke="#2b2520" stroke-opacity="0.06"/>
+<path d="M-20 760 C 180 840, 460 680, 740 800 S 940 860, 1020 760" fill="none" stroke="#2b2520" stroke-opacity="0.05"/>
+<rect x="40" y="24" width="920" height="14" fill="url(#meander)"/>
+<text x="500.0" y="80" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="30" letter-spacing="6" fill="#2b2520">FLUXO DE UM LANCE</text>
+<text x="500.0" y="106" text-anchor="middle" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="16" fill="#9a7529">POST /lots/:id/bids, do clique ao aviso nas outras salas</text>
+<g filter="url(#lift)"><rect x="150.0" y="140" width="460" height="58" fill="#2b2520" stroke="#9a7529" stroke-width="1.5"/></g>
+<rect x="154.0" y="144" width="452" height="50" fill="none" stroke="#c9a24e" stroke-width="0.7"/>
+<circle cx="184.0" cy="169.0" r="14" fill="#f2ede3"/><text x="184.0" y="174.0" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" fill="#2b2520">1</text>
+<text x="212.0" y="165" font-family="'EB Garamond', Garamond, Georgia, serif" font-size="18" fill="#f2ede3">O licitante envia o lance</text>
+<text x="212.0" y="184" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#c9a24e">valor em centavos + token JWT</text>
+<rect x="124.0" y="222" width="512" height="542" fill="none" stroke="#9a7529" stroke-width="1.2" stroke-dasharray="2 5"/>
+<rect x="138.0" y="212" width="190" height="20" fill="#f2ede3"/>
+<text x="146.0" y="227" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="12" letter-spacing="2" fill="#9a7529">TRANSAÇÃO ÚNICA</text>
+<path d="M380 198 V242" stroke="#9a7529" stroke-width="1.8" marker-end="url(#a)"/>
+<g filter="url(#lift)"><rect x="150.0" y="244" width="460" height="58" fill="#faf6ee" stroke="#9a7529" stroke-width="1.5"/></g>
+<rect x="154.0" y="248" width="452" height="50" fill="none" stroke="#c9a24e" stroke-width="0.7"/>
+<circle cx="184.0" cy="273.0" r="14" fill="#2b2520"/><text x="184.0" y="278.0" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" fill="#c9a24e">2</text>
+<text x="212.0" y="269" font-family="'EB Garamond', Garamond, Georgia, serif" font-size="18" fill="#2b2520">Trava o lote</text>
+<text x="212.0" y="288" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#6b6157">SELECT … FOR UPDATE · hora lida depois da trava</text>
+<path d="M380 302 V330" stroke="#9a7529" stroke-width="1.8" marker-end="url(#a)"/>
+<g filter="url(#lift)"><rect x="150.0" y="332" width="460" height="58" fill="#faf6ee" stroke="#9a7529" stroke-width="1.5"/></g>
+<rect x="154.0" y="336" width="452" height="50" fill="none" stroke="#c9a24e" stroke-width="0.7"/>
+<circle cx="184.0" cy="361.0" r="14" fill="#2b2520"/><text x="184.0" y="366.0" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" fill="#c9a24e">3</text>
+<text x="212.0" y="357" font-family="'EB Garamond', Garamond, Georgia, serif" font-size="18" fill="#2b2520">Lê o último lance e confere o selo</text>
+<text x="212.0" y="376" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#6b6157">liderança lida de bids, não da cópia no lote</text>
+<path d="M610.0 361.0 H678.0" stroke="#b23a1f" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#r)"/>
+<rect x="680.0" y="338" width="230" height="46" fill="#faf6ee" stroke="#b23a1f" stroke-width="1.3"/>
+<text x="694.0" y="359" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="12.5" letter-spacing="1" fill="#b23a1f">409 LOT_INTEGRITY_FAILED</text>
+<text x="694.0" y="376" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="14" fill="#2b2520">selo não confere: nada é gravado</text>
+<path d="M380 390 V418" stroke="#9a7529" stroke-width="1.8" marker-end="url(#a)"/>
+<g filter="url(#lift)"><rect x="150.0" y="420" width="460" height="58" fill="#faf6ee" stroke="#9a7529" stroke-width="1.5"/></g>
+<rect x="154.0" y="424" width="452" height="50" fill="none" stroke="#c9a24e" stroke-width="0.7"/>
+<circle cx="184.0" cy="449.0" r="14" fill="#2b2520"/><text x="184.0" y="454.0" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" fill="#c9a24e">4</text>
+<text x="212.0" y="445" font-family="'EB Garamond', Garamond, Georgia, serif" font-size="18" fill="#2b2520">Trava as carteiras em ordem de id</text>
+<text x="212.0" y="464" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#6b6157">licitante e líder anterior · evita deadlock</text>
+<path d="M380 478 V506" stroke="#9a7529" stroke-width="1.8" marker-end="url(#a)"/>
+<g filter="url(#lift)"><rect x="150.0" y="508" width="460" height="58" fill="#faf6ee" stroke="#9a7529" stroke-width="1.5"/></g>
+<rect x="154.0" y="512" width="452" height="50" fill="none" stroke="#c9a24e" stroke-width="0.7"/>
+<circle cx="184.0" cy="537.0" r="14" fill="#2b2520"/><text x="184.0" y="542.0" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" fill="#c9a24e">5</text>
+<text x="212.0" y="533" font-family="'EB Garamond', Garamond, Georgia, serif" font-size="18" fill="#2b2520">Aplica a regra</text>
+<text x="212.0" y="552" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#6b6157">status · liderança · mínimo · saldo · anti-sniping</text>
+<path d="M610.0 537.0 H678.0" stroke="#b23a1f" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#r)"/>
+<rect x="680.0" y="514" width="230" height="46" fill="#faf6ee" stroke="#b23a1f" stroke-width="1.3"/>
+<text x="694.0" y="535" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="12.5" letter-spacing="1" fill="#b23a1f">422 COM O MOTIVO</text>
+<text x="694.0" y="552" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="14" fill="#2b2520">lance recusado: nada é gravado</text>
+<path d="M380 566 V594" stroke="#9a7529" stroke-width="1.8" marker-end="url(#a)"/>
+<g filter="url(#lift)"><rect x="150.0" y="596" width="460" height="58" fill="#faf6ee" stroke="#9a7529" stroke-width="1.5"/></g>
+<rect x="154.0" y="600" width="452" height="50" fill="none" stroke="#c9a24e" stroke-width="0.7"/>
+<circle cx="184.0" cy="625.0" r="14" fill="#2b2520"/><text x="184.0" y="630.0" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" fill="#c9a24e">6</text>
+<text x="212.0" y="621" font-family="'EB Garamond', Garamond, Georgia, serif" font-size="18" fill="#2b2520">Grava o lance e o novo selo, move o saldo</text>
+<text x="212.0" y="640" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#6b6157">seq + 1 · hash = HMAC(dados, hash anterior)</text>
+<path d="M380 654 V682" stroke="#9a7529" stroke-width="1.8" marker-end="url(#a)"/>
+<g filter="url(#lift)"><rect x="150.0" y="684" width="460" height="58" fill="#faf6ee" stroke="#9a7529" stroke-width="1.5"/></g>
+<rect x="154.0" y="688" width="452" height="50" fill="none" stroke="#c9a24e" stroke-width="0.7"/>
+<circle cx="184.0" cy="713.0" r="14" fill="#2b2520"/><text x="184.0" y="718.0" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" fill="#c9a24e">7</text>
+<text x="212.0" y="709" font-family="'EB Garamond', Garamond, Georgia, serif" font-size="18" fill="#2b2520">Confirma tudo junto</text>
+<text x="212.0" y="728" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#6b6157">COMMIT</text>
+<path d="M380 764 V802" stroke="#9a7529" stroke-width="1.8"/>
+<text x="392" y="786" font-family="'EB Garamond', Garamond, Georgia, serif" font-style="italic" font-size="14" fill="#6b6157">só depois do commit</text>
+<path d="M200 802 H570" stroke="#9a7529" stroke-width="1.8"/>
+<path d="M200 802 V826" stroke="#9a7529" stroke-width="1.8" marker-end="url(#a)"/>
+<path d="M570 802 V826" stroke="#9a7529" stroke-width="1.8" marker-end="url(#a)"/>
+<g filter="url(#lift)"><rect x="35.0" y="828" width="330" height="58" fill="#faf6ee" stroke="#9a7529" stroke-width="1.5"/></g>
+<circle cx="65.0" cy="857.0" r="14" fill="#9a7529"/><text x="65.0" y="862.0" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" fill="#f2ede3">8</text>
+<text x="91.0" y="853" font-family="'EB Garamond', Garamond, Georgia, serif" font-size="17" fill="#2b2520">Responde ao licitante</text>
+<text x="91.0" y="872" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#6b6157">201 com o lance aceito</text>
+<g filter="url(#lift)"><rect x="405.0" y="828" width="330" height="58" fill="#faf6ee" stroke="#1f4b96" stroke-width="1.5"/></g>
+<circle cx="435.0" cy="857.0" r="14" fill="#1f4b96"/><text x="435.0" y="862.0" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Cormorant SC', Georgia, serif" font-size="13" fill="#f2ede3">9</text>
+<text x="461.0" y="853" font-family="'EB Garamond', Garamond, Georgia, serif" font-size="17" fill="#2b2520">Avisa as outras salas</text>
+<text x="461.0" y="872" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#6b6157">evento &quot;bid&quot; pelo stream (SSE)</text>
+<rect x="40" y="926" width="920" height="14" fill="url(#meander)"/>
+</svg>

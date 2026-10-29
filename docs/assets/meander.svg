@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 14" width="560" height="14" aria-hidden="true">
+<defs><pattern id="meander" width="28" height="14" patternUnits="userSpaceOnUse">
+ <path d="M1 13 V1 H21 V9 H9 V5 H17" fill="none" stroke="#9a7529" stroke-width="1.6"/>
+ <path d="M1 13 H27" fill="none" stroke="#9a7529" stroke-width="1.6"/></pattern></defs>
+<rect width="560" height="14" fill="url(#meander)"/>
+</svg>

@@ -29,7 +29,6 @@ context:
 
 **Never:**
 - Tocar `README.md`, `docs/stories/deferred-work.md` ou `docs/deploy-notes.md`.
-- Citar critérios de avaliação de processo seletivo.
 - Inventar revisão no ai-log ou mudar o sentido de uma decisão registrada.
 
 ## I/O & Edge-Case Matrix

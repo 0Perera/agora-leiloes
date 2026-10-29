@@ -932,3 +932,28 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Escolher uma sugestão pelo teclado deixava o foco perdido na página; agora volta ao botão de sugestões.
 - Na conferência das telas: o resumo das contas de demonstração aparecia cortado em 360px; agora quebra em duas linhas.
 - Na conferência das telas: o lote encerrado sem comprovante ficava com o rótulo "Ação" sozinho no cartão; agora a linha some.
+
+## Story 6.7: README final
+
+**O que a IA gerou:**
+- As correções da revisão das stories 6.1 a 6.6: o destaque da vitrine relê a carteira quando o lote é cancelado, o depósito devolve o tipo de resposta da carteira, o seed reaproveita a busca do último lance, os tipos do painel com os nomes da API, a remoção de tipos sem uso, os textos do teto do depósito montados pelo valor e nomes ajustados ao padrão.
+- O README final, com as regras do leilão, os comportamentos esperados, a auditoria e o que ficou de fora.
+- Um documento de desenvolvimento com hot reload, migrations, seed fora do compose e as limitações do plano free, no lugar das notas de deploy.
+- Os mockups de monitor e celular com a página inicial, o print da auditoria adulterada e o script que gera os prints.
+
+**O que revisei e pedi para mudar:**
+- Pedi para aplicar os achados da revisão das stories 6.1 a 6.6.
+- Pedi que o destaque releia a carteira só quando ela existe, como o cartão do destaque já faz, porque o visitante não tem carteira.
+- Decidi levar das notas de deploy para o documento de desenvolvimento só a topologia, os limites do plano free e as armadilhas de configuração.
+- Pedi na seção de testes uma linha explicando o squash e por que as branches das stories são mantidas.
+- Pedi mockups de monitor e celular no topo, no lugar dos prints soltos da página inicial.
+- Decidi que o README tem um único print, o da auditoria adulterada, e que "Testar agora" fica só em texto.
+- Decidi tirar o Swagger de "Fora do escopo" e a linha do banco recriado na entrega de "Comportamentos esperados".
+- Pedi para conferir os números de decisão citados nas regras do leilão, porque o saldo comprometido apontava para a decisão errada.
+
+**Sugestões rejeitadas e por quê:**
+- Nada a registrar.
+
+**Erro encontrado na revisão:**
+- Na conferência dos mockups, a ilha do celular cobria o botão Entrar; agora a tela começa abaixo dela.
+- Nas regras do leilão, quatro citações apontavam para decisões que tratam de outra coisa (o lance atual guardado no lote, o status das recusas e o timer da liquidação); agora cada regra cita a decisão certa ou fica sem número.

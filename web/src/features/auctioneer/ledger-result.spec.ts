@@ -68,7 +68,7 @@ describe('receiptOf', () => {
   });
 });
 
-function makeBookLot(
+function makeDashboardLot(
   override: Partial<Pick<DashboardLot, 'status' | 'bidCount'>> = {},
 ): Pick<DashboardLot, 'status' | 'bidCount'> {
   return { status: 'live', bidCount: 0, ...override };
@@ -76,17 +76,17 @@ function makeBookLot(
 
 describe('cancellable', () => {
   it('aceita lote ao vivo com lances', () => {
-    expect(cancellable(makeBookLot({ bidCount: 3 }))).toBe(true);
+    expect(cancellable(makeDashboardLot({ bidCount: 3 }))).toBe(true);
   });
 
   it('aceita lote agendado', () => {
-    expect(cancellable(makeBookLot({ status: 'scheduled' }))).toBe(true);
+    expect(cancellable(makeDashboardLot({ status: 'scheduled' }))).toBe(true);
   });
 
   it('recusa lote encerrado', () => {
-    expect(cancellable(makeBookLot({ status: 'ended', bidCount: 3 }))).toBe(
-      false,
-    );
+    expect(
+      cancellable(makeDashboardLot({ status: 'ended', bidCount: 3 })),
+    ).toBe(false);
   });
 });
 

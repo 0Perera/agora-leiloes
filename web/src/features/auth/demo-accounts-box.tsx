@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import type { LoginRequest } from '../../shared/api/types';
-import { DEMO_ACCOUNTS, DEMO_PASSWORD } from './demo-accounts';
+import { demoAccounts, demoPassword } from './demo-accounts';
 
 type Props = { onPick: (values: LoginRequest) => void };
 
@@ -9,7 +9,7 @@ export function DemoAccountsBox({ onPick }: Props) {
 
   function pick(email: string) {
     if (box.current) box.current.open = false;
-    onPick({ email, password: DEMO_PASSWORD });
+    onPick({ email, password: demoPassword });
   }
 
   return (
@@ -20,7 +20,7 @@ export function DemoAccountsBox({ onPick }: Props) {
       </summary>
       <div className="demo-box-panel">
         <ul className="demo-box-list">
-          {DEMO_ACCOUNTS.map((account) => (
+          {demoAccounts.map((account) => (
             <li key={account.email}>
               <button
                 type="button"
@@ -36,7 +36,7 @@ export function DemoAccountsBox({ onPick }: Props) {
             </li>
           ))}
         </ul>
-        <p className="demo-box-password">Senha de todas: {DEMO_PASSWORD}</p>
+        <p className="demo-box-password">Senha de todas: {demoPassword}</p>
       </div>
     </details>
   );

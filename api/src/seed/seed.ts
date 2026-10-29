@@ -1,8 +1,8 @@
 import { INestApplicationContext, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
-import { Bid } from '../bids/bid.entity';
 import { BidsService } from '../bids/bids.service';
+import { lastBid } from '../bids/last-bid';
 import { CatalogService } from '../catalog/catalog.service';
 import { Clock } from '../common/clock';
 import { Lot } from '../lots/lot.entity';
@@ -162,11 +162,7 @@ class Seeder {
   }
 
   private async bids(plan: LotPlan, lot: SeededLot, users: Users) {
-    const last = await this.db.getRepository(Bid).findOne({
-      select: { seq: true },
-      where: { lotId: lot.id },
-      order: { seq: 'DESC' },
-    });
+    const last = await lastBid(this.db.manager, lot.id);
     const service = this.app.get(BidsService);
     for (const bid of plan.bids.slice(last?.seq ?? 0)) {
       const at = shift(lot.startsAt, bid.after);

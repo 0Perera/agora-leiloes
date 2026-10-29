@@ -1,5 +1,5 @@
 import { ApiError } from '../../shared/api/client';
-import { parseAmount } from '../../shared/lib/money';
+import { formatMoney, parseAmount } from '../../shared/lib/money';
 
 export const minDeposit = 100;
 export const maxDeposit = 1_000_000_000;
@@ -7,7 +7,7 @@ export const maxDeposit = 1_000_000_000;
 const messages = {
   empty: 'Informe o valor do depósito.',
   min: 'O depósito mínimo é R$ 1,00.',
-  max: 'O limite por depósito simulado é R$ 10.000.000,00.',
+  max: `O limite por depósito simulado é ${formatMoney(maxDeposit)}.`,
   format: 'Use só números, com até dois centavos. Ex.: 1.500,50',
   balanceLimit: 'Com esse depósito, o saldo passaria do limite da carteira.',
   connection: 'Não foi possível conectar. Tente de novo.',

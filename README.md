@@ -1,184 +1,221 @@
-# Ágora
+<p align="center"><img alt="Ágora: casa de leilões de arte clássica" src="docs/assets/readme-banner.svg" width="100%"></p>
 
-Casa de leilões online de arte clássica europeia, com lances ao vivo e histórico auditável.
+<p align="center">
+<img alt="NestJS 11" src="https://img.shields.io/badge/NestJS-11-e0234e?labelColor=2b2520&logo=nestjs">
+<img alt="React 19 + Vite" src="https://img.shields.io/badge/React_19-Vite-61dafb?labelColor=2b2520&logo=react">
+<img alt="PostgreSQL 17" src="https://img.shields.io/badge/PostgreSQL-17-4169e1?labelColor=2b2520&logo=postgresql">
+<img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178c6?labelColor=2b2520&logo=typescript">
+</p>
 
-_(o que faz: lista curta de funcionalidades)_
+<p align="center">
+<img alt="Monitor com a página inicial da Ágora: cabeçalho, lote em destaque ao vivo com lance atual, contagem regressiva e a obra num nicho em arco" src="docs/assets/preview-desktop.png" width="66%">
+<img alt="Celular com a página inicial da Ágora: menu, a obra em destaque num nicho em arco e o título do lote ao vivo" src="docs/assets/preview-mobile.png" width="23%">
+</p>
 
-- App: https://agora-web-gp1g.onrender.com
-- API: https://agora-api-w6z9.onrender.com (status em [`/health`](https://agora-api-w6z9.onrender.com/health))
+<p align="center"><em>Como na praça de Atenas: tudo à vista, e qualquer pessoa pode conferir.</em></p>
 
-## Testar agora
+Ágora é uma casa de leilões online de arte clássica europeia. As obras vêm do acervo aberto do Cleveland Museum of Art: o leiloeiro escolhe uma peça e cria o lote, os licitantes dão lances ao vivo com o saldo de uma carteira simulada, e qualquer pessoa, sem login, confere se o histórico de lances de um lote foi alterado.
 
-> O primeiro acesso pode levar até 1 min: a API dorme após 15 min sem tráfego (plano free do Render).
+**App:** https://agora-web-gp1g.onrender.com · **API:** [`/health`](https://agora-api-w6z9.onrender.com/health)
+O primeiro acesso pode levar até 1 min: a API dorme após 15 min sem tráfego (plano free do Render).
 
-Contas de demonstração (também na tela Entrar, que preenche o formulário com um clique), todas com a senha `Agora2026!`:
+[I · O que dá para fazer](#i--o-que-dá-para-fazer) · [II · Testar agora](#ii--testar-agora) · [III · Regras do leilão](#iii--regras-do-leilão) · [IV · Rodar local](#iv--rodar-local) · [V · Arquitetura](#v--arquitetura) · [VI · Modelo de dados](#vi--modelo-de-dados) · [VII · Auditoria](#vii--auditoria) · [VIII · Comportamentos esperados](#viii--comportamentos-esperados) · [IX · Testes](#ix--testes) · [X · Decisões principais](#x--decisões-principais) · [XI · Identidade visual e processo de design](#xi--identidade-visual-e-processo-de-design) · [XII · Fora do escopo](#xii--fora-do-escopo) · [XIII · Uso de IA](#xiii--uso-de-ia)
 
-| E-mail | Papel |
-|---|---|
-| `leiloeiro@agora.dev` | Leiloeiro (Casa Ágora), dono de todos os lotes |
-| `geovanna@agora.dev` | Licitante |
-| `felipe@agora.dev` | Licitante |
+<p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
 
-O seed cria 11 lotes: 4 ao vivo (um disputado, um liderado por cada licitante e um sem lances), 2 agendados, 3 encerrados e liquidados (um para cada licitante e um sem lances), 1 cancelado e 1 adulterado de propósito.
+## I · O que dá para fazer
 
-Roteiro curto: entre como Geovanna e dê um lance no lote liderado por Felipe; em outra janela, entre como Felipe e veja o lance chegar ao vivo; entre como Casa Ágora e veja no painel os encerrados e o total recebido; abra o comprovante de um lote encerrado e a auditoria de qualquer lote.
+- **Vitrine:** lotes ao vivo, agendados e encerrados, com busca por título, artista ou número do lote, e um destaque com os lances chegando ao vivo.
+- **Sala do lote:** lance com atalhos de valor, contagem regressiva pela hora do servidor, histórico em tempo real e a situação do licitante ("ganhando" ou "superado", com a posição).
+- **Carteira:** depósito simulado, saldo disponível e os lotes em que o saldo está comprometido.
+- **Meus lances:** lotes em andamento, arrematados e não arrematados, com o link do comprovante.
+- **Painel do leiloeiro:** busca no acervo do museu, criação de lote, livro de lotes com filtros, resultado, total recebido e cancelamento.
+- **Auditoria pública:** veredito do lote e cada lance com o seu código, sem login; o comprovante de arremate também é público.
 
-**Lote adulterado:** o lote nº 11 (_Portrait of a Family Playing Music_, Pieter de Hooch) foi encerrado e liquidado normalmente, e depois o valor do lance 3 foi trocado de R$ 55.000 para R$ 30.000 direto no banco. A auditoria dele acusa `tampered` no lance 3, para mostrar a detecção sem ninguém precisar mexer no banco.
+<p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
 
-**Testar a adulteração você mesmo** (só no ambiente local do compose, nunca em produção). Os comandos mexem só nos lotes encerrados 7 e 8, então os lotes ao vivo continuam aceitando lances:
+## II · Testar agora
+
+| Conta | E-mail | Papel |
+|---|---|---|
+| Casa Ágora | `leiloeiro@agora.dev` | Leiloeiro, dono de todos os lotes |
+| Geovanna | `geovanna@agora.dev` | Licitante |
+| Felipe | `felipe@agora.dev` | Licitante |
+
+Senha de todas: `Agora2026!` (também na tela Entrar, que preenche o formulário com um clique).
+
+O seed cria 11 lotes: 4 ao vivo (um disputado, um liderado por cada licitante e um sem lances), 2 agendados, 3 encerrados e liquidados (um para cada licitante e um sem lances), 1 cancelado e o lote XI, encerrado e adulterado de propósito.
+
+1. Entre como Geovanna e cubra o lance de Felipe no lote III.
+2. Numa janela anônima, entre como Felipe na mesma sala e veja o lance chegar ao vivo, com "Você foi superado" e a posição.
+3. Entre como Casa Ágora, cancele no painel um lote ao vivo com lances e veja na Carteira do líder o comprometido voltar para o disponível.
+4. Em Meus lances, copie o link do comprovante de um lote arrematado e abra numa janela anônima: a assinatura é conferida na hora.
+5. Na página inicial, audite o lote XI (o campo aceita 11 ou XI): o lance 3 foi trocado de R$ 55.000 para R$ 30.000 direto no banco, e o veredito acusa.
+
+<p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
+
+## III · Regras do leilão
+
+A hora de referência é sempre a do servidor, e toda recusa volta com um código estável que o front traduz (D-043).
+
+- **Lance só ao vivo:** antes do início responde `LOT_NOT_STARTED`, depois do fim `LOT_ENDED`; o status sai do horário, não de coluna (D-010).
+- **Primeiro lance e incremento:** o primeiro lance vale ao menos o lance inicial; os seguintes, o lance atual mais o incremento do lote, senão `BID_BELOW_MINIMUM`.
+- **Líder não cobre o próprio lance:** responde `ALREADY_WINNING`.
+- **Saldo comprometido:** o valor do lance que lidera fica reservado na carteira; sem disponível, `INSUFFICIENT_BALANCE`.
+- **Devolução ao superado:** o comprometido do líder anterior volta na mesma transação do lance que o cobre, com lock no lote e nas carteiras (D-014).
+- **Anti-sniping:** lance aceito com 2 min ou menos para o fim soma 2 min ao fim atual, e o novo fim chega pelo stream (D-011).
+- **Liquidação:** no fim, o vencedor é debitado, o leiloeiro creditado e o comprovante assinado, numa transação só (D-014, D-029).
+- **Cancelamento com estorno:** o leiloeiro cancela lote próprio agendado ou ao vivo; com lances, o comprometido do líder é devolvido (D-070).
+
+<p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
+
+## IV · Rodar local
+
+Pré-requisito: Docker. Front em http://localhost:5173, API em http://localhost:3000; as migrations rodam no boot da API.
+
+```bash
+docker compose up --build
+docker compose exec api npm run seed   # em outro terminal
+```
+
+O seed cria tudo pelos services da aplicação, baixando obras e imagens da Cleveland na hora, e é idempotente: rodar de novo completa o que faltou sem duplicar.
+Hot reload, migrations, seed fora do compose e as limitações do Render free: [`docs/desenvolvimento.md`](docs/desenvolvimento.md).
+
+### Adulterar o histórico você mesmo
+
+Só no ambiente local do compose, nunca em produção. Os comandos mexem só nos lotes encerrados VII e VIII:
 
 ```bash
 psql() { docker compose exec db psql -U agora -d agora -c "$1"; }
 # 1. Valor de um lance: o lote 8 passa a "Adulterado" no lance 2. Desfazer: o mesmo com "- 100000".
 psql "UPDATE bids SET amount = amount + 100000 WHERE seq = 2 AND lot_id = (SELECT id FROM lots WHERE number = 8)"
-# 2. Valor do comprovante (com o 1 desfeito): a auditoria do lote 8 acusa o comprovante, que aparece inválido. Desfazer: "+ 100000".
+# 2. Valor do comprovante (com o 1 desfeito): a auditoria do lote 8 acusa o comprovante. Desfazer: "+ 100000".
 psql "UPDATE receipts SET amount = amount - 100000 WHERE lot_id = (SELECT id FROM lots WHERE number = 8)"
 # 3. Último lance apagado: o lote 7 acusa lances removidos do fim. Sem desfazer.
 psql "DELETE FROM bids WHERE seq = 4 AND lot_id = (SELECT id FROM lots WHERE number = 7)"
 ```
 
-Para voltar ao estado do seed: `docker compose down -v`, `docker compose up --build` e o seed de novo.
+<p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
 
-## Rodar local
+## V · Arquitetura
 
-Tudo com Docker, num comando só (pré-requisito: Docker):
+API em NestJS com um módulo por domínio (`auth`, `users`, `wallets`, `catalog`, `lots`, `bids`, `settlement`, `audit`, `receipts`) e front em React por feature, tudo no Render free (API, site estático e Postgres).
 
-```bash
-docker compose up --build
-```
+<p align="center"><img alt="Fluxo de um lance: transação, locks, regra, gravação e evento depois do commit" src="docs/assets/fluxo-do-lance.svg" width="100%"></p>
 
-Front em http://localhost:5173, API em http://localhost:3000, banco na 5432.
-Se alguma porta estiver ocupada: `WEB_PORT=5174 API_PORT=3001 DB_PORT=5433 docker compose up --build`.
-As migrations rodam sozinhas no boot da API.
+A liquidação roda num timer em memória apontado para o próximo fim, recalculado no boot, a cada lance e a cada lote criado, e também no primeiro acesso a um lote vencido, porque a API do plano free dorme.
+Timer e acessos simultâneos liquidam uma vez só: o lote é travado com `FOR UPDATE` e o comprovante tem `UNIQUE (lot_id)` (D-009).
 
-Dados de demonstração (com o compose de pé, em outro terminal):
+<p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
 
-```bash
-docker compose exec api npm run seed
-```
+## VI · Modelo de dados
 
-O seed cria tudo pelos services da aplicação, com as obras e imagens baixadas da Cleveland na hora, e pode ser rodado de novo: completa o que faltou sem duplicar nada. Se a Cleveland estiver fora no início, ele para antes de gravar; se falhar no meio, rodar de novo completa o que faltou.
+<p align="center"><img alt="Modelo de dados: users, wallets, lots, lot_images, bids e receipts" src="docs/assets/modelo-de-dados.svg" width="100%"></p>
 
-Para desenvolver com hot reload (pré-requisito: Node 24), suba só o banco e rode API e front com npm:
+Dinheiro em centavos (`integer`); `bids` só recebe inserção; `current_bid` e `bid_count` no lote são cópias para exibição, e liderança, mínimo e vencedor saem sempre do último lance da cadeia (D-042).
 
-```bash
-docker compose up -d db
+<p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
 
-cd api && cp .env.example .env && npm ci && npm run start:dev   # ajuste DATABASE_URL se mudou DB_PORT
-cd web && cp .env.example .env && npm ci && npm run dev         # outro terminal
-```
+## VII · Auditoria
 
-Seed fora do compose (em `api/`): `DATABASE_URL` e `BID_HMAC_SECRET` têm que vir do ambiente do processo, não do `.env`, e o seed para com erro se faltar uma delas.
+Cada lance guarda um HMAC do lote, da ordem, do licitante, do valor, da data e do hash do lance anterior: mudar, inserir, apagar ou reordenar um lance quebra a cadeia, e só o servidor tem o segredo para assinar de novo (D-012). O lote guarda um selo com a contagem e o último hash, que acusa lances apagados do fim. O comprovante assina o lote, o apelido do vencedor, o valor, o hash final e a data da liquidação, e é conferido a cada abertura. Um segredo só, com prefixo por contexto (`bid:`, `seal:`, `alias:`, `receipt:`) em formato fixo, para uma assinatura nunca valer em outro lugar (D-056).
 
-```bash
-npm run build
-DATABASE_URL=postgres://agora:agora@localhost:5432/agora BID_HMAC_SECRET=dev-only-bid-hmac-secret-change-me-0123 npm run seed
-```
+A tela `/lots/:id/audit` dá um de quatro vereditos, nesta prioridade: íntegro, adulterado (com o primeiro lance quebrado), lances removidos do fim ou comprovante divergente (D-065). Cada lance aparece como íntegro, adulterado ou não verificável. Limitação: restaurar o banco inteiro (lote e lances) para um estado anterior não é detectado, porque o hash não é ancorado fora do banco.
 
-Em produção, o seed roda da máquina local contra a External Database URL do Render, com o `BID_HMAC_SECRET` copiado da API no Render (Environment). Com outro segredo, a API recusaria todo lance com `LOT_INTEGRITY_FAILED` e a auditoria acusaria todos os lotes:
+<p align="center"><img alt="Auditoria do lote XI com o veredito Adulterado e o lance 3 marcado como adulterado" src="docs/assets/audit-tampered.png" width="80%"></p>
 
-```bash
-DATABASE_URL='<External Database URL>' DB_SSL=true BID_HMAC_SECRET='<o mesmo do Render>' npm run seed
-```
+<p align="center"><sub>A auditoria do lote XI aponta o lance alterado direto no banco.</sub></p>
 
-A API não sobe se faltar variável de ambiente, e a mensagem diz qual.
-Os testes de integração (`npm run test:e2e`) sobem o próprio Postgres e também exigem Docker.
+<p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
 
-Migrations (em `api/`):
+## VIII · Comportamentos esperados
 
-```bash
-npm run migration:generate -- src/database/migrations/NomeDaMudanca   # a partir das entidades
-npm run migration:create -- src/database/migrations/NomeDaMudanca     # vazia
-npm run migration:run                                                 # aplica (o boot também aplica)
-npm run migration:revert                                              # desfaz a última
-```
+- Cleveland fora do ar não derruba vitrine, sala, auditoria nem comprovante: obra e imagem ficam no banco; só a busca no acervo e a criação de lote dependem dela (D-004).
+- As imagens da busca no acervo vêm direto da CDN do museu e podem demorar; nas telas de lote, a imagem sai da API.
+- Lote com selo divergente da cadeia não aceita lance (`LOT_INTEGRITY_FAILED`) nem é liquidado, para não apagar a evidência (D-059, D-064).
+- O login aceita 5 tentativas por minuto por IP; a 6ª responde `TOO_MANY_ATTEMPTS` (D-068).
+- A sessão dura 8h e não renova (D-006).
+- Com a Carteira aberta, um lote que venceu continua "você lidera" até recarregar a página.
+- O licitante aparece com um apelido diferente em cada lote, nunca com nome ou e-mail (D-013).
+- Os textos das obras ficam em inglês, como no acervo da Cleveland (D-038).
+- Os cards da vitrine mostram o estado do carregamento da página; só o destaque atualiza ao vivo, porque um stream por card estouraria o limite de conexões do navegador.
+- O leiloeiro não tem tela de carteira: o arremate é creditado na carteira dele, e o painel mostra o total recebido pelos comprovantes (D-039).
+- O stream de lances vive na memória de uma instância só da API, o que basta no plano free, que roda uma instância.
 
-## Arquitetura
+<p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
 
-_(módulos, fluxo de um lance e liquidação)_
-
-**Fluxo de um lance** (`POST /lots/:id/bids`, só licitante): numa única transação, trava o lote (`FOR UPDATE`), lê a hora do servidor, busca o último lance da cadeia e trava as carteiras do licitante e do líder anterior em ordem de `id`. A regra decide (status, liderança, mínimo, saldo); recusa responde 422 com o código e o detalhe (`minimum`, `available`, `startsAt`) sem gravar nada. Aceito, o lance entra com o `seq` seguinte e o hash encadeado no anterior, o lote recebe o novo selo, lance atual, contagem e fim (prorrogado em 2 min quando faltam 2 min ou menos), e o comprometido sai do líder anterior para o novo lance. Liderança e mínimo vêm sempre do último lance em `bids`, nunca da cópia no lote (D-042).
-
-**Tempo real:** depois do commit, o lance aceito vira um evento `bid` (`seq`, valor, alias, data e fim) no `GET /lots/:id/stream` (SSE, público), com heartbeat a cada 25 s. O histórico sai de `GET /lots/:id/bids?page=` (20 por página, do mais recente) e `GET /wallet` lista até 20 lotes em que o licitante é o líder e que ainda não foram liquidados.
-
-## Auditoria
-
-Qualquer pessoa confere se o histórico de um lote foi mexido, sem login, na tela `/lots/:id/audit` (veredito e cada lance com o seu código), aberta pelo campo da página inicial (aceita 7 ou VII) ou pelo link "Auditar este lote" na vitrine, na sala e no comprovante. Na API: `GET /lots/:id/audit` e `GET /lots/number/:number`, que leva do número ao id. A técnica é uma cadeia de HMAC (D-012):
-
-- **Cada lance assina o anterior:** o lance guarda um HMAC do lote, da ordem, do licitante, do valor, da data e do hash do lance anterior. Mudar, inserir, apagar ou trocar a ordem de um lance quebra a cadeia, e só o servidor tem o segredo para assinar de novo.
-- **O selo do lote** guarda a contagem e o último hash, e acusa lances apagados do fim, que deixariam o resto da cadeia coerente.
-- **O comprovante assinado** aponta para o último lance da cadeia, e a assinatura dele é conferida a cada consulta (D-029).
-- Um segredo só, com um prefixo diferente para cada uso, em formato fixo, para uma assinatura nunca valer em outro lugar (D-056).
-- **Resultado:** `intact` (íntegro), `tampered` (lance adulterado, com o primeiro quebrado), `truncated` (lances apagados do fim) ou `receipt_tampered` (comprovante não confere), nessa prioridade (D-065). Cada lance aparece como íntegro, adulterado ou não verificável (depois do primeiro quebrado).
-- **Limitação:** restaurar o lote e os lances inteiros para um estado anterior não é detectado, porque o hash não é guardado fora do banco.
-
-## Comportamentos esperados
-
-_(regras que podem surpreender, uma linha cada, com o porquê)_
-
-- A sessão dura 8h e não renova: token vencido no recarregamento volta a visitante; um 401 durante o uso leva para Entrar com aviso de sessão expirada (D-006).
-- O login aceita 5 tentativas por minuto por IP; a 6ª responde 429 (`TOO_MANY_ATTEMPTS`), contra força bruta de senha. Atrás da Cloudflare, o IP vem do `CF-Connecting-IP` (D-068).
-- A busca no acervo mostra só pintura e escultura europeia ou arte grega e romana, um departamento por vez (tema da casa, D-050), e só peças com imagem.
-- Uma peça só fica em um lote agendado ou ao vivo por vez; lote encerrado ou cancelado libera a peça para outro lote (D-051).
-- Lote cancelado some da vitrine e do destaque, e o link direto da sala responde 404 (lote não encontrado).
-- Lote cujo selo não confere com a cadeia de lances para de aceitar lances (`LOT_INTEGRITY_FAILED`): sem isso, o próximo lance reassinaria o selo e apagaria a evidência de lances removidos (D-059).
-- O leiloeiro cancela lote próprio agendado ou ao vivo, mesmo com lances: o comprometido do líder volta para ele na mesma transação, e os lances continuam na cadeia e na auditoria (D-070). Lote encerrado responde `LOT_ENDED`, porque o resultado já vale; lote de outro leiloeiro responde 404, sem revelar que existe.
-- Lote cancelado com lances vai para "Não arrematados" em Meus lances e continua auditável pelo link direto; quem está na sala vê o aviso na hora, pelo stream.
-- O número do lote só aparece depois da criação: a sequência é global, e outro leiloeiro pode pegar o número enquanto a ficha está aberta (D-053).
-- O número do lote aparece em romano com o número comum ao lado ("Lote XIV · nº 14"); acima de 3999, onde o romano padrão acaba, aparece só o número comum (D-054).
-- O destaque da página inicial é escolhido ao abrir a página e não troca de lote enquanto ela está aberta, mesmo que outro lote passe a ter o maior lance: a troca no meio da leitura tiraria a obra da frente do visitante. Os lances dele chegam ao vivo (é o único stream da página; os cards não atualizam), mas a virada de agendado para ao vivo, ou de ao vivo para encerrado, só aparece ao recarregar.
-- Lote vencido é liquidado por um timer em memória, armado no boot para o próximo fim, e também no primeiro acesso a ele, porque a API do plano free dorme e o timer dorme junto. Débito do vencedor, crédito do leiloeiro e comprovante assinado numa transação só; timer e acessos simultâneos liquidam uma vez só (D-009).
-- Lote cujo selo não confere com a cadeia de lances não é liquidado: nenhum saldo se move e a evidência fica para a auditoria. Cada acesso ao lote tenta liquidar de novo e registra o motivo no log, até alguém investigar (D-064).
-- Se o crédito da venda levar o saldo do leiloeiro acima do teto do `integer` (~R$ 21 mi), o lote não é liquidado e o erro vai para o log: saldos são inteiros em centavos, sem `bigint`.
-- Em Meus lances, lote encerrado fica em "Em andamento", marcado como aguardando liquidação, até o timer ou o primeiro acesso a ele liquidar: a listagem só lê, nunca liquida.
-- A contagem regressiva de Meus lances usa o relógio do navegador, porque a listagem não traz a hora do servidor; a sala do lote continua sendo a referência exata.
-- Consultar a auditoria não liquida o lote: lote vencido aparece encerrado e sem comprovante conferido até o timer ou o primeiro acesso à sala liquidá-lo.
-- Lote vencido e ainda não liquidado continua comprometendo o saldo do vencedor, e a Carteira mostra "Você arrematou · aguardando liquidação"; a lista mostra até 20 lotes e diz quantos faltam (D-063).
-- Na busca da vitrine, "7", "VII" e "lote vii" procuram o número do lote; romano em minúscula sem o "lote " vai como texto, porque o acervo tem nomes como "Agnolo di Cosimo". A busca abre a primeira aba com resultado (Ao vivo, Agendados, Encerrados), para o visitante não achar que nada existe só porque a aba atual está vazia.
-- A sala do lote não calcula o status no navegador: quando a contagem chega ao início ou ao fim, ela busca o lote de novo (e repete até 3 vezes, a cada 2 s, se o status ainda não mudou), porque a hora de referência é a do servidor.
-- O stream de lances vive na memória de uma instância só: com mais de uma réplica da API, cada uma veria só os lances que passaram por ela. Ele também não limita o número de conexões por lote. O stream só avisa; ao conectar e reconectar, a sala busca o lote e a primeira página do histórico de novo e une tudo pelo `seq`, sem duplicar lance.
-- A sala mostra a primeira página do histórico (20 lances) mais os que chegam ao vivo, sem paginação; o mínimo exibido no formulário é só ajuda, quem decide é a API.
-- Licitante não é identificado no stream nem no histórico: aparece por um alias diferente em cada lote, e `GET /lots/:id` com token de licitante devolve `me.alias` e `me.hasBid`, para a sala saber quais lances são dele e se ele já foi superado. Token inválido nessa rota responde 401, em vez de tratar como visitante.
-- A sala encerrada mostra o resultado que o `GET /lots/:id` traz depois de liquidar; se o lote não pôde ser liquidado (selo que não confere), mostra "aguardando liquidação" sem tentar de novo sozinha, e recarregar a página tenta outra vez. O comprovante (`/receipts/:token`) é público e confere a assinatura a cada abertura.
-- Os dados das obras (título, técnica, dimensões, descrição) aparecem como no acervo da Cleveland, em inglês, porque vêm só do acervo (D-038); só o tipo da obra é traduzido.
-
-## Testes
+## IX · Testes
 
 ```bash
-cd api && npm test           # Jest, unitários ao lado de cada arquivo (*.spec.ts)
-cd api && npm run test:e2e   # integração em api/test, contra Postgres real (exige Docker)
+cd api && npm test           # Jest, unitários ao lado de cada arquivo
+cd api && npm run test:e2e   # integração contra Postgres real (exige Docker)
 cd web && npm test           # Vitest
 ```
 
-- **API:** regras de saldo e depósito, validação dos DTOs, hash de senha, cadastro e login, guards de token e de papel, filters de erro, `/health` e o logger que esconde parâmetros de query.
-- **Catálogo:** mapeamento da peça da Cleveland (artista com fallback para `culture`, descarte de peça sem imagem), cache da busca com TTL, falha da Cleveland virando `CATALOG_UNAVAILABLE` sem entrar no cache e download da imagem (só JPEG, PNG ou WebP, até 5 MB contados nos bytes lidos).
-- **Lotes:** datas de início e fim, peça já em lote ativo, limites de lance inicial e incremento, falha da imagem sem gravar lote, cadeia do destaque (maior lance, fim mais próximo, próximo agendado), filtros da vitrine e do painel, resumo do painel sem lotes e cancelamento (encerrado, estorno do líder, lote alheio e trava da linha).
-- **Lances:** ordem das recusas, mínimo, saldo, anti-sniping, cadeia de HMAC, selo e alias; no serviço, ordem dos locks, hora lida depois do lock, encadeamento do `seq` e do hash, atualização do lote, movimento do comprometido, resposta do lance, recusa quando o selo do lote não confere e evento emitido só depois da transação; stream por lote com heartbeat e campos fechados do evento e do histórico.
-- **Integração (e2e):** Postgres 17 de verdade via Testcontainers e a API inteira por HTTP, com relógio de teste e catálogo falso. Lance aceito, recusado, de leiloeiro e sem token, saldo devolvido ao superado e prorrogação nos últimos 2 min; evento no stream só do lance aceito e ouvinte removido ao fechar a conexão, histórico paginado, `me` no detalhe por papel e lotes comprometidos na carteira; 10 lances simultâneos parados no mesmo lock (cadeia, selo, `seq`, lote e carteiras íntegros) dois lances do mesmo mínimo e o mesmo licitante em dois lotes com saldo para um lance só; destaque, cancelamento com estorno (carteira, selo divergente, liquidação e lance depois do cancelamento, painel, Meus lances e auditoria), contagens e ordem das abas da vitrine.
-- **Auditoria:** verificação da cadeia, do selo e do comprovante (alteração, inserção, remoção, ordem trocada, selo nulo, comprovante divergente, ausente ou fora de lugar) e indicador por lance; no e2e, `UPDATE` no valor e no dono, `DELETE` do último lance e `UPDATE` no comprovante, aliases iguais aos da sala e duas queries por chamada.
-- **Seed:** contas e lotes por status, auditoria íntegra em todos menos o adulterado (que aponta o lance alterado), comprovantes válidos, segunda execução sem duplicar, execução interrompida completada na seguinte, Cleveland fora sem gravar nada e segredo ausente barrado antes de subir a aplicação.
-- **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito, rótulos e nota do resumo da sala do lote, id inválido na rota da sala, nova busca na virada de estado, tradução do tipo da obra e, na sala, união dos lances do POST, do stream e da reconexão pelo `seq`, situação do licitante, atalhos de valor e tradução das recusas de lance; na Carteira, os textos dos lotes comprometidos; o resultado da sala encerrada, a data por extenso e o hash abreviado do comprovante; em Meus lances, situação, tempo, ação e valor final de cada lote; no painel, o resultado do lote encerrado.
+- **TDD:** regras de lance, saldo comprometido e anti-sniping (4.1), cadeia de HMAC e selo (4.2), liquidação (5.1) e auditoria (5.5), com o commit do teste vermelho antes da implementação (D-055).
+- **e2e:** Postgres 17 de verdade via Testcontainers e a API por HTTP: 10 lances simultâneos no mesmo lote, cancelamento com estorno e adulteração feita direto no banco.
+- **Branches:** o merge na `main` é por squash (D-021), então cada story vira um commit só; as branches das stories são mantidas de propósito, porque guardam o passo a passo de cada uma (teste vermelho antes da implementação nas stories com TDD e correções da revisão, D-055). Num projeto normal elas seriam apagadas depois do merge.
+- **CI:** GitHub Actions roda lint, testes unitários, e2e e build dos dois lados, e valida o título da PR e o limite de linhas deste README.
 
-## Stack e decisões
+<p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
 
-NestJS 11, TypeORM e PostgreSQL na API; React 19, Vite e React Router 7 no front; deploy no Render.
+## X · Decisões principais
 
-- JWT no header `Authorization`, com validade de 8h e sem refresh token (D-006).
-- Dados da obra só do acervo da Cleveland, com a imagem guardada no banco ao criar o lote (D-004, D-038).
-- Cada lance roda numa transação única, com lock de linha no lote e nas carteiras (D-014).
-- A auditoria usa uma cadeia de HMAC sobre os lances, mais um selo no lote (D-012).
-- A liquidação acontece por timer em memória e também no acesso ao lote vencido, sem job periódico (D-009).
+- Cada lance numa transação única, com lock de linha no lote e nas carteiras em ordem de `id` (D-014).
+- Cadeia de HMAC nos lances, mais um selo no lote, para a auditoria pública (D-012).
+- Liquidação por timer em memória e no acesso ao lote vencido, sem job periódico (D-009).
+- Obra e imagem copiadas para o banco na criação do lote (D-004).
+- Tempo real por SSE, com apelido público por lote (D-005).
 
-Todas as decisões e alternativas descartadas em [`docs/decisions.md`](docs/decisions.md).
+São 70 decisões, com as alternativas descartadas, em [`docs/decisions.md`](docs/decisions.md); o mapa dos documentos está em [`docs/README.md`](docs/README.md).
 
-## Fora do escopo
+<p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
 
-_(o que não foi feito, uma linha cada)_
+## XI · Identidade visual e processo de design
 
-- A carteira não tem extrato de movimentações: mostra só saldo, comprometido e disponível.
-- O depósito é simulado, sem meio de pagamento (Pix, cartão).
+<p align="center"><img alt="A Escola de Atenas, afresco de Rafael (1509–1511), com filósofos gregos reunidos sob arcos e abóbadas de mármore" src="docs/assets/escola-de-atenas.jpg" width="80%"></p>
 
-## Uso de IA
+<p align="center"><sub><em>A Escola de Atenas</em>, Rafael, 1509–1511 (domínio público). A referência visual do projeto.</sub></p>
 
-O Claude Code implementou o código e fez os commits seguindo as regras do [`CLAUDE.md`](CLAUDE.md); o Claude (app) serviu de apoio de pesquisa.
-As decisões foram minhas e estão registradas por story em [`docs/ai-log.md`](docs/ai-log.md).
+A vontade de fazer um site com design clássico veio antes do projeto. O tema de leilão de obras de arte foi escolhido para dar espaço a essa linguagem visual.
+
+A referência foi _A Escola de Atenas_, de Rafael: dela saíram as cores, os estilos e os detalhes, como o arco, o mármore e os dourados. Com essa base, as telas foram desenhadas no Claude Design como um monumento greco-romano, mas mantendo a interface moderna e fácil de usar. Os desenhos estão em [`docs/design`](docs/design).
+
+Evitei de propósito o visual padrão de interface gerada por IA, com caixas de bordas arredondadas por toda parte e um design chamativo e moderno demais. Busquei algo mais refinado e agradável aos olhos: cantos retos, filetes dourados, mármore e tipografia de inscrição.
+
+O nome vem do grego antigo: ágora era a praça pública onde aconteciam o comércio e a vida da cidade. Numa tradução direta, algo como "mercado".
+
+Paleta: mármore `#f2ede3`, tinta `#2b2520`, ouro `#9a7529`, cinábrio `#b23a1f`, ultramar `#1f4b96` e malaquita `#2c6646`. Fontes: Cinzel nos títulos, Cormorant Garamond e EB Garamond no texto.
+
+<p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
+
+## XII · Fora do escopo
+
+- Tema escuro (opcional do enunciado); o desenho existe em [`docs/design`](docs/design).
+- Cancelar lote já arrematado: desfaria a liquidação e o comprovante.
+- Extrato da carteira: ela mostra só saldo, comprometido e disponível.
+- Pagamento real: o depósito é simulado.
+
+<p align="center"><img alt="" src="docs/assets/meander.svg" width="60%"></p>
+
+## XIII · Uso de IA
+
+**Planejamento (3 dias, antes da primeira linha de código).** Alinhei o design, as regras de negócio, os gargalos e a arquitetura: como travar os lances (lock na transação, D-014), se a sala ao vivo usaria WebSocket (Socket.IO) ou SSE (D-005) e como provar que o histórico não foi mexido (D-012). Disso saiu o [`CLAUDE.md`](CLAUDE.md), com o jeito de trabalhar: TDD nas regras críticas, sem comentários desnecessários e sem nomes de função longos demais. Com ele e a primeira story (o esqueleto no ar), usei o BMAD para organizar tudo em épicos e depois em stories.
+
+Cada story seguiu o mesmo ciclo:
+
+1. Abro a story no BMAD com o contexto do que quero.
+2. Alinho as decisões e aprovo os casos de teste antes do código.
+3. O Claude Code implementa, e revisores automáticos procuram falhas.
+4. Analiso o que a revisão pegou e decido, usando o Claude (app) para pesquisa e dúvidas.
+5. Passo as decisões novas, se houver, e peço o push e a PR.
+6. Reviso o código em busca de erros e inconsistências e aprovo o merge depois do CI verde.
+
+Alguns destaques:
+
+- **Cadeia de HMAC com selo (D-012):** a cadeia sozinha não acusa lances apagados do fim; o selo no lote fecha esse buraco. A IA fez o selo igual para todos os lotes sem lances, e quem apagasse os lances de um poderia copiar o selo de outro; pedi o lote dentro do selo, com testes.
+- **Liquidação sem job periódico (D-009):** a API do plano free dorme, então o timer em memória não basta e o lote vencido também é liquidado no primeiro acesso. Pedi ainda que um selo divergente bloqueasse a liquidação (D-064).
+- **Snapshot da obra (D-004):** obra e imagem vão para o banco na criação do lote, para a sala, a auditoria e o comprovante nunca dependerem da Cleveland.
+- **Erros da IA pegos na revisão:** ela afirmou que o comum era o leilão acabar 2 min depois do lance de última hora; conferido, a casa citada no enunciado soma 2 min ao fim atual (D-011). Também sugeriu decidir o cancelamento por um contador de lances sem proteção contra adulteração, o que recusei.
+
+Registro completo, por story: [`docs/ai-log.md`](docs/ai-log.md).

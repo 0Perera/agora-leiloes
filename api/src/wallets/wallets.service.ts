@@ -6,7 +6,9 @@ import { CommittedLotDto } from './dto/committed-lot.dto';
 import {
   CommittedLots,
   toWalletDetail,
+  toWalletResponse,
   WalletDetailDto,
+  WalletResponseDto,
 } from './dto/wallet-response.dto';
 import { deposit, WalletState } from './wallet.rules';
 import { Wallet } from './wallet.entity';
@@ -76,7 +78,7 @@ export class WalletsService {
     };
   }
 
-  deposit(userId: number, amount: number): Promise<WalletState> {
+  deposit(userId: number, amount: number): Promise<WalletResponseDto> {
     return this.dataSource.transaction(async (manager) => {
       const repository = manager.getRepository(Wallet);
       const wallet = await repository.findOne({
@@ -87,7 +89,7 @@ export class WalletsService {
       if (!wallet) throw new NotFoundException();
       const next = deposit(wallet, amount);
       await repository.update(wallet.id, { balance: next.balance });
-      return { balance: next.balance, committed: next.committed };
+      return toWalletResponse(next);
     });
   }
 }

@@ -53,7 +53,7 @@ Nome do projeto: **Ágora**. Com acento em tudo que o usuário lê (interface, `
 │   │   ├── features/          # auth, lots, live-room, auctioneer, wallet, my-bids, receipts, audit
 │   │   └── shared/            # api/ (client tipado), ui/ (componentes genéricos), lib/ (moeda, data)
 │   └── package.json
-├── docs/                      # mapa em docs/README.md: decisions, ai-log, screens, deploy-notes, planning/, stories/, design/
+├── docs/                      # mapa em docs/README.md: decisions, ai-log, screens, desenvolvimento, planning/, stories/, design/
 ├── .github/workflows/
 ├── docker-compose.yml
 ├── render.yaml                # Blueprint do deploy (D-034)
@@ -144,7 +144,7 @@ dto/place-bid.dto.ts
 - Liquidação agendada usa um timer em memória apontando para o próximo `ends_at`, recalculado no boot, a cada lance aceito e a cada lote criado.
   Sem cron e sem `@nestjs/schedule`.
 - Postgres do Render no free **expira 30 dias após a criação**. No dia da entrega o banco é recriado e o seed roda de novo
-  (passo a passo em `docs/deploy-notes.md`). Nada no código pode depender de dados criados antes disso.
+  (passo a passo em `docs/desenvolvimento.md`). Nada no código pode depender de dados criados antes disso.
 - A API usa a URL **interna** do banco (mesma região, sem SSL). Da máquina local, só a URL externa, com SSL.
 - Front e API em domínios diferentes: CORS liberado só para a origem do front, configurada por env.
 - Front estático com rewrite `/* → /index.html`, senão links diretos (ex.: comprovante compartilhado) dão 404.

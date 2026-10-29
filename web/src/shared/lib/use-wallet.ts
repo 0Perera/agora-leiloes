@@ -19,3 +19,8 @@ export function useWallet(): WalletValue {
   if (!value) throw new Error('useWallet outside WalletProvider');
   return value;
 }
+
+// visitante e leiloeiro não têm carteira: quem pode rodar para todos relê só se houver
+export function useOptionalWallet(): WalletValue | null {
+  return useContext(WalletContext);
+}
