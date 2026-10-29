@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { api } from '../../shared/api/client';
 import type { Artwork, CreatedLot } from '../../shared/api/types';
@@ -36,6 +36,13 @@ function blankForm(): Form {
   };
 }
 
+// a ficha é montada de novo a cada obra escolhida (key): no celular ela fica abaixo do acervo
+function bringIntoView(sheet: HTMLElement) {
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  sheet.scrollIntoView({ block: 'start', behavior: still ? 'auto' : 'smooth' });
+  document.getElementById('f-startingBid')?.focus({ preventScroll: true });
+}
+
 function focusFirst(errors: LotErrors) {
   const field = fieldOrder.find((item) => errors[item]);
   if (field) document.getElementById(`f-${field}`)?.focus();
@@ -46,6 +53,11 @@ export function LotForm({ artwork, onCreated }: Props) {
   const [errors, setErrors] = useState<LotErrors>({});
   const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const sheet = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (sheet.current) bringIntoView(sheet.current);
+  }, []);
 
   function change(field: LotField, value: string) {
     const masked =
@@ -92,6 +104,7 @@ export function LotForm({ artwork, onCreated }: Props) {
 
   return (
     <form
+      ref={sheet}
       className="panel-corners panel-sheet"
       noValidate
       onSubmit={submit}

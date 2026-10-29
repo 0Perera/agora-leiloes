@@ -12,6 +12,7 @@ import { LoadError } from '../../shared/ui/load-error';
 import { DepartmentPicker } from './department-picker';
 import { departments } from './departments';
 import { Pager } from '../../shared/ui/pager';
+import { SearchSuggestions } from './search-suggestions';
 
 type Query = { q: string; department: CatalogDepartment; page: number };
 
@@ -58,29 +59,40 @@ export function CatalogSearch({ selected, onPick }: Props) {
     void run({ q, department, page: 1 });
   }
 
+  function suggest(term: string) {
+    setText(term);
+    setEmpty(false);
+    void run({ q: term, department, page: 1 });
+  }
+
   return (
     <div className="panel-search">
       <form className="panel-search-form" noValidate onSubmit={submit}>
-        <label className="ag-field panel-search-term" htmlFor="q">
-          <span className="ag-field__label">1. Buscar no acervo do museu</span>
-          <span className={empty ? 'ag-input is-invalid' : 'ag-input'}>
-            <span className="ag-input__prefix" aria-hidden="true">
-              <SearchIcon />
+        <div className="ag-field panel-search-term">
+          <label className="ag-field__label" htmlFor="q">
+            1. Buscar no acervo do museu
+          </label>
+          <span className="panel-search-row">
+            <span className={empty ? 'ag-input is-invalid' : 'ag-input'}>
+              <span className="ag-input__prefix" aria-hidden="true">
+                <SearchIcon />
+              </span>
+              <input
+                id="q"
+                className="ag-input__control panel-text"
+                type="search"
+                autoComplete="off"
+                maxLength={100}
+                value={text}
+                onChange={(event) => {
+                  setText(event.target.value);
+                  setEmpty(false);
+                }}
+                aria-invalid={empty}
+                aria-describedby="q-help q-err"
+              />
             </span>
-            <input
-              id="q"
-              className="ag-input__control panel-text"
-              type="search"
-              autoComplete="off"
-              maxLength={100}
-              value={text}
-              onChange={(event) => {
-                setText(event.target.value);
-                setEmpty(false);
-              }}
-              aria-invalid={empty}
-              aria-describedby="q-help q-err"
-            />
+            <SearchSuggestions department={department} onPick={suggest} />
           </span>
           <span id="q-help" className="ag-field__hint">
             Título, artista, técnica ou lugar. Ex.: portrait, marble, Rome.
@@ -89,7 +101,7 @@ export function CatalogSearch({ selected, onPick }: Props) {
             id="q-err"
             message={empty ? 'Digite um termo para buscar no acervo.' : ''}
           />
-        </label>
+        </div>
         <DepartmentPicker value={department} onChange={setDepartment} />
         <button
           className="ag-btn ag-btn--secondary panel-search-submit"
@@ -194,6 +206,8 @@ type CardProps = {
 };
 
 function ResultCard({ artwork, selected, onPick }: CardProps) {
+  const [loaded, setLoaded] = useState(false);
+
   return (
     <button
       className="panel-result"
@@ -203,10 +217,11 @@ function ResultCard({ artwork, selected, onPick }: CardProps) {
     >
       <span className="panel-wall">
         <img
-          className="panel-wall-image"
+          className={loaded ? 'panel-wall-image is-loaded' : 'panel-wall-image'}
           src={artwork.imageUrl}
           alt=""
           loading="lazy"
+          onLoad={() => setLoaded(true)}
         />
       </span>
       <span className="panel-result-body">
