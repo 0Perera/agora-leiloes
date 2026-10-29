@@ -317,8 +317,11 @@
   font-family: var(--font-display);
   font-weight: 600;
   font-size: clamp(11px, 3.1cqi, 13px);
+  line-height: 1.2;
   letter-spacing: clamp(0px, 0.15cqi, 0.52px);
-  white-space: nowrap;
+  /* o único espaço é o depois do "R$": valores na casa dos milhões quebram ali e não vazam */
+  white-space: normal;
+  padding-block: 4px;
   cursor: pointer;
 }
 
