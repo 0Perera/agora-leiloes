@@ -875,3 +875,31 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Erro encontrado na revisão:**
 - Nada a registrar.
+
+## Story 6.5: Cancelamento com estorno
+
+**O que a IA gerou:**
+- A regra do cancelamento, com o teste antes: lote agendado ou ao vivo cancela e devolve o valor do último lance a quem o deu; lote encerrado é recusado.
+- O cancelamento na API, numa operação só: trava o lote, confere se ele já encerrou e se o selo bate, trava a carteira de quem está ganhando, devolve o saldo comprometido e marca o lote como cancelado; o aviso ao vivo sai depois de gravar.
+- A saída do lote cancelado da carteira e de "Em andamento", a entrada em "Não arrematados" e a auditoria acessível pelo link direto.
+- Na sala, o aviso de cancelamento com o formulário escondido e a contagem parada; no painel, o botão de cancelar também em lote com lances, com o aviso na confirmação.
+- Testes da regra, do serviço, do aviso ao vivo e de integração contra um banco de verdade.
+- A atualização sobre as stories 6.2, 6.3 e 6.4, usando as peças compartilhadas que elas criaram.
+
+**O que revisei e pedi para mudar:**
+- Pedi o cancelamento de lote ao vivo com lances, com o saldo de quem está ganhando devolvido na mesma operação e os lances mantidos na auditoria; lote encerrado continua sem cancelamento.
+- Decidi que o lote cancelado sai de "Em andamento" e vai para "Não arrematados", com o selo "Cancelado", o maior lance, a data do cancelamento e só o botão de auditar.
+- Decidi que a auditoria do lote cancelado continua pelo link direto, com o selo "Cancelado", e que a busca por número continua sem achá-lo.
+- Decidi que o cancelamento confere o selo do lote e recusa quando ele não bate, como o lance e a liquidação.
+- Defini os casos de teste e as mensagens da sala, e pedi quatro casos a mais na integração: a liquidação não age no lote cancelado, lance depois do cancelamento não grava nada, o lote nunca aparece em "Arrematados" e o painel não muda o total recebido.
+- Aprovei trocar o texto da confirmação do painel, que dizia que os lances seriam cancelados, pela versão sugerida pelo agente, porque os lances continuam na auditoria.
+- Pedi para ajustar no CLAUDE.md as linhas que ainda descreviam o cancelamento só sem lances, o estorno como fora do escopo e o código de erro que deixou de existir.
+- Na atualização sobre as outras stories, pedi para reaproveitar as peças delas (busca do último lance, status com cancelamento no painel e na auditoria, selo de status) e para somar a devolução do saldo no banco, como na liquidação.
+
+**Sugestões rejeitadas e por quê:**
+- Nada a registrar.
+
+**Erro encontrado na revisão:**
+- A contagem regressiva continuava correndo na sala depois do cancelamento; agora para.
+- Um lance enviado no instante do cancelamento trocava o aviso pela tela de lote não encontrado; agora o aviso fica.
+- O teste da devolução não distinguia devolver só o valor do lance de zerar todo o saldo comprometido; agora distingue.

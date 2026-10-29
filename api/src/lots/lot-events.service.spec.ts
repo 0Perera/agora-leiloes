@@ -57,3 +57,19 @@ describe('LotEventsService', () => {
     ]);
   });
 });
+
+describe('LotEventsService.cancelled', () => {
+  it('emite o evento cancelled para os inscritos do lote', () => {
+    const events = new LotEventsService();
+    const received: MessageEvent[] = [];
+    const cancelledAt = new Date('2026-10-27T12:00:00Z');
+    const subscription = events
+      .stream(1)
+      .subscribe((event) => received.push(event));
+
+    events.cancelled(1, { cancelledAt });
+    subscription.unsubscribe();
+
+    expect(received).toEqual([{ type: 'cancelled', data: { cancelledAt } }]);
+  });
+});

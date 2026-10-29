@@ -16,7 +16,12 @@ import { StatusBadge } from '../../shared/ui/status-badge';
 import { BidForm } from './bid-form';
 import { olderPage } from './room-bids';
 import { RoomHistory } from './room-history';
-import { BidderStatus, EndedStatus, RoomOpening } from './room-status';
+import {
+  BidderStatus,
+  CancelledStatus,
+  EndedStatus,
+  RoomOpening,
+} from './room-status';
 import { RoomSummary } from './room-timing';
 import type { ReadyRoom } from './use-room';
 
@@ -39,7 +44,7 @@ export function RoomView({
 }: Props) {
   const { lot } = room;
   const viewer = useViewer(lot);
-  const open = lot.status !== 'ended';
+  const open = lot.status !== 'ended' && !room.cancelled;
   const offline = connection === 'lost';
   const page = olderPage(room);
   const older = page === null ? null : () => onOlder(page);
@@ -62,11 +67,12 @@ export function RoomView({
           </Niche>
         </figure>
         <div className="room__main">
-          <RoomHead lot={lot} />
+          <RoomHead lot={lot} cancelled={room.cancelled} />
           <RoomSummary
             lot={lot}
             offset={room.offset}
             extended={room.extended}
+            cancelled={room.cancelled}
             leader={leaderOf(lot, room.bids[0])}
           />
           <RoomStatus lot={lot} viewer={viewer} room={room} />
@@ -125,10 +131,20 @@ function RoomStatus({
   viewer: Viewer;
   room: ReadyRoom;
 }) {
-  if (lot.status === 'scheduled')
+  const top = room.bids[0];
+  const bidder = viewer === 'bidder' ? lot.me : undefined;
+  if (room.cancelled && !bidder) return <CancelledStatus lot={lot} top={top} />;
+  if (lot.status === 'scheduled' && !room.cancelled)
     return <RoomOpening startsAt={lot.startsAt} />;
-  if (viewer === 'bidder' && lot.me)
-    return <BidderStatus lot={lot} me={lot.me} top={room.bids[0]} />;
+  if (bidder)
+    return (
+      <BidderStatus
+        lot={lot}
+        me={bidder}
+        top={top}
+        cancelled={room.cancelled}
+      />
+    );
   if (lot.status === 'ended') return <EndedStatus lot={lot} />;
   return null;
 }
@@ -147,13 +163,13 @@ function VisitorBox() {
   );
 }
 
-function RoomHead({ lot }: { lot: LotDetail }) {
+function RoomHead({ lot, cancelled }: { lot: LotDetail; cancelled: boolean }) {
   const byline = [lot.artist, lot.date].filter(Boolean).join(', ');
 
   return (
     <div className="room__head">
       <div className="room-tags">
-        <StatusBadge status={lot.status} />
+        <StatusBadge status={cancelled ? 'cancelled' : lot.status} />
         <span className="room-kicker">{lotLabel(lot.number)}</span>
       </div>
       <h1 className="room-title">{lot.title}</h1>

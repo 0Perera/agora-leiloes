@@ -92,7 +92,12 @@ export function useFeatured() {
   const onMissing = useCallback(() => setFeatured({ status: 'none' }), []);
 
   const id = featured.status === 'ready' ? featured.lot.id : 0;
-  useLotStream(id, featured.status === 'ready', { onBid, onSync, onMissing });
+  useLotStream(id, featured.status === 'ready', {
+    onBid,
+    onSync,
+    onMissing,
+    onCancelled: onMissing,
+  });
 
   return { featured, retry };
 }

@@ -38,3 +38,16 @@ function endedResult(result: DashboardLot['result']): Result {
 export function receiptOf(lot: Pick<DashboardLot, 'result'>): string | null {
   return lot.result?.receiptToken ?? null;
 }
+
+// encerrado já tem resultado; com lances, o cancelamento devolve o comprometido do líder
+export function cancellable(lot: Pick<DashboardLot, 'status'>): boolean {
+  return lot.status === 'live' || lot.status === 'scheduled';
+}
+
+export function cancelWarning(
+  lot: Pick<DashboardLot, 'bidCount'>,
+): string | null {
+  return lot.bidCount > 0
+    ? 'Os lances continuam na auditoria e o saldo comprometido volta para quem está ganhando.'
+    : null;
+}

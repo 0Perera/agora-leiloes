@@ -1,6 +1,7 @@
 import { Injectable, MessageEvent } from '@nestjs/common';
 import { interval, map, merge, Observable } from 'rxjs';
 import { BidEventDto, toBidEvent } from './dto/bid-event.dto';
+import { CancelledEventDto, toCancelledEvent } from './dto/cancelled-event.dto';
 import { SettledEventDto, toSettledEvent } from './dto/settled-event.dto';
 
 export const HEARTBEAT_MS = 25_000;
@@ -18,6 +19,10 @@ export class LotEventsService {
 
   settled(lotId: number, result: SettledEventDto): void {
     this.send(lotId, { type: 'settled', data: toSettledEvent(result) });
+  }
+
+  cancelled(lotId: number, event: CancelledEventDto): void {
+    this.send(lotId, { type: 'cancelled', data: toCancelledEvent(event) });
   }
 
   stream(lotId: number): Observable<MessageEvent> {

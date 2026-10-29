@@ -4,7 +4,7 @@ import { DataSource, EntityManager } from 'typeorm';
 import { Bid } from '../bids/bid.entity';
 import { Clock } from '../common/clock';
 import { Env } from '../config/env.validation';
-import { type LotStatus, STATUS_SQL } from '../lots/lot-status';
+import { type LotState, STATE_SQL } from '../lots/lot-status';
 import { Lot } from '../lots/lot.entity';
 import { Receipt } from '../receipts/receipt.entity';
 import { forLot } from './alias';
@@ -16,7 +16,7 @@ type LotRow = {
   number: number;
   title: string;
   artist: string;
-  status: LotStatus;
+  status: LotState;
   seal: string | null;
   settledAt: Date | null;
   receiptAlias: string | null;
@@ -85,7 +85,7 @@ export class AuditService {
       .addSelect('lot.number', 'number')
       .addSelect('lot.title', 'title')
       .addSelect('lot.artist', 'artist')
-      .addSelect(STATUS_SQL, 'status')
+      .addSelect(STATE_SQL, 'status')
       .addSelect('lot.seal', 'seal')
       .addSelect('lot.settledAt', 'settledAt')
       .addSelect('receipt.alias', 'receiptAlias')
@@ -94,7 +94,6 @@ export class AuditService {
       .addSelect('receipt.settledAt', 'receiptSettledAt')
       .addSelect('receipt.signature', 'receiptSignature')
       .where('lot.id = :id', { id })
-      .andWhere('lot.cancelledAt IS NULL')
       .setParameter('now', this.clock.now())
       .getRawOne<LotRow>();
     if (!row) throw new NotFoundException();

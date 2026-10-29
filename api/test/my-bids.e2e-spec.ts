@@ -2,6 +2,7 @@ import request from 'supertest';
 import {
   type Account,
   at,
+  BASE,
   DEPOSIT,
   INCREMENT,
   start,
@@ -139,6 +140,49 @@ describe('GET /my-bids encerrados', () => {
         settledAt: at(30).toISOString(),
       }),
     ]);
+  });
+});
+
+describe('GET /my-bids cancelados', () => {
+  function cancel(lotId: number): request.Test {
+    return request(api.server)
+      .post(`/lots/${lotId}/cancel`)
+      .auth(auctioneer.token, { type: 'bearer' })
+      .expect(204);
+  }
+
+  it('lote cancelado sai de ongoing e entra em lost em GET /my-bids', async () => {
+    const lotId = await api.createLot(auctioneer, { endsAt: at(60) });
+    await api.bid(bidder, lotId, STARTING_BID).expect(201);
+
+    await cancel(lotId);
+
+    expect((await page('ongoing')).items).toEqual([]);
+    expect((await page('lost')).items).toEqual([
+      expect.objectContaining({
+        id: lotId,
+        amount: null,
+        myBid: STARTING_BID,
+        settledAt: null,
+        cancelledAt: BASE.toISOString(),
+      }),
+    ]);
+  });
+
+  it('lote cancelado nunca aparece em arrematados, mesmo depois do fim original', async () => {
+    const lotId = await api.createLot(auctioneer, { endsAt: at(30) });
+    await api.bid(rival, lotId, STARTING_BID).expect(201);
+    await api.bid(bidder, lotId, STARTING_BID + INCREMENT).expect(201);
+    await cancel(lotId);
+
+    await api.settle(lotId);
+
+    for (const account of [bidder, rival]) {
+      expect((await page('won', account)).items).toEqual([]);
+      expect((await page('lost', account)).items).toEqual([
+        expect.objectContaining({ id: lotId }),
+      ]);
+    }
   });
 });
 

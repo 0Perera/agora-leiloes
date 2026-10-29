@@ -6,7 +6,12 @@ import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel, toRoman } from '../../shared/lib/roman';
 import { StatusBadge } from '../../shared/ui/status-badge';
-import { receiptOf, resultOf } from './ledger-result';
+import {
+  cancellable,
+  cancelWarning,
+  receiptOf,
+  resultOf,
+} from './ledger-result';
 
 export type Fresh = { id: number; reveal: boolean };
 
@@ -156,8 +161,9 @@ function Action({
     return <span className="panel-sub">Fora da vitrine.</span>;
   const receipt = receiptOf(lot);
   if (receipt) return <ReceiptLink lot={lot} token={receipt} />;
-  const cancellable = lot.status !== 'ended' && lot.bidCount === 0;
-  if (!cancellable || !confirming)
+  const allowed = cancellable(lot);
+  const warning = cancelWarning(lot);
+  if (!allowed || !confirming)
     return (
       <span className="panel-actions">
         <Link
@@ -167,7 +173,7 @@ function Action({
         >
           Abrir sala
         </Link>
-        {cancellable && (
+        {allowed && (
           <button className="panel-cancel" type="button" onClick={onAsk}>
             Cancelar lote
           </button>
@@ -182,6 +188,7 @@ function Action({
       aria-label={`Confirmar cancelamento do ${lotLabel(lot.number)}`}
     >
       <span>Tirar o lote da vitrine?</span>
+      {warning && <span className="panel-sub">{warning}</span>}
       <span className="panel-confirm-buttons">
         <button
           className="panel-cancel panel-cancel--confirm"

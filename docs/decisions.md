@@ -27,7 +27,7 @@ D-001 a D-030 foram tomadas no planejamento (22 e 23/10/2026), antes da primeira
 | D-015 | Dinheiro em centavos, `integer` | Aceita | planejamento |
 | D-016 | Papéis escolhidos no cadastro | Aceita | planejamento |
 | D-017 | Lote não editável | Aceita | planejamento |
-| D-018 | Opcionais escolhidos | Aceita | planejamento |
+| D-018 | Opcionais escolhidos | Parcialmente substituída por D-070 | planejamento |
 | D-019 | Testes com Jest, Testcontainers e TDD seletivo | Aceita | planejamento |
 | D-020 | Seed pelos services | Parcialmente substituída por D-069 | planejamento |
 | D-021 | Squash merge e título de PR validado | Aceita | planejamento |
@@ -79,6 +79,7 @@ D-001 a D-030 foram tomadas no planejamento (22 e 23/10/2026), antes da primeira
 | D-067 | Lotes encerrados do seed liquidados no passado | Aceita | 6.1 |
 | D-068 | Limite de tentativas no login por IP, com o IP da Cloudflare | Aceita | 6.2 |
 | D-069 | Prazos dos lotes do seed em dias | Aceita | 6.1 |
+| D-070 | Cancelamento com estorno do comprometido do líder | Aceita | 6.5 |
 
 ## Modelo
 
@@ -295,7 +296,7 @@ Story: planejamento
 
 ## D-018: Opcionais escolhidos
 
-Status: Aceita
+Status: Parcialmente substituída por D-070
 Data: 2026-10-23
 Story: planejamento
 
@@ -872,3 +873,15 @@ Substitui: a parte da D-020 sobre o prazo
 **Por quê:** o seed roda no dia da entrega, junto com a recriação do banco (D-027), e o sistema é testado nos dias seguintes; 7 a 10 dias bastam para os lotes ao vivo continuarem abertos nesse período, e os agendados abrem antes de eles encerrarem.
 **Alternativas descartadas:** lote ao vivo terminando em ~30 dias, como dizia a D-020.
 **Consequência:** o seed precisa rodar de novo no dia da entrega; rodado antes, os lotes ao vivo podem encerrar cedo demais.
+
+## D-070: Cancelamento com estorno do comprometido do líder
+
+Status: Aceita
+Data: 2026-10-28
+Story: 6.5
+Substitui: a parte da D-018 sobre o estorno
+
+**Decisão:** o leiloeiro cancela lote agendado ou ao vivo mesmo com lances. Na mesma transação, o lote é travado, depois a carteira do líder (ordem da D-014), o comprometido dele cai o valor do último lance e o lote recebe `cancelled_at`. Os lances, a cadeia e o selo ficam como estão, e o evento `cancelled` sai no stream depois do commit.
+**Por quê:** uma peça com lances não saía da vitrine e o saldo de quem lidera ficava preso até o fim do lote. Só o líder tem comprometido no lote, porque cada lance aceito já libera o comprometido do anterior, então o estorno é um movimento só.
+**Alternativas descartadas:** manter `LOT_HAS_BIDS` (o opcional ficaria de fora); apagar ou marcar os lances como cancelados (a tabela de lances é append-only e a auditoria quebraria); cancelar também lote encerrado (desfaria um comprovante já assinado).
+**Consequência:** o código `LOT_HAS_BIDS` deixa de existir. Selo divergente recusa o cancelamento com `LOT_INTEGRITY_FAILED`, como no lance e na liquidação. O lote cancelado continua dando 404 na sala e na busca por número, vai para "Não arrematados" em Meus lances e segue auditável pelo link direto, com o status `cancelled`.

@@ -42,7 +42,7 @@ export class WalletsService {
     return { balance: wallet.balance, committed: wallet.committed };
   }
 
-  // Comprometido é do líder: lote cujo último lance é dele e que ainda não foi liquidado.
+  // Comprometido é do líder: lote cujo último lance é dele, ainda não liquidado nem cancelado.
   async committedLots(userId: number): Promise<CommittedLots> {
     const rows = await this.dataSource
       .getRepository(Bid)
@@ -56,6 +56,7 @@ export class WalletsService {
       .addSelect('COUNT(*) OVER()::int', 'total')
       .where('bid.userId = :userId', { userId })
       .andWhere('lot.settledAt IS NULL')
+      .andWhere('lot.cancelledAt IS NULL')
       .andWhere(
         'NOT EXISTS (SELECT 1 FROM bids later WHERE later.lot_id = bid.lot_id AND later.seq > bid.seq)',
       )

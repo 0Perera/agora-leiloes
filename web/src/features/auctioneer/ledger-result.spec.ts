@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { DashboardLot } from '../../shared/api/types';
-import { receiptOf, resultOf } from './ledger-result';
+import {
+  cancellable,
+  cancelWarning,
+  receiptOf,
+  resultOf,
+} from './ledger-result';
 
 type ResultLot = Pick<DashboardLot, 'status' | 'currentBid' | 'result'>;
 
@@ -60,5 +65,39 @@ describe('receiptOf', () => {
 
   it('não devolve token no lote sem comprovante', () => {
     expect(receiptOf(makeLot({ result: null }))).toBeNull();
+  });
+});
+
+function makeBookLot(
+  override: Partial<Pick<DashboardLot, 'status' | 'bidCount'>> = {},
+): Pick<DashboardLot, 'status' | 'bidCount'> {
+  return { status: 'live', bidCount: 0, ...override };
+}
+
+describe('cancellable', () => {
+  it('aceita lote ao vivo com lances', () => {
+    expect(cancellable(makeBookLot({ bidCount: 3 }))).toBe(true);
+  });
+
+  it('aceita lote agendado', () => {
+    expect(cancellable(makeBookLot({ status: 'scheduled' }))).toBe(true);
+  });
+
+  it('recusa lote encerrado', () => {
+    expect(cancellable(makeBookLot({ status: 'ended', bidCount: 3 }))).toBe(
+      false,
+    );
+  });
+});
+
+describe('cancelWarning', () => {
+  it('com lances, avisa que o comprometido volta para o líder', () => {
+    expect(cancelWarning({ bidCount: 2 })).toBe(
+      'Os lances continuam na auditoria e o saldo comprometido volta para quem está ganhando.',
+    );
+  });
+
+  it('sem lances, não avisa nada', () => {
+    expect(cancelWarning({ bidCount: 0 })).toBeNull();
   });
 });

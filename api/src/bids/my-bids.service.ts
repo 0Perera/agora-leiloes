@@ -9,10 +9,11 @@ import { MyBidDto, MyBidsCountsDto, MyBidsDto } from './dto/my-bids.dto';
 const PAGE_SIZE = 20;
 
 // Vencedor pelo id, nunca pelo alias: dois licitantes podem colidir no alias.
+// Lote cancelado nunca é liquidado, então vai para lost e não para won.
 const SECTION_WHERE: Record<MyBidsSection, string> = {
-  ongoing: 'lot.settledAt IS NULL',
+  ongoing: 'lot.settledAt IS NULL AND lot.cancelledAt IS NULL',
   won: 'lot.settledAt IS NOT NULL AND receipt.winnerUserId = :userId',
-  lost: 'lot.settledAt IS NOT NULL AND receipt.winnerUserId IS DISTINCT FROM :userId',
+  lost: '((lot.settledAt IS NOT NULL AND receipt.winnerUserId IS DISTINCT FROM :userId) OR lot.cancelledAt IS NOT NULL)',
 };
 
 // Situação pelo dono do último lance da cadeia, nunca por current_bid.
@@ -52,8 +53,12 @@ const SECTIONS: Record<MyBidsSection, Section> = {
       builder
         .addSelect('receipt.amount', 'amount')
         .addSelect('MAX(bid.amount)', 'myBid')
-        .addSelect('lot.settledAt', 'settledAt'),
-    order: settledOrder,
+        .addSelect('lot.settledAt', 'settledAt')
+        .addSelect('lot.cancelledAt', 'cancelledAt'),
+    order: (builder) =>
+      builder
+        .orderBy('COALESCE(lot.settledAt, lot.cancelledAt)', 'DESC')
+        .addOrderBy('lot.id', 'DESC'),
   },
 };
 

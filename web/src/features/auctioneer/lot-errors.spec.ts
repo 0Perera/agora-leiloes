@@ -30,15 +30,6 @@ describe('createError', () => {
 });
 
 describe('cancelError', () => {
-  it('traduz LOT_HAS_BIDS', () => {
-    expect(cancelError(new ApiError(409, { code: 'LOT_HAS_BIDS' }), 7)).toEqual(
-      {
-        title: 'Cancelamento recusado',
-        text: 'Um lance chegou no Lote VII · nº 7 antes do cancelamento, então o lote continua no ar.',
-      },
-    );
-  });
-
   it('traduz LOT_ENDED', () => {
     expect(cancelError(new ApiError(422, { code: 'LOT_ENDED' }), 7)).toEqual({
       title: 'Cancelamento recusado',

@@ -25,7 +25,7 @@ export class WonBidDto {
   receiptToken!: string;
 }
 
-// Valor nulo só num liquidado sem comprovante, que não deveria existir.
+// Lote cancelado tem valor e liquidação nulos; fora dele, valor nulo não deveria existir.
 export class LostBidDto {
   id!: number;
   number!: number;
@@ -33,7 +33,8 @@ export class LostBidDto {
   artist!: string;
   amount!: number | null;
   myBid!: number;
-  settledAt!: Date;
+  settledAt!: Date | null;
+  cancelledAt!: Date | null;
 }
 
 export type MyBidDto = OngoingBidDto | WonBidDto | LostBidDto;

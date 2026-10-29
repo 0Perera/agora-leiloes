@@ -181,6 +181,7 @@ export const api = {
 type StreamHandlers = {
   onBid: (bid: BidEvent) => void;
   onSettled: () => void;
+  onCancelled: () => void;
   onOpen: () => void;
   onLost: () => void;
   onDrop: () => void;
@@ -206,6 +207,7 @@ export function openLotStream(
       if (bid) handlers.onBid(bid);
     });
     source.addEventListener('settled', handlers.onSettled);
+    source.addEventListener('cancelled', handlers.onCancelled);
     source.addEventListener('error', () => {
       if (closed) return;
       handlers.onLost();
