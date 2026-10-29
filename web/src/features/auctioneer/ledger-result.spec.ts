@@ -9,7 +9,7 @@ function makeLot(override: Partial<ResultLot> = {}): ResultLot {
     status: 'ended',
     currentBid: 975000,
     result: {
-      alias: 'Licitante #A7F2',
+      alias: 'Licitante K7QX2M',
       amount: 975000,
       receiptToken: 'token',
     },
@@ -23,7 +23,7 @@ describe('resultOf', () => {
       text: 'R$ 9.750,00',
       sub: 'arrematado por',
       muted: false,
-      who: 'Licitante #A7F2',
+      who: 'Licitante K7QX2M',
     });
   });
 

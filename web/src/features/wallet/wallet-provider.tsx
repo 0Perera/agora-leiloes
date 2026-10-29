@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { api } from '../../shared/api/client';
 import type { WalletBalance } from '../../shared/api/types';
-import { WalletContext } from './use-wallet';
-import type { WalletState } from './use-wallet';
+import { WalletContext } from '../../shared/lib/use-wallet';
+import type { WalletState } from '../../shared/lib/use-wallet';
 
 export function WalletProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<WalletState>({ status: 'loading' });
@@ -26,7 +26,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     setAttempt((current) => current + 1);
   }, []);
 
-  // Releitura em segundo plano: o resumo não passa por "carregando" e um erro mantém o valor anterior.
+  // releitura em segundo plano: o resumo não passa por "carregando" e um erro mantém o valor anterior
   const refresh = useCallback(() => {
     const request = ++latest.current;
     api.wallet().then(
@@ -37,7 +37,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
-  // O depósito devolve só o saldo: os lotes comprometidos continuam os da última leitura.
+  // o depósito devolve só o saldo: os lotes comprometidos continuam os da última leitura
   const update = useCallback((balance: WalletBalance) => {
     setState((current) =>
       current.status === 'ready'

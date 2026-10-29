@@ -5,11 +5,7 @@ import type {
   DashboardBook,
   DashboardSummary,
 } from '../../shared/api/types';
-
-export type Load<T> =
-  | { status: 'loading'; data: T | null }
-  | { status: 'error'; data: T | null }
-  | { status: 'ready'; data: T };
+import type { Load } from '../../shared/lib/load';
 
 export function useDashboard() {
   const [summary, setSummary] = useState<Load<DashboardSummary>>({

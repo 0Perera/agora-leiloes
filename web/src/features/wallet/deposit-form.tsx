@@ -4,7 +4,7 @@ import { api } from '../../shared/api/client';
 import { formatMoney, maskAmount } from '../../shared/lib/money';
 import { FieldError } from '../../shared/ui/field-error';
 import { depositError, validateAmount } from './deposit';
-import { useWallet } from './use-wallet';
+import { useWallet } from '../../shared/lib/use-wallet';
 
 const chips = [50000, 100000, 500000];
 

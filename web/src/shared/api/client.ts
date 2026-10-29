@@ -50,6 +50,10 @@ export class ApiError extends Error {
   }
 }
 
+export function isNotFound(caught: unknown): boolean {
+  return caught instanceof ApiError && caught.status === 404;
+}
+
 type Options = {
   method?: 'GET' | 'POST';
   body?: unknown;

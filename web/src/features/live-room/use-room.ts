@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ApiError, api } from '../../shared/api/client';
+import { api, isNotFound } from '../../shared/api/client';
 import type { BidEvent, BidHistory, LotDetail } from '../../shared/api/types';
 import { clockOffset } from '../../shared/lib/countdown';
 import { mergeBid, mergeRoom } from '../../shared/lib/live-bids';
@@ -56,8 +56,7 @@ function withBid(current: Room, bid: BidEvent): Room {
 }
 
 function failure(caught: unknown): Room {
-  const missing = caught instanceof ApiError && caught.status === 404;
-  return { status: missing ? 'missing' : 'error' };
+  return { status: isNotFound(caught) ? 'missing' : 'error' };
 }
 
 function turnOf(room: Room): number | null {
@@ -148,8 +147,8 @@ function useTurn(id: number, room: Room, setRoom: SetRoom) {
         },
         (caught: unknown) => {
           // lote cancelado com a página aberta; outro erro mantém a tela
-          const missing = caught instanceof ApiError && caught.status === 404;
-          if (active && missing) setRoom(() => ({ status: 'missing' }));
+          if (active && isNotFound(caught))
+            setRoom(() => ({ status: 'missing' }));
         },
       );
     };

@@ -2,7 +2,7 @@ import type { DashboardSummary } from '../../shared/api/types';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { LoadError } from '../../shared/ui/load-error';
-import type { Load } from './use-dashboard';
+import type { Load } from '../../shared/lib/load';
 
 type Props = {
   state: Load<DashboardSummary>;
@@ -76,12 +76,12 @@ function SummarySkeleton() {
       <div className="panel-tabula" aria-hidden="true">
         {[1, 2, 3, 4].map((term) => (
           <div key={term}>
-            <div className="panel-skel panel-skel--label" />
+            <div className="skel panel-skel--label" />
             <div
               className={
                 term === 1
-                  ? 'panel-skel panel-skel--value panel-skel--total'
-                  : 'panel-skel panel-skel--value'
+                  ? 'skel panel-skel--value panel-skel--total'
+                  : 'skel panel-skel--value'
               }
             />
           </div>

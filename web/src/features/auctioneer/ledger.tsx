@@ -11,7 +11,8 @@ import { LoadError } from '../../shared/ui/load-error';
 import { cancelError } from './lot-errors';
 import type { Notice } from './lot-errors';
 import { Pager } from '../../shared/ui/pager';
-import type { Load } from './use-dashboard';
+import { Tabs } from '../../shared/ui/tabs';
+import type { Load } from '../../shared/lib/load';
 
 const filters: { id: BookFilter; label: string; empty: string }[] = [
   { id: 'all', label: 'Todos', empty: 'no livro' },
@@ -64,22 +65,16 @@ export function Ledger(props: Props) {
         </h2>
         <div className="ag-meander panel-section-meander" />
       </header>
-      <div className="panel-filters" role="group" aria-label="Filtrar lotes">
-        {filters.map((item) => (
-          <button
-            key={item.id}
-            className="panel-tab"
-            type="button"
-            aria-pressed={filter === item.id}
-            onClick={() => choose(item.id)}
-          >
-            {item.label}{' '}
-            {counts && (
-              <span className="panel-tab-count">({counts[item.id]})</span>
-            )}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        tabs={filters.map(({ id, label }) => ({
+          id,
+          label,
+          count: counts?.[id],
+        }))}
+        active={filter}
+        label="Filtrar lotes"
+        onSelect={choose}
+      />
       {refusal && (
         <div className="ag-notice ag-notice--info" role="alert">
           <span className="ag-notice__mark" aria-hidden="true">
@@ -209,11 +204,11 @@ function LedgerSkeleton() {
       <div className="panel-ledger-skel" aria-hidden="true">
         {[1, 2, 3, 4, 5].map((row) => (
           <div key={row} className="panel-ledger-skel-row">
-            <div className="panel-skel panel-skel--num" />
-            <div className="panel-skel panel-skel--thumb" />
+            <div className="skel panel-skel--num" />
+            <div className="skel panel-skel--thumb" />
             <div className="panel-ledger-skel-text">
-              <div className="panel-skel panel-skel--line" />
-              <div className="panel-skel panel-skel--short" />
+              <div className="skel panel-skel--line" />
+              <div className="skel panel-skel--short" />
             </div>
           </div>
         ))}

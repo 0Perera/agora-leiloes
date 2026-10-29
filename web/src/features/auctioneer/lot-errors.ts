@@ -1,4 +1,4 @@
-import { ApiError } from '../../shared/api/client';
+import { ApiError, isNotFound } from '../../shared/api/client';
 import { lotLabel } from '../../shared/lib/roman';
 import { lotMessages } from './lot-validation';
 import type { LotErrors, LotField } from './lot-validation';
@@ -82,7 +82,7 @@ export function cancelError(error: unknown, number: number): Notice {
       title,
       text: `O ${lot} encerrou antes do cancelamento, então o resultado vale.`,
     };
-  if (error.status === 404)
+  if (isNotFound(error))
     return {
       title,
       text: `O ${lot} não está mais disponível para cancelar. O livro foi atualizado.`,

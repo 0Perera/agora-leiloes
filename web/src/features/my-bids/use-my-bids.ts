@@ -1,14 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '../../shared/api/client';
 import type { MyBids, MyBidsSection } from '../../shared/api/types';
-
-export type MyBidsState =
-  | { status: 'loading'; data: MyBids | null }
-  | { status: 'error'; data: MyBids | null }
-  | { status: 'ready'; data: MyBids };
+import type { Load } from '../../shared/lib/load';
 
 export function useMyBids() {
-  const [state, setState] = useState<MyBidsState>({
+  const [state, setState] = useState<Load<MyBids>>({
     status: 'loading',
     data: null,
   });

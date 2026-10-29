@@ -1,6 +1,7 @@
 import type { LotShowcase, LotStatus } from '../../shared/api/types';
 import { LoadError } from '../../shared/ui/load-error';
 import { Pager } from '../../shared/ui/pager';
+import { Tabs } from '../../shared/ui/tabs';
 import { LotCard } from './lot-card';
 import { useShowcase } from './use-showcase';
 
@@ -58,22 +59,12 @@ export function Showcase({ now, offset }: Props) {
       </header>
 
       <div className="home-toolbar">
-        <div role="group" aria-label="Estado dos lotes" className="home-tabs">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              className="home-tab"
-              type="button"
-              aria-pressed={view.tab === tab.id}
-              onClick={() => view.choose(tab.id)}
-            >
-              {tab.label}{' '}
-              {counts && (
-                <span className="home-tab__count">({counts[tab.id]})</span>
-              )}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          tabs={tabs.map((tab) => ({ ...tab, count: counts?.[tab.id] }))}
+          active={view.tab}
+          label="Estado dos lotes"
+          onSelect={view.choose}
+        />
         <label className="home-search">
           <span className="ag-field__label">Buscar na vitrine</span>
           <span className="ag-input home-search__box">

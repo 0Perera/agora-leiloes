@@ -1,7 +1,5 @@
+import { maxPage } from '../lib/limits';
 import './pager.css';
-
-// as listagens paginadas da API aceitam no máximo a página 100
-const maxPage = 100;
 
 type Props = {
   page: number;

@@ -2,7 +2,7 @@ import type { BidHistoryItem, LotDetail } from '../../shared/api/types';
 import { formatShortDate } from '../../shared/lib/date';
 import { minimumOf, situationOf } from '../../shared/lib/live-bids';
 import { BidSituation, EndedSituation } from '../../shared/ui/bid-situation';
-import { useWalletRefresh } from '../wallet/use-wallet-refresh';
+import { useWalletRefresh } from '../../shared/lib/use-wallet-refresh';
 import { endedOf } from './room-ended';
 import type { Ended } from './room-ended';
 

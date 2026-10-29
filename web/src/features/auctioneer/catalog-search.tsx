@@ -235,10 +235,10 @@ function ResultsSkeleton() {
       <div className="panel-results" aria-hidden="true">
         {[1, 2, 3, 4, 5, 6].map((item) => (
           <div key={item} className="panel-result-skel">
-            <div className="panel-skel panel-skel--wall" />
+            <div className="skel panel-skel--wall" />
             <div className="panel-result-body">
-              <div className="panel-skel panel-skel--line" />
-              <div className="panel-skel panel-skel--short" />
+              <div className="skel panel-skel--line" />
+              <div className="skel panel-skel--short" />
             </div>
           </div>
         ))}

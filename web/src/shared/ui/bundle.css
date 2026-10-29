@@ -1,37 +1,13 @@
-/* Ágora: componentes em CSS puro. Copie este arquivo para o front (React) e use as classes ag-*.
-   Requer as variáveis de tokens.css (cores, espaçamento, raios, sombras, --font-*). */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 
-/* ---------- Base ---------- */
-.ag-page {
-  margin: 0;
-  padding: var(--space-5);
-  background-color: var(--marble-000);
-  color: var(--ink);
-  font-family: var(--font-text);
-  font-size: 18px;
-  line-height: 28px;
-  -webkit-font-smoothing: antialiased;
-}
-.ag-page *, .ag-page *::before, .ag-page *::after { box-sizing: border-box; }
-.ag-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
-.ag-stack { display: flex; flex-direction: column; gap: var(--space-4); }
-
-/* Mármore: veios gerados por SVG (feTurbulence), sem imagem externa */
-.ag-marble {
-  background-color: var(--marble-000);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='720'%3E%3Cfilter id='m' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.0035 0.011' numOctaves='5' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.51 0 0 0 0 0.45 -2.4 0 0 0 0.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)' opacity='0.6'/%3E%3C/svg%3E");
-  background-size: 720px 720px;
-}
-
-/* Chão da página: mármore com veios suaves (todo texto passa 4,5:1 sobre o veio mais escuro) */
+/* chão da página: mármore com veios suaves (todo texto passa 4,5:1 sobre o veio mais escuro) */
 .ag-ground {
   background-color: var(--marble-000);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='720'%3E%3Cfilter id='m' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.0035 0.011' numOctaves='5' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.51 0 0 0 0 0.45 -2.4 0 0 0 0.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)' opacity='0.3'/%3E%3C/svg%3E");
   background-size: 900px 900px;
 }
 
-/* Meandro grego (greca) em ouro */
+/* meandro grego (greca) em ouro */
 .ag-meander {
   height: 16px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%239a7529' stroke-width='2' stroke-linecap='square'%3E%3Cpath d='M0 1.5H24M0 22.5H24'/%3E%3Cpath d='M2 22.5V6H20V18H8V10H15V14'/%3E%3C/g%3E%3C/svg%3E");
@@ -41,45 +17,15 @@
 }
 .ag-meander--light { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23e4cd92' stroke-width='2' stroke-linecap='square'%3E%3Cpath d='M0 1.5H24M0 22.5H24'/%3E%3Cpath d='M2 22.5V6H20V18H8V10H15V14'/%3E%3C/g%3E%3C/svg%3E"); }
 
-/* Filete dourado duplo */
+/* filete dourado duplo */
 .ag-rule {
   height: 5px;
   border-top: var(--border-hairline) solid var(--gold-500);
   border-bottom: var(--border-hairline) solid var(--gold-500);
 }
 
-.ag-link {
-  color: var(--ultramarine);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
-}
-
-:where(.ag-page) :focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 3px;
-}
-
-/* ---------- Título de seção ---------- */
 .ag-section { text-align: center; }
-.ag-section__numeral {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  justify-content: center;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 13px;
-  line-height: 16px;
-  letter-spacing: 0.3em;
-  color: var(--gold-700);
-}
-.ag-section__numeral::before, .ag-section__numeral::after {
-  content: "";
-  width: 48px;
-  height: 0;
-  border-top: var(--border-hairline) solid var(--gold-500);
-}
+
 .ag-section__title {
   margin: var(--space-2) 0 var(--space-3);
   font-family: var(--font-display);
@@ -99,7 +45,6 @@
   color: var(--ink-muted);
 }
 
-/* ---------- Botão ---------- */
 .ag-btn {
   display: inline-flex;
   align-items: center;
@@ -147,7 +92,6 @@
   cursor: not-allowed;
 }
 
-/* ---------- Badge de status do lote ---------- */
 .ag-badge {
   display: inline-flex;
   align-items: center;
@@ -174,11 +118,10 @@
 }
 .ag-badge--scheduled { background: var(--marble-000); color: var(--gold-700); border-color: var(--gold-500); }
 .ag-badge--closed { background: var(--marble-200); color: var(--ink-muted); border-color: var(--vein); }
-.ag-badge--won { background: var(--ultramarine); color: var(--on-pigment); }
+
 @keyframes ag-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 @media (prefers-reduced-motion: reduce) { .ag-badge--live::before { animation: none; } }
 
-/* ---------- Card de lote ---------- */
 .ag-lot {
   display: flex;
   flex-direction: column;
@@ -190,22 +133,7 @@
   transition: box-shadow 200ms ease, transform 200ms ease;
 }
 .ag-lot:hover { box-shadow: var(--shadow-relief); transform: translateY(-2px); }
-.ag-lot__frame {
-  padding: var(--space-2);
-  border: var(--border-hairline) solid var(--gold-500);
-  border-bottom: 0;
-  border-radius: var(--radius-arch) var(--radius-arch) 0 0;
-  background: var(--marble-100);
-}
-.ag-lot__img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  border-radius: var(--radius-arch) var(--radius-arch) 0 0;
-  background-color: var(--marble-200);
-  box-shadow: inset 0 0 0 1px var(--vein);
-}
+
 .ag-lot__body {
   padding: var(--space-4);
   border: var(--border-hairline) solid var(--gold-500);
@@ -267,7 +195,6 @@
 .ag-lot__time { font-family: var(--font-display); font-weight: 600; font-size: 16px; line-height: 28px; color: var(--ink); text-align: right; }
 .ag-lot__time--urgent { color: var(--cinnabar); }
 
-/* ---------- Contagem regressiva ---------- */
 .ag-countdown { display: inline-flex; flex-direction: column; align-items: center; gap: var(--space-3); }
 .ag-countdown__units { display: flex; align-items: flex-start; gap: var(--space-2); }
 .ag-countdown__unit { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
@@ -302,16 +229,7 @@
   color: var(--ink-muted);
 }
 .ag-countdown--urgent .ag-countdown__value { color: var(--cinnabar); border-color: var(--cinnabar); }
-.ag-countdown__note {
-  margin: 0;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 17px;
-  line-height: 24px;
-  color: var(--cinnabar-deep);
-}
 
-/* ---------- Faixa de status do lance ---------- */
 .ag-bidstatus {
   display: flex;
   align-items: center;
@@ -348,7 +266,6 @@
 }
 .ag-bidstatus__text { margin: 2px 0 0; font-size: 16px; line-height: 22px; }
 
-/* ---------- Formulário de lance ---------- */
 .ag-field { display: flex; flex-direction: column; gap: var(--space-2); }
 .ag-field__label {
   font-family: var(--font-display);
@@ -391,10 +308,7 @@
 }
 .ag-input__control:focus { outline: none; }
 .ag-field__hint { font-size: 15px; line-height: 20px; color: var(--ink-muted); }
-.ag-bidform { display: flex; align-items: flex-end; gap: var(--space-3); flex-wrap: wrap; }
-.ag-bidform .ag-field { flex: 1 1 220px; }
 
-/* ---------- Avisos (lance recusado, informação, confirmação) ---------- */
 .ag-notice {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -418,40 +332,6 @@
 .ag-notice--info { background: var(--ultramarine-soft); color: var(--ultramarine); }
 .ag-notice--success { background: var(--malachite-soft); color: var(--malachite); }
 
-/* ---------- Carteira ---------- */
-.ag-wallet {
-  padding: var(--space-5);
-  background: var(--marble-100);
-  border: var(--border-hairline) solid var(--gold-500);
-  box-shadow: inset 0 0 0 4px var(--marble-100), inset 0 0 0 5px var(--vein);
-}
-.ag-wallet__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
-.ag-wallet__title { margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 28px; line-height: 34px; }
-.ag-wallet__grid { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: var(--space-5); }
-.ag-wallet__cell { padding: 0 var(--space-4); border-left: var(--border-hairline) solid var(--gold-500); }
-.ag-wallet__cell:first-child { padding-left: 0; border-left: 0; }
-.ag-wallet__label {
-  display: block;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 14px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-muted);
-}
-.ag-wallet__value { display: block; margin-top: var(--space-2); font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 32px; font-variant-numeric: tabular-nums; }
-.ag-wallet__value--committed { color: var(--gold-700); }
-.ag-wallet__value--available { color: var(--ultramarine); }
-.ag-wallet__note { display: block; margin-top: var(--space-1); font-size: 15px; line-height: 20px; color: var(--ink-muted); }
-@media (max-width: 560px) {
-  .ag-wallet__grid { grid-template-columns: 1fr; gap: var(--space-4); }
-  .ag-wallet__cell { padding: var(--space-4) 0 0; border-left: 0; border-top: var(--border-hairline) solid var(--gold-500); }
-  .ag-wallet__cell:first-child { padding-top: 0; border-top: 0; }
-}
-
-/* ---------- Selo de auditoria ---------- */
-.ag-audit { display: flex; align-items: center; gap: var(--space-5); flex-wrap: wrap; }
 .ag-seal {
   position: relative;
   flex: none;
@@ -495,17 +375,4 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.ag-audit__body { flex: 1 1 260px; min-width: 0; }
-.ag-audit__title { margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 26px; line-height: 32px; }
-.ag-audit__text { margin: var(--space-1) 0 0; font-size: 16px; line-height: 24px; color: var(--ink-muted); }
-.ag-hash {
-  display: inline-block;
-  margin-top: var(--space-2);
-  padding: 2px var(--space-2);
-  background: var(--marble-100);
-  border: var(--border-hairline) solid var(--vein);
-  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-  font-size: 13px;
-  line-height: 20px;
-  color: var(--ink);
-}
+

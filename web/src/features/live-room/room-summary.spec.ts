@@ -3,7 +3,6 @@ import type { LotDetail } from '../../shared/api/types';
 import {
   awaitsSettlement,
   countNote,
-  parseLotId,
   retryTurn,
   summaryOf,
   topMark,
@@ -58,12 +57,6 @@ describe('countNote', () => {
   });
 });
 
-describe('parseLotId', () => {
-  it('não transforma id não numérico em busca na API', () => {
-    expect(parseLotId('abc')).toBeNull();
-  });
-});
-
 describe('retryTurn', () => {
   it('repete a busca no máximo 3 vezes enquanto o status não muda', () => {
     const retries = [0, 1, 2, 3].map((done) => retryTurn('live', 'live', done));
@@ -77,7 +70,7 @@ describe('awaitsSettlement', () => {
   });
 
   it('não aguarda no lote encerrado já liquidado', () => {
-    const result = { alias: 'Licitante #A7F2', amount: 975000 };
+    const result = { alias: 'Licitante K7QX2M', amount: 975000 };
     expect(awaitsSettlement({ status: 'ended', result })).toBe(false);
   });
 });
@@ -88,7 +81,7 @@ describe('topMark', () => {
   });
 
   it('marca o último lance como "Arrematou" no lote liquidado com vencedor', () => {
-    const result = { alias: 'Licitante #A7F2', amount: 975000 };
+    const result = { alias: 'Licitante K7QX2M', amount: 975000 };
     expect(topMark({ status: 'ended', result })).toBe('Arrematou');
   });
 

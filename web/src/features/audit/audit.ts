@@ -1,5 +1,5 @@
 import type { AuditBid, BidMark, LotAudit } from '../../shared/api/types';
-import { fromRoman, toRoman } from '../../shared/lib/roman';
+import { formatClock } from '../../shared/lib/date';
 
 export type Verdict = { intact: boolean; title: string; text: string };
 
@@ -54,9 +54,7 @@ export function countText(count: number): string {
 }
 
 export function checkedText(checkedAt: Date): string {
-  const pad = (value: number) => String(value).padStart(2, '0');
-  const clock = `${pad(checkedAt.getHours())}h${pad(checkedAt.getMinutes())}`;
-  return `Verificado agora, às\u00a0${clock}.`;
+  return `Verificado agora, às\u00a0${formatClock(checkedAt)}.`;
 }
 
 export type CheckView = { label: string; busy: boolean; error: string | null };
@@ -103,28 +101,3 @@ function noteOf(
     return `Depende do lance ${brokenSeq} e não pode ser confirmado.`;
   return null;
 }
-
-const maxNumber = 2_147_483_647;
-const prefix = /^lote\s+/i;
-const digits = /^\d+$/;
-
-export type Lookup = { number: number } | { error: string };
-
-export function parseLookup(text: string): Lookup {
-  const term = text.trim().replace(prefix, '');
-  if (term === '') return { error: 'Informe o número do lote para auditar.' };
-  const number = digits.test(term)
-    ? Number(term)
-    : fromRoman(term.toUpperCase());
-  if (number === null || number < 1 || number > maxNumber)
-    return { error: 'Use o número do lote, como 7 ou VII.' };
-  return { number };
-}
-
-export function missingText(number: number): string {
-  const name = toRoman(number) ?? `nº ${number}`;
-  return `Lote ${name} não encontrado. Confira o número no card ou no comprovante.`;
-}
-
-export const lookupFailed =
-  'Não foi possível buscar o lote agora. Tente de novo.';

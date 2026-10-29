@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ApiError, api } from '../../shared/api/client';
+import { api, isNotFound } from '../../shared/api/client';
 import type { BidEvent, BidHistory, LotDetail } from '../../shared/api/types';
 import { clockOffset } from '../../shared/lib/countdown';
 import { mergeBid, mergeRoom } from '../../shared/lib/live-bids';
@@ -13,10 +13,6 @@ export type Featured =
   | { status: 'error' }
   | { status: 'none' }
   | ReadyFeatured;
-
-function isMissing(caught: unknown): boolean {
-  return caught instanceof ApiError && caught.status === 404;
-}
 
 async function loadFeatured(): Promise<Featured> {
   const card = await api.featured();
@@ -37,7 +33,7 @@ async function loadFeatured(): Promise<Featured> {
     };
   } catch (caught) {
     // o lote pode ter sido cancelado entre as duas chamadas
-    if (isMissing(caught)) return { status: 'none' };
+    if (isNotFound(caught)) return { status: 'none' };
     throw caught;
   }
 }
@@ -47,7 +43,7 @@ function withBid(current: Featured, bid: BidEvent): Featured {
   return { ...current, ...mergeBid(current, bid) };
 }
 
-// o status fica o do carregamento: a virada com a página aberta segue como na 3.6
+// o status fica o do carregamento: a virada com a página aberta só aparece ao recarregar
 function synced(
   current: Featured,
   lot: LotDetail,

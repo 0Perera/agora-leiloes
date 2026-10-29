@@ -1,4 +1,5 @@
 import type { LotDetail } from '../../shared/api/types';
+import { urgentSeconds } from '../../shared/lib/countdown';
 
 type SummaryLot = Pick<
   LotDetail,
@@ -9,9 +10,7 @@ export type Summary = { label: string; amount: number; bids: string };
 
 export type CountNote = { text: string; urgent: boolean };
 
-const urgentSeconds = 120;
 const maxTurnRetries = 3;
-const maxId = 2_147_483_647;
 
 export function summaryOf(lot: SummaryLot): Summary {
   return {
@@ -50,13 +49,6 @@ export function countNote(
     text: 'Lances nos últimos 2 minutos estendem o fim em +2 min.',
     urgent: false,
   };
-}
-
-// id fora do integer nunca existe: a API responderia 404 do mesmo jeito
-export function parseLotId(param: string | undefined): number | null {
-  if (param === undefined || !/^[1-9]\d*$/.test(param)) return null;
-  const id = Number(param);
-  return id <= maxId ? id : null;
 }
 
 // o relógio do servidor pode virar o status um pouco depois da contagem zerar

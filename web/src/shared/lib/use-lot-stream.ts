@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ApiError, api, openLotStream } from '../api/client';
+import { api, isNotFound, openLotStream } from '../api/client';
 import type { BidEvent, BidHistory, LotDetail } from '../api/types';
 import { connectionAfter } from './connection';
 import type { Connection, StreamSignal } from './connection';
@@ -11,10 +11,6 @@ type Handlers = {
 };
 
 const syncRetryDelay = 3000;
-
-function isMissing(caught: unknown): boolean {
-  return caught instanceof ApiError && caught.status === 404;
-}
 
 // o stream só avisa: ao conectar e ao reconectar, o estado completo vem dos GETs
 export function useLotStream(
@@ -42,7 +38,7 @@ export function useLotStream(
         },
         (caught: unknown) => {
           if (!open) return;
-          if (isMissing(caught)) onMissing();
+          if (isNotFound(caught)) onMissing();
           else retry = setTimeout(sync, syncRetryDelay);
         },
       );
@@ -51,7 +47,7 @@ export function useLotStream(
     const check = () => {
       api.lot(id).then(
         () => {},
-        (caught: unknown) => open && isMissing(caught) && onMissing(),
+        (caught: unknown) => open && isNotFound(caught) && onMissing(),
       );
     };
 

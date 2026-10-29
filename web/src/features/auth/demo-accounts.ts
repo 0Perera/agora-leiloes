@@ -1,4 +1,4 @@
-// Mesmas contas de api/src/seed/accounts.ts e do README.
+// mesmas contas de api/src/seed/accounts.ts e do README
 export const DEMO_PASSWORD = 'Agora2026!';
 
 export type DemoAccount = { name: string; role: string; email: string };

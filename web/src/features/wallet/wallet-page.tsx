@@ -7,7 +7,7 @@ import { LoadError } from '../../shared/ui/load-error';
 import { BalanceEquation } from './balance-equation';
 import { DepositForm } from './deposit-form';
 import { holdNote, moreLots } from './holds';
-import { useWallet } from './use-wallet';
+import { useWallet } from '../../shared/lib/use-wallet';
 import './wallet.css';
 
 export function WalletPage() {
@@ -123,19 +123,19 @@ function Loading() {
         <div className="wallet-equation">
           {[1, 2, 3].map((term) => (
             <div key={term} className="wallet-term">
-              <div className="wallet-skel wallet-skel--label" />
-              <div className="wallet-skel wallet-skel--value" />
+              <div className="skel wallet-skel--label" />
+              <div className="skel wallet-skel--value" />
             </div>
           ))}
         </div>
         <div className="wallet-cols">
           <div className="wallet-skel-list">
-            <div className="wallet-skel wallet-skel--title" />
-            <div className="wallet-skel wallet-skel--row" />
-            <div className="wallet-skel wallet-skel--row" />
-            <div className="wallet-skel wallet-skel--row" />
+            <div className="skel wallet-skel--title" />
+            <div className="skel wallet-skel--row" />
+            <div className="skel wallet-skel--row" />
+            <div className="skel wallet-skel--row" />
           </div>
-          <div className="wallet-skel wallet-skel--card" />
+          <div className="skel wallet-skel--card" />
         </div>
       </div>
     </>

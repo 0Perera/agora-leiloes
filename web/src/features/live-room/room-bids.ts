@@ -1,13 +1,12 @@
 import type { BidHistory } from '../../shared/api/types';
 import { minimumOf, unite } from '../../shared/lib/live-bids';
 import type { LiveRoom, Pricing } from '../../shared/lib/live-bids';
+import { maxPage } from '../../shared/lib/limits';
 
 const pageSize = 20;
-// as listagens paginadas da API aceitam no máximo a página 100
-const maxPage = 100;
 
-// o seq é contínuo a partir de 1: enquanto o menor carregado passa de 1, há lances anteriores.
-// A página parte do lance mais novo conhecido; a sobreposição com o que já está na tela some no unite
+// o seq é contínuo a partir de 1: enquanto o menor carregado passa de 1, há lances anteriores;
+// a página parte do lance mais novo conhecido; a sobreposição com o que já está na tela some no unite
 export function olderPage(room: Pick<LiveRoom, 'lot' | 'bids'>): number | null {
   const oldest = room.bids.at(-1);
   if (!oldest || oldest.seq <= 1) return null;

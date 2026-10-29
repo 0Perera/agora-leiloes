@@ -1,13 +1,12 @@
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router';
-import { ApiError, api } from '../../shared/api/client';
+import { api, isNotFound } from '../../shared/api/client';
 import { FieldError } from '../../shared/ui/field-error';
-import { lookupFailed, missingText, parseLookup } from '../audit/audit';
+import { lookupFailed, missingText, parseLookup } from './lookup';
 
 function lookupError(caught: unknown, number: number): string {
-  const missing = caught instanceof ApiError && caught.status === 404;
-  return missing ? missingText(number) : lookupFailed;
+  return isNotFound(caught) ? missingText(number) : lookupFailed;
 }
 
 export function AuditLookup() {
