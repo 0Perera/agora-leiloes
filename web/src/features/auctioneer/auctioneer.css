@@ -1034,6 +1034,11 @@ a.panel-obra-title:hover {
     justify-self: start;
   }
 
+  /* encerrado sem comprovante não tem ação: sem o rótulo solto no cartão */
+  .panel-lrow > .panel-action:empty {
+    display: none;
+  }
+
   .panel-obra {
     align-items: flex-start;
   }
