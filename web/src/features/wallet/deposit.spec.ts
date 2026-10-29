@@ -15,8 +15,8 @@ describe('validateAmount', () => {
     ['abaixo do mínimo', '0,99', 'O depósito mínimo é R$ 1,00.'],
     [
       'acima do máximo',
-      '100.000,01',
-      'O limite por depósito simulado é R$ 100.000,00.',
+      '10.000.000,01',
+      'O limite por depósito simulado é R$ 10.000.000,00.',
     ],
   ])('recusa valor %s', (_case, text, error) => {
     expect(validateAmount(text)).toEqual({ error });
@@ -29,7 +29,7 @@ describe('depositError', () => {
     [
       'regra max',
       validation('max'),
-      'O limite por depósito simulado é R$ 100.000,00.',
+      'O limite por depósito simulado é R$ 10.000.000,00.',
     ],
     [
       'regra isInt',

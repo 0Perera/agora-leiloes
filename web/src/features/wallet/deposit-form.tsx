@@ -85,7 +85,7 @@ export function DepositForm() {
             />
           </span>
           <span id="dep-help" className="ag-field__hint">
-            De R$ 1,00 a R$ 100.000,00 por depósito.
+            De R$ 1,00 a R$ 10.000.000,00 por depósito.
           </span>
           <FieldError id="dep-err" message={error} />
         </label>

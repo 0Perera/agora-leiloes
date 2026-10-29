@@ -124,7 +124,7 @@ Os dados da obra vêm **só** do acervo: o leiloeiro não edita título nem escr
 
 - **Saldo total**, **comprometido** (soma dos lotes que o licitante lidera ou arrematou sem liquidação) e **disponível** (total − comprometido), com barra de proporção.
 - Lotes que comprometem saldo, até 20 e "e mais N lotes" (D-063): número, título, situação ("Você lidera · encerra {data}" ou "Você arrematou · aguardando liquidação"), valor e link para a sala.
-- **Depósito simulado:** campo com máscara de moeda e atalhos, de R$ 1,00 a R$ 100.000,00. Saldo atualizado só com a resposta da API (D-049); confirmação curta ("Depósito confirmado" / "R$ X adicionados ao seu saldo."), sem repetir os saldos que a tela já mostra.
+- **Depósito simulado:** campo com máscara de moeda e atalhos, de R$ 1,00 a R$ 10.000.000,00. Saldo atualizado só com a resposta da API (D-049); confirmação curta ("Depósito confirmado" / "R$ X adicionados ao seu saldo."), sem repetir os saldos que a tela já mostra.
 - Aviso de que o saldo é simulado.
 
 ## Meus lances · `features/my-bids` · rota `/my-bids` (só licitante)
