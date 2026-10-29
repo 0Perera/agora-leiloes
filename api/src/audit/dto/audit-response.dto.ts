@@ -1,4 +1,4 @@
-import type { LotStatus } from '../../lots/lot-status';
+import type { LotState } from '../../lots/lot-status';
 import type { AuditResult, BidMark } from '../chain';
 
 export class AuditBidDto {
@@ -15,7 +15,7 @@ export class AuditResponseDto {
   number!: number;
   title!: string;
   artist!: string;
-  status!: LotStatus;
+  status!: LotState;
   result!: AuditResult;
   brokenSeq!: number | null;
   bids!: AuditBidDto[];

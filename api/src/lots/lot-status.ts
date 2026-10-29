@@ -8,3 +8,8 @@ export const STATUS_WHERE: Record<LotStatus, string> = {
   live: 'lot.startsAt <= :now AND :now < lot.endsAt',
   ended: 'lot.endsAt <= :now',
 };
+
+// Cancelamento é coluna, não é calculado: entra antes do status por datas.
+export type LotState = LotStatus | 'cancelled';
+
+export const STATE_SQL = `CASE WHEN lot.cancelledAt IS NOT NULL THEN 'cancelled' ELSE ${STATUS_SQL} END`;

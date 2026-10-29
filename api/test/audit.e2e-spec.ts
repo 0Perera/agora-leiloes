@@ -203,14 +203,21 @@ describe('GET /lots/:id/audit', () => {
     await audit(999).expect(404);
   });
 
-  it('responde 404 para lote cancelado', async () => {
-    const { lotId } = await lotWithBids(0);
+  it('lote cancelado com lances continua com auditoria intact e status cancelled', async () => {
+    const { lotId } = await lotWithBids(2);
     await request(api.server)
       .post(`/lots/${lotId}/cancel`)
       .auth(auctioneer.token, { type: 'bearer' })
       .expect(204);
 
-    await audit(lotId).expect(404);
+    const response = await audit(lotId).expect(200);
+
+    expect(response.body).toMatchObject({
+      status: 'cancelled',
+      result: 'intact',
+      brokenSeq: null,
+    });
+    expect((response.body as Audit).bids).toHaveLength(2);
   });
 });
 
