@@ -293,28 +293,32 @@
   gap: var(--space-3);
 }
 
+/* três colunas iguais medidas pela largura do formulário: R$ 130.000,00 cabe de 360px em diante */
 .room-shortcuts {
-  display: flex;
-  flex-wrap: wrap;
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: center;
   gap: var(--space-2);
 }
 
-.room-shortcuts .ag-field__hint {
-  margin-right: var(--space-1);
+.room-shortcuts > .ag-field__hint {
+  grid-column: 1 / -1;
 }
 
 .room-chip {
+  min-width: 0;
   min-height: 44px;
-  padding: 0 14px;
+  padding: 0 clamp(2px, 1.5cqi, 14px);
   border: 1px solid var(--gold-500);
   border-radius: 2px;
   background: var(--marble-000);
   color: var(--ink);
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.04em;
+  font-size: clamp(11px, 3.1cqi, 13px);
+  letter-spacing: clamp(0px, 0.15cqi, 0.52px);
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -549,11 +553,6 @@
 }
 
 @media (max-width: 479px) {
-  /* o rótulo vai para a linha de cima, para os três atalhos caberem juntos */
-  .room-shortcuts > .ag-field__hint {
-    flex-basis: 100%;
-  }
-
   .room-summary {
     flex-direction: column;
     align-items: flex-start;
