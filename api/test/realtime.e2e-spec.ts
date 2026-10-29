@@ -176,6 +176,17 @@ describe('GET /lots/:id', () => {
     expect(after.body).toMatchObject({ me: { hasBid: true } });
   });
 
+  it('detalhe do licitante superado traz a posição dele', async () => {
+    await api.bid(bidder, lotId, STARTING_BID).expect(201);
+    await api.bid(rival, lotId, STARTING_BID + INCREMENT).expect(201);
+
+    const response = await detail(bidder.token).expect(200);
+
+    expect(response.body).toMatchObject({
+      me: { standing: { highest: STARTING_BID, rank: 2, bidders: 2 } },
+    });
+  });
+
   it('detalhe sem token não traz me', async () => {
     const response = await detail().expect(200);
 

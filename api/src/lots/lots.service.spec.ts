@@ -344,8 +344,18 @@ function makeFind(override: Partial<FindRow> = {}) {
   };
   const lots = { createQueryBuilder: () => builder };
   const settle = jest.fn();
+  const tops = {
+    select: () => tops,
+    addSelect: () => tops,
+    where: () => tops,
+    groupBy: () => tops,
+    getRawMany: jest.fn().mockResolvedValue([]),
+  };
+  const manager = {
+    getRepository: () => ({ createQueryBuilder: () => tops }),
+  };
   const service = new LotsService(
-    {} as DataSource,
+    { manager } as unknown as DataSource,
     {} as CatalogService,
     { now: () => NOW },
     {} as Repository<LotImage>,

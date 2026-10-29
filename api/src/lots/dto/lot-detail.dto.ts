@@ -23,9 +23,17 @@ export type DetailFields = Pick<
   | 'bidCount'
 >;
 
+// Posição pelo maior lance de cada licitante; só para quem já deu lance no lote.
+export class StandingDto {
+  highest!: number;
+  rank!: number;
+  bidders!: number;
+}
+
 export class LotViewerDto {
   alias!: string;
   hasBid!: boolean;
+  standing?: StandingDto;
   // Só para o vencedor: o link do comprovante não é exibido aos demais.
   receiptToken?: string;
 }
