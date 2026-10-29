@@ -1,7 +1,5 @@
 import type { Lot } from '../lot.entity';
-import type { LotStatus } from '../lot-status';
-
-export type DashboardStatus = LotStatus | 'cancelled';
+import type { LotState } from '../lot-status';
 
 export type DashboardFields = Pick<
   Lot,
@@ -28,7 +26,7 @@ export class DashboardLotDto {
   number!: number;
   title!: string;
   artist!: string;
-  status!: DashboardStatus;
+  status!: LotState;
   startingBid!: number;
   currentBid!: number | null;
   bidCount!: number;
@@ -39,7 +37,7 @@ export class DashboardLotDto {
 
 export function toDashboardLot(
   lot: DashboardFields,
-  status: DashboardStatus,
+  status: LotState,
   result: DashboardResultDto | null,
 ): DashboardLotDto {
   return {

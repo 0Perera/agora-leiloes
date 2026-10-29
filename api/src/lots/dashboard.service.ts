@@ -6,18 +6,15 @@ import { DashboardCountsDto, DashboardPageDto } from './dto/dashboard-page.dto';
 import { Receipt } from '../receipts/receipt.entity';
 import {
   DashboardResultDto,
-  DashboardStatus,
   DashboardLotDto,
   toDashboardLot,
 } from './dto/dashboard-lot.dto';
 import { DashboardFilter, DashboardQueryDto } from './dto/dashboard-query.dto';
 import { DashboardSummaryDto } from './dto/dashboard-summary.dto';
 import { Lot } from './lot.entity';
-import { STATUS_SQL, STATUS_WHERE } from './lot-status';
+import { type LotState, STATE_SQL, STATUS_WHERE } from './lot-status';
 
 const PAGE_SIZE = 20;
-
-const DASHBOARD_SQL = `CASE WHEN lot.cancelledAt IS NOT NULL THEN 'cancelled' ELSE ${STATUS_SQL} END`;
 
 const DASHBOARD_WHERE: Record<DashboardFilter, string> = {
   all: 'TRUE',
@@ -41,7 +38,7 @@ const DASHBOARD_COLUMNS = [
 ] as const;
 
 type DashboardRaw = {
-  status: DashboardStatus;
+  status: LotState;
   receiptAlias: string | null;
   receiptAmount: number | null;
   receiptToken: string | null;
@@ -81,7 +78,7 @@ export class DashboardService {
     const now = this.clock.now();
     const { entities, raw } = await this.own(auctioneerId, now)
       .select(DASHBOARD_COLUMNS.map((column) => `lot.${column}`))
-      .addSelect(DASHBOARD_SQL, 'status')
+      .addSelect(STATE_SQL, 'status')
       .leftJoin(Receipt, 'receipt', 'receipt.lotId = lot.id')
       .addSelect('receipt.alias', 'receiptAlias')
       .addSelect('receipt.amount', 'receiptAmount')
