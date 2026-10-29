@@ -8,7 +8,12 @@ import { useLotStream } from '../../shared/lib/use-lot-stream';
 import { appendPage } from './room-bids';
 import { retryTurn } from './room-summary';
 
-export type ReadyRoom = LiveRoom & { status: 'ready'; offset: number };
+// cancelado só chega pelo stream: o GET do lote cancelado dá 404
+export type ReadyRoom = LiveRoom & {
+  status: 'ready';
+  offset: number;
+  cancelled: boolean;
+};
 
 export type Room =
   | { status: 'loading' }
@@ -34,6 +39,7 @@ function toReady(lot: LotDetail, history: BidHistory): Room {
     bids: history.items,
     total: history.total,
     extended: false,
+    cancelled: false,
   };
 }
 
@@ -47,6 +53,7 @@ function synced(
     ...mergeRoom(current, lot, history),
     status: 'ready',
     offset: clockOffset(lot.serverTime, Date.now()),
+    cancelled: current.cancelled,
   };
 }
 
@@ -60,7 +67,7 @@ function failure(caught: unknown): Room {
 }
 
 function turnOf(room: Room): number | null {
-  if (room.status !== 'ready') return null;
+  if (room.status !== 'ready' || room.cancelled) return null;
   if (room.lot.status === 'scheduled') return Date.parse(room.lot.startsAt);
   if (room.lot.status === 'live') return Date.parse(room.lot.endsAt);
   return null;
@@ -96,6 +103,13 @@ export function useRoom(id: number) {
     [],
   );
   const missing = useCallback(() => setRoom({ status: 'missing' }), []);
+  const cancelled = useCallback(
+    () =>
+      setRoom((current) =>
+        current.status === 'ready' ? { ...current, cancelled: true } : current,
+      ),
+    [],
+  );
   const older = useCallback(
     (page: number) =>
       api
@@ -111,11 +125,13 @@ export function useRoom(id: number) {
   );
 
   useTurn(id, room, setRoom);
-  const streaming = room.status === 'ready' && room.lot.status !== 'ended';
+  const streaming =
+    room.status === 'ready' && room.lot.status !== 'ended' && !room.cancelled;
   const connection = useLotStream(id, streaming, {
     onBid: placed,
     onSync: sync,
     onMissing: missing,
+    onCancelled: cancelled,
   });
 
   return { room, connection, retry, placed, missing, older };

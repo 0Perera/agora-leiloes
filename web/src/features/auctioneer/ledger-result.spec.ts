@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { DashboardLot } from '../../shared/api/types';
-import { receiptOf, resultOf } from './ledger-result';
+import { cancellable, receiptOf, resultOf } from './ledger-result';
 
 type ResultLot = Pick<DashboardLot, 'status' | 'currentBid' | 'result'>;
 
@@ -60,5 +60,15 @@ describe('receiptOf', () => {
 
   it('não devolve token no lote sem comprovante', () => {
     expect(receiptOf(makeLot({ result: null }))).toBeNull();
+  });
+});
+
+describe('cancellable', () => {
+  it('aceita lote ao vivo com lances', () => {
+    expect(cancellable({ status: 'live' })).toBe(true);
+  });
+
+  it('recusa lote encerrado', () => {
+    expect(cancellable({ status: 'ended' })).toBe(false);
   });
 });

@@ -8,6 +8,7 @@ type Handlers = {
   onBid: (bid: BidEvent) => void;
   onSync: (lot: LotDetail, history: BidHistory) => void;
   onMissing: () => void;
+  onCancelled: () => void;
 };
 
 const syncRetryDelay = 3000;
@@ -18,7 +19,7 @@ export function useLotStream(
   active: boolean,
   handlers: Handlers,
 ): Connection {
-  const { onBid, onSync, onMissing } = handlers;
+  const { onBid, onSync, onMissing, onCancelled } = handlers;
   const [connection, setConnection] = useState<Connection>('live');
 
   useEffect(() => {
@@ -55,6 +56,7 @@ export function useLotStream(
     const close = openLotStream(id, {
       onBid,
       onSettled: sync,
+      onCancelled,
       onOpen: () => {
         signal('open');
         sync();
@@ -71,7 +73,7 @@ export function useLotStream(
       close();
       setConnection('live');
     };
-  }, [id, active, onBid, onSync, onMissing]);
+  }, [id, active, onBid, onSync, onMissing, onCancelled]);
 
   return connection;
 }

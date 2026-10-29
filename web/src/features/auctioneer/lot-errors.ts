@@ -72,10 +72,10 @@ export function cancelError(error: unknown, number: number): Notice {
   const title = 'Cancelamento recusado';
   if (!(error instanceof ApiError))
     return { title: 'Não foi possível cancelar', text: messages.connection };
-  if (error.code === 'LOT_HAS_BIDS')
+  if (error.code === 'LOT_INTEGRITY_FAILED')
     return {
       title,
-      text: `Um lance chegou no ${lot} antes do cancelamento, então o lote continua no ar.`,
+      text: `O histórico de lances do ${lot} não passou na verificação de integridade, então nada foi alterado.`,
     };
   if (error.code === 'LOT_ENDED')
     return {

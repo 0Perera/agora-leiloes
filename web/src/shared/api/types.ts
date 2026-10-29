@@ -208,7 +208,7 @@ export type LotAudit = {
   number: number;
   title: string;
   artist: string;
-  status: LotStatus;
+  status: BookStatus;
   result: AuditResult;
   // seq do primeiro lance quebrado; nulo fora de 'tampered'
   brokenSeq: number | null;
@@ -248,7 +248,8 @@ export type LostBid = {
   artist: string;
   amount: number | null;
   myBid: number;
-  settledAt: string;
+  settledAt: string | null;
+  cancelledAt: string | null;
 };
 
 type MyBidsPage<S extends MyBidsSection, T> = {
@@ -278,6 +279,8 @@ export type PlacedBid = {
 export type BidEvent = PlacedBid;
 
 export type SettledEvent = LotResult;
+
+export type CancelledEvent = { cancelledAt: string };
 
 export type BidHistoryItem = {
   seq: number;
