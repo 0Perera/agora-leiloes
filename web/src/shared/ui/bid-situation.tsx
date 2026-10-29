@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import type { Standing } from '../api/types';
 import { formatMoney } from '../lib/money';
 import type { Situation } from '../lib/live-bids';
 import './bid-situation.css';
@@ -6,9 +7,26 @@ import './bid-situation.css';
 type Props = {
   situation: Exclude<Situation, 'none'>;
   minimum: number;
+  standing?: Standing;
 };
 
-export function BidSituation({ situation, minimum }: Props) {
+export function BidSituation({ situation, minimum, standing }: Props) {
+  const block = <SituationBlock situation={situation} minimum={minimum} />;
+  if (!standing) return block;
+  return (
+    <div className="bid-situation">
+      {block}
+      <p className="bid-situation__standing">{standingText(standing)}</p>
+    </div>
+  );
+}
+
+function standingText({ highest, rank, bidders }: Standing): string {
+  const noun = bidders === 1 ? 'licitante' : 'licitantes';
+  return `Seu maior lance: ${formatMoney(highest)} · ${rank}º de ${bidders} ${noun}`;
+}
+
+function SituationBlock({ situation, minimum }: Omit<Props, 'standing'>) {
   if (situation === 'winning') {
     return (
       <div className="ag-bidstatus ag-bidstatus--winning" role="status">

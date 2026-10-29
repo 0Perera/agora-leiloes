@@ -133,8 +133,18 @@ export type LotDetail = {
   serverTime: string;
   // nulo até a liquidação; alias e valor nulos quando o lote encerrou sem lances
   result: LotResult | null;
-  me?: { alias: string; hasBid: boolean; receiptToken?: string };
+  me?: LotViewer;
 };
+
+// standing só vem para quem já deu lance no lote
+export type LotViewer = {
+  alias: string;
+  hasBid: boolean;
+  receiptToken?: string;
+  standing?: Standing;
+};
+
+export type Standing = { highest: number; rank: number; bidders: number };
 
 export type LotResult = { alias: string | null; amount: number | null };
 
