@@ -39,8 +39,13 @@ então qualquer mudança nelas é feita no dashboard. `DATABASE_URL` vem do banc
 
 ## Seed em produção
 
-- Roda **da máquina local**, apontando para a External Database URL do Render:
-  `DATABASE_URL=<External Database URL> DB_SSL=true BID_HMAC_SECRET=<mesmo do Render> npm run seed`
+- Roda **da máquina local** (o Render free não tem Shell), em `api/`, apontando para a External Database URL do Render:
+  ```bash
+  npm ci && npm run build
+  DATABASE_URL='<External Database URL>' DB_SSL=true BID_HMAC_SECRET='<o mesmo do Render>' npm run seed
+  ```
+- `DATABASE_URL` e `BID_HMAC_SECRET` têm que vir do ambiente do processo: o `.env` não conta para elas, e o seed para antes de subir a aplicação se faltar uma. As outras variáveis podem vir do `.env` local.
+- O seed é idempotente: rodar de novo completa o que faltou sem duplicar. Se a Cleveland estiver fora no início, ele para antes de gravar; se falhar no meio (ex.: download de uma imagem), rodar de novo completa o que faltou.
 - O segredo de HMAC tem que ser **exatamente o mesmo** configurado no Render. Com um segredo diferente, os lances do seed ficam com hash inválido e a auditoria acusa adulteração.
 - Guardar uma cópia do `BID_HMAC_SECRET` fora do Render (é o mesmo valor usado para rodar o seed local): recriado o serviço, o Render geraria outro.
 - O segredo **nunca muda depois do seed**: trocar invalida todas as assinaturas gravadas (lances, selos, aliases e comprovantes) e a auditoria passa a acusar adulteração em todos os lotes.
@@ -86,9 +91,10 @@ O Postgres free expira 30 dias após a criação. Recriar na entrega faz os 30 d
 2. Rodar um sync manual do Blueprint: ele recria o `agora-db` (mesma região e versão) e o `fromDatabase` liga a nova URL interna à API.
 3. Conferir na API se `DATABASE_URL` aponta para o banco novo; se não, atualizar com a nova Internal Database URL. O redeploy roda as migrations no start.
 4. Conferir nos logs que as migrations rodaram e que `/health` responde.
-5. Rodar o seed da máquina local com a nova External Database URL e o **mesmo** `BID_HMAC_SECRET` do Render.
-6. Abrir a auditoria do lote do seed e confirmar que aparece como íntegro.
-7. Entrar com as credenciais do README e fazer um lance de teste num lote que não seja o do seed.
+5. Copiar o `BID_HMAC_SECRET` da API no Render (Environment) e a nova External Database URL, e rodar o seed da máquina local,
+   em `api/`, com o comando da seção "Seed em produção". O lote ao vivo mais longo termina ~10 dias depois do seed.
+6. Abrir a auditoria dos lotes: do nº 1 ao nº 9 íntegros, o nº 10 (cancelado) responde 404 e o nº 11 acusa `tampered` no lance 3.
+7. Entrar com uma conta de demonstração do README e dar um lance num lote ao vivo.
 
 ## Fontes
 

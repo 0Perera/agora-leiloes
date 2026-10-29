@@ -455,7 +455,7 @@ Status: Aceita · Story: 4.2
 
 ## D-045: Lote encerrado no seed com `Clock` deslocado
 
-Status: Aceita · Story: 6.1
+Status: Parcialmente substituída por D-067 · Story: 6.1
 
 **Decisão:** além do lote ao vivo, o seed cria um lote já encerrado e liquidado. Para isso, o seed troca o `Clock` por um deslocado para o passado enquanto cria esse lote e os lances dele, sempre pelos services; depois volta ao relógio real e liquida o lote pelo service de liquidação.
 **Por quê:** o avaliador precisa ver comprovante, total recebido e a aba Encerrados no primeiro acesso, sem esperar um lote terminar. Passando pelos services, a cadeia de HMAC, o selo e a assinatura do comprovante saem válidos.
@@ -692,3 +692,14 @@ Story: 5.5
 **Por quê:** a verificação depende da cadeia inteira: cada lance confere o hash do anterior e o selo confere o último, então não dá para verificar uma página isolada.
 **Alternativas descartadas:** verificar a cadeia inteira e paginar só a resposta (a tela mostraria o indicador de lances que o visitante não vê, e a lista lida continuaria completa); teto de lances (lote acima do teto não seria auditável).
 **Consequência:** o custo da rota cresce com o número de lances do lote (dois HMACs por lance). Aceito no escopo: um lote tem dezenas de lances, não milhares.
+
+## D-067: Lotes encerrados do seed liquidados no passado
+
+Status: Aceita
+Data: 2026-10-28
+Story: 6.1 · Substitui a parte da D-045 que liquidava com o relógio real
+
+**Decisão:** o seed liquida cada lote encerrado com o `Clock` ainda deslocado, 1 minuto depois do `ends_at` do lote, pelo service de liquidação.
+**Por quê:** o comprovante e o painel mostram a data da liquidação; com o relógio real, um leilão que terminou há semanas apareceria liquidado no dia do seed.
+**Alternativas descartadas:** liquidar com o relógio real, como dizia a D-045 (data de liquidação incoerente com o fim do lote).
+**Consequência:** a liquidação continua passando pelo service, com a cadeia, o selo e a assinatura do comprovante válidos; só a data gravada fica no passado.

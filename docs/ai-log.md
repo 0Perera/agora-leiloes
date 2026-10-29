@@ -746,3 +746,32 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Erro encontrado na revisão:**
 - O passo 2 da auditoria dizia que o selo do lote nascia no encerramento, mas ele é gravado a cada lance.
 - O espaço que não quebra linha antes do horário no comprovante tinha virado um caractere invisível no código na refatoração; voltou a ser escrito de forma explícita.
+
+## Story 6.1: Seed idempotente e compose verificado
+
+**O que a IA gerou:**
+- O replanejamento do épico 6 nos documentos de planejamento e no controle das stories.
+- O relógio da aplicação como peça única, que o seed consegue adiantar ou atrasar.
+- O seed com três contas, onze lotes de obras do museu e lances passando pelo mesmo caminho do site, incluindo lotes que aconteceram no passado e um lote adulterado de propósito.
+- A retomada: rodar de novo completa o que faltou sem duplicar nada.
+- O bloco "Contas de demonstração" na tela Entrar.
+- O roteiro de teste, a seção "Testar a adulteração você mesmo" e o comando do seed em produção no README.
+- Testes do seed contra um banco de verdade.
+
+**O que revisei e pedi para mudar:**
+- Decidi o épico 6 com sete stories, a saída do Swagger e o cancelamento com estorno como story própria.
+- Aprovei liquidar os lotes do passado 1 minuto depois do fim e pedi o teste de adulteração do README só nos lotes encerrados, para os ao vivo continuarem aceitando lances.
+- Pedi a composição do seed: um leiloeiro, dois licitantes, quatro lotes ao vivo, dois agendados, três encerrados, um cancelado e um adulterado.
+- Escolhi as contas leiloeiro, Geovanna e Felipe, todas com a senha Agora2026!.
+- Pedi que o seed exija o segredo de assinatura e o endereço do banco explícitos fora do compose, com um teste para o segredo ausente.
+- Decidi as datas: lotes ao vivo encerrando entre 7 e 10 dias depois do seed e agendados abrindo entre 5 e 6 dias.
+- Pedi o desenho do bloco de contas de demonstração: linha dourada, título em versalete, três botões com nome e papel, foco no botão Entrar e a linha com a senha; depois, o nome Casa Ágora para o leiloeiro.
+- Pedi para tirar o teste do botão de conta de demonstração, que percorria a tela à mão para conferir um clique simples; os screenshots já mostram o comportamento.
+
+**Sugestões rejeitadas e por quê:**
+- Lote ao vivo terminando em cerca de 30 dias: troquei por 7 a 10 dias, porque a avaliação acontece poucos dias depois da entrega.
+- Nomes Ana e Bia para os licitantes: troquei por Geovanna e Felipe.
+- Teste do botão de conta de demonstração que percorria a tela à mão: recusei, porque conferia um clique simples e os screenshots já cobrem.
+
+**Erro encontrado na revisão:**
+- Um lote do passado já liquidado podia receber os lances que faltavam numa segunda execução; agora o seed não dá lance em lote liquidado.

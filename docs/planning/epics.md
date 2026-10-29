@@ -61,7 +61,7 @@ e em `docs/decisions.md` (D-001 a D-038, que não são rediscutidas). Telas: `do
 - FR25: Seed com um leiloeiro, dois licitantes e ao menos um lote ao vivo com lances, criado pelos services (D-020), também no deploy.
 - FR26: Num checkout limpo, `docker compose up` sobe banco, API e web, as migrations rodam e o comando do seed funciona.
   O seed é idempotente: rodar duas vezes não quebra nem duplica dados. Verificação junta da story do seed (base do compose entregue na 1.1).
-- FR27 (opcional, última story): documentação Swagger gerada a partir das classes `*.dto.ts` (D-023).
+- FR27 (opcional): documentação Swagger gerada a partir das classes `*.dto.ts` (D-023). Retirado no replanejamento do épico 6: vai para "Fora do escopo" no README.
 
 ### Requisitos não funcionais
 
@@ -115,7 +115,7 @@ FR10, FR11, FR12: Épico 3 - vitrine, destaque, imagem
 FR13: Épico 3 (estado e `serverTime`) e Épico 4 (`me.alias`)
 FR14, FR15, FR16, FR17, FR21, FR23, FR24: Épico 4 - motor de lances, SSE, cadeia de HMAC, alias, mensagens de recusa
 FR18, FR19, FR20, FR22: Épico 5 - liquidação, comprovante, meus lances, auditoria
-FR25, FR26, FR27: Épico 6 - seed e compose, Swagger opcional
+FR25, FR26: Épico 6 - seed e compose (FR27, Swagger, fora do escopo)
 
 ## Lista de épicos
 
@@ -139,8 +139,8 @@ Lote vencido é liquidado e o vencedor recebe o comprovante assinado; a sala mos
 **FRs:** FR9 (total recebido e resultado), FR18, FR19, FR20, FR22 · **UX:** DR6 (estados de encerramento), DR8, DR9, DR10
 
 ### Épico 6: Entrega
-Seed idempotente também no deploy, compose verificado num checkout limpo, README final e, por último e opcional, Swagger.
-**FRs:** FR25, FR26, FR27 · **NFR:** NFR10
+Seed idempotente também no deploy, compose verificado num checkout limpo, consistência da API e do front, documentação, cancelamento com estorno, polimento final e README final.
+**FRs:** FR25, FR26 · **NFR:** NFR10
 
 NFR3 a NFR9 são transversais: entram como critério de aceite nas stories que tocam cada ponto.
 `lots` é tocada nos épicos 3, 4 e 5 de propósito: cada épico é uma fatia vertical com front, e a sobreposição é só nas colunas que cada um precisa.
@@ -1173,7 +1173,7 @@ canvas **Auditoria do lote** e **Página inicial**.
 
 ## Épico 6: Entrega
 
-Seed idempotente também no deploy, compose verificado num checkout limpo, README final e, por último e opcional, Swagger.
+Seed idempotente também no deploy, compose verificado num checkout limpo, consistência da API e do front, documentação, cancelamento com estorno, polimento final e README final.
 
 ### Story 6.1: Seed idempotente e compose verificado
 
@@ -1214,7 +1214,86 @@ para percorrer o fluxo sem montar tudo do zero.
 
 **And** as credenciais do seed ficam no README; `docs/deploy-notes.md` tem o passo a passo do dia da entrega (recriar o banco, rodar o seed, conferir)
 
-### Story 6.2: README final
+### Story 6.2: Consistência da API
+
+Como avaliador,
+quero uma API com os mesmos padrões em todos os módulos,
+para ler qualquer parte do código sem estranhar.
+
+**Notas:** revisão transversal do `/api` contra o `CLAUDE.md` (nomes, controllers finos, códigos de domínio, DTOs de resposta em classe,
+paginação e colunas selecionadas, sem N+1). Os itens concretos e os casos de teste são definidos na abertura da story.
+
+**Acceptance Criteria:**
+
+**Given** os módulos do `/api`
+**When** a story termina
+**Then** os pontos levantados na abertura estão resolvidos, sem mudança de contrato não registrada em `web/src/shared/api/types.ts`
+**And** lint, testes unitários, e2e e build passam
+
+### Story 6.3: Consistência do front
+
+Como avaliador,
+quero telas construídas com os mesmos componentes e o mesmo padrão de chamada à API,
+para o front parecer um produto só.
+
+**Notas:** itens da seção "Revisão final" do `docs/stories/deferred-work.md`: componentes únicos em `shared/ui` (esqueleto, erro com
+"Tentar de novo", abas), padrão único de chamada à API e tipografia e espaçamentos fluidos com `clamp()`.
+
+**Acceptance Criteria:**
+
+**Given** as telas do `/web`
+**When** a story termina
+**Then** esqueleto, estado de erro e abas vêm de um componente só em `shared/ui`, e toda tela chama a API pelo mesmo padrão
+**And** nenhuma tela quebra ou rola na horizontal em 360, 768, 1024, 1280 e 1920px
+
+### Story 6.4: Documentação
+
+Como avaliador,
+quero os documentos de `docs/` atualizados e fáceis de ler,
+para entender as decisões e o deploy sem ler o código.
+
+**Notas:** `decisions.md`, `deploy-notes.md`, `ai-log.md` (reescrita das entradas antigas no estilo novo, item do `deferred-work.md`)
+e lista de códigos de erro do `CLAUDE.md`.
+
+**Acceptance Criteria:**
+
+**Given** os arquivos de `docs/`
+**When** a story termina
+**Then** refletem o sistema entregue, sem link quebrado
+**And** as entradas do `ai-log.md` seguem o estilo das regras do `CLAUDE.md`
+
+### Story 6.5: Cancelamento com estorno
+
+Como leiloeiro,
+quero cancelar um lote que já recebeu lances,
+para retirar uma peça sem prender o saldo dos licitantes.
+
+**Notas:** hoje só lote sem lances é cancelável (`LOT_HAS_BIDS`). Os lances continuam na cadeia (tabela append-only);
+o estorno libera o saldo comprometido do licitante que lidera. Regra, códigos e casos de teste definidos na abertura da story.
+
+**Acceptance Criteria:**
+
+**Given** um lote ao vivo ou agendado com lances
+**When** o leiloeiro dono cancela
+**Then** o lote sai da vitrine, o comprometido do licitante que lidera é liberado na mesma transação, com lock do lote e das carteiras
+**And** a auditoria do lote continua íntegra
+
+### Story 6.6: Polimento final
+
+Como avaliador,
+quero as telas sem arestas de uso,
+para percorrer o fluxo sem tropeçar em detalhe visual.
+
+**Notas:** itens da seção "Polimento visual" do `docs/stories/deferred-work.md`.
+
+**Acceptance Criteria:**
+
+**Given** os itens de polimento registrados
+**When** a story termina
+**Then** cada um está feito ou declarado fora do escopo
+**And** as telas tocadas foram conferidas em 360, 768, 1024 e 1280px
+
+### Story 6.7: README final
 
 Como avaliador,
 quero um README que me deixe rodar, testar e entender o sistema,
@@ -1229,6 +1308,8 @@ para avaliar sem precisar ler o código primeiro.
 **Given** o README
 **When** a story termina
 **Then** tem as seções fixas na ordem do `CLAUDE.md`: Ágora, Testar agora, Rodar local, Arquitetura, Auditoria, Comportamentos esperados, Testes, Stack e decisões, Fora do escopo, Uso de IA
+**And** "Fora do escopo" declara Swagger, tema escuro e limite de tentativas no login (`deferred-work.md`)
+**And** o conteúdo de `docs/deploy-notes.md` passa para o README e o arquivo é apagado
 **And** passa no job do CI de no máximo 300 linhas
 
 **Given** a seção Auditoria
@@ -1245,26 +1326,3 @@ para avaliar sem precisar ler o código primeiro.
 **Then** consegue entrar com as credenciais do seed, dar um lance no lote ao vivo e abrir a auditoria, com os links do app e da API
 
 **And** `docs/ai-log.md` tem a entrada de cada story; nenhum link do README está quebrado
-
-### Story 6.3: Documentação da API com Swagger (opcional)
-
-Como avaliador,
-quero navegar pela API numa página de documentação,
-para entender os contratos sem ler o código.
-
-**Cobre:** FR27
-
-**Notas:** opcional e última story, só se sobrar prazo (D-018, D-023). Dependência aprovada: `@nestjs/swagger`, na linha que aceita o Nest 11 (D-032).
-
-**Acceptance Criteria:**
-
-**Given** a API rodando
-**When** alguém abre `/docs`
-**Then** vê todas as rotas com os DTOs gerados pelo plugin do `@nestjs/swagger` a partir das classes `*.dto.ts`, sem decorar campo por campo
-**And** as rotas autenticadas aceitam o Bearer token na própria página
-
-**Given** as respostas de erro
-**When** aparecem na documentação
-**Then** mostram o formato `{ code }` e `VALIDATION_FAILED`
-
-**And** o README ganha o link para `/docs` em Stack e decisões
