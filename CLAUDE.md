@@ -12,7 +12,7 @@ Nome do projeto: **Ágora**. Com acento em tudo que o usuário lê (interface, `
 - npm, com um `package.json` e um lockfile independentes em `api/` e em `web/` (sem workspaces)
 - Banco: PostgreSQL
 - ORM: TypeORM (`@nestjs/typeorm`)
-- Auth: JWT no header `Authorization: Bearer`, expiração de 8h, sem refresh token (trade-off explicado no README)
+- Auth: JWT no header `Authorization: Bearer`, expiração de 8h, sem refresh token (trade-off na D-006)
 - Deploy: tudo no Render free: API (Web Service), front (Static Site) e banco (Postgres). Cada serviço aponta o Root Directory para a sua pasta
 - Tarefas organizadas com BMAD: trabalhe sempre dentro do escopo da story atual.
 
@@ -35,7 +35,7 @@ Nome do projeto: **Ágora**. Com acento em tudo que o usuário lê (interface, `
 /
 ├── api/
 │   ├── src/
-│   │   ├── main.ts, app.module.ts
+│   │   ├── main.ts, app.module.ts, app.setup.ts   # app.setup.ts: pipe e filters, usado também no e2e
 │   │   ├── config/            # validação das envs
 │   │   ├── common/            # Clock, erros de domínio, exception filter, guards
 │   │   ├── database/          # data-source.ts (CLI) e migrations/
@@ -53,9 +53,10 @@ Nome do projeto: **Ágora**. Com acento em tudo que o usuário lê (interface, `
 │   │   ├── features/          # auth, lots, live-room, auctioneer, wallet, my-bids, receipts, audit
 │   │   └── shared/            # api/ (client tipado), ui/ (componentes genéricos), lib/ (moeda, data)
 │   └── package.json
-├── docs/                      # decisions.md, ai-log.md, deploy-notes.md, stories/
+├── docs/                      # mapa em docs/README.md: decisions, ai-log, screens, deploy-notes, planning/, stories/, design/
 ├── .github/workflows/
 ├── docker-compose.yml
+├── render.yaml                # Blueprint do deploy (D-034)
 ├── CLAUDE.md
 └── README.md
 ```
@@ -85,6 +86,8 @@ dto/place-bid.dto.ts
   `CATALOG_UNAVAILABLE` (503), `IMAGE_DOWNLOAD_FAILED` (502), `LOT_HAS_BIDS` (409),
   `ARTWORK_ALREADY_LISTED` (409): peça já em lote agendado ou ao vivo.
   `BALANCE_LIMIT_EXCEEDED` (422): depósito que levaria o saldo acima do teto do `integer`.
+  `LOT_INTEGRITY_FAILED` (409): selo do lote não confere, lance recusado sem gravar nada (D-059).
+  `TOO_MANY_ATTEMPTS` (429): mais de 5 tentativas de login por minuto do mesmo IP (D-068).
   O front traduz o código; o backend não devolve texto livre para essas recusas.
 - Erro de validação de DTO no formato `{ code: 'VALIDATION_FAILED', fields: { <campo>: <regra> } }`, para o front traduzir por campo.
 - Configuração só via variáveis de ambiente validadas na inicialização. Todo novo env vai para o `.env.example`.
@@ -108,7 +111,7 @@ dto/place-bid.dto.ts
 - Toda listagem é paginada e seleciona só as colunas que a tela usa.
   Exceção: os lotes comprometidos em `GET /wallet` vêm com teto de 20 e o total, sem página (D-063).
   Exceção: a auditoria (`GET /lots/:id/audit`) devolve a lista completa de lances, porque a verificação depende da cadeia inteira (D-066).
-- Índice em toda coluna usada em filtro ou ordenação frequente (ex.: `lots.starts_at`, `lots.ends_at`, `bids.lot_id`).
+- Índice em toda coluna usada em filtro ou ordenação frequente (ex.: `lots.starts_at`, `lots.ends_at`; em `bids`, o `UNIQUE (lot_id, seq)` já atende às buscas por lote, D-057).
 - Operações que mexem em saldo ou lance rodam numa **única transação**, com lock de linha (`FOR UPDATE`) no lote e nas carteiras.
   Carteiras sempre travadas na mesma ordem (por `id`) para evitar deadlock.
 - O banco é a última defesa: `CHECK` em saldos (`balance >= committed >= 0`), `UNIQUE (lot_id, seq)` em lances,
@@ -138,7 +141,7 @@ dto/place-bid.dto.ts
   a liquidação também acontece quando alguém acessa um lote vencido.
 - O cold start (até ~1 min no primeiro acesso) é aceito e avisado no README. Sem pinger externo.
 - `GET /health` não toca no banco: serve só para dizer que a API está de pé.
-- Liquidação agendada usa um timer em memória apontando para o próximo `ends_at`, recalculado no boot e a cada lance ou prorrogação.
+- Liquidação agendada usa um timer em memória apontando para o próximo `ends_at`, recalculado no boot, a cada lance aceito e a cada lote criado.
   Sem cron e sem `@nestjs/schedule`.
 - Postgres do Render no free **expira 30 dias após a criação**. No dia da entrega o banco é recriado e o seed roda de novo
   (passo a passo em `docs/deploy-notes.md`). Nada no código pode depender de dados criados antes disso.
@@ -187,7 +190,7 @@ dto/place-bid.dto.ts
 
 ## Testes
 
-- Jest. Regras de lance, saldo comprometido, anti-sniping e liquidação com testes unitários.
+- API em Jest; front em Vitest. Regras de lance, saldo comprometido, anti-sniping e liquidação com testes unitários.
 - Padrão do Nest: unitário em `*.spec.ts` **ao lado** do arquivo testado; integração em `api/test/*.e2e-spec.ts`,
   com a config `test/jest-e2e.json` e o script `npm run test:e2e`.
 - Testes de integração contra Postgres real via **Testcontainers** (inclui lances simultâneos no mesmo lote).
@@ -213,7 +216,10 @@ Nomes de teste:
 
 - Leiloeiro, dois licitantes e ao menos um lote ao vivo com lances, também no ambiente de deploy. Credenciais no README.
 - Lances do seed passam pelos services (nunca `INSERT` direto), senão a cadeia de HMAC fica inválida e a auditoria acusa adulteração.
-- O lote ao vivo do seed termina em ~30 dias, para continuar aberto quando a avaliação acontecer.
+- Composição em `api/src/seed/plan.ts`: lotes ao vivo começam 3 dias antes da execução e encerram 7 a 10 dias depois dela; agendados abrem em 5 e 6 dias (D-069).
+  Lotes encerrados são criados e liquidados com o `Clock` deslocado para o passado (D-045, D-067).
+- Um lote encerrado tem um lance reescrito por `UPDATE` de propósito, para a auditoria mostrar adulteração. É a única exceção ao append-only de `bids`.
+- Idempotente: contas pelo e-mail, lotes pela peça do leiloeiro; rodar de novo completa o que faltou, sem duplicar.
 - Lotes do seed criados pelo mesmo fluxo do leiloeiro, incluindo o download da imagem. Nenhuma imagem versionada no repositório.
   Se a Cleveland estiver fora na hora do seed, ele falha e é rodado de novo.
 
@@ -222,7 +228,7 @@ Nomes de teste:
 - Organização por feature (`features/lots`, `features/live-room`, `features/wallet`...), não por tipo de arquivo.
 - Um client de API tipado, único. Componentes não chamam `fetch` diretamente.
 - Tipos das respostas declarados à mão em `web/src/shared/api/types.ts`. Mudança de contrato na API atualiza esse arquivo na mesma PR.
-- No back, respostas da API são **classes** em arquivos `*.dto.ts` (ex.: `lot-response.dto.ts`), nunca `type`/`interface`.
+- No back, respostas da API são **classes** em arquivos `*.dto.ts` (ex.: `lot-detail.dto.ts`), nunca `type`/`interface`.
   Assim o plugin do `@nestjs/swagger` consegue gerar a documentação depois, sem decorar campo por campo.
 - Regra de negócio fica no backend; o front só exibe estado e traduz códigos de erro.
 - Toda tela que busca dados trata os três estados: **carregando**, **vazio** e **erro** (com ação para tentar de novo quando fizer sentido).
@@ -233,7 +239,7 @@ Nomes de teste:
 ## Lint
 
 - ESLint com a config padrão gerada pelo Nest CLI, mais `complexity: ['error', 10]` e `@typescript-eslint/no-explicit-any: 'error'`.
-  No front, a config do template do Vite com as mesmas duas regras. Prettier para formatação.
+  No front, o oxlint do template do Vite (`web/.oxlintrc.json`) com as mesmas duas regras (D-033). Prettier para formatação nos dois.
 - Tipo desconhecido usa `unknown` com checagem, nunca `any`. `as` só quando o tipo foi garantido antes (ex.: depois de validar).
 - Função que estoura a complexidade é quebrada em funções menores, nunca silenciada com `eslint-disable`.
 

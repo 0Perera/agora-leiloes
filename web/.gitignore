@@ -1,22 +1,8 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
+# Logs, node_modules, dist e .vscode/.idea/.DS_Store já estão no .gitignore da raiz.
 dist-ssr
 *.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
+# Editor
 *.suo
 *.ntvs*
 *.njsproj

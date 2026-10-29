@@ -6,13 +6,13 @@ Registro de onde e como usei IA no projeto, o que revisei e pedi para mudar e o 
 
 Este projeto foi feito com ajuda de inteligência artificial, com papéis separados:
 
-- **Eu decido:** as regras do leilão, o que entra e o que fica de fora, como cada tela funciona e quando uma parte está pronta.
+- **Eu decido e não delego:** as regras do leilão, a escolha entre alternativas, o que entra e o que fica de fora, como cada tela funciona e quando uma parte está pronta para publicar.
 - **O Claude Code implementa:** escreve o código, os testes e a documentação, e registra cada mudança no histórico do projeto.
 - **O Claude app pesquisa e revisa:** ajuda a entender o desafio, compara alternativas e dá uma segunda opinião sobre o que o Claude Code propõe.
 
 Cada parte do sistema passou por três passos:
 
-1. **Plano:** o Claude Code escreve um plano curto, com a lista de testes. Eu respondo as dúvidas e aprovo ou peço mudanças.
+1. **Plano:** o Claude Code escreve um plano curto, com a lista de testes. A IA propõe os testes; eu aprovo, corto ou acrescento casos, respondo as dúvidas e aprovo o plano ou peço mudanças.
 2. **Implementação:** o Claude Code escreve o código e os testes. Depois, revisores independentes procuram falhas, e eu decido o que é corrigido.
 3. **Conferência:** testo no navegador, em telas de vários tamanhos, e só então decido se a parte entra na versão principal.
 
@@ -22,12 +22,6 @@ Alguns erros da ferramenta que corrigi:
 - Sugeriu permitir a mesma obra em vários leilões ao mesmo tempo. Recusei, porque a casa venderia a mesma peça duas vezes.
 - Sugeriu decidir se um leilão pode ser cancelado por um contador de lances que não é protegido contra adulteração. Recusei: alguém com acesso ao banco poderia zerar o contador e cancelar um leilão disputado.
 - A proteção do histórico dava o mesmo selo a todos os leilões sem lances, e quem apagasse os lances de um deles poderia copiar o selo de outro. Pedi a correção, com testes.
-
-O que não deleguei:
-
-- As regras do negócio e a escolha entre alternativas.
-- A lista de testes de cada parte.
-- A conferência das telas e a decisão de publicar cada parte.
 
 ## Ferramentas
 
@@ -42,13 +36,16 @@ O que não deleguei:
 **O que a IA gerou:**
 **O que revisei e pedi para mudar:**
 **Sugestões rejeitadas e por quê:**
+**Erro encontrado na revisão:**
 ```
+
+Seção sem item leva `- Nada a registrar.`; cada seção tem no máximo 8 itens.
 
 ---
 
 ## Planejamento (22 e 23/10/2026)
 
-Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir stack, tema, arquitetura e regras de trabalho. As decisões finais estão em `docs/decisions.md` (D-001 a D-022).
+Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir stack, tema, arquitetura e regras de trabalho. As decisões finais estão em `docs/decisions.md` (D-001 a D-030).
 
 **O que a IA gerou:**
 - Leitura do enunciado separando requisitos funcionais, regras de lance e requisitos não funcionais.
@@ -59,13 +56,12 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **O que revisei e pedi para mudar:**
 - No começo, a IA saiu definindo stack e cronograma inteiros. Pedi para parar e decidi item por item. A única coisa fixa desde o início era o NestJS.
-- O tema começou como cartas de TCG. Pedi que a IA me mostrasse qual API pública era mais confiável para realizar o projeto. Com base na comparação, escolhi a do Cleveland Museum of Art e decidi mudar o tema para obras de arte.
-- Pedi outra direção visual: arte clássica europeia (mármore, estátuas, museus clássicos), e não contemporânea.
+- O tema começou como cartas de TCG. Pedi que a IA me mostrasse qual API pública era mais confiável para realizar o projeto. Com base na comparação, escolhi a do Cleveland Museum of Art, mudei o tema para obras de arte e pedi a direção visual de arte clássica europeia (mármore, estátuas, museus clássicos), e não contemporânea.
 - Decidi testar a API da Cleveland na minha máquina, porque a checagem da IA pela web devolvia resposta em cache e não servia como prova. Duas chamadas travaram; num loop de diagnóstico, todas voltaram 200 em menos de 1s.
 - Pedi uma avaliação do custo do TDD em tokens e tempo e decidi usá-lo só nas regras críticas.
 - Como o alias no SSE me pareceu gambiarra, pedi a comparação com WebSocket. Decidi manter o SSE por causa do prazo, sabendo o que perderia.
 - Pedi que as imagens fossem baixadas e guardadas, porque o enunciado pede que tudo funcione com a API fora do ar.
-- Escolhi o Postgres do Render em vez do Neon. A IA tinha recomendado o Neon porque o free do Render expira em 30 dias, mas o Elite Dev avalia em até 4 dias após a entrega. Decidi recriar o banco no dia da entrega, para os 30 dias cobrirem o processo inteiro.
+- Escolhi o Postgres do Render em vez do Neon. A IA tinha recomendado o Neon porque o free do Render expira em 30 dias; decidi recriar o banco no dia da entrega, para os 30 dias contarem a partir dela.
 - Pedi o `decisions.md` e este log.
 
 **Sugestões rejeitadas e por quê:**
@@ -76,7 +72,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - *Regra extra de lint `no-floating-promises`:* fiquei com o padrão do Nest, o limite de complexidade e o `no-explicit-any` (D-028).
 - *Cancelamento com estorno e dark mode:* fora do escopo, por causa do prazo.
 
-**Erro da IA que peguei:**
+**Erro encontrado na revisão:**
 - Para o anti-sniping, a IA afirmou que "fim = agora + 2 min" era o comportamento comum em leilões. Pedi para conferir, e a pesquisa mostrou que não existe um padrão único: o Catawiki, uma das referências do próprio desafio, soma o tempo ao fim atual. A decisão final (D-011) foi pela leitura literal do enunciado e pelo Catawiki.
 
 ## Story 1.1: Esqueleto do monorepo no ar
@@ -93,11 +89,13 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - O template do Vite também trocou ESLint por oxlint. Decidi manter o oxlint, com as mesmas duas regras da API (D-033).
 - Pedi o deploy via Blueprint, ainda no plano free, na região Virginia (D-034). A IA conferiu os campos do `render.yaml` na documentação do Render (`staticPublishPath` relativo ao `rootDir`, sintaxe de `routes`).
 - Pedi para trazer o compose completo (D-030) para esta story. A IA avisou que estava fora do escopo escrito; decidi incluir, com o front em nginx (D-035).
-- Pedi uma revisão final, e nela a IA achou um bug que ela mesma tinha introduzido: o ajuste do `tsconfig` para o TS 6 tirou o cache incremental da `dist` e quebrou o `start:dev`. A IA corrigiu e pôs um segundo build no CI para pegar a regressão.
 - Pedi Prettier no front, com a mesma config da API, e `strictPropertyInitialization` ligado, para ficar coerente com o `!` exigido nas entidades.
 
 **Sugestões rejeitadas e por quê:**
 - *Aceitar o template do Nest 12:* contrariava as decisões de testes e lint já tomadas.
+
+**Erro encontrado na revisão:**
+- Na revisão final que pedi, a IA achou um bug que ela mesma tinha introduzido: o ajuste do `tsconfig` para o TS 6 tirou o cache incremental da `dist` e quebrou o `start:dev`. A IA corrigiu e pôs um segundo build no CI para pegar a regressão.
 
 ## Story 2.1: Cadastro e login na API
 
@@ -105,7 +103,6 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Módulos `users` e `auth` (`POST /auth/signup`, `POST /auth/login`, `GET /auth/me`), entidade `User` e a migration `Users` gerada pelo CLI.
 - Em `common/`: `DomainException` com código, `DomainExceptionFilter`, `validationPipe()` no formato `VALIDATION_FAILED`, `AuthGuard`, `RolesGuard` e os decorators `@Auth` e `@CurrentUser`.
 - Hash de senha com `scrypt` nativo, `SafeLogger` do TypeORM sem parâmetros de query, env `JWT_SECRET` e os testes unitários aprovados na spec.
-- Correção feita pela própria IA: instalou o `@nestjs/jwt` 12, que é só ESM e quebrou o Jest, e trocou pelo 11.x, que aceita o Nest 11 e segue o D-032.
 
 **O que revisei e pedi para mudar:**
 - Decidi os casos de teste antes da implementação e pedi um a mais, o do e-mail normalizado para minúsculas: sem isso, "Ana@x.com" e "ana@x.com" virariam duas contas e o login falharia por capitalização.
@@ -117,13 +114,15 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - *`passport-jwt`:* três pacotes para uma estratégia só (D-040).
 
+**Erro encontrado na revisão:**
+- A IA instalou o `@nestjs/jwt` 12, que é só ESM e quebrou o Jest, e trocou pelo 11.x, que aceita o Nest 11 e segue a D-032.
+
 ## Story 2.2: Carteira e depósito simulado na API
 
 **O que a IA gerou:**
 - Módulo `wallets`: entidade `Wallet` (`UNIQUE (user_id)` e `CHECK` de saldo), migration `Wallets` gerada pelo CLI com o `INSERT` das carteiras dos usuários existentes, `GET /wallet` e `POST /wallet/deposits` só para licitante.
 - Regra pura `deposit` com o teto do `integer` e o código `BALANCE_LIMIT_EXCEEDED` (422); depósito numa transação com `FOR UPDATE` na carteira.
 - Cadastro gravando usuário e carteira na mesma transação, e os testes unitários aprovados na spec.
-- Correção feita pela própria IA: a primeira migration gerada tinha o `UNIQUE (user_id)` duplicado (coluna `unique` mais o do `OneToOne`) e um `ON DELETE CASCADE` que a spec não pedia; tirou os dois e gerou de novo.
 
 **O que revisei e pedi para mudar:**
 - Pedi para registrar no `CLAUDE.md` as regras de execução: só o revisor de casos de borda fora das stories críticas, correção automática só de achado grave, contexto do épico reaproveitado, leitura só da seção da story no `epics.md` e "O que revisei" sem invenção.
@@ -136,6 +135,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - *Teto do saldo com status 400:* troquei para 422, o mesmo das recusas de lance (D-043); 400 fica só para `VALIDATION_FAILED`.
 - *Teto como `VALIDATION_FAILED` com `fields.amount`:* a regra depende do saldo no banco, não é validação do DTO.
 
+**Erro encontrado na revisão:**
+- A primeira migration gerada tinha o `UNIQUE (user_id)` duplicado (coluna `unique` mais o do `OneToOne`) e um `ON DELETE CASCADE` que a spec não pedia; a IA tirou os dois e gerou de novo.
+
 ## Story 2.3: Telas Entrar e Criar conta
 
 **O que a IA gerou:**
@@ -143,7 +145,6 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Client único com Bearer, `ApiError` (status, código e campos) e encerramento da sessão em 401 com token; sessão no `localStorage` validada pelo `exp` do JWT (D-047).
 - Telas `/login` e `/signup` reescritas em React a partir do canvas, com `tokens.css` e `bundle.css` copiados sem edição; tradução dos erros da API por código e por campo em `auth-errors.ts`.
 - Vitrine e painel do leiloeiro provisórios, `vitest` com os testes aprovados na spec e o passo `npm test` no job `web` do CI.
-- Correção feita pela própria IA na revisão: o aviso de sessão expirada dependia do state da navegação e podia se perder no redirecionamento da guarda (e reaparecer ao recarregar); passou para um estado em memória no provider de sessão.
 
 **O que revisei e pedi para mudar:**
 - Escolhi o canvas `docs/design/Entrar.dc.html` como referência e pedi a cópia de `tokens.css` e `bundle.css` para `web/src/shared/ui/` e a reescrita em React, sem o runtime nem a simulação do canvas.
@@ -153,10 +154,12 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi para registrar o token no `localStorage` no `decisions.md`, com o trade-off (XSS; cookie httpOnly descartado pela D-006; mitigado pelo escape do React e pela validade de 8h) (D-047).
 - Pedi que o usuário logado que abre `/login` ou `/signup` vá para a página do seu papel.
 - Pedi que o 401 que encerra a sessão leve para `/login` com o aviso "Sua sessão expirou, entre de novo".
-- Decidi manter a spec inteira, acima do limite de tamanho, em vez de dividir.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma: as opções recomendadas foram aceitas, com os acréscimos acima.
+- Nada a registrar.
+
+**Erro encontrado na revisão:**
+- O aviso de sessão expirada dependia do state da navegação e podia se perder no redirecionamento da guarda (e reaparecer ao recarregar); passou para um estado em memória no provider de sessão.
 
 ## Story 2.4: Tela Carteira
 
@@ -168,27 +171,16 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Testes de `validateAmount` (vazio, abaixo do mínimo, acima do máximo), acrescentados pela IA para cobrir a matriz da spec, fora da lista aprovada.
 - Máscara de moeda no campo (`maskAmount` em `shared/lib/money.ts`), com testes: só dígitos, que entram pela direita nos centavos.
 - Ajustes depois do teste no navegador: valores sempre com centavos, confirmação curta do depósito em `ag-notice`, classes CSS com prefixo `wallet-`, D-048, D-049 e a story opcional de pagamento simulado no `deferred-work.md`.
-- Correção feita pela própria IA na revisão: digitar ou clicar num chip durante o envio apagava o valor novo; campo e chips passaram a travar enquanto o depósito está em andamento.
 
 **O que revisei e pedi para mudar:**
-- Pedi a story com o canvas `docs/design/Carteira.dc.html` como referência.
-- Pedi um commit `refactor(web)` separado com os tokens de espaçamento, o `App` com export nomeado e a remoção do `.gitkeep` (que já tinha saído na 2.3).
-- Pedi a regra no `CLAUDE.md` de nunca apagar a branch da story depois do merge.
+- Pedi a story com o canvas `docs/design/Carteira.dc.html` como referência e aprovei mover `FieldError` para `shared/ui/`, o widget de carteira no cabeçalho sem o monograma e o extrato fora da tela.
 - Pedi a troca do título "O que revisei ou reescrevi" por "O que revisei e pedi para mudar", só com os verbos decidi, escolhi, aprovei, recusei e pedi, e a revisão das entradas antigas.
 - Decidi o mínimo de R$ 1, igual à API, com o texto "De R$ 1 a R$ 100.000".
-- Escolhi aceitar reais com centavos ("1.500,50") e pedi o `parseAmount` em `shared/lib`, para o formulário de lance reaproveitar.
-- Aprovei os testes, com os casos de `parseAmount` definidos por mim: aceita "1.500", "1500", "1.500,50" e "1500,5"; recusa texto, mais de duas casas decimais e vazio.
-- Decidi manter a spec inteira, acima do limite de tamanho.
-- Aprovei mover `FieldError` para `shared/ui/` num refactor separado, o widget de carteira no cabeçalho sem o monograma e o extrato fora da tela.
-- Pedi uma máscara de moeda no campo de depósito, para ninguém digitar ponto e vírgula à mão: a formatação aparece sozinha conforme os dígitos entram.
-- Aprovei os 6 testes da máscara e os 3 de `validateAmount`; com a máscara, colar "R$ 1.500,00" deixou de ser problema.
-- Pedi valores sempre com duas casas decimais em todo o app (avisos, erros, atalhos e confirmação), porque o campo mostrava centavos e os textos não (D-048).
-- Pedi a confirmação curta do depósito ("Depósito confirmado" / "R$ 5.000,00 adicionados ao seu saldo."), sem repetir saldo e disponível, que a tela e o cabeçalho já mostram.
-- Pedi o prefixo da feature nas classes CSS da carteira, para não colidirem com telas futuras.
-- Decidi registrar a atualização pessimista do saldo (D-049): com dinheiro, não se mostra saldo que a API não confirmou.
-- Pedi a linha "O depósito é simulado, sem meio de pagamento (Pix, cartão)." em "Fora do escopo".
-- Pedi o registro de uma story opcional de pagamento simulado (Pix ou cartão de teste, só no front, 45 min) para depois do épico 5.
-- Pedi a atualização do README (Rodar local, Stack e decisões, Testes e Uso de IA) num commit `docs` separado.
+- Escolhi aceitar reais com centavos ("1.500,50"), com o `parseAmount` em `shared/lib` para o formulário de lance reaproveitar, e defini os casos dele: aceita "1.500", "1500", "1.500,50" e "1500,5"; recusa texto, mais de duas casas decimais e vazio.
+- Pedi uma máscara de moeda no campo de depósito, para ninguém digitar ponto e vírgula à mão, e aprovei os 6 testes dela e os 3 de `validateAmount`; com a máscara, colar "R$ 1.500,00" deixou de ser problema.
+- Pedi valores sempre com duas casas decimais em todo o app, porque o campo mostrava centavos e os textos não (D-048), e decidi a atualização pessimista do saldo: com dinheiro, não se mostra saldo que a API não confirmou (D-049).
+- Pedi a confirmação curta do depósito ("Depósito confirmado" / "R$ 5.000,00 adicionados ao seu saldo."), sem repetir saldo e disponível, e o prefixo da feature nas classes CSS, para não colidirem com telas futuras.
+- Pedi a linha "O depósito é simulado, sem meio de pagamento (Pix, cartão)." em "Fora do escopo" e o registro de uma story opcional de pagamento simulado (Pix ou cartão de teste, só no front, 45 min) para depois do épico 5.
 
 **Sugestões rejeitadas e por quê:**
 - *Mínimo de R$ 10, como no canvas:* a tela ficaria mais restrita que a API.
@@ -196,6 +188,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - *Valores inteiros sem ",00":* troquei por duas casas sempre, para bater com o campo (D-048).
 - *Confirmação repetindo saldo total e disponível:* troquei por uma mensagem curta, porque a tela já mostra os valores.
 - *`parseAmount` dentro de `features/wallet`:* o lance vai usar o mesmo parse, então foi para `shared/lib`.
+
+**Erro encontrado na revisão:**
+- Digitar ou clicar num chip durante o envio apagava o valor novo; campo e chips passaram a travar enquanto o depósito está em andamento.
 
 ## Story 3.1: Busca no acervo da Cleveland
 
@@ -209,9 +204,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **O que revisei e pedi para mudar:**
 - Escolhi restringir a busca ao tema da casa e pedi para checar se a Cleveland aceita mais de um departamento na mesma chamada, para incluir Greek and Roman Art.
 - Aprovei os 8 casos de teste propostos e pedi um a mais: `culture` vem como lista, então o fallback usa o primeiro item, e lista vazia conta como ausente.
-- Decidi manter a spec inteira acima do teto de tokens e pedi que, daqui em diante, só se pergunte quando der para dividir em entregas independentes.
-- Pedi um parâmetro `department` com duas opções validadas (European Painting and Sculpture como padrão, Greek and Roman Art), uma chamada por busca, e departamento fora da lista recusado com `VALIDATION_FAILED`, com teste.
-- Pedi que `find(id)` aceite peça dos dois departamentos e recuse as de fora.
+- Pedi um parâmetro `department` com duas opções validadas (European Painting and Sculpture como padrão, Greek and Roman Art), uma chamada por busca, e departamento fora da lista recusado com `VALIDATION_FAILED`, com teste; e que `find(id)` aceite peça dos dois departamentos e recuse as de fora.
 - Pedi a D-050 com o motivo (a Cleveland não aceita dois departamentos na mesma chamada) e a linha em "Comportamentos esperados" do README.
 - Decidi que a tela com o seletor de departamento fica para a 3.5.
 - Decidi manter Monet fora da busca (o departamento dele é o de arte moderna, fora do tema) e pedi "portrait" como exemplo de busca no lugar de "monet".
@@ -221,6 +214,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - *Só European Painting and Sculpture, sem seletor:* troquei por um seletor com Greek and Roman Art, porque estátuas e mármore fazem parte do tema.
 - *Acervo inteiro:* foge do tema de arte clássica europeia (D-050).
+
+**Erro encontrado na revisão:**
+- Nada a registrar.
 
 ## Story 3.2: Criação de lote com snapshot e imagem
 
@@ -244,6 +240,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - *Permitir a mesma peça em vários lotes ao mesmo tempo:* recusei, porque venderia a mesma obra duas vezes; a peça só fica em um lote ativo por vez (D-051).
 
+**Erro encontrado na revisão:**
+- Nada a registrar.
+
 ## Story 3.3: Vitrine, destaque e detalhe do lote na API
 
 **O que a IA gerou:**
@@ -256,25 +255,20 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Testes aprovados na spec: os quatro passos do destaque com repository falso, número romano e status fora da lista no DTO, id não inteiro e acima do teto no pipe.
 
 **O que revisei e pedi para mudar:**
-- Pedi para marcar a 3.2 como done antes de começar e para reaproveitar o contexto do épico.
 - Defini que o status é calculado na query com o `now` do `Clock` e que lote cancelado nunca aparece na vitrine nem no destaque, e responde 404 no `GET /lots/:id`.
-- Pedi `GET /lots/featured` declarado antes de `GET /lots/:id` e o `:id` validado por pipe, seguindo o 404 que o projeto já usava.
-- Pedi o `serverTime` em ISO no detalhe.
-- Decidi que o teste de integração dos fallbacks do destaque fica para a 4.4 e que aqui entram testes unitários do service.
-- Pedi desempate no destaque entre lotes com o mesmo lance: fim mais próximo e depois número do lote, coberto pelo caso de teste 1.
+- Pedi `GET /lots/featured` declarado antes de `GET /lots/:id`, o `:id` validado por pipe com o 404 que o projeto já usava, registrado como decisão (D-052), e o `serverTime` em ISO no detalhe.
+- Aprovei os oito casos de teste da spec e pedi desempate no destaque entre lotes com o mesmo lance: fim mais próximo e depois número do lote, coberto pelo caso de teste 1.
 - Pedi para escapar também a barra invertida na busca, além de `%` e `_`.
-- Pedi `page` validado como inteiro maior ou igual a 1.
-- Pedi que os testes de integração da vitrine (cancelado fora das três rotas, contagens com busca, ordem de cada aba) fiquem para a 4.4, com o Testcontainers.
-- Aprovei os oito casos de teste da spec.
-- Pedi só o revisor de casos de borda nesta story.
-- Pedi para o `number` da vitrine aceitar só dígitos (`1e3`, `0x10` e ` 7` recusados com 400), com um caso de teste no DTO.
-- Decidi manter o teto de 100 no `page`.
+- Pedi `page` validado como inteiro maior ou igual a 1, com o teto de 100 mantido, e o `number` da vitrine aceitando só dígitos (`1e3`, `0x10` e ` 7` recusados com 400), com um caso de teste no DTO.
+- Decidi que os testes de integração dos fallbacks do destaque e da vitrine (cancelado fora das três rotas, contagens com busca, ordem de cada aba) ficam para a 4.4, com o Testcontainers, e que aqui entram testes unitários do service.
 - Aceitei os outros dois achados da revisão (divergência momentânea das contagens e imagem de lote cancelado) como comportamentos conhecidos, registrados no `deferred-work.md`.
-- Aprovei registrar o 404 do `LotIdPipe` como decisão (D-052).
 
 **Sugestões rejeitadas e por quê:**
 - *Destaque desempatado só pelo fim mais próximo:* pedi também o número do lote, para o desempate ser determinístico.
 - *Busca escapando só `%` e `_`:* pedi a barra invertida também, porque ela é o caractere de escape do `LIKE` no Postgres.
+
+**Erro encontrado na revisão:**
+- Nada a registrar.
 
 ## Story 3.4: Painel do leiloeiro na API
 
@@ -288,22 +282,17 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Testes aprovados na spec: cinco de `assertCancellable`, três de `LotsService.cancel` com manager falso, status fora da lista no DTO e resumo sem lotes.
 
 **O que revisei e pedi para mudar:**
-- Pedi a branch da story a partir da `main` atualizada, com a 3.3 marcada como done antes de começar.
 - Pedi o `LotIdPipe` (D-052) em toda rota com `:id` de lote.
 - Aprovei as escolhas da spec: livro em `number DESC`, 20 por página, contagem dos cinco filtros, 204 no cancelamento, 404 para lote já cancelado e `LOT_ENDED` antes de `LOT_HAS_BIDS`.
-- Decidi que "tem lance" no cancelamento sai do `bid_count` da linha travada por enquanto, e pedi para registrar em `deferred-work.md` a troca por `EXISTS` em `bids` na 4.3, porque `bid_count` é só cache de exibição.
-- Pedi o caso de teste (10): cancela lote agendado sem lances e grava `cancelled_at` com o `now` do `Clock`.
-- Aprovei os casos de teste 1 a 10.
+- Decidi que "tem lance" no cancelamento sai do `bid_count` da linha travada por enquanto, e pedi para registrar em `deferred-work.md` a troca por `EXISTS` em `bids` na 4.3, porque `bid_count` é só cache de exibição (D-042).
+- Aprovei os casos de teste 1 a 10, com o caso (10) pedido por mim: cancela lote agendado sem lances e grava `cancelled_at` com o `now` do `Clock`.
 - Pedi para conferir no log do Postgres que `GET /dashboard/lots` e `GET /dashboard/summary` disparam número fixo de queries.
-- Pedi só o revisor de casos de borda e `npm run lint:check` antes do commit.
 - Pedi para ajustar a frase do README sobre o cancelamento: só lote sem lances, como pede o enunciado, porque cancelar com lances exigiria estorno, opcional que não entrou (D-018).
-- Pedi para confirmar o registro da troca por `EXISTS` (D-042) para a 4.3 em `deferred-work.md`.
-- Pedi para apagar o banco de rascunho `agora_scratch34` e desligar o log de queries.
 
 **Sugestões rejeitadas e por quê:**
 - *Justificativa do cancelamento no README ("quem deu lance já tem saldo comprometido"):* pedi a regra do enunciado e o motivo real, o estorno fora do escopo (D-018).
 
-**Erro da IA que peguei:**
+**Erro encontrado na revisão:**
 - O Claude (app) sugeriu usar o `bid_count` de forma definitiva na checagem de "tem lance" do cancelamento. Apontei que contrariava a D-042: o contador não está na cadeia de HMAC e poderia ser alterado direto no banco para burlar a regra.
 
 ## Story 3.5: Tela Painel do leiloeiro
@@ -335,6 +324,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - *Caso (4) com o fuso do ambiente:* pedi o fuso fixo nos testes, para o resultado não depender da máquina.
 - *Datas exibidas sempre em `America/Sao_Paulo`, diferente dos campos da ficha:* recusei; pedi o fuso do navegador nos dois.
 
+**Erro encontrado na revisão:**
+- Nada a registrar.
+
 ## Story 3.6: Tela Página inicial (vitrine)
 
 **O que a IA gerou:**
@@ -351,7 +343,6 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Decidi que só dígitos, romano canônico em maiúscula ou romano em qualquer caixa com o prefixo "lote " viram `number`; palavra solta em minúscula como "di" ou "mix" vai como texto.
 - Decidi o grid de cards com `repeat(auto-fill, minmax(250px, 1fr))`, igual ao painel, em vez de preencher a linha com poucos resultados.
 - Decidi a rota provisória `/lots/:id` com o título "Sala do lote" até a 3.7, porque o Render publica a main a cada merge e nenhum link pode cair em tela de erro.
-- Pedi só o revisor de casos de borda na revisão.
 - Pedi para registrar no `deferred-work.md`, numa seção de polimento visual, o ajuste do painel no modo cartão (selo e botão na largura do conteúdo, miniatura alinhada ao título).
 - Pedi, depois de conferir a tela, a imagem do destaque antes do texto quando o destaque empilha, com o arco limitado a ~55vh para o título e o botão ficarem perto; lado a lado acima disso.
 - Pedi que a busca abra a primeira aba com resultado pelas contagens da resposta (Ao vivo, Agendados, Encerrados), fique na aba atual sem resultado e volte para Ao vivo ao limpar, com um caso de teste para a escolha da aba.
@@ -359,6 +350,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - *Cards esticados para preencher a linha com poucos resultados:* recusei; pedi o mesmo grid do painel, com os cards no tamanho natural.
+
+**Erro encontrado na revisão:**
+- Nada a registrar.
 
 ## Story 3.7: Tela Sala do lote ao vivo (leitura)
 
@@ -373,26 +367,23 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Mapa fixo de tradução do tipo da obra (`shared/lib/artwork-type.ts`) e nova busca na virada até 3 vezes.
 
 **O que revisei e pedi para mudar:**
-- Pedi para seguir o canvas da Sala e as classes `ag-*`, substituindo a página provisória da 3.6.
-- Pedi para reaproveitar o helper de contagem com `serverTime` da 3.6, sem criar outro.
+- Pedi para seguir o canvas da Sala e as classes `ag-*`, substituindo a página provisória da 3.6, e para reaproveitar o helper de contagem com `serverTime` da 3.6, sem criar outro.
 - Pedi que a tela ficasse completa sem os blocos do épico 4 (lance, histórico, tempo real), sem espaços vazios ou placeholders.
 - Pedi número no formato da D-054, datas no fuso do navegador e valores com centavos (D-048).
-- Pedi "Abrir sala" no livro do painel, item registrado no `deferred-work.md` na 3.5.
-- Aprovei os casos de teste (31) a (36) da spec.
-- Decidi o layout abaixo de 880px igual ao destaque da página inicial: obra primeiro, arco limitado a ~55vh, sem miniatura no cabeçalho.
-- Aprovei refazer o `GET /lots/:id` uma vez quando o lote abre ou encerra com a página aberta.
-- Decidi "Abrir sala" no painel em todo lote não cancelado (ao vivo, agendado e encerrado), sumindo durante a confirmação de cancelamento.
-- Pedi que a virada de estado tente de novo a cada 2 s, no máximo 3 vezes, quando o status vier igual, com um caso de teste.
+- Pedi "Abrir sala" no livro do painel, item registrado no `deferred-work.md` na 3.5, e decidi mostrá-lo em todo lote não cancelado (ao vivo, agendado e encerrado), sumindo durante a confirmação de cancelamento.
+- Aprovei os casos de teste (31) a (36) e refazer o `GET /lots/:id` quando o lote abre ou encerra com a página aberta, e pedi que essa busca tente de novo a cada 2 s, no máximo 3 vezes, quando o status vier igual, com um caso de teste.
+- Decidi o layout abaixo de 880px igual ao destaque da página inicial (obra primeiro, arco limitado a ~55vh, sem miniatura no cabeçalho) e pedi o subtítulo do cabeçalho só com artista e data, com a técnica apenas em "Sobre a obra e o lote".
 - Pedi texto de erro neutro na sala, sem menção a lance: "Não foi possível carregar o lote. Verifique a conexão e tente de novo."
-- Pedi o subtítulo do cabeçalho só com artista e data, com a técnica apenas em "Sobre a obra e o lote".
-- Pedi o tipo da obra traduzido por mapa fixo no front, com um caso de teste; decidi aplicar só na sala e na busca do acervo do Painel, sem mudar a API para o card.
-- Pedi uma linha no README explicando que os dados das obras aparecem em inglês, como no acervo (D-038).
+- Pedi o tipo da obra traduzido por mapa fixo no front, com um caso de teste, só na sala e na busca do acervo do Painel, sem mudar a API para o card, e uma linha no README explicando que os dados das obras aparecem em inglês, como no acervo (D-038).
 
 **Sugestões rejeitadas e por quê:**
 - *Cabeçalho com miniatura antes da obra no mobile:* recusei; pedi a obra primeiro, como no destaque da página inicial.
 - *"Abrir sala" só em lote ao vivo, como no canvas do Painel:* recusei; pedi em todo lote não cancelado, para o leiloeiro abrir também agendados e encerrados.
 - *Nova busca da virada uma vez só:* mudei para até 3 tentativas a cada 2 s, para a sala não ficar parada em 00:00 se o servidor demorar a virar o status.
 - *Texto de erro do canvas ("Nenhum lance seu foi enviado ou perdido"):* recusei; pedi um texto neutro, porque ainda não há lance.
+
+**Erro encontrado na revisão:**
+- Nada a registrar.
 
 ## Story 4.1: Regras de lance, saldo comprometido e anti-sniping (TDD)
 
@@ -415,7 +406,10 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi que a escolha de devolver a recusa em vez de lançar ficasse em "O que a IA gerou", porque não foi decisão minha.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma nesta story.
+- Nada a registrar.
+
+**Erro encontrado na revisão:**
+- Nada a registrar.
 
 ## Story 4.2: Cadeia de HMAC, selo e alias (TDD)
 
@@ -435,11 +429,11 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi registrar o formato da serialização como decisão (D-056), com o caso 15 como o teste que o fixa, e tipar o prefixo do `sign()` com os quatro contextos.
 - Pedi incluir o `lotId` no selo, com os casos 17 (selos de lotes vazios diferentes não coincidem) e 18 (selo muda com o `lotId`) em TDD.
 
-**Erro da IA que peguei:**
-- O selo sem o `lotId` deixava todos os lotes sem lances com o mesmo selo: quem apagasse todos os lances de um lote poderia copiar o selo de outro lote vazio e a auditoria mostraria o lote como íntegro.
-
 **Sugestões rejeitadas e por quê:**
-- Nenhuma nesta story.
+- Nada a registrar.
+
+**Erro encontrado na revisão:**
+- O selo sem o `lotId` deixava todos os lotes sem lances com o mesmo selo: quem apagasse todos os lances de um lote poderia copiar o selo de outro lote vazio e a auditoria mostraria o lote como íntegro.
 
 ## Story 4.3: Dar lance na API
 
@@ -462,7 +456,10 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi corrigir os dois ajustes de estilo: o `code` depois do detalhe no filter e o `bidCount` fora do helper de cancelamento.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma nesta story.
+- Nada a registrar.
+
+**Erro encontrado na revisão:**
+- Nada a registrar.
 
 ## Story 4.4: Testcontainers, CI e lances simultâneos
 
@@ -486,6 +483,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - O Claude sugeriu remover o `.then((r) => r)` e o `PORT` do teste; testei e os dois são necessários: o supertest só envia a requisição no `then`, e a validação das variáveis exige `PORT` no CI.
 
+**Erro encontrado na revisão:**
+- Nada a registrar.
+
 ## Story 4.5: Tempo real, histórico e situação do licitante na API
 
 **O que a IA gerou:**
@@ -508,6 +508,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Sugestões rejeitadas e por quê:**
 - Recusei a paginação do histórico por faixa de `seq` a partir da contagem copiada no lote: dependeria dessa cópia (D-042) e quebraria com buracos na sequência; pedi `ORDER BY seq DESC` com `LIMIT` e `OFFSET`.
+
+**Erro encontrado na revisão:**
+- Nada a registrar.
 
 ## Story 4.6: Tela Sala do lote ao vivo (lances e tempo real)
 
@@ -535,6 +538,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Recusei a ordem do canvas no celular, com miniatura no cabeçalho: mantive a decidida na 3.7.
 - Mudei o texto proposto para a recusa por integridade, para dizer que o lance não foi registrado.
 
+**Erro encontrado na revisão:**
+- Nada a registrar.
+
 ## Story 4.7: Destaque ao vivo e lotes comprometidos na carteira
 
 **O que a IA gerou:**
@@ -559,6 +565,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Mudei a proposta da data de fim na Carteira: o lote já vencido e ainda não liquidado mostra "Você arrematou · aguardando liquidação" em vez da data.
 - Mudei a proposta de um item novo no `deferred-work.md` para a virada de status do destaque: pedi um item só, junto com o achado da 3.6.
 
+**Erro encontrado na revisão:**
+- Nada a registrar.
+
 ## Story 5.1: Regras de liquidação (TDD)
 
 **O que a IA gerou:**
@@ -580,6 +589,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - Pedi para juntar os quatro testes de movimentos num só: a comparação da lista inteira, sugerida pelo Claude (app), tinha deixado os quatro idênticos.
 
+**Erro encontrado na revisão:**
+- Nada a registrar.
+
 ## Story 5.2: Liquidação e comprovante assinado na API
 
 **O que a IA gerou:**
@@ -587,21 +599,24 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - A assinatura do comprovante e a verificação dela, escritas depois dos 6 casos de teste, em dois pares de commits de teste e implementação.
 - A tabela de comprovantes, com um comprovante por lote e um link aleatório e único.
 - O gatilho no acesso ao lote: lote vencido é liquidado ao ser aberto, e a resposta traz o resultado; o link do comprovante vai só para o vencedor.
-- O aviso de encerramento no tempo real, só com o apelido do vencedor e o valor.
+- O aviso de encerramento no tempo real, só com o alias do vencedor e o valor.
 - Seis testes de integração com banco real, três deles avisados como extras (lote sem lances, link só para o vencedor, aviso no tempo real).
 
 **O que revisei e pedi para mudar:**
 - Pedi que a liquidação conferisse o selo do lote antes de mover saldo e, com selo inválido, não liquidasse e só registrasse o motivo no log (virou a D-064).
 - Pedi a mesma ordem de travas do lance, a data da liquidação lida do relógio do servidor depois da trava, e que uma falha na liquidação nunca derrubasse a página do lote.
-- Pedi o link do comprovante aleatório, nunca derivado do número do lote, e o aviso de encerramento só depois de gravar, com apelido e valor.
+- Pedi o link do comprovante aleatório, nunca derivado do número do lote, e o aviso de encerramento só depois de gravar, com alias e valor.
 - Aprovei os 5 casos de teste da assinatura e pedi um sexto, conferindo com uma assinatura montada à mão, para fixar o formato.
 - Pedi três testes com banco real: dois acessos simultâneos liquidando uma vez só, cobrança pelo último lance mesmo com o lance atual alterado no banco, e selo inválido sem liquidar.
 - Na revisão, aprovei três testes novos: falha na liquidação sem derrubar a página, uma query só fora do lote vencido, e os acessos que não liquidam.
-- Pedi que o link do comprovante fosse entregue pelo id do vencedor, gravado no comprovante, com um teste de dois licitantes de mesmo apelido.
+- Pedi que o link do comprovante fosse entregue pelo id do vencedor, gravado no comprovante, com um teste de dois licitantes de mesmo alias.
 - Pedi para juntar o cálculo do selo num lugar só, registrar no README as duas limitações aceitas e deixar os demais ajustes de estilo como estavam.
 
 **Sugestões rejeitadas e por quê:**
-- Reconhecer o vencedor comparando apelidos: recusei, porque dois licitantes do mesmo lote podem ter o mesmo apelido e o link iria para a pessoa errada.
+- Reconhecer o vencedor comparando aliases: recusei, porque dois licitantes do mesmo lote podem ter o mesmo alias e o link iria para a pessoa errada.
+
+**Erro encontrado na revisão:**
+- Nada a registrar.
 
 ## Story 5.3: Timer de liquidação em memória
 
@@ -625,6 +640,9 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 **Sugestões rejeitadas e por quê:**
 - Deixar para depois a nova tentativa quando a consulta do próximo fim falha: recusei, porque sem ela o timer para até o próximo lance ou lote criado.
 
+**Erro encontrado na revisão:**
+- Nada a registrar.
+
 ## Story 5.4: Comprovante, meus lances e resultado do painel na API
 
 **O que a IA gerou:**
@@ -635,7 +653,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Os tipos novos no front, sete testes unitários e dezessete testes de integração com banco real.
 
 **O que revisei e pedi para mudar:**
-- Pedi que arrematados e não arrematados reconheçam o vencedor pelo id gravado no comprovante, nunca pelo apelido.
+- Pedi que arrematados e não arrematados reconheçam o vencedor pelo id gravado no comprovante, nunca pelo alias.
 - Pedi que lote encerrado e ainda não liquidado fique em "em andamento", marcado como aguardando liquidação, para nenhum lote sumir das três seções.
 - Pedi que a situação (ganhando ou superado) venha do dono do último lance, calculada na API.
 - Pedi que o comprovante adulterado continue aparecendo, marcado como inválido, e que link com formato impossível dê 404 sem consultar o banco.
@@ -645,23 +663,25 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Aprovei a spec, com os 17 casos de teste propostos pelo agente, sem parar para revisá-la.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma.
+- Nada a registrar.
+
+**Erro encontrado na revisão:**
+- Nada a registrar.
 
 ## Story 5.5: Auditoria da cadeia na API (TDD)
 
 **O que a IA gerou:**
 - A verificação da cadeia de lances, do selo do lote e do comprovante, escrita depois dos testes, que falharam primeiro.
 - O indicador por lance: íntegro antes do primeiro lance quebrado, adulterado nele e não verificável depois.
-- A rota pública de auditoria do lote, com apelidos e sem dado pessoal, em duas consultas para qualquer número de lances.
+- A rota pública de auditoria do lote, com aliases e sem dado pessoal, em duas consultas para qualquer número de lances.
 - A rota que leva do número do lote ao id, sem lotes cancelados.
 - A separação da função de assinatura num arquivo próprio, para a verificação conferir o comprovante sem import circular.
-- Na revisão, a leitura do lote e dos lances no mesmo instante do banco: um lance chegando entre as duas leituras fazia um lote íntegro parecer adulterado.
 - A explicação da técnica de auditoria no README, os tipos novos no front e os testes unitários e de integração com banco real.
 
 **O que revisei e pedi para mudar:**
 - Aprovei os 12 casos de teste propostos e pedi mais quatro: lance com seq maior que 1 apontando para o início da cadeia, selo nulo, comprovante com hash final diferente e comprovante com assinatura inválida.
 - Pedi o indicador por lance: íntegro antes do primeiro quebrado, adulterado nele e não verificável nos seguintes.
-- Pedi que cada lance apareça com o apelido calculado do licitante, sem id, nome ou e-mail, e testes de integração que alterem o banco direto (valor, último lance apagado, hash final do comprovante).
+- Pedi que cada lance apareça com o alias calculado do licitante, sem id, nome ou e-mail, e testes de integração que alterem o banco direto (valor, último lance apagado, hash final do comprovante).
 - Escolhi um quarto resultado para comprovante adulterado, com prioridade menor que lance quebrado e lances removidos do fim.
 - Decidi que lote liquidado com lances e sem comprovante é adulterado, pedi o caso do lote liquidado sem lances, que continua íntegro, e aprovei que o selo nulo conte como lances removidos do fim.
 - Depois da revisão, decidi que comprovante em lote não liquidado ou em lote liquidado sem lances também é adulterado (dois casos novos) e aprovei os três testes extras do agente.
@@ -669,7 +689,10 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi que a auditoria ganhasse um item próprio nos testes do README e uma linha dizendo que consultar a auditoria não liquida o lote.
 
 **Sugestões rejeitadas e por quê:**
-- Comparar o apelido e o valor do comprovante com o último lance: recusei, porque a assinatura já cobre os dois e forjá-la exige o segredo.
+- Comparar o alias e o valor do comprovante com o último lance: recusei, porque a assinatura já cobre os dois e forjá-la exige o segredo.
+
+**Erro encontrado na revisão:**
+- O lote e os lances eram lidos em instantes diferentes do banco: um lance chegando entre as duas leituras fazia um lote íntegro parecer adulterado. Agora as duas leituras veem o mesmo instante.
 
 ## Story 5.6: Sala encerrada e tela Comprovante de arremate
 
@@ -683,16 +706,19 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **O que revisei e pedi para mudar:**
 - Pedi que o resultado venha da releitura do lote que a sala já faz na virada, e que lote encerrado sem resultado mostre "Lote encerrado, aguardando liquidação".
-- Pedi "Você arrematou" com o valor e o link do comprovante para o vencedor, com a carteira do cabeçalho relida, e o apelido do vencedor com o valor, ou "sem lances", para os demais.
+- Pedi "Você arrematou" com o valor e o link do comprovante para o vencedor, com a carteira do cabeçalho relida, e o alias do vencedor com o valor, ou "sem lances", para os demais.
 - Decidi deixar para depois o link da auditoria no comprovante e na sala (5.8), as sugestões de termos na busca do acervo (polimento), a caixa de contas de demonstração na tela Entrar e a composição do seed, com um lote adulterado de propósito e um roteiro de adulteração no README (6.1).
 - Pedi que os botões de copiar mostrem o texto selecionado para cópia manual quando a área de transferência falhar.
 - Pedi que o comprovante inválido mostre todos os dados, com o selo "Comprovante inválido", e valores com centavos, datas no fuso do navegador e o número do lote com romano.
 - Pedi a conferência visual: canvas e site lado a lado em 1280px, capturas em 360, 768, 1024 e 1280px, e reaproveitamento do que já existe em comum, sem bloco novo com o prefixo da tela.
 - Na conferência, pedi a frase de lote pendente uma vez só, a marca "Arrematou" ou "Último lance" no histórico do lote encerrado e as grades de cartões com no máximo 4 colunas, para as páginas de 12 sempre fecharem a linha.
-- Antes do merge, pedi que "Você arrematou" dependa só do token do comprovante, que a API envia apenas ao vencedor, e não do apelido; e que o comprovante válido diga que só a assinatura confere, indicando a auditoria para o histórico de lances.
+- Antes do merge, pedi que "Você arrematou" dependa só do token do comprovante, que a API envia apenas ao vencedor, e não do alias; e que o comprovante válido diga que só a assinatura confere, indicando a auditoria para o histórico de lances.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma nesta story.
+- Nada a registrar.
+
+**Erro encontrado na revisão:**
+- Nada a registrar.
 
 ## Story 5.7: Tela Meus lances e resultado no painel
 
@@ -719,10 +745,13 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Rótulo "Você lidera" na situação: escolhi "Você está ganhando", o mesmo da sala e do destaque da página inicial.
 - Nota "em N lotes arrematados" no total recebido: um lote vencido e ainda não liquidado entraria na contagem sem estar no total, então a nota diz só "soma dos comprovantes dos lotes arrematados".
 
+**Erro encontrado na revisão:**
+- Nada a registrar.
+
 ## Story 5.8: Tela Auditoria do lote e campo da página inicial
 
 **O que a IA gerou:**
-- A tela pública da auditoria, com o veredito (Íntegro ou Adulterado) em linguagem simples, o botão de verificar de novo e a lista de todos os lances com apelido, valor, horário, código e verificação de cada um.
+- A tela pública da auditoria, com o veredito (Íntegro ou Adulterado) em linguagem simples, o botão de verificar de novo e a lista de todos os lances com alias, valor, horário, código e verificação de cada um.
 - Os quatro resultados: histórico íntegro, lance alterado (com o ponto exato e os lances seguintes como não verificáveis), lances removidos do fim e comprovante que não confere.
 - O bloco "Leilões que qualquer pessoa pode conferir" na página inicial, com o campo do número do lote em algarismos ou romano.
 - Os links "Auditar este lote" na vitrine, no destaque, na sala, no comprovante e em Meus lances, e os itens Como funciona e Auditoria no cabeçalho, que rolam até a seção.
@@ -764,12 +793,12 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Pedi a composição do seed: um leiloeiro, dois licitantes, quatro lotes ao vivo, dois agendados, três encerrados, um cancelado e um adulterado.
 - Escolhi as contas leiloeiro, Geovanna e Felipe, todas com a senha Agora2026!.
 - Pedi que o seed exija o segredo de assinatura e o endereço do banco explícitos fora do compose, com um teste para o segredo ausente.
-- Decidi as datas: lotes ao vivo encerrando entre 7 e 10 dias depois do seed e agendados abrindo entre 5 e 6 dias.
+- Decidi as datas: lotes ao vivo encerrando entre 7 e 10 dias depois do seed e agendados abrindo entre 5 e 6 dias (D-069).
 - Pedi o desenho do bloco de contas de demonstração: linha dourada, título em versalete, três botões com nome e papel, foco no botão Entrar e a linha com a senha; depois, o nome Casa Ágora para o leiloeiro.
 - Pedi para tirar o teste do botão de conta de demonstração, que percorria a tela à mão para conferir um clique simples; os screenshots já mostram o comportamento.
 
 **Sugestões rejeitadas e por quê:**
-- Lote ao vivo terminando em cerca de 30 dias: troquei por 7 a 10 dias, porque a avaliação acontece poucos dias depois da entrega.
+- Lote ao vivo terminando em cerca de 30 dias: troquei por 7 a 10 dias, porque os lotes só precisam ficar abertos nos dias seguintes à entrega (D-069).
 - Nomes Ana e Bia para os licitantes: troquei por Geovanna e Felipe.
 - Teste do botão de conta de demonstração que percorria a tela à mão: recusei, porque conferia um clique simples e os screenshots já cobrem.
 
@@ -807,7 +836,7 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Um lugar só para as datas, os limites (como o maior número de lote) e a leitura do número do lote digitado.
 - A checagem de "não encontrado" e o formato dos estados de carregamento num lugar só.
 - A limpeza da folha de estilos do design system e dos comentários fora do padrão.
-- Os dados de teste repetidos num arquivo compartilhado, com apelidos no formato real.
+- Os dados de teste repetidos num arquivo compartilhado, com aliases no formato real.
 - Comparação por screenshots antes e depois da vitrine, do painel e de Meus lances.
 
 **O que revisei e pedi para mudar:**
@@ -819,7 +848,30 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - Aprovei a spec como estava, inclusive a saída dos ganchos da carteira para a pasta compartilhada.
 
 **Sugestões rejeitadas e por quê:**
-- Nenhuma.
+- Nada a registrar.
 
 **Erro encontrado na revisão:**
-- Nenhum.
+- Nada a registrar.
+
+## Story 6.4: Documentação
+
+**O que a IA gerou:**
+- A revisão de `docs/` e do `CLAUDE.md` conferida no código: telas no estado final, códigos de erro, seed e estrutura de pastas.
+- O índice das decisões, com número, título, status e story, e o mesmo formato de cabeçalho em todas as entradas.
+- O formato único deste log: quatro seções na mesma ordem, no máximo 8 itens por seção e "alias" como termo único.
+- O mapa de `docs/` num README próprio, a spec da 1.1 no padrão das outras e o controle das stories com os status reais.
+
+**O que revisei e pedi para mudar:**
+- Pedi o índice no topo do `decisions.md` e um formato só de cabeçalho, com status `Aceita`, `Substituída por` ou `Parcialmente substituída por`.
+- Pedi que as justificativas das decisões trouxessem o motivo técnico ou de prazo.
+- Decidi registrar os prazos dos lotes do seed, decididos na 6.1, como nova decisão que substitui parte da D-020 (D-069).
+- Pedi neste log as seções sempre na mesma ordem, com "Erro encontrado na revisão" por último, e as entradas com mais de 8 itens enxugadas, sem perder decisão.
+- Pedi no Resumo um item só para o que eu decido e não delego, e a lista de testes descrita como proposta da IA que eu aprovo, corto ou completo.
+- Pedi o mapa de `docs/`, com uma linha só sobre as referências do Claude Design, sem README dentro de `docs/design/`.
+- Decidi não mexer no README, no `deferred-work.md` nem no `deploy-notes.md` nesta story.
+
+**Sugestões rejeitadas e por quê:**
+- README próprio dentro de `docs/design/`: recusei; a linha sobre os desenhos fica só no mapa de `docs/`.
+
+**Erro encontrado na revisão:**
+- Nada a registrar.

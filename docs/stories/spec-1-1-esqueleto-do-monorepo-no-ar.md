@@ -1,8 +1,18 @@
+---
+title: 'Story 1.1: Esqueleto do monorepo no ar'
+type: 'feature'
+created: '2026-10-23'
+status: 'done'
+route: 'dispatch'
+context:
+  - '{project-root}/CLAUDE.md'
+  - '{project-root}/docs/deploy-notes.md'
+  - '{project-root}/docs/decisions.md'
+---
+
 # Story 1.1: Esqueleto do monorepo no ar
 
-Status: em andamento
 Branch: `story/1-1-skeleton`
-Contexto obrigatório: `CLAUDE.md`, `docs/deploy-notes.md`, `docs/decisions.md`
 
 ## Objetivo
 
