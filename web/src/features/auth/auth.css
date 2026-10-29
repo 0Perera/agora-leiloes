@@ -319,9 +319,7 @@
   }
 }
 
-/* a fonte do resumo acompanha a largura da caixa para o texto caber numa linha desde 360px */
 .demo-box {
-  container-type: inline-size;
   min-width: 0;
 }
 
@@ -331,12 +329,12 @@
   justify-content: space-between;
   gap: var(--space-2);
   min-height: 48px;
-  padding: 0 var(--space-3);
+  padding: var(--space-1) var(--space-3);
   border: 1px solid var(--gold-500);
   background-color: transparent;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(11px, calc((100cqi - 48px) / 21), 15px);
+  font-size: 15px;
   line-height: 20px;
   font-variant: small-caps;
   letter-spacing: 0.02em;
@@ -345,11 +343,10 @@
   cursor: pointer;
 }
 
+/* onde a frase não cabe numa linha (cartão estreito), quebra em duas equilibradas em vez de cortar */
 .demo-box-summary > span {
   min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  text-wrap: balance;
 }
 
 .demo-box-summary::-webkit-details-marker {
