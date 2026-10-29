@@ -11,7 +11,29 @@ _(o que faz: lista curta de funcionalidades)_
 
 > O primeiro acesso pode levar até 1 min: a API dorme após 15 min sem tráfego (plano free do Render).
 
-_(credenciais do seed e um roteiro curto de teste)_
+Contas de demonstração (também na tela Entrar, que preenche o formulário com um clique), todas com a senha `Agora2026!`:
+
+| E-mail | Papel |
+|---|---|
+| `leiloeiro@agora.dev` | Leiloeiro, dono de todos os lotes |
+| `geovanna@agora.dev` | Licitante |
+| `felipe@agora.dev` | Licitante |
+
+O seed cria 11 lotes: 4 ao vivo (um disputado, um liderado por cada licitante e um sem lances), 2 agendados, 3 encerrados e liquidados (um para cada licitante e um sem lances), 1 cancelado e 1 adulterado de propósito.
+
+Roteiro curto: entre como Geovanna e dê um lance no lote liderado por Felipe; em outra janela, entre como Felipe e veja o lance chegar ao vivo; entre como Leiloeiro e veja no painel os encerrados e o total recebido; abra o comprovante de um lote encerrado e a auditoria de qualquer lote.
+
+**Lote adulterado:** o lote nº 11 (_Portrait of a Family Playing Music_, Pieter de Hooch) foi encerrado e liquidado normalmente, e depois o valor do lance 3 foi trocado de R$ 55.000 para R$ 30.000 direto no banco. A auditoria dele acusa `tampered` no lance 3, para mostrar a detecção sem ninguém precisar mexer no banco.
+
+**Testar a adulteração você mesmo** (no compose, depois do seed; os lotes alterados ficam assim até recriar o banco):
+
+```bash
+docker compose exec db psql -U agora -d agora -c "UPDATE bids SET amount = amount + 100000 WHERE seq = 2 AND lot_id = (SELECT id FROM lots WHERE number = 2)"
+docker compose exec db psql -U agora -d agora -c "DELETE FROM bids WHERE seq = 2 AND lot_id = (SELECT id FROM lots WHERE number = 3)"
+docker compose exec db psql -U agora -d agora -c "UPDATE receipts SET amount = amount - 100000 WHERE lot_id = (SELECT id FROM lots WHERE number = 7)"
+```
+
+Resultado na auditoria: lote 2 `tampered` no lance 2, lote 3 `truncated` (último lance apagado) e lote 7 `receipt_tampered`, com o comprovante dele aparecendo como inválido. Para voltar ao estado do seed: `docker compose down -v`, `docker compose up --build` e o seed de novo.
 
 ## Rodar local
 
@@ -25,6 +47,14 @@ Front em http://localhost:5173, API em http://localhost:3000, banco na 5432.
 Se alguma porta estiver ocupada: `WEB_PORT=5174 API_PORT=3001 DB_PORT=5433 docker compose up --build`.
 As migrations rodam sozinhas no boot da API.
 
+Dados de demonstração (com o compose de pé, em outro terminal):
+
+```bash
+docker compose exec api npm run seed
+```
+
+O seed cria tudo pelos services da aplicação, com as obras e imagens baixadas da Cleveland na hora, e pode ser rodado de novo: completa o que faltou sem duplicar nada. Se a Cleveland estiver fora no início, ele para antes de gravar; se falhar no meio, rodar de novo completa o que faltou.
+
 Para desenvolver com hot reload (pré-requisito: Node 24), suba só o banco e rode API e front com npm:
 
 ```bash
@@ -32,6 +62,19 @@ docker compose up -d db
 
 cd api && cp .env.example .env && npm ci && npm run start:dev   # ajuste DATABASE_URL se mudou DB_PORT
 cd web && cp .env.example .env && npm ci && npm run dev         # outro terminal
+```
+
+Seed fora do compose (em `api/`): `DATABASE_URL` e `BID_HMAC_SECRET` têm que vir do ambiente do processo, não do `.env`, e o seed para com erro se faltar uma delas.
+
+```bash
+npm run build
+DATABASE_URL=postgres://agora:agora@localhost:5432/agora BID_HMAC_SECRET=dev-only-bid-hmac-secret-change-me-0123 npm run seed
+```
+
+Em produção, o seed roda da máquina local contra a External Database URL do Render, com o `BID_HMAC_SECRET` copiado da API no Render (Environment). Com outro segredo, a API recusaria todo lance com `LOT_INTEGRITY_FAILED` e a auditoria acusaria todos os lotes:
+
+```bash
+DATABASE_URL='<External Database URL>' DB_SSL=true BID_HMAC_SECRET='<o mesmo do Render>' npm run seed
 ```
 
 A API não sobe se faltar variável de ambiente, e a mensagem diz qual.
@@ -107,7 +150,8 @@ cd web && npm test           # Vitest
 - **Lances:** ordem das recusas, mínimo, saldo, anti-sniping, cadeia de HMAC, selo e alias; no serviço, ordem dos locks, hora lida depois do lock, encadeamento do `seq` e do hash, atualização do lote, movimento do comprometido, resposta do lance, recusa quando o selo do lote não confere e evento emitido só depois da transação; stream por lote com heartbeat e campos fechados do evento e do histórico.
 - **Integração (e2e):** Postgres 17 de verdade via Testcontainers e a API inteira por HTTP, com relógio de teste e catálogo falso. Lance aceito, recusado, de leiloeiro e sem token, saldo devolvido ao superado e prorrogação nos últimos 2 min; evento no stream só do lance aceito e ouvinte removido ao fechar a conexão, histórico paginado, `me` no detalhe por papel e lotes comprometidos na carteira; 10 lances simultâneos parados no mesmo lock (cadeia, selo, `seq`, lote e carteiras íntegros) dois lances do mesmo mínimo e o mesmo licitante em dois lotes com saldo para um lance só; destaque, cancelamento, contagens e ordem das abas da vitrine.
 - **Auditoria:** verificação da cadeia, do selo e do comprovante (alteração, inserção, remoção, ordem trocada, selo nulo, comprovante divergente, ausente ou fora de lugar) e indicador por lance; no e2e, `UPDATE` no valor e no dono, `DELETE` do último lance e `UPDATE` no comprovante, aliases iguais aos da sala e duas queries por chamada.
-- **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito, rótulos e nota do resumo da sala do lote, id inválido na rota da sala, nova busca na virada de estado, tradução do tipo da obra e, na sala, união dos lances do POST, do stream e da reconexão pelo `seq`, situação do licitante, atalhos de valor e tradução das recusas de lance; na Carteira, os textos dos lotes comprometidos; o resultado da sala encerrada, a data por extenso e o hash abreviado do comprovante; em Meus lances, situação, tempo, ação e valor final de cada lote; no painel, o resultado do lote encerrado.
+- **Seed:** contas e lotes por status, auditoria íntegra em todos menos o adulterado (que aponta o lance alterado), comprovantes válidos, segunda execução sem duplicar, execução interrompida completada na seguinte, Cleveland fora sem gravar nada e segredo ausente barrado antes de subir a aplicação.
+- **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito, rótulos e nota do resumo da sala do lote, id inválido na rota da sala, nova busca na virada de estado, tradução do tipo da obra e, na sala, união dos lances do POST, do stream e da reconexão pelo `seq`, situação do licitante, atalhos de valor e tradução das recusas de lance; na Carteira, os textos dos lotes comprometidos; o resultado da sala encerrada, a data por extenso e o hash abreviado do comprovante; em Meus lances, situação, tempo, ação e valor final de cada lote; no painel, o resultado do lote encerrado; no login, o botão de conta de demonstração preenchendo e-mail e senha.
 
 ## Stack e decisões
 
