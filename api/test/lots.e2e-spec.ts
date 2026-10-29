@@ -212,15 +212,26 @@ describe('POST /lots/:id/cancel', () => {
   });
 
   it('cancela lote ao vivo com lances e devolve o comprometido do líder', async () => {
+    const other = await api.createLot(auctioneer, {
+      startsAt: BASE,
+      endsAt: at(60),
+      startingBid: STARTING_BID,
+      increment: INCREMENT,
+    });
+    await api.bid(second, other, STARTING_BID).expect(201);
     await biddingWar();
+    const before = await wallets();
+    const untouched = before.filter((row) => row.userId !== second.id);
 
     await cancel().expect(204);
 
-    const body = (await wallet(second)).body as {
-      balance: number;
-      committed: number;
-    };
-    expect(body).toMatchObject({ balance: DEPOSIT, committed: 0 });
+    const after = await wallets();
+    expect(after.find((row) => row.userId === second.id)).toEqual({
+      userId: second.id,
+      balance: DEPOSIT,
+      committed: STARTING_BID,
+    });
+    expect(after.filter((row) => row.userId !== second.id)).toEqual(untouched);
   });
 
   it('lote cancelado sai dos lotes comprometidos de GET /wallet', async () => {

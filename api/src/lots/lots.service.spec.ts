@@ -25,7 +25,9 @@ const config = {
 
 const timer = { refresh: jest.fn() } as unknown as SettlementTimer;
 
-const events = { cancelled: jest.fn() } as unknown as LotEventsService;
+const cancelled = jest.fn();
+
+const events = { cancelled } as unknown as LotEventsService;
 
 function makeArtwork(): ArtworkDetail {
   return {
@@ -226,6 +228,10 @@ function makeCancel(lot: Pick<Lot, 'id' | 'endsAt' | 'seal'> | null) {
 }
 
 describe('LotsService.cancel', () => {
+  beforeEach(() => {
+    cancelled.mockClear();
+  });
+
   it('responde 404 quando o lote não é do leiloeiro', async () => {
     const { service, repository } = makeCancel(null);
 
@@ -236,6 +242,16 @@ describe('LotsService.cancel', () => {
         lock: { mode: 'pessimistic_write' },
       }),
     );
+  });
+
+  it('não emite cancelled quando recusa lote encerrado com LOT_ENDED', async () => {
+    const lot = { id: 1, endsAt: NOW, seal: EMPTY_SEAL };
+    const { service } = makeCancel(lot);
+
+    await expect(service.cancel(2, 1)).rejects.toThrow(
+      new DomainException('LOT_ENDED'),
+    );
+    expect(cancelled).not.toHaveBeenCalled();
   });
 
   it('verifica lances em bids depois de travar o lote', async () => {
