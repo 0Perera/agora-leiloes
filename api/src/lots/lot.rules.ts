@@ -1,3 +1,4 @@
+import type { Movement } from '../bids/bid.rules';
 import { DomainException } from '../common/domain.exception';
 
 // Tolerância para o relógio do cliente e a latência entre montar o formulário e enviar.
@@ -5,7 +6,8 @@ const START_TOLERANCE_MS = 60_000;
 
 export type Schedule = { startsAt: Date; endsAt: Date };
 export type ListedLot = { cancelledAt: Date | null; endsAt: Date };
-export type CancelState = { endsAt: Date; hasBids: boolean };
+export type CancelState = { endsAt: Date; last: Movement | null };
+export type Cancellation = { release: Movement | null };
 
 export function scheduleErrors(
   { startsAt, endsAt }: Schedule,
@@ -31,10 +33,10 @@ export function assertAvailable(lots: ListedLot[], now: Date): void {
   if (active) throw new DomainException('ARTWORK_ALREADY_LISTED');
 }
 
-// Encerrado vem primeiro: lote vencido com lance é resultado, não "chegou um lance".
-export function assertCancellable(lot: CancelState, now: Date): void {
+// Só o líder tem comprometido: cada lance já liberou o do anterior (D-070).
+export function cancellation(lot: CancelState, now: Date): Cancellation {
   if (now.getTime() >= lot.endsAt.getTime()) {
     throw new DomainException('LOT_ENDED');
   }
-  if (lot.hasBids) throw new DomainException('LOT_HAS_BIDS');
+  return { release: lot.last };
 }

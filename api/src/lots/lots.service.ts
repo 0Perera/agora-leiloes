@@ -14,8 +14,9 @@ import {
   SelectQueryBuilder,
 } from 'typeorm';
 import { forLot } from '../audit/alias';
-import { GENESIS, sealLot } from '../audit/chain';
-import { Bid } from '../bids/bid.entity';
+import { expectedSeal, GENESIS, sealLot } from '../audit/chain';
+import type { Movement } from '../bids/bid.rules';
+import { lastBid } from '../bids/last-bid';
 import type { ArtworkDetail } from '../catalog/artwork.mapper';
 import { CatalogService } from '../catalog/catalog.service';
 import type { ImageFile } from '../catalog/cleveland.client';
@@ -23,8 +24,10 @@ import type { AuthUser } from '../common/auth.guard';
 import { Clock } from '../common/clock';
 import { errorMessage } from '../common/error-message';
 import { validationFailed } from '../common/validation-failed';
+import { DomainException } from '../common/domain.exception';
 import { Env } from '../config/env.validation';
 import { Receipt } from '../receipts/receipt.entity';
+import { lockWallets, walletOf } from '../wallets/wallet.lock';
 import { SettlementService } from '../settlement/settlement.service';
 import { SettlementTimer } from '../settlement/settlement.timer';
 import { CreateLotDto } from './dto/create-lot.dto';
@@ -43,14 +46,11 @@ import {
 } from './dto/created-lot.dto';
 import type { LotIdDto } from './dto/lot-id.dto';
 import { LotCountsDto, LotShowcaseDto } from './dto/lot-showcase.dto';
+import { LotEventsService } from './lot-events.service';
 import { LotImage } from './lot-image.entity';
 import { LotStatus, STATUS_SQL, STATUS_WHERE } from './lot-status';
 import { Lot } from './lot.entity';
-import {
-  assertAvailable,
-  assertCancellable,
-  scheduleErrors,
-} from './lot.rules';
+import { assertAvailable, cancellation, scheduleErrors } from './lot.rules';
 
 const PAGE_SIZE = 12;
 
@@ -128,6 +128,7 @@ export class LotsService {
     config: ConfigService<Env, true>,
     private readonly settlement: SettlementService,
     private readonly timer: SettlementTimer,
+    private readonly events: LotEventsService,
   ) {
     this.secret = config.get('BID_HMAC_SECRET', { infer: true });
   }
@@ -221,22 +222,11 @@ export class LotsService {
 
   // Lote alheio, inexistente ou já cancelado dá o mesmo 404: não revela que o lote existe.
   async cancel(auctioneerId: number, id: number): Promise<void> {
-    await this.dataSource.transaction(async (manager) => {
-      const lots = manager.getRepository(Lot);
-      const lot = await lots.findOne({
-        select: { id: true, endsAt: true },
-        where: { id, auctioneerId, cancelledAt: IsNull() },
-        lock: { mode: 'pessimistic_write' },
-      });
-      if (!lot) throw new NotFoundException();
-      // Depois do lock: um lance que chegou antes já está em bids, e bid_count é só exibição.
-      const hasBids = await manager
-        .getRepository(Bid)
-        .exists({ where: { lotId: id } });
-      const now = this.clock.now();
-      assertCancellable({ endsAt: lot.endsAt, hasBids }, now);
-      await lots.update({ id }, { cancelledAt: now });
-    });
+    const cancelledAt = await this.dataSource.transaction((manager) =>
+      this.revoke(manager, auctioneerId, id),
+    );
+    // Fora da transação: evento só depois do commit, nunca de cancelamento revertido.
+    this.events.cancelled(id, { cancelledAt });
   }
 
   async image(id: number): Promise<ImageFile> {
@@ -246,6 +236,38 @@ export class LotsService {
     });
     if (!image) throw new NotFoundException();
     return { contentType: image.contentType, bytes: image.bytes };
+  }
+
+  // Lote travado antes da carteira (D-014); os lances e o selo ficam como estão.
+  private async revoke(
+    manager: EntityManager,
+    auctioneerId: number,
+    id: number,
+  ): Promise<Date> {
+    const lots = manager.getRepository(Lot);
+    const lot = await lots.findOne({
+      select: { id: true, endsAt: true, seal: true },
+      where: { id, auctioneerId, cancelledAt: IsNull() },
+      lock: { mode: 'pessimistic_write' },
+    });
+    if (!lot) throw new NotFoundException();
+    // Depois do lock: um lance que chegou antes já está em bids, e bid_count é só exibição.
+    const last = await lastBid(manager, id);
+    const now = this.clock.now();
+    const { release } = cancellation(
+      {
+        endsAt: lot.endsAt,
+        last: last && { userId: last.userId, amount: last.amount },
+      },
+      now,
+    );
+    // Mesma checagem do lance e da liquidação: selo divergente não move saldo (D-064).
+    if (lot.seal !== expectedSeal(this.secret, id, last)) {
+      throw new DomainException('LOT_INTEGRITY_FAILED');
+    }
+    if (release) await refund(manager, release);
+    await lots.update({ id }, { cancelledAt: now });
+    return now;
   }
 
   private async detail(
@@ -369,6 +391,18 @@ export class LotsService {
     });
     return { id, number: generated, ...snapshot, ...conditions };
   }
+}
+
+// Variação somada no banco depois da trava, como na liquidação.
+async function refund(
+  manager: EntityManager,
+  release: Movement,
+): Promise<void> {
+  const wallets = await lockWallets(manager, [release.userId]);
+  await manager.query(
+    'UPDATE wallets SET committed = committed - $1 WHERE id = $2',
+    [release.amount, walletOf(wallets, release.userId).id],
+  );
 }
 
 function featuredChain(now: Date): Candidate[] {
