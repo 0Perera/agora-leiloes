@@ -331,18 +331,8 @@
   }
 }
 
+/* a partir de 440px o menu só caberia numa linha com 4px entre os links: quebra em duas, sem rolar */
 @media (max-width: 440px) {
-  .header-nav {
-    gap: 0 4px;
-  }
-
-  .header-nav .nav-link {
-    padding-inline: 0;
-  }
-}
-
-/* abaixo de 420px o menu não cabe numa linha: quebra em duas, sem rolar, com o espaço normal */
-@media (max-width: 419px) {
   .header-nav {
     flex-wrap: wrap;
     overflow-x: visible;
@@ -366,7 +356,7 @@
   }
 }
 
-/* medido com R$ 100.000,00 disponível: abaixo de 440px o nome encosta na carteira */
+/* medido com R$ 10.000.000,00 disponível: abaixo de 440px o nome encosta na carteira */
 @media (max-width: 439px) {
   .layout-main {
     padding: var(--space-5) var(--space-4) var(--space-7);
