@@ -13,7 +13,8 @@ export type DomainCode =
   | 'ALREADY_WINNING'
   | 'BID_BELOW_MINIMUM'
   | 'INSUFFICIENT_BALANCE'
-  | 'LOT_INTEGRITY_FAILED';
+  | 'LOT_INTEGRITY_FAILED'
+  | 'TOO_MANY_ATTEMPTS';
 
 export class DomainException extends Error {
   constructor(

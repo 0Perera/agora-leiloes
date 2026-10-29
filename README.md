@@ -117,6 +117,7 @@ Qualquer pessoa confere se o histórico de um lote foi mexido, sem login, na tel
 _(regras que podem surpreender, uma linha cada, com o porquê)_
 
 - A sessão dura 8h e não renova: token vencido no recarregamento volta a visitante; um 401 durante o uso leva para Entrar com aviso de sessão expirada (D-006).
+- O login aceita 5 tentativas por minuto por IP; a 6ª responde 429 (`TOO_MANY_ATTEMPTS`), contra força bruta de senha. Atrás da Cloudflare, o IP vem do `CF-Connecting-IP` (D-068).
 - A busca no acervo mostra só pintura e escultura europeia ou arte grega e romana, um departamento por vez (tema da casa, D-050), e só peças com imagem.
 - Uma peça só fica em um lote agendado ou ao vivo por vez; lote encerrado ou cancelado libera a peça para outro lote (D-051).
 - Lote cancelado some da vitrine e do destaque, e o link direto dele responde 404 (lote não encontrado).
