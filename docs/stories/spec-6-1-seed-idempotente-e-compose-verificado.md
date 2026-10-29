@@ -22,7 +22,7 @@ context:
 
 **Always:**
 - `Clock` registrado uma vez, em `ClockModule` `@Global()` em `common/`; sai dos `providers` de lots, bids, settlement e audit. Os e2e continuam com `overrideProvider(Clock)`.
-- Contas (decisão do usuário): `leiloeiro@agora.dev` (Leiloeiro), `geovanna@agora.dev` (Geovanna) e `felipe@agora.dev` (Felipe), todas com a senha `Agora2026!`.
+- Contas (decisão do usuário): `leiloeiro@agora.dev` (Casa Ágora, papel Leiloeiro; renomeado pelo usuário na revisão da PR #28), `geovanna@agora.dev` (Geovanna) e `felipe@agora.dev` (Felipe), todas com a senha `Agora2026!`.
 - Composição, tudo do mesmo leiloeiro, obras dos dois departamentos: Geovanna e Felipe com saldo; 4 ao vivo, abertos ~3 dias antes do seed e encerrando entre 7 e 10 dias depois dele (disputado com ~8 lances alternados, Geovanna lidera, Felipe lidera, sem lances); 2 agendados abrindo entre 5 e 6 dias depois do seed e encerrando depois disso; 3 encerrados e liquidados no passado (Geovanna arremata, Felipe arremata, sem lances); 1 cancelado no passado; 1 encerrado e liquidado no passado com ≥4 lances e depois adulterado.
 - Escrita só pelos services (`AuthService.signup`, `WalletsService.deposit`, `LotsService.create/cancel`, `BidsService.place`, `SettlementService.settle`). A única exceção é o `UPDATE` da adulteração, num lance do meio do lote adulterado, nunca em lote ao vivo.
 - Idempotência por chave natural: usuário pelo e-mail; lote por (leiloeiro, `artworkId`); lances pelo `seq` já gravado (só faltantes, no horário planejado a partir do `startsAt` gravado); depósito só com saldo zero; liquidação só sem `settled_at`; cancelamento só sem `cancelled_at`; adulteração só se o valor ainda é o planejado.
@@ -64,7 +64,7 @@ context:
 - [x] `api/src/seed/{accounts,plan,seed,seed-env,main}.ts` -- plano declarativo (contas, obras, lotes com offsets e lances), `seed(app)` idempotente, `main.ts` com `NestFactory.createApplicationContext` -- testável sem o `main`
 - [x] `api/package.json` -- script `seed` (`node dist/seed/main`) -- roda igual no compose e local
 - [x] `api/test/seed.e2e-spec.ts` -- casos abaixo
-- [x] `web/src/features/auth/{demo-accounts.ts,demo-accounts-box.tsx}` + `login-page.tsx` -- bloco abaixo do formulário, separado pela linha fina dourada do site, título pequeno em versalete "Contas de demonstração"; três botões lado a lado com classes existentes (`ag-btn--secondary` ou `--quiet`, sem estilo novo), nome em cima (Leiloeiro, Geovanna, Felipe) e papel embaixo em texto menor (Leiloeiro, Licitante, Licitante); clicar preenche e-mail e senha e foca "Entrar", sem enviar; linha "Senha de todas: Agora2026!". Em 360px cabem numa linha ou em grade de 3, sem esticar. Só no login.
+- [x] `web/src/features/auth/{demo-accounts.ts,demo-accounts-box.tsx}` + `login-page.tsx` -- bloco abaixo do formulário, separado pela linha fina dourada do site, título pequeno em versalete "Contas de demonstração"; três botões lado a lado com classes existentes (`ag-btn--secondary` ou `--quiet`, sem estilo novo), nome em cima (Casa Ágora, Geovanna, Felipe) e papel embaixo em texto menor (Leiloeiro, Licitante, Licitante); clicar preenche e-mail e senha e foca "Entrar", sem enviar; linha "Senha de todas: Agora2026!". Em 360px cabem numa linha ou em grade de 3, sem esticar. Só no login.
 - [x] `README.md` -- credenciais em "Testar agora", qual lote foi adulterado e por quê, "Testar a adulteração você mesmo" (3 SQL para o compose com o resultado esperado), comando do seed local, no compose e em produção (produção mostra `DATABASE_URL` e `BID_HMAC_SECRET`, com o aviso de copiar o segredo do Render)
 - [x] `docs/deploy-notes.md` -- passo a passo do dia da entrega com o comando novo
 
@@ -79,7 +79,7 @@ context:
   7. execução interrompida no meio dos lotes completa na seguinte sem duplicar
   8. catálogo fora do ar não grava nada
 - `seed-env.spec.ts` / `describe('seedEnv')`: 9. sem `BID_HMAC_SECRET` definido, sai com erro antes de gravar qualquer coisa
-- `login-page.spec.tsx`: 10. botão de conta de demonstração preenche e-mail e senha
+- ~~`login-page.spec.tsx`: 10. botão de conta de demonstração preenche e-mail e senha~~ (removido a pedido do usuário na revisão da PR #28: o teste chamava o componente como função e percorria a árvore à mão para conferir um `onClick` trivial; o comportamento fica conferido pelos screenshots)
 
 **Acceptance Criteria:**
 - Given um checkout limpo, when `docker compose up` e depois `docker compose exec api npm run seed`, then o app em `localhost:5173` mostra os lotes do seed e o login de demonstração entra.

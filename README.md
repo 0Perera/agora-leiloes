@@ -15,13 +15,13 @@ Contas de demonstração (também na tela Entrar, que preenche o formulário com
 
 | E-mail | Papel |
 |---|---|
-| `leiloeiro@agora.dev` | Leiloeiro, dono de todos os lotes |
+| `leiloeiro@agora.dev` | Leiloeiro (Casa Ágora), dono de todos os lotes |
 | `geovanna@agora.dev` | Licitante |
 | `felipe@agora.dev` | Licitante |
 
 O seed cria 11 lotes: 4 ao vivo (um disputado, um liderado por cada licitante e um sem lances), 2 agendados, 3 encerrados e liquidados (um para cada licitante e um sem lances), 1 cancelado e 1 adulterado de propósito.
 
-Roteiro curto: entre como Geovanna e dê um lance no lote liderado por Felipe; em outra janela, entre como Felipe e veja o lance chegar ao vivo; entre como Leiloeiro e veja no painel os encerrados e o total recebido; abra o comprovante de um lote encerrado e a auditoria de qualquer lote.
+Roteiro curto: entre como Geovanna e dê um lance no lote liderado por Felipe; em outra janela, entre como Felipe e veja o lance chegar ao vivo; entre como Casa Ágora e veja no painel os encerrados e o total recebido; abra o comprovante de um lote encerrado e a auditoria de qualquer lote.
 
 **Lote adulterado:** o lote nº 11 (_Portrait of a Family Playing Music_, Pieter de Hooch) foi encerrado e liquidado normalmente, e depois o valor do lance 3 foi trocado de R$ 55.000 para R$ 30.000 direto no banco. A auditoria dele acusa `tampered` no lance 3, para mostrar a detecção sem ninguém precisar mexer no banco.
 
@@ -155,7 +155,7 @@ cd web && npm test           # Vitest
 - **Integração (e2e):** Postgres 17 de verdade via Testcontainers e a API inteira por HTTP, com relógio de teste e catálogo falso. Lance aceito, recusado, de leiloeiro e sem token, saldo devolvido ao superado e prorrogação nos últimos 2 min; evento no stream só do lance aceito e ouvinte removido ao fechar a conexão, histórico paginado, `me` no detalhe por papel e lotes comprometidos na carteira; 10 lances simultâneos parados no mesmo lock (cadeia, selo, `seq`, lote e carteiras íntegros) dois lances do mesmo mínimo e o mesmo licitante em dois lotes com saldo para um lance só; destaque, cancelamento, contagens e ordem das abas da vitrine.
 - **Auditoria:** verificação da cadeia, do selo e do comprovante (alteração, inserção, remoção, ordem trocada, selo nulo, comprovante divergente, ausente ou fora de lugar) e indicador por lance; no e2e, `UPDATE` no valor e no dono, `DELETE` do último lance e `UPDATE` no comprovante, aliases iguais aos da sala e duas queries por chamada.
 - **Seed:** contas e lotes por status, auditoria íntegra em todos menos o adulterado (que aponta o lance alterado), comprovantes válidos, segunda execução sem duplicar, execução interrompida completada na seguinte, Cleveland fora sem gravar nada e segredo ausente barrado antes de subir a aplicação.
-- **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito, rótulos e nota do resumo da sala do lote, id inválido na rota da sala, nova busca na virada de estado, tradução do tipo da obra e, na sala, união dos lances do POST, do stream e da reconexão pelo `seq`, situação do licitante, atalhos de valor e tradução das recusas de lance; na Carteira, os textos dos lotes comprometidos; o resultado da sala encerrada, a data por extenso e o hash abreviado do comprovante; em Meus lances, situação, tempo, ação e valor final de cada lote; no painel, o resultado do lote encerrado; no login, o botão de conta de demonstração preenchendo e-mail e senha.
+- **Front:** leitura do `exp` do token, tradução dos erros da API, valor e formatação de moeda, validação do depósito, rótulos e nota do resumo da sala do lote, id inválido na rota da sala, nova busca na virada de estado, tradução do tipo da obra e, na sala, união dos lances do POST, do stream e da reconexão pelo `seq`, situação do licitante, atalhos de valor e tradução das recusas de lance; na Carteira, os textos dos lotes comprometidos; o resultado da sala encerrada, a data por extenso e o hash abreviado do comprovante; em Meus lances, situação, tempo, ação e valor final de cada lote; no painel, o resultado do lote encerrado.
 
 ## Stack e decisões
 
