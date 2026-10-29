@@ -35,8 +35,10 @@ export function Footer() {
         </nav>
       </div>
       <div className="footer-credits">
-        <span>Projeto do desafio Elite Dev da Verzel</span>
-        <span>Imagens das obras: Cleveland Museum of Art.</span>
+        <div className="footer-credits-line">
+          <span>Projeto do desafio Elite Dev da Verzel</span>
+          <span>Imagens das obras: Cleveland Museum of Art.</span>
+        </div>
       </div>
     </footer>
   );

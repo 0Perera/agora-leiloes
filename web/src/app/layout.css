@@ -466,7 +466,11 @@
 .footer-credits {
   max-width: 1240px;
   margin: 0 auto;
-  padding: var(--space-4) var(--space-5) 28px;
+  padding: 0 var(--space-5) 28px;
+}
+
+.footer-credits-line {
+  padding-top: var(--space-4);
   border-top: 1px solid var(--ink-muted);
   display: flex;
   flex-wrap: wrap;
