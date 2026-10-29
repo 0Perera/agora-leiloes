@@ -25,15 +25,19 @@ Roteiro curto: entre como Geovanna e dê um lance no lote liderado por Felipe; e
 
 **Lote adulterado:** o lote nº 11 (_Portrait of a Family Playing Music_, Pieter de Hooch) foi encerrado e liquidado normalmente, e depois o valor do lance 3 foi trocado de R$ 55.000 para R$ 30.000 direto no banco. A auditoria dele acusa `tampered` no lance 3, para mostrar a detecção sem ninguém precisar mexer no banco.
 
-**Testar a adulteração você mesmo** (no compose, depois do seed; os lotes alterados ficam assim até recriar o banco):
+**Testar a adulteração você mesmo** (só no ambiente local do compose, nunca em produção). Os comandos mexem só nos lotes encerrados 7 e 8, então os lotes ao vivo continuam aceitando lances:
 
 ```bash
-docker compose exec db psql -U agora -d agora -c "UPDATE bids SET amount = amount + 100000 WHERE seq = 2 AND lot_id = (SELECT id FROM lots WHERE number = 2)"
-docker compose exec db psql -U agora -d agora -c "DELETE FROM bids WHERE seq = 2 AND lot_id = (SELECT id FROM lots WHERE number = 3)"
-docker compose exec db psql -U agora -d agora -c "UPDATE receipts SET amount = amount - 100000 WHERE lot_id = (SELECT id FROM lots WHERE number = 7)"
+psql() { docker compose exec db psql -U agora -d agora -c "$1"; }
+# 1. Valor de um lance: o lote 8 passa a "Adulterado" no lance 2. Desfazer: o mesmo com "- 100000".
+psql "UPDATE bids SET amount = amount + 100000 WHERE seq = 2 AND lot_id = (SELECT id FROM lots WHERE number = 8)"
+# 2. Valor do comprovante (com o 1 desfeito): a auditoria do lote 8 acusa o comprovante, que aparece inválido. Desfazer: "+ 100000".
+psql "UPDATE receipts SET amount = amount - 100000 WHERE lot_id = (SELECT id FROM lots WHERE number = 8)"
+# 3. Último lance apagado: o lote 7 acusa lances removidos do fim. Sem desfazer.
+psql "DELETE FROM bids WHERE seq = 4 AND lot_id = (SELECT id FROM lots WHERE number = 7)"
 ```
 
-Resultado na auditoria: lote 2 `tampered` no lance 2, lote 3 `truncated` (último lance apagado) e lote 7 `receipt_tampered`, com o comprovante dele aparecendo como inválido. Para voltar ao estado do seed: `docker compose down -v`, `docker compose up --build` e o seed de novo.
+Para voltar ao estado do seed: `docker compose down -v`, `docker compose up --build` e o seed de novo.
 
 ## Rodar local
 
