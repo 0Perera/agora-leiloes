@@ -102,7 +102,16 @@ export function useRoom(id: number) {
       setRoom((current) => synced(current, lot, history)),
     [],
   );
-  const missing = useCallback(() => setRoom({ status: 'missing' }), []);
+  // lance em voo que volta 404 depois do evento: a sala cancelada continua na tela
+  const missing = useCallback(
+    () =>
+      setRoom((current) =>
+        current.status === 'ready' && current.cancelled
+          ? current
+          : { status: 'missing' },
+      ),
+    [],
+  );
   const cancelled = useCallback(
     () =>
       setRoom((current) =>

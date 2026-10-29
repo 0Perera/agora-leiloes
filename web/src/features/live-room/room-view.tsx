@@ -72,6 +72,7 @@ export function RoomView({
             lot={lot}
             offset={room.offset}
             extended={room.extended}
+            cancelled={room.cancelled}
             leader={leaderOf(lot, room.bids[0])}
           />
           <RoomStatus lot={lot} viewer={viewer} room={room} />

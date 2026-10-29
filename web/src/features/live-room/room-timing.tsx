@@ -10,12 +10,19 @@ type SummaryProps = {
   lot: LotDetail;
   offset: number;
   extended: boolean;
+  cancelled: boolean;
   leader?: string;
 };
 
-export function RoomSummary({ lot, offset, extended, leader }: SummaryProps) {
+export function RoomSummary({
+  lot,
+  offset,
+  extended,
+  cancelled,
+  leader,
+}: SummaryProps) {
   const summary = summaryOf(lot);
-  const live = lot.status === 'live';
+  const live = lot.status === 'live' && !cancelled;
   const now = useNow(live);
   const seconds = live ? secondsLeft(lot.endsAt, now, offset) : Infinity;
   const note = countNote(lot.status === 'ended', seconds, extended);
@@ -35,17 +42,18 @@ export function RoomSummary({ lot, offset, extended, leader }: SummaryProps) {
             {leader ? `${leader} · ${summary.bids}` : summary.bids}
           </span>
         </div>
-        {lot.status === 'scheduled' ? (
-          <RoomOpens startsAt={lot.startsAt} />
-        ) : (
-          <Countdown
-            seconds={live ? seconds : 0}
-            urgent={note.urgent}
-            place="room"
-          />
-        )}
+        {!cancelled &&
+          (lot.status === 'scheduled' ? (
+            <RoomOpens startsAt={lot.startsAt} />
+          ) : (
+            <Countdown
+              seconds={live ? seconds : 0}
+              urgent={note.urgent}
+              place="room"
+            />
+          ))}
       </section>
-      {!awaitsSettlement(lot) && (
+      {!cancelled && !awaitsSettlement(lot) && (
         <p
           className={note.urgent ? 'room-note room-note--urgent' : 'room-note'}
         >
