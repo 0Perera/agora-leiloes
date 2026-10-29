@@ -1,6 +1,6 @@
 import { createHmac } from 'node:crypto';
 
-import { sign as signReceipt } from '../receipts/receipt.signature';
+import { signReceipt } from '../receipts/receipt.signature';
 import {
   AuditInput,
   BidLink,
@@ -18,7 +18,7 @@ const SECRET = 'test-secret-with-at-least-32-chars!';
 const LOT = 7;
 const FORGED = 'f'.repeat(64);
 
-function makeBid(override: Partial<BidLink> = {}): BidLink {
+function makeLink(override: Partial<BidLink> = {}): BidLink {
   return {
     lotId: 7,
     seq: 3,
@@ -36,11 +36,11 @@ function makeSeal(override: Partial<LotSeal> = {}): LotSeal {
 
 describe('chain.hashBid', () => {
   it('gera o mesmo hash para o mesmo lance', () => {
-    expect(hashBid(SECRET, makeBid())).toBe(hashBid(SECRET, makeBid()));
+    expect(hashBid(SECRET, makeLink())).toBe(hashBid(SECRET, makeLink()));
   });
 
   it('assina os campos em ordem fixa com prefixo bid:', () => {
-    expect(hashBid(SECRET, makeBid())).toBe(
+    expect(hashBid(SECRET, makeLink())).toBe(
       createHmac('sha256', SECRET)
         .update('bid:7|3|42|150000|2026-10-27T12:00:00.123Z|' + 'a'.repeat(64))
         .digest('hex'),
@@ -55,25 +55,25 @@ describe('chain.hashBid', () => {
     ['createdAt', { createdAt: new Date('2026-10-27T12:00:00.124Z') }],
     ['prevHash', { prevHash: 'b'.repeat(64) }],
   ])('muda o hash quando muda o campo %s', (_field, override) => {
-    expect(hashBid(SECRET, makeBid(override))).not.toBe(
-      hashBid(SECRET, makeBid()),
+    expect(hashBid(SECRET, makeLink(override))).not.toBe(
+      hashBid(SECRET, makeLink()),
     );
   });
 
   it('encadeia o primeiro lance com o hash genesis', () => {
-    expect(hashBid(SECRET, makeBid({ prevHash: null }))).toBe(
-      hashBid(SECRET, makeBid({ prevHash: GENESIS })),
+    expect(hashBid(SECRET, makeLink({ prevHash: null }))).toBe(
+      hashBid(SECRET, makeLink({ prevHash: GENESIS })),
     );
   });
 
   it('muda o hash quando muda o segredo', () => {
-    expect(hashBid(`${SECRET}x`, makeBid())).not.toBe(
-      hashBid(SECRET, makeBid()),
+    expect(hashBid(`${SECRET}x`, makeLink())).not.toBe(
+      hashBid(SECRET, makeLink()),
     );
   });
 
   it('não coincide com um selo de mesmo conteúdo', () => {
-    const bid = makeBid();
+    const bid = makeLink();
     const rest = `${bid.userId}|${bid.amount}|${bid.createdAt.toISOString()}|${bid.prevHash}`;
 
     expect(hashBid(SECRET, bid)).not.toBe(
@@ -82,8 +82,8 @@ describe('chain.hashBid', () => {
   });
 
   it('muda o hash quando dígitos passam de um campo para o vizinho', () => {
-    expect(hashBid(SECRET, makeBid({ lotId: 1, seq: 23 }))).not.toBe(
-      hashBid(SECRET, makeBid({ lotId: 12, seq: 3 })),
+    expect(hashBid(SECRET, makeLink({ lotId: 1, seq: 23 }))).not.toBe(
+      hashBid(SECRET, makeLink({ lotId: 12, seq: 3 })),
     );
   });
 });

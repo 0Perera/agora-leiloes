@@ -1,9 +1,14 @@
 import request from 'supertest';
 import { SettlementService } from '../src/settlement/settlement.service';
-import { type Account, at, BASE, start, type TestApp } from './app';
-
-const STARTING_BID = 100_000;
-const INCREMENT = 5_000;
+import {
+  type Account,
+  at,
+  BASE,
+  INCREMENT,
+  start,
+  STARTING_BID,
+  type TestApp,
+} from './app';
 
 type AuditBid = { seq: number; alias: string; mark: string };
 type Audit = {

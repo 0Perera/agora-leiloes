@@ -43,7 +43,7 @@ function movesOf(decision: SettlementDecision) {
   return closeOf(decision).moves;
 }
 
-describe('decide', () => {
+describe('settlementRules.decide', () => {
   describe('quando liquidar', () => {
     it('não liquida um milissegundo antes do fim', () => {
       const state = makeState({ lot: makeLot({ endsAt: at(1) }) });

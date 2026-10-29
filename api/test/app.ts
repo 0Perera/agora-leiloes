@@ -1,6 +1,8 @@
 import { INestApplication, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
+import { getOptionsToken } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import type { AddressInfo } from 'node:net';
 import type { Server } from 'node:http';
@@ -13,14 +15,21 @@ import { CatalogService } from '../src/catalog/catalog.service';
 import type { ImageFile } from '../src/catalog/cleveland.client';
 import { Clock } from '../src/common/clock';
 import { Env } from '../src/config/env.validation';
-import { DatabaseModule } from '../src/database/database.module';
-import { databaseOptions } from '../src/database/database.options';
+import {
+  databaseFactory,
+  DatabaseModule,
+} from '../src/database/database.module';
+import { SettlementService } from '../src/settlement/settlement.service';
 import { SettlementTimer } from '../src/settlement/settlement.timer';
 import type { Role } from '../src/users/user.entity';
 
 export const BASE = new Date('2026-11-01T12:00:00.000Z');
+export const STARTING_BID = 100_000;
+export const INCREMENT = 5_000;
+export const DEPOSIT = 1_000_000;
 const LOCK_TIMEOUT_MS = 10_000;
 const POLL_MS = 20;
+const UNLIMITED = [{ ttl: 60_000, limit: 1_000_000 }];
 
 export function at(minutes: number): Date {
   return new Date(BASE.getTime() + minutes * 60_000);
@@ -90,11 +99,7 @@ export class FakeTimer implements Pick<SettlementTimer, 'refresh'> {
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService<Env, true>) => ({
-        ...databaseOptions({
-          DATABASE_URL: config.get('DATABASE_URL', { infer: true }),
-          DB_SSL: config.get('DB_SSL', { infer: true }),
-        }),
-        migrationsRun: true,
+        ...databaseFactory(config),
         poolSize: 20,
       }),
     }),
@@ -151,7 +156,7 @@ export function eventually(check: () => boolean): Promise<true> {
 }
 
 export type LotDraft = {
-  startsAt: Date;
+  startsAt?: Date;
   endsAt: Date;
   startingBid?: number;
   increment?: number;
@@ -208,20 +213,28 @@ export class TestApp {
     this.artworks += 1;
     const artworkId = this.artworks;
     if (draft.title) this.catalog.title(artworkId, draft.title);
-    this.clock.set(draft.startsAt);
+    const startsAt = draft.startsAt ?? BASE;
+    this.clock.set(startsAt);
     const response = await request(this.server)
       .post('/lots')
       .auth(auctioneer.token, { type: 'bearer' })
       .send({
         artworkId,
-        startingBid: draft.startingBid ?? 100_000,
-        increment: draft.increment ?? 5_000,
-        startsAt: draft.startsAt.toISOString(),
+        startingBid: draft.startingBid ?? STARTING_BID,
+        increment: draft.increment ?? INCREMENT,
+        startsAt: startsAt.toISOString(),
         endsAt: draft.endsAt.toISOString(),
       })
       .expect(201);
     this.clock.set(BASE);
     return (response.body as { id: number }).id;
+  }
+
+  // Relógio no fim dos lotes de 30 min criados em BASE.
+  async settle(...lotIds: number[]): Promise<void> {
+    this.clock.set(at(30));
+    const settlement = this.app.get(SettlementService);
+    for (const lotId of lotIds) await settlement.settle(lotId);
   }
 
   bid(bidder: Account, lotId: number, amount: number): request.Test {
@@ -255,11 +268,12 @@ export class TestApp {
   }
 }
 
-export async function start(): Promise<TestApp> {
+// Limite real do login só na suíte dele: as outras logam à vontade do mesmo IP.
+export async function start({ throttle = false } = {}): Promise<TestApp> {
   const clock = new TestClock();
   const catalog = new FakeCatalog();
   const timer = new FakeTimer();
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
+  const builder = Test.createTestingModule({ imports: [AppModule] })
     .overrideModule(DatabaseModule)
     .useModule(TestDatabaseModule)
     .overrideProvider(Clock)
@@ -267,14 +281,17 @@ export async function start(): Promise<TestApp> {
     .overrideProvider(CatalogService)
     .useValue(catalog)
     .overrideProvider(SettlementTimer)
-    .useValue(timer)
-    .compile();
-  const app = moduleRef.createNestApplication();
+    .useValue(timer);
+  if (!throttle) {
+    builder.overrideProvider(getOptionsToken()).useValue(UNLIMITED);
+  }
+  const moduleRef = await builder.compile();
+  const app = moduleRef.createNestApplication<NestExpressApplication>();
   setup(app);
   await app.listen(0);
   return new TestApp(
     app,
-    app.getHttpServer() as Server,
+    app.getHttpServer(),
     clock,
     catalog,
     app.get(DataSource),

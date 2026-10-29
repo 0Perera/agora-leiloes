@@ -118,7 +118,7 @@ describe('LotsService.create', () => {
   });
 });
 
-function makeLot(override: Partial<CardFields> = {}): CardFields {
+function makeCard(override: Partial<CardFields> = {}): CardFields {
   return {
     id: 1,
     number: 7,
@@ -150,7 +150,7 @@ function makeFeatured(...results: (CardFields | null)[]) {
 
 describe('LotsService.featured', () => {
   it('devolve o ao vivo com maior lance, desempatando por fim mais próximo e depois por número', async () => {
-    const lot = makeLot({ currentBid: 150_000 });
+    const lot = makeCard({ currentBid: 150_000 });
     const { service, findOne } = makeFeatured(lot);
 
     expect(await service.featured()).toEqual({ ...lot, status: 'live' });
@@ -164,7 +164,7 @@ describe('LotsService.featured', () => {
   });
 
   it('sem ao vivo com lance, devolve o ao vivo que encerra primeiro', async () => {
-    const lot = makeLot();
+    const lot = makeCard();
     const { service, findOne } = makeFeatured(null, lot);
 
     expect(await service.featured()).toEqual({ ...lot, status: 'live' });
@@ -174,7 +174,7 @@ describe('LotsService.featured', () => {
   });
 
   it('sem ao vivo, devolve o próximo agendado', async () => {
-    const lot = makeLot({ startsAt: new Date('2026-10-28T10:00:00Z') });
+    const lot = makeCard({ startsAt: new Date('2026-10-28T10:00:00Z') });
     const { service, findOne } = makeFeatured(null, null, lot);
 
     expect(await service.featured()).toEqual({ ...lot, status: 'scheduled' });
@@ -315,7 +315,7 @@ function makeFind(override: Partial<FindRow> = {}) {
     ...override,
   };
   const lot = {
-    ...makeLot(),
+    ...makeCard(),
     increment: 5_000,
     bidCount: 0,
     settledAt: row.settledAt,

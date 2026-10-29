@@ -775,3 +775,26 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 
 **Erro encontrado na revisão:**
 - Um lote do passado já liquidado podia receber os lances que faltavam numa segunda execução; agora o seed não dá lance em lote liquidado.
+
+## Story 6.2: Consistência da API
+
+**O que a IA gerou:**
+- A arrumação da API: um lugar só para regras e utilidades que estavam copiadas em vários módulos.
+- Nomes num padrão só (assinaturas, painel, eventos do tempo real, funções de teste) e comentários sem referência a story.
+- O registro das consultas ao banco em desenvolvimento, para conferir quantas cada tela dispara.
+- O limite de 5 tentativas de login por minuto para cada endereço, com a mensagem na tela Entrar.
+- Os testes do limite, escritos antes do código, e a decisão registrada.
+
+**O que revisei e pedi para mudar:**
+- Pedi os treze pontos da arrumação da API, um a um, e o que não podia ser mexido.
+- Pedi o limite de tentativas só no login, com a resposta no formato da API e a mensagem "Muitas tentativas. Aguarde um minuto e tente de novo.".
+- Decidi que o endereço vem do cabeçalho da Cloudflare quando existir, porque atrás dela o endereço visto pelo servidor é compartilhado por muitos usuários.
+- Pedi o teste de que dois endereços diferentes não dividem o limite e de que, sem o cabeçalho, conta o endereço da conexão.
+- Aprovei o mesmo teto de 100 páginas em todas as listagens, inclusive o histórico de lances.
+- Aprovei o prefixo único do painel, o limite próprio nos testes de integração e a opção de ligar o registro de consultas.
+
+**Sugestões rejeitadas e por quê:**
+- Contar o limite pelo endereço visto pelo servidor atrás do proxy: troquei pelo cabeçalho da Cloudflare, para um usuário não bloquear o login de todos.
+
+**Erro encontrado na revisão:**
+- Um cabeçalho da Cloudflare vazio faria todos esses clientes dividirem o mesmo limite; agora o vazio cai no endereço da conexão.

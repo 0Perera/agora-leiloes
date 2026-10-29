@@ -1,37 +1,31 @@
-import { BadRequestException } from '@nestjs/common';
-import { validationPipe } from '../../common/validation.pipe';
+import { validate } from '../../common/validate.testing';
 import { SearchQueryDto } from './search-query.dto';
-
-async function validate(query: unknown): Promise<unknown> {
-  try {
-    await validationPipe().transform(query, {
-      type: 'query',
-      metatype: SearchQueryDto,
-    });
-  } catch (error) {
-    if (error instanceof BadRequestException) return error.getResponse();
-    throw error;
-  }
-  return undefined;
-}
 
 describe('SearchQueryDto', () => {
   it('recusa departamento fora da lista', async () => {
-    expect(await validate({ q: 'portrait', department: 'Prints' })).toEqual({
+    expect(
+      await validate(
+        SearchQueryDto,
+        { q: 'portrait', department: 'Prints' },
+        'query',
+      ),
+    ).toEqual({
       code: 'VALIDATION_FAILED',
       fields: { department: 'isIn' },
     });
   });
 
   it('recusa termo vazio', async () => {
-    expect(await validate({ q: '   ' })).toEqual({
+    expect(await validate(SearchQueryDto, { q: '   ' }, 'query')).toEqual({
       code: 'VALIDATION_FAILED',
       fields: { q: 'isNotEmpty' },
     });
   });
 
   it('recusa página menor que 1', async () => {
-    expect(await validate({ q: 'portrait', page: '0' })).toEqual({
+    expect(
+      await validate(SearchQueryDto, { q: 'portrait', page: '0' }, 'query'),
+    ).toEqual({
       code: 'VALIDATION_FAILED',
       fields: { page: 'min' },
     });

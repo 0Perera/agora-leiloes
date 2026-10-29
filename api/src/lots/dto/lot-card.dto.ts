@@ -1,7 +1,5 @@
 import type { Lot } from '../lot.entity';
-
-export const LOT_STATUSES = ['live', 'scheduled', 'ended'] as const;
-export type LotStatus = (typeof LOT_STATUSES)[number];
+import type { LotStatus } from '../lot-status';
 
 export type CardFields = Pick<
   Lot,

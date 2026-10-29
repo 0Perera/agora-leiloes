@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { Auth } from '../common/auth.decorator';
 import type { AuthUser } from '../common/auth.guard';
@@ -14,6 +15,7 @@ import { AuthResponseDto } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { LoginThrottlerGuard } from './login-throttler.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -25,6 +27,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @UseGuards(LoginThrottlerGuard)
   @HttpCode(HttpStatus.OK)
   login(@Body() dto: LoginDto): Promise<AuthResponseDto> {
     return this.auth.login(dto);

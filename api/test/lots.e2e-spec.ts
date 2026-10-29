@@ -7,48 +7,48 @@ type Showcase = {
   counts: { live: number; scheduled: number; ended: number };
 };
 
-describe('vitrine', () => {
-  let test: TestApp;
-  let auctioneer: Account;
+let api: TestApp;
+let auctioneer: Account;
 
-  function live(endsAt: Date, title?: string): Promise<number> {
-    return test.createLot(auctioneer, { startsAt: BASE, endsAt, title });
-  }
+function live(endsAt: Date, title?: string): Promise<number> {
+  return api.createLot(auctioneer, { startsAt: BASE, endsAt, title });
+}
 
-  function scheduled(startsAt: Date, title?: string): Promise<number> {
-    const endsAt = new Date(startsAt.getTime() + 60 * 60_000);
-    return test.createLot(auctioneer, { startsAt, endsAt, title });
-  }
+function scheduled(startsAt: Date, title?: string): Promise<number> {
+  const endsAt = new Date(startsAt.getTime() + 60 * 60_000);
+  return api.createLot(auctioneer, { startsAt, endsAt, title });
+}
 
-  function ended(endsAt: Date, title?: string): Promise<number> {
-    return test.createLot(auctioneer, { startsAt: at(-300), endsAt, title });
-  }
+function ended(endsAt: Date, title?: string): Promise<number> {
+  return api.createLot(auctioneer, { startsAt: at(-300), endsAt, title });
+}
 
-  async function featured(): Promise<request.Response> {
-    return request(test.server).get('/lots/featured');
-  }
+async function featured(): Promise<request.Response> {
+  return request(api.server).get('/lots/featured');
+}
 
-  async function showcase(query: Record<string, string>): Promise<Showcase> {
-    const response = await request(test.server)
-      .get('/lots')
-      .query(query)
-      .expect(200);
-    return response.body as Showcase;
-  }
+async function showcase(query: Record<string, string>): Promise<Showcase> {
+  const response = await request(api.server)
+    .get('/lots')
+    .query(query)
+    .expect(200);
+  return response.body as Showcase;
+}
 
-  beforeAll(async () => {
-    test = await start();
-  });
+beforeAll(async () => {
+  api = await start();
+});
 
-  beforeEach(async () => {
-    await test.reset();
-    auctioneer = await test.signup('AUCTIONEER');
-  });
+beforeEach(async () => {
+  await api.reset();
+  auctioneer = await api.signup('AUCTIONEER');
+});
 
-  afterAll(async () => {
-    await test.close();
-  });
+afterAll(async () => {
+  await api.close();
+});
 
+describe('GET /lots/featured', () => {
   it('destaque responde 204 sem lotes', async () => {
     const response = await featured();
 
@@ -76,21 +76,23 @@ describe('vitrine', () => {
   });
 
   it('destaque prefere o ao vivo com maior lance atual', async () => {
-    const bidder = await test.signup('BIDDER');
-    await test.deposit(bidder, 1_000_000);
+    const bidder = await api.signup('BIDDER');
+    await api.deposit(bidder, 1_000_000);
     const ending = await live(at(60));
     const richer = await live(at(120));
-    await test.bid(bidder, ending, 100_000).expect(201);
-    await test.bid(bidder, richer, 150_000).expect(201);
+    await api.bid(bidder, ending, 100_000).expect(201);
+    await api.bid(bidder, richer, 150_000).expect(201);
 
     const response = await featured();
 
     expect(response.body).toMatchObject({ id: richer, currentBid: 150_000 });
   });
+});
 
+describe('GET /lots', () => {
   it('lote cancelado fica fora de GET /lots, /lots/featured e /lots/:id (404)', async () => {
     const lotId = await scheduled(at(60));
-    await request(test.server)
+    await request(api.server)
       .post(`/lots/${lotId}/cancel`)
       .auth(auctioneer.token, { type: 'bearer' })
       .expect(204);
@@ -99,7 +101,7 @@ describe('vitrine', () => {
     expect(list.items).toEqual([]);
     expect(list.counts.scheduled).toBe(0);
     expect((await featured()).status).toBe(204);
-    await request(test.server).get(`/lots/${lotId}`).expect(404);
+    await request(api.server).get(`/lots/${lotId}`).expect(404);
   });
 
   it('counts das três abas aplicam o q', async () => {

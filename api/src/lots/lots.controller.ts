@@ -19,11 +19,11 @@ import { Auth } from '../common/auth.decorator';
 import { OptionalAuthGuard, type AuthUser } from '../common/auth.guard';
 import { CurrentUser } from '../common/current-user.decorator';
 import { CreateLotDto } from './dto/create-lot.dto';
+import { CreatedLotDto } from './dto/created-lot.dto';
 import { ListLotsQueryDto } from './dto/list-lots-query.dto';
 import { LotCardDto } from './dto/lot-card.dto';
 import { LotDetailDto } from './dto/lot-detail.dto';
 import { LotIdDto } from './dto/lot-id.dto';
-import { LotResponseDto, toLotResponse } from './dto/lot-response.dto';
 import { LotShowcaseDto } from './dto/lot-showcase.dto';
 import { LotEventsService } from './lot-events.service';
 import { LotIdPipe } from './lot-id.pipe';
@@ -38,11 +38,11 @@ export class LotsController {
 
   @Post()
   @Auth('AUCTIONEER')
-  async create(
+  create(
     @CurrentUser() user: AuthUser,
     @Body() dto: CreateLotDto,
-  ): Promise<LotResponseDto> {
-    return toLotResponse(await this.lots.create(user.id, dto));
+  ): Promise<CreatedLotDto> {
+    return this.lots.create(user.id, dto);
   }
 
   @Get()

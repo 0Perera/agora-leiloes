@@ -4,7 +4,6 @@ import type { AuthUser } from '../common/auth.guard';
 import { CurrentUser } from '../common/current-user.decorator';
 import { DepositDto } from './dto/deposit.dto';
 import {
-  toWalletDetail,
   toWalletResponse,
   WalletDetailDto,
   WalletResponseDto,
@@ -17,12 +16,8 @@ export class WalletsController {
   constructor(private readonly wallets: WalletsService) {}
 
   @Get()
-  async find(@CurrentUser() user: AuthUser): Promise<WalletDetailDto> {
-    const [wallet, committed] = await Promise.all([
-      this.wallets.find(user.id),
-      this.wallets.committedLots(user.id),
-    ]);
-    return toWalletDetail(wallet, committed);
+  find(@CurrentUser() user: AuthUser): Promise<WalletDetailDto> {
+    return this.wallets.detail(user.id);
   }
 
   @Post('deposits')

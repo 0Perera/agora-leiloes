@@ -13,6 +13,12 @@ export function databaseOptions(env: DatabaseEnv): PostgresConnectionOptions {
     entities: [join(__dirname, '..', '**', '*.entity{.ts,.js}')],
     migrations: [join(__dirname, 'migrations', '*{.ts,.js}')],
     // 'schema' é onde o TypeORM loga o andamento das migrations no boot.
-    logger: new SafeLogger(['error', 'warn', 'schema', 'migration']),
+    logger: new SafeLogger([
+      'error',
+      'warn',
+      'schema',
+      'migration',
+      ...(env.DB_LOG_QUERIES ? (['query'] as const) : []),
+    ]),
   };
 }

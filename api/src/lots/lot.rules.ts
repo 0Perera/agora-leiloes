@@ -1,7 +1,7 @@
 import { DomainException } from '../common/domain.exception';
 
 // Tolerância para o relógio do cliente e a latência entre montar o formulário e enviar.
-export const START_TOLERANCE_MS = 60_000;
+const START_TOLERANCE_MS = 60_000;
 
 export type Schedule = { startsAt: Date; endsAt: Date };
 export type ListedLot = { cancelledAt: Date | null; endsAt: Date };

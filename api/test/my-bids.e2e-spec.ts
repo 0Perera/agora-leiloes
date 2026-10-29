@@ -1,10 +1,13 @@
 import request from 'supertest';
-import { SettlementService } from '../src/settlement/settlement.service';
-import { type Account, at, BASE, start, type TestApp } from './app';
-
-const STARTING_BID = 100_000;
-const INCREMENT = 5_000;
-const DEPOSIT = 1_000_000;
+import {
+  type Account,
+  at,
+  DEPOSIT,
+  INCREMENT,
+  start,
+  STARTING_BID,
+  type TestApp,
+} from './app';
 
 type Section = 'ongoing' | 'won' | 'lost';
 
@@ -46,21 +49,6 @@ async function page(section: Section, account = bidder): Promise<Page> {
   return response.body as Page;
 }
 
-function createLot(endsAt = at(60)): Promise<number> {
-  return api.createLot(auctioneer, {
-    startsAt: BASE,
-    endsAt,
-    startingBid: STARTING_BID,
-    increment: INCREMENT,
-  });
-}
-
-async function settle(...lotIds: number[]): Promise<void> {
-  api.clock.set(at(30));
-  for (const lotId of lotIds)
-    await api.app.get(SettlementService).settle(lotId);
-}
-
 async function token(lotId: number): Promise<string> {
   const [row] = await api.db.query<{ token: string }[]>(
     'SELECT token FROM receipts WHERE lot_id = $1',
@@ -71,7 +59,7 @@ async function token(lotId: number): Promise<string> {
 
 describe('GET /my-bids em andamento', () => {
   it('meu lance por último aparece como ganhando', async () => {
-    const lotId = await createLot();
+    const lotId = await api.createLot(auctioneer, { endsAt: at(60) });
     await api.bid(bidder, lotId, STARTING_BID).expect(201);
 
     expect((await page('ongoing')).items).toEqual([
@@ -86,7 +74,7 @@ describe('GET /my-bids em andamento', () => {
   });
 
   it('lance coberto por rival aparece como superado', async () => {
-    const lotId = await createLot();
+    const lotId = await api.createLot(auctioneer, { endsAt: at(60) });
     await api.bid(bidder, lotId, STARTING_BID).expect(201);
     await api.bid(rival, lotId, STARTING_BID + INCREMENT).expect(201);
 
@@ -99,7 +87,7 @@ describe('GET /my-bids em andamento', () => {
   });
 
   it('lote encerrado sem liquidar fica aguardando liquidação', async () => {
-    const lotId = await createLot(at(30));
+    const lotId = await api.createLot(auctioneer, { endsAt: at(30) });
     await api.bid(bidder, lotId, STARTING_BID).expect(201);
     api.clock.set(at(30));
 
@@ -111,9 +99,9 @@ describe('GET /my-bids em andamento', () => {
 
 describe('GET /my-bids encerrados', () => {
   it('vencedor vê o lote em arrematados com valor, data e token', async () => {
-    const lotId = await createLot(at(30));
+    const lotId = await api.createLot(auctioneer, { endsAt: at(30) });
     await api.bid(bidder, lotId, STARTING_BID).expect(201);
-    await settle(lotId);
+    await api.settle(lotId);
 
     expect((await page('won')).items).toEqual([
       {
@@ -129,18 +117,18 @@ describe('GET /my-bids encerrados', () => {
   });
 
   it('vencedor não vê o lote liquidado em andamento', async () => {
-    const lotId = await createLot(at(30));
+    const lotId = await api.createLot(auctioneer, { endsAt: at(30) });
     await api.bid(bidder, lotId, STARTING_BID).expect(201);
-    await settle(lotId);
+    await api.settle(lotId);
 
     expect((await page('ongoing')).items).toEqual([]);
   });
 
   it('perdedor vê o valor final e o seu maior lance', async () => {
-    const lotId = await createLot(at(30));
+    const lotId = await api.createLot(auctioneer, { endsAt: at(30) });
     await api.bid(rival, lotId, STARTING_BID).expect(201);
     await api.bid(bidder, lotId, STARTING_BID + INCREMENT).expect(201);
-    await settle(lotId);
+    await api.settle(lotId);
 
     expect((await page('lost', rival)).items).toEqual([
       expect.objectContaining({
@@ -156,16 +144,16 @@ describe('GET /my-bids encerrados', () => {
 
 describe('GET /my-bids contagens', () => {
   it('counts somam todos os lotes em que o licitante deu lance', async () => {
-    const live = await createLot();
-    const won = await createLot(at(30));
-    const lost = await createLot(at(30));
+    const live = await api.createLot(auctioneer, { endsAt: at(60) });
+    const won = await api.createLot(auctioneer, { endsAt: at(30) });
+    const lost = await api.createLot(auctioneer, { endsAt: at(30) });
     await api.bid(bidder, live, STARTING_BID).expect(201);
     await api.bid(rival, live, STARTING_BID + INCREMENT).expect(201);
     await api.bid(bidder, live, STARTING_BID + 2 * INCREMENT).expect(201);
     await api.bid(bidder, won, STARTING_BID).expect(201);
     await api.bid(bidder, lost, STARTING_BID).expect(201);
     await api.bid(rival, lost, STARTING_BID + INCREMENT).expect(201);
-    await settle(won, lost);
+    await api.settle(won, lost);
 
     expect((await page('ongoing')).counts).toEqual({
       ongoing: 1,
@@ -175,7 +163,7 @@ describe('GET /my-bids contagens', () => {
   });
 
   it('lote sem lance do licitante não aparece', async () => {
-    const other = await createLot();
+    const other = await api.createLot(auctioneer, { endsAt: at(60) });
     await api.bid(rival, other, STARTING_BID).expect(201);
 
     const pages = await Promise.all(
@@ -188,11 +176,11 @@ describe('GET /my-bids contagens', () => {
 
 describe('GET /my-bids privacidade e acesso', () => {
   it('resposta não traz id de usuário, nome ou e-mail', async () => {
-    const live = await createLot();
-    const sold = await createLot(at(30));
+    const live = await api.createLot(auctioneer, { endsAt: at(60) });
+    const sold = await api.createLot(auctioneer, { endsAt: at(30) });
     await api.bid(bidder, live, STARTING_BID).expect(201);
     await api.bid(bidder, sold, STARTING_BID).expect(201);
-    await settle(sold);
+    await api.settle(sold);
 
     const bodies = JSON.stringify([await page('ongoing'), await page('won')]);
 

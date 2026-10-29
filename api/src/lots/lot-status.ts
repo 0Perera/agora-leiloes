@@ -1,4 +1,5 @@
-import type { LotStatus } from './dto/lot-card.dto';
+export const LOT_STATUSES = ['live', 'scheduled', 'ended'] as const;
+export type LotStatus = (typeof LOT_STATUSES)[number];
 
 export const STATUS_SQL = `CASE WHEN :now < lot.startsAt THEN 'scheduled' WHEN :now < lot.endsAt THEN 'live' ELSE 'ended' END`;
 

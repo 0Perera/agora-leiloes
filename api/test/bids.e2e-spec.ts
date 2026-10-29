@@ -1,8 +1,13 @@
 import request from 'supertest';
-import { type Account, at, BASE, start, type TestApp } from './app';
-
-const STARTING_BID = 100_000;
-const INCREMENT = 5_000;
+import {
+  type Account,
+  at,
+  BASE,
+  INCREMENT,
+  start,
+  STARTING_BID,
+  type TestApp,
+} from './app';
 
 describe('POST /lots/:id/bids', () => {
   let test: TestApp;

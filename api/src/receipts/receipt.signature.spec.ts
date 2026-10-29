@@ -1,7 +1,7 @@
 import { createHmac } from 'node:crypto';
 
-import { sign as signFields } from '../audit/sign';
-import { ReceiptFields, sign, verify } from './receipt.signature';
+import { sign } from '../common/sign';
+import { ReceiptFields, signReceipt, verifyReceipt } from './receipt.signature';
 
 const SECRET = 'test-secret-with-at-least-32-chars!';
 
@@ -24,16 +24,18 @@ const CHANGES: [string, Partial<ReceiptFields>][] = [
   ['settledAt', { settledAt: new Date('2026-10-27T12:00:00.124Z') }],
 ];
 
-describe('receiptSignature.sign', () => {
+describe('receiptSignature.signReceipt', () => {
   it('gera a mesma assinatura para o mesmo comprovante', () => {
-    expect(sign(SECRET, makeReceipt())).toBe(sign(SECRET, makeReceipt()));
+    expect(signReceipt(SECRET, makeReceipt())).toBe(
+      signReceipt(SECRET, makeReceipt()),
+    );
   });
 
   it.each(CHANGES)(
     'muda a assinatura quando muda o campo %s',
     (_field, override) => {
-      expect(sign(SECRET, makeReceipt(override))).not.toBe(
-        sign(SECRET, makeReceipt()),
+      expect(signReceipt(SECRET, makeReceipt(override))).not.toBe(
+        signReceipt(SECRET, makeReceipt()),
       );
     },
   );
@@ -41,8 +43,8 @@ describe('receiptSignature.sign', () => {
   it('não coincide com um hash de lance de mesmo conteúdo', () => {
     const receipt = makeReceipt();
 
-    expect(sign(SECRET, receipt)).not.toBe(
-      signFields(SECRET, 'bid', [
+    expect(signReceipt(SECRET, receipt)).not.toBe(
+      sign(SECRET, 'bid', [
         receipt.lotId,
         receipt.alias,
         receipt.amount,
@@ -53,7 +55,7 @@ describe('receiptSignature.sign', () => {
   });
 
   it('confere com um HMAC montado à mão', () => {
-    expect(sign(SECRET, makeReceipt())).toBe(
+    expect(signReceipt(SECRET, makeReceipt())).toBe(
       createHmac('sha256', SECRET)
         .update(
           `receipt:7|Licitante ABCDEF|150000|${'a'.repeat(64)}|2026-10-27T12:00:00.123Z`,
@@ -63,19 +65,23 @@ describe('receiptSignature.sign', () => {
   });
 });
 
-describe('receiptSignature.verify', () => {
+describe('receiptSignature.verifyReceipt', () => {
   it('aceita comprovante intacto', () => {
     const receipt = makeReceipt();
 
-    expect(verify(SECRET, receipt, sign(SECRET, receipt))).toBe(true);
+    expect(verifyReceipt(SECRET, receipt, signReceipt(SECRET, receipt))).toBe(
+      true,
+    );
   });
 
   it.each(CHANGES)(
     'recusa comprovante com o campo %s alterado',
     (_field, override) => {
-      const signature = sign(SECRET, makeReceipt());
+      const signature = signReceipt(SECRET, makeReceipt());
 
-      expect(verify(SECRET, makeReceipt(override), signature)).toBe(false);
+      expect(verifyReceipt(SECRET, makeReceipt(override), signature)).toBe(
+        false,
+      );
     },
   );
 });

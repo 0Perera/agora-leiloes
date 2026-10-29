@@ -2,6 +2,7 @@ import { plainToInstance, Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsInt,
+  IsOptional,
   IsUrl,
   Max,
   Min,
@@ -24,6 +25,12 @@ export class DatabaseEnv {
   @Transform(toBoolean)
   @IsBoolean()
   DB_SSL!: boolean;
+
+  // Em desenvolvimento, para conferir quantas queries cada endpoint dispara (N+1).
+  @IsOptional()
+  @Transform(toBoolean)
+  @IsBoolean()
+  DB_LOG_QUERIES: boolean = false;
 }
 
 export class Env extends DatabaseEnv {

@@ -1,7 +1,7 @@
 import { MessageEvent } from '@nestjs/common';
 import { HEARTBEAT_MS, LotEventsService } from './lot-events.service';
 
-function makeBid() {
+function makeEvent() {
   return {
     seq: 1,
     amount: 100_000,
@@ -23,11 +23,11 @@ describe('LotEventsService', () => {
     const first = events.stream(1).subscribe((event) => lot1.push(event));
     const second = events.stream(2).subscribe((event) => lot2.push(event));
 
-    events.publish(1, makeBid());
+    events.bid(1, makeEvent());
     first.unsubscribe();
     second.unsubscribe();
 
-    expect(lot1).toEqual([{ type: 'bid', data: makeBid() }]);
+    expect(lot1).toEqual([{ type: 'bid', data: makeEvent() }]);
     expect(lot2).toEqual([]);
   });
 

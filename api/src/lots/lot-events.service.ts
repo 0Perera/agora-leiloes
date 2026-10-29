@@ -12,7 +12,7 @@ type Subscriber = (event: MessageEvent) => void;
 export class LotEventsService {
   private readonly subscribers = new Map<number, Set<Subscriber>>();
 
-  publish(lotId: number, bid: BidEventDto): void {
+  bid(lotId: number, bid: BidEventDto): void {
     this.send(lotId, { type: 'bid', data: toBidEvent(bid) });
   }
 

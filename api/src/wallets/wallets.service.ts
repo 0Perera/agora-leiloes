@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { Bid } from '../bids/bid.entity';
 import { CommittedLotDto } from './dto/committed-lot.dto';
-import { CommittedLots } from './dto/wallet-response.dto';
+import {
+  CommittedLots,
+  toWalletDetail,
+  WalletDetailDto,
+} from './dto/wallet-response.dto';
 import { deposit, WalletState } from './wallet.rules';
 import { Wallet } from './wallet.entity';
 
@@ -19,6 +23,14 @@ export class WalletsService {
   // Recebe o manager do cadastro: carteira e usuário nascem na mesma transação.
   async open(manager: EntityManager, userId: number): Promise<void> {
     await manager.getRepository(Wallet).insert({ userId });
+  }
+
+  async detail(userId: number): Promise<WalletDetailDto> {
+    const [wallet, committed] = await Promise.all([
+      this.find(userId),
+      this.committedLots(userId),
+    ]);
+    return toWalletDetail(wallet, committed);
   }
 
   async find(userId: number): Promise<WalletState> {

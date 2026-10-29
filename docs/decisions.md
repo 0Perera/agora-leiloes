@@ -703,3 +703,14 @@ Story: 6.1 · Substitui a parte da D-045 que liquidava com o relógio real
 **Por quê:** o comprovante e o painel mostram a data da liquidação; com o relógio real, um leilão que terminou há semanas apareceria liquidado no dia do seed.
 **Alternativas descartadas:** liquidar com o relógio real, como dizia a D-045 (data de liquidação incoerente com o fim do lote).
 **Consequência:** a liquidação continua passando pelo service, com a cadeia, o selo e a assinatura do comprovante válidos; só a data gravada fica no passado.
+
+## D-068: Limite de tentativas no login por IP, com o IP da Cloudflare
+
+Status: Aceita
+Data: 2026-10-28
+Story: 6.2
+
+**Decisão:** só `POST /auth/login` tem limite: 5 tentativas por minuto por IP, com `@nestjs/throttler`, respondendo 429 `{ code: 'TOO_MANY_ATTEMPTS' }`. O IP vem do cabeçalho `CF-Connecting-IP` quando existe e de `req.ip` quando não existe (local e e2e), com `trust proxy 1` no Express.
+**Por quê:** sem limite, o login aceita força bruta de senha. No Render a requisição passa pela Cloudflare e pelo proxy do Render: sem `trust proxy`, todo mundo teria o IP do proxy; só com ele, `req.ip` pode virar o IP do servidor da Cloudflare, compartilhado por muitos clientes. A Cloudflare preenche e sobrescreve o `CF-Connecting-IP`, então o cliente não o falsifica por ela.
+**Alternativas descartadas:** limite global em todas as rotas (bloquearia lances e o stream sem ganho de segurança); só `req.ip` com `trust proxy` (risco de um limite único para todos atrás do mesmo servidor da Cloudflare); limite por e-mail (permite travar a conta de outra pessoa).
+**Consequência:** o risco é o proxy mudar: quem chamar a API direto, sem passar pela Cloudflare, pode mandar um `CF-Connecting-IP` falso e trocar de IP a cada tentativa. Conferir em produção que o cabeçalho chega e que dois aparelhos não dividem o mesmo contador. Contagem em memória, numa instância só, como os eventos do SSE.

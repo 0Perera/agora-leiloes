@@ -1,6 +1,6 @@
 import { toBidEvent } from './bid-event.dto';
 
-describe('toBidEvent', () => {
+describe('bidEventDto.toBidEvent', () => {
   it('expõe só seq, valor, alias, data e fim', () => {
     const bid = {
       seq: 1,

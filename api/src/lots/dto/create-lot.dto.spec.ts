@@ -1,5 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
-import { validationPipe } from '../../common/validation.pipe';
+import { validate } from '../../common/validate.testing';
 import { CreateLotDto } from './create-lot.dto';
 
 function makeBody(override: Record<string, unknown> = {}): unknown {
@@ -13,29 +12,18 @@ function makeBody(override: Record<string, unknown> = {}): unknown {
   };
 }
 
-async function validate(body: unknown): Promise<unknown> {
-  try {
-    await validationPipe().transform(body, {
-      type: 'body',
-      metatype: CreateLotDto,
-    });
-  } catch (error) {
-    if (error instanceof BadRequestException) return error.getResponse();
-    throw error;
-  }
-  return undefined;
-}
-
 describe('CreateLotDto', () => {
   it('recusa startingBid zero', async () => {
-    expect(await validate(makeBody({ startingBid: 0 }))).toEqual({
+    expect(await validate(CreateLotDto, makeBody({ startingBid: 0 }))).toEqual({
       code: 'VALIDATION_FAILED',
       fields: { startingBid: 'min' },
     });
   });
 
   it('recusa valor acima do teto', async () => {
-    expect(await validate(makeBody({ startingBid: 1_000_000_001 }))).toEqual({
+    expect(
+      await validate(CreateLotDto, makeBody({ startingBid: 1_000_000_001 })),
+    ).toEqual({
       code: 'VALIDATION_FAILED',
       fields: { startingBid: 'max' },
     });

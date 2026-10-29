@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsString, MaxLength } from 'class-validator';
-import { trim } from './trim';
+import { trim } from '../../common/trim';
 
 export class LoginDto {
   @Transform(trim)

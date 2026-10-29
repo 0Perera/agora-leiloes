@@ -1,10 +1,13 @@
 import request from 'supertest';
-import { SettlementService } from '../src/settlement/settlement.service';
-import { type Account, at, BASE, start, type TestApp } from './app';
-
-const STARTING_BID = 100_000;
-const INCREMENT = 5_000;
-const DEPOSIT = 1_000_000;
+import {
+  type Account,
+  at,
+  DEPOSIT,
+  INCREMENT,
+  start,
+  STARTING_BID,
+  type TestApp,
+} from './app';
 
 type DashboardLot = { id: number; result: unknown };
 
@@ -27,25 +30,10 @@ afterAll(async () => {
   await api.close();
 });
 
-function createLot(owner = auctioneer, endsAt = at(30)): Promise<number> {
-  return api.createLot(owner, {
-    startsAt: BASE,
-    endsAt,
-    startingBid: STARTING_BID,
-    increment: INCREMENT,
-  });
-}
-
-async function settle(...lotIds: number[]): Promise<void> {
-  api.clock.set(at(30));
-  for (const lotId of lotIds)
-    await api.app.get(SettlementService).settle(lotId);
-}
-
 async function sell(owner = auctioneer, amount = STARTING_BID) {
-  const lotId = await createLot(owner);
+  const lotId = await api.createLot(owner, { endsAt: at(30) });
   const placed = await api.bid(bidder, lotId, amount).expect(201);
-  await settle(lotId);
+  await api.settle(lotId);
   const [row] = await api.db.query<{ token: string; finalHash: string }[]>(
     `SELECT r.token, b.hash AS "finalHash"
      FROM receipts r JOIN bids b ON b.lot_id = r.lot_id
@@ -114,7 +102,7 @@ describe('GET /receipts/:token', () => {
   });
 });
 
-describe('painel do leiloeiro', () => {
+describe('GET /dashboard/summary', () => {
   it('received soma só os comprovantes dos lotes do leiloeiro', async () => {
     const other = await api.signup('AUCTIONEER');
     await sell(auctioneer, STARTING_BID);
@@ -127,12 +115,14 @@ describe('painel do leiloeiro', () => {
       STARTING_BID * 2 + INCREMENT,
     );
   });
+});
 
+describe('GET /dashboard/lots', () => {
   it('book traz o resultado conforme a liquidação do lote', async () => {
     const sold = await sell();
-    const empty = await createLot();
-    const live = await createLot(auctioneer, at(60));
-    await settle(empty);
+    const empty = await api.createLot(auctioneer, { endsAt: at(30) });
+    const live = await api.createLot(auctioneer, { endsAt: at(60) });
+    await api.settle(empty);
 
     const response = await dashboard('lots');
     const items = (response.body as { items: DashboardLot[] }).items;

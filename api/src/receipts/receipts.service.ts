@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { Env } from '../config/env.validation';
 import { ReceiptResponseDto } from './dto/receipt-response.dto';
 import { Receipt } from './receipt.entity';
-import { verify } from './receipt.signature';
+import { verifyReceipt } from './receipt.signature';
 
 type ReceiptRow = Omit<ReceiptResponseDto, 'valid'> & { signature: string };
 
@@ -38,6 +38,9 @@ export class ReceiptsService {
       .getRawOne<ReceiptRow>();
     if (!row) throw new NotFoundException();
     const { signature, ...receipt } = row;
-    return { ...receipt, valid: verify(this.secret, receipt, signature) };
+    return {
+      ...receipt,
+      valid: verifyReceipt(this.secret, receipt, signature),
+    };
   }
 }

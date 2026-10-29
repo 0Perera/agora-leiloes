@@ -14,7 +14,7 @@ function makeRaw(override: Record<string, unknown> = {}): unknown {
   };
 }
 
-describe('toArtwork', () => {
+describe('artworkMapper.toArtwork', () => {
   it('usa creators[0].description como artista', () => {
     expect(toArtwork(makeRaw())?.artist).toBe(
       'Rembrandt van Rijn (Dutch, 1606–1669)',

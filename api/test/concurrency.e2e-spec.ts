@@ -3,20 +3,20 @@ import { GENESIS, hashBid, sealLot } from '../src/audit/chain';
 import {
   type Account,
   at,
-  BASE,
   type Barrier,
+  BASE,
+  DEPOSIT,
+  INCREMENT,
   lockLot,
   lockWallet,
   secret,
   start,
+  STARTING_BID,
   type TestApp,
   waitForLockWaiters,
 } from './app';
 
 const N = 10;
-const STARTING_BID = 100_000;
-const INCREMENT = 5_000;
-const DEPOSIT = 1_000_000;
 
 type Offer = { bidder: Account; amount: number };
 
@@ -139,7 +139,7 @@ afterAll(async () => {
   await api.close();
 });
 
-describe('lances simultâneos', () => {
+describe('POST /lots/:id/bids simultâneos', () => {
   let lotId: number;
   let offers: Offer[];
   let result: Race;
@@ -228,7 +228,7 @@ describe('lances simultâneos', () => {
   });
 });
 
-describe('lances simultâneos do mesmo mínimo', () => {
+describe('POST /lots/:id/bids simultâneos do mesmo mínimo', () => {
   it('dois lances simultâneos do mesmo mínimo: um aceito e o outro BID_BELOW_MINIMUM', async () => {
     await api.reset();
     const lotId = await liveLot(api);
@@ -270,7 +270,7 @@ describe('lances simultâneos do mesmo mínimo', () => {
   });
 });
 
-describe('mesmo licitante em dois lotes', () => {
+describe('POST /lots/:id/bids do mesmo licitante em dois lotes', () => {
   it('mesmo licitante em dois lotes com saldo para um só lance: um aceito e o outro INSUFFICIENT_BALANCE', async () => {
     await api.reset();
     const lots = [await liveLot(api), await liveLot(api)];

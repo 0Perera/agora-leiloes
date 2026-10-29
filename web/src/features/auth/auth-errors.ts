@@ -24,6 +24,11 @@ const connectionFailed: Notice = {
   text: 'Tente de novo.',
 };
 
+const tooManyAttempts: Notice = {
+  title: 'Muitas tentativas.',
+  text: 'Aguarde um minuto e tente de novo.',
+};
+
 const emailTaken =
   'Este e-mail já está cadastrado. Entre com ele ou use outro.';
 const emailInvalid = 'Este e-mail não parece válido. Ex.: nome@dominio.com';
@@ -61,6 +66,8 @@ export function authError(
     return { notice: connectionFailed, fields: {} };
   if (error.code === 'INVALID_CREDENTIALS')
     return { notice: invalidCredentials, fields: {} };
+  if (error.code === 'TOO_MANY_ATTEMPTS')
+    return { notice: tooManyAttempts, fields: {} };
   if (error.code === 'EMAIL_TAKEN') return { fields: { email: emailTaken } };
   if (error.code === 'VALIDATION_FAILED' && error.fields)
     return { fields: fieldErrors(error.fields, form, values) };

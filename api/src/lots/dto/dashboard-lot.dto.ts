@@ -1,9 +1,9 @@
 import type { Lot } from '../lot.entity';
-import type { LotStatus } from './lot-card.dto';
+import type { LotStatus } from '../lot-status';
 
-export type BookStatus = LotStatus | 'cancelled';
+export type DashboardStatus = LotStatus | 'cancelled';
 
-export type BookFields = Pick<
+export type DashboardFields = Pick<
   Lot,
   | 'id'
   | 'number'
@@ -17,7 +17,7 @@ export type BookFields = Pick<
 >;
 
 // Alias, valor e token nulos: lote liquidado sem lances.
-export class BookResultDto {
+export class DashboardResultDto {
   alias!: string | null;
   amount!: number | null;
   receiptToken!: string | null;
@@ -28,19 +28,19 @@ export class DashboardLotDto {
   number!: number;
   title!: string;
   artist!: string;
-  status!: BookStatus;
+  status!: DashboardStatus;
   startingBid!: number;
   currentBid!: number | null;
   bidCount!: number;
   startsAt!: Date;
   endsAt!: Date;
-  result!: BookResultDto | null;
+  result!: DashboardResultDto | null;
 }
 
 export function toDashboardLot(
-  lot: BookFields,
-  status: BookStatus,
-  result: BookResultDto | null,
+  lot: DashboardFields,
+  status: DashboardStatus,
+  result: DashboardResultDto | null,
 ): DashboardLotDto {
   return {
     id: lot.id,

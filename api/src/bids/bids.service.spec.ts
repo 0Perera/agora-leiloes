@@ -11,6 +11,7 @@ import { SettlementTimer } from '../settlement/settlement.timer';
 import { Wallet } from '../wallets/wallet.entity';
 import { Bid } from './bid.entity';
 import { BidsService } from './bids.service';
+import { LastBid } from './last-bid';
 
 const SECRET = 'test-secret';
 const NOW = new Date('2026-10-26T12:00:00Z');
@@ -26,7 +27,6 @@ type LotRow = Pick<
   'id' | 'startsAt' | 'endsAt' | 'startingBid' | 'increment'
 > &
   Partial<Pick<Lot, 'currentBid' | 'bidCount' | 'seal'>>;
-type LastBid = Pick<Bid, 'seq' | 'userId' | 'amount' | 'hash'>;
 type WalletRow = Pick<Wallet, 'id' | 'userId' | 'balance' | 'committed'>;
 
 function at(offsetMs: number): Date {
@@ -44,7 +44,7 @@ function makeLot(override: Partial<LotRow> = {}): LotRow {
   };
 }
 
-function makeBid(override: Partial<LastBid> = {}): LastBid {
+function makeLastBid(override: Partial<LastBid> = {}): LastBid {
   return {
     seq: 3,
     userId: 20,
@@ -106,7 +106,7 @@ function makeService(
     },
   };
   const clock = { now: jest.fn(() => NOW) };
-  const events = { publish: jest.fn() };
+  const events = { bid: jest.fn() };
   const timer = { refresh: jest.fn() };
   const service = new BidsService(
     dataSource as unknown as DataSource,
@@ -166,7 +166,7 @@ describe('BidsService.place', () => {
 
   it('trava uma carteira só quando o licitante já é o líder', async () => {
     const { service, wallets } = makeService({
-      last: makeBid({ userId: 10 }),
+      last: makeLastBid({ userId: 10 }),
     });
 
     await expect(service.place(10, 1, 200_000)).rejects.toThrow(
@@ -179,7 +179,7 @@ describe('BidsService.place', () => {
 
   it('trava as carteiras do licitante e do líder anterior em ordem de id', async () => {
     const { service, wallets } = makeService({
-      last: makeBid({ userId: 20 }),
+      last: makeLastBid({ userId: 20 }),
       wallets: [
         makeWallet({ id: 1, userId: 10 }),
         makeWallet({ id: 2, userId: 20, committed: 120_000 }),
@@ -215,7 +215,7 @@ describe('BidsService.place', () => {
   });
 
   it.each<[DomainCode, Parameters<typeof makeService>[0], number]>([
-    ['ALREADY_WINNING', { last: makeBid({ userId: 10 }) }, 200_000],
+    ['ALREADY_WINNING', { last: makeLastBid({ userId: 10 }) }, 200_000],
     ['INSUFFICIENT_BALANCE', {}, 600_000],
     ['LOT_NOT_STARTED', { lot: makeLot({ startsAt: at(HOUR) }) }, 100_000],
     ['LOT_ENDED', { lot: makeLot({ endsAt: at(-MINUTE) }) }, 100_000],
@@ -250,7 +250,7 @@ describe('BidsService.place', () => {
   });
 
   it('encadeia o lance no hash do último lance com o seq seguinte', async () => {
-    const last = makeBid({ seq: 3, hash: 'b'.repeat(64) });
+    const last = makeLastBid({ seq: 3, hash: 'b'.repeat(64) });
     const { service, bids } = makeService({
       last,
       wallets: [
@@ -317,7 +317,7 @@ describe('BidsService.place', () => {
 
   it('libera o comprometido do líder anterior e compromete o novo lance', async () => {
     const { service, wallets } = makeService({
-      last: makeBid({ userId: 20, amount: 120_000 }),
+      last: makeLastBid({ userId: 20, amount: 120_000 }),
       wallets: [
         makeWallet({ id: 1, userId: 10, committed: 0 }),
         makeWallet({ id: 2, userId: 20, committed: 120_000 }),
@@ -332,7 +332,7 @@ describe('BidsService.place', () => {
 
   it('licitante superado que volta compromete o valor cheio do novo lance', async () => {
     const { service, wallets } = makeService({
-      last: makeBid({ userId: 20, amount: 105_000 }),
+      last: makeLastBid({ userId: 20, amount: 105_000 }),
       wallets: [
         makeWallet({ id: 1, userId: 10, committed: 0 }),
         makeWallet({ id: 2, userId: 20, committed: 105_000 }),
@@ -347,7 +347,7 @@ describe('BidsService.place', () => {
   it('calcula o mínimo pelo último lance, não pela cópia do lote', async () => {
     const { service, bids } = makeService({
       lot: makeLot({ currentBid: 300_000, bidCount: 9 }),
-      last: makeBid({ userId: 20, amount: 120_000 }),
+      last: makeLastBid({ userId: 20, amount: 120_000 }),
       wallets: [
         makeWallet(),
         makeWallet({ id: 2, userId: 20, committed: 120_000 }),
@@ -366,9 +366,9 @@ describe('BidsService.place', () => {
 
     const bid = await service.place(10, 1, 100_000);
 
-    expect(events.publish).toHaveBeenCalledWith(1, bid);
+    expect(events.bid).toHaveBeenCalledWith(1, bid);
     expect(commit.mock.invocationCallOrder[0]).toBeLessThan(
-      events.publish.mock.invocationCallOrder[0],
+      events.bid.mock.invocationCallOrder[0],
     );
   });
 
@@ -376,7 +376,7 @@ describe('BidsService.place', () => {
     const { service, events } = makeService();
 
     await expect(service.place(10, 1, 50_000)).rejects.toThrow(DomainException);
-    expect(events.publish).not.toHaveBeenCalled();
+    expect(events.bid).not.toHaveBeenCalled();
   });
 
   it('não emite quando a transação falha', async () => {
@@ -387,6 +387,6 @@ describe('BidsService.place', () => {
     await expect(service.place(10, 1, 100_000)).rejects.toThrow(
       'commit failed',
     );
-    expect(events.publish).not.toHaveBeenCalled();
+    expect(events.bid).not.toHaveBeenCalled();
   });
 });

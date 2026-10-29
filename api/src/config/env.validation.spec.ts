@@ -17,7 +17,7 @@ function makeConfig(
   };
 }
 
-describe('validateEnv', () => {
+describe('envValidation.validateEnv', () => {
   it.each<[string, string | undefined]>([
     ['ausente', undefined],
     ['curto', 'b'.repeat(31)],

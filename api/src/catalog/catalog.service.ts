@@ -10,7 +10,7 @@ import { ClevelandClient, type ImageFile } from './cleveland.client';
 import { type Department, isDepartment } from './departments';
 import { SearchCache } from './search.cache';
 
-export const PAGE_SIZE = 12;
+const PAGE_SIZE = 12;
 
 export type CatalogSearch = {
   q: string;
@@ -33,19 +33,17 @@ export class CatalogService {
   ) {}
 
   async search({ q, department, page }: CatalogSearch): Promise<CatalogPage> {
-    const term = q.trim().toLowerCase();
+    const term = q.toLowerCase();
     const key = JSON.stringify([department, term, page]);
     const cached = this.cache.get(key);
     if (cached) return cached;
 
-    const raw = await this.call(() =>
-      this.client.search({
-        q: term,
-        department,
-        limit: PAGE_SIZE,
-        skip: (page - 1) * PAGE_SIZE,
-      }),
-    );
+    const raw = await this.client.search({
+      q: term,
+      department,
+      limit: PAGE_SIZE,
+      skip: (page - 1) * PAGE_SIZE,
+    });
     const parsed = toArtworkPage(raw);
     if (!parsed) throw new DomainException('CATALOG_UNAVAILABLE');
 
@@ -55,25 +53,13 @@ export class CatalogService {
   }
 
   async find(id: number): Promise<ArtworkDetail | null> {
-    const raw = await this.call(() => this.client.find(id));
+    const raw = await this.client.find(id);
     const artwork = toArtworkDetail(raw);
     if (!artwork || !isDepartment(artwork.department)) return null;
     return artwork;
   }
 
-  async image(url: string): Promise<ImageFile> {
-    try {
-      return await this.client.download(url);
-    } catch {
-      throw new DomainException('IMAGE_DOWNLOAD_FAILED');
-    }
-  }
-
-  private async call(request: () => Promise<unknown>): Promise<unknown> {
-    try {
-      return await request();
-    } catch {
-      throw new DomainException('CATALOG_UNAVAILABLE');
-    }
+  image(url: string): Promise<ImageFile> {
+    return this.client.download(url);
   }
 }
