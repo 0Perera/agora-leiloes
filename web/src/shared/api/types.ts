@@ -131,7 +131,7 @@ export type LotDetail = {
   currentBid: number | null;
   bidCount: number;
   serverTime: string;
-  // Nulo até a liquidação; alias e valor nulos quando o lote encerrou sem lances.
+  // nulo até a liquidação; alias e valor nulos quando o lote encerrou sem lances
   result: LotResult | null;
   me?: { alias: string; hasBid: boolean; receiptToken?: string };
 };
@@ -210,7 +210,7 @@ export type LotAudit = {
   artist: string;
   status: LotStatus;
   result: AuditResult;
-  // Seq do primeiro lance quebrado; nulo fora de 'tampered'.
+  // seq do primeiro lance quebrado; nulo fora de 'tampered'
   brokenSeq: number | null;
   bids: AuditBid[];
 };

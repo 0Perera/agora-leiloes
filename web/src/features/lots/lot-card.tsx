@@ -1,18 +1,15 @@
 import { Link } from 'react-router';
 import { lotImageUrl } from '../../shared/api/client';
-import type { LotCard as Lot, LotStatus } from '../../shared/api/types';
-import { formatLeft, secondsLeft } from '../../shared/lib/countdown';
+import type { LotCard as Lot } from '../../shared/api/types';
+import {
+  formatLeft,
+  secondsLeft,
+  urgentSeconds,
+} from '../../shared/lib/countdown';
 import { formatDay, formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel } from '../../shared/lib/roman';
-
-const urgentSeconds = 120;
-
-const badges: Record<LotStatus, { className: string; text: string }> = {
-  live: { className: 'ag-badge--live', text: 'Ao vivo' },
-  scheduled: { className: 'ag-badge--scheduled', text: 'Agendado' },
-  ended: { className: 'ag-badge--closed', text: 'Encerrado' },
-};
+import { StatusBadge } from '../../shared/ui/status-badge';
 
 type Facts = {
   priceLabel: string;
@@ -79,7 +76,6 @@ type Props = {
 };
 
 export function LotCard({ lot, now, offset }: Props) {
-  const badge = badges[lot.status];
   const facts = factsOf(lot, now, offset);
 
   return (
@@ -97,7 +93,7 @@ export function LotCard({ lot, now, offset }: Props) {
       <div className="ag-lot__body">
         <div className="ag-lot__top">
           <p className="ag-lot__number">{lotLabel(lot.number)}</p>
-          <span className={`ag-badge ${badge.className}`}>{badge.text}</span>
+          <StatusBadge status={lot.status} />
         </div>
         <h3 className="ag-lot__title">
           <Link className="lot-link" to={`/lots/${lot.id}`}>

@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type { Wallet, WalletBalance } from '../../shared/api/types';
+import type { Wallet, WalletBalance } from '../api/types';
 
 export type WalletState =
   | { status: 'loading' }

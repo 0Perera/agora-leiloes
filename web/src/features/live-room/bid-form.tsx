@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
-import { ApiError, api } from '../../shared/api/client';
+import { api, isNotFound } from '../../shared/api/client';
 import type { BidEvent, LotDetail } from '../../shared/api/types';
 import { minimumOf } from '../../shared/lib/live-bids';
 import { formatMoney, maskAmount, parseAmount } from '../../shared/lib/money';
 import '../../shared/ui/field.css';
-import { useWallet } from '../wallet/use-wallet';
+import { useWallet } from '../../shared/lib/use-wallet';
 import { bidError, emptyAmount } from './bid-errors';
 import type { BidNotice } from './bid-errors';
 import { shortcuts } from './room-bids';
@@ -50,7 +50,7 @@ export function BidForm({ lot, offline, onPlaced, onMissing }: Props) {
       setValue('');
       setAccepted(acceptedText(bid, endsAt));
     } catch (caught) {
-      if (caught instanceof ApiError && caught.status === 404) onMissing();
+      if (isNotFound(caught)) onMissing();
       else fail(bidError(caught));
     } finally {
       sending.current = false;

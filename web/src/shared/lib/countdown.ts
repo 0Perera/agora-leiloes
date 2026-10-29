@@ -1,4 +1,7 @@
+import { pad } from './date';
+
 const hour = 3600;
+export const urgentSeconds = 120;
 
 export function clockOffset(serverTime: string, clientNow: number): number {
   return Date.parse(serverTime) - clientNow;
@@ -12,8 +15,6 @@ export function secondsLeft(
   const left = Date.parse(endsAt) - (clientNow + offset);
   return Math.max(0, Math.ceil(left / 1000));
 }
-
-const pad = (value: number) => String(value).padStart(2, '0');
 
 export function formatLeft(seconds: number): string {
   const { first, second, inHours } = splitLeft(seconds);

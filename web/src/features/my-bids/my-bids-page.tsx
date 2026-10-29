@@ -1,12 +1,12 @@
 import { Link } from 'react-router';
 import type { MyBids, MyBidsSection } from '../../shared/api/types';
+import type { Load } from '../../shared/lib/load';
 import { LoadError } from '../../shared/ui/load-error';
 import { Pager } from '../../shared/ui/pager';
 import { Tabs } from '../../shared/ui/tabs';
 import { Lost } from './lost';
 import { Ongoing } from './ongoing';
 import { useMyBids } from './use-my-bids';
-import type { MyBidsState } from './use-my-bids';
 import { Won } from './won';
 import './my-bids.css';
 
@@ -65,7 +65,7 @@ function Content({ state, section, retry, choose, turn }: Props) {
 }
 
 type BodyProps = {
-  state: MyBidsState;
+  state: Load<MyBids>;
   onRetry: () => void;
   onTurn: (page: number) => void;
 };

@@ -12,6 +12,7 @@ import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel } from '../../shared/lib/roman';
 import { Niche } from '../../shared/ui/niche';
+import { StatusBadge } from '../../shared/ui/status-badge';
 import { BidForm } from './bid-form';
 import { olderPage } from './room-bids';
 import { RoomHistory } from './room-history';
@@ -28,12 +29,6 @@ type Props = {
 };
 
 type Viewer = 'visitor' | 'auctioneer' | 'bidder';
-
-const badges = {
-  live: { className: 'ag-badge ag-badge--live', text: 'Ao vivo' },
-  scheduled: { className: 'ag-badge ag-badge--scheduled', text: 'Agendado' },
-  ended: { className: 'ag-badge ag-badge--closed', text: 'Encerrado' },
-};
 
 export function RoomView({
   room,
@@ -153,13 +148,12 @@ function VisitorBox() {
 }
 
 function RoomHead({ lot }: { lot: LotDetail }) {
-  const badge = badges[lot.status];
   const byline = [lot.artist, lot.date].filter(Boolean).join(', ');
 
   return (
     <div className="room__head">
       <div className="room-tags">
-        <span className={badge.className}>{badge.text}</span>
+        <StatusBadge status={lot.status} />
         <span className="room-kicker">{lotLabel(lot.number)}</span>
       </div>
       <h1 className="room-title">{lot.title}</h1>

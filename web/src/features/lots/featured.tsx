@@ -1,17 +1,17 @@
 import { Link } from 'react-router';
 import { lotImageUrl } from '../../shared/api/client';
 import type { BidHistoryItem, LotDetail } from '../../shared/api/types';
-import { secondsLeft, splitLeft } from '../../shared/lib/countdown';
+import { secondsLeft, urgentSeconds } from '../../shared/lib/countdown';
 import { formatShortDate } from '../../shared/lib/date';
 import { minimumOf, situationOf } from '../../shared/lib/live-bids';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel } from '../../shared/lib/roman';
+import { useWalletRefresh } from '../../shared/lib/use-wallet-refresh';
 import { BidSituation } from '../../shared/ui/bid-situation';
+import { Countdown } from '../../shared/ui/countdown';
 import { LoadError } from '../../shared/ui/load-error';
-import { useWalletRefresh } from '../wallet/use-wallet-refresh';
+import { StatusBadge } from '../../shared/ui/status-badge';
 import type { Featured as FeaturedState, ReadyFeatured } from './use-featured';
-
-const urgentSeconds = 120;
 
 type Props = {
   state: FeaturedState;
@@ -37,11 +37,7 @@ function FeaturedLot({ room, now }: { room: ReadyFeatured; now: number }) {
           {live ? 'Em destaque agora' : 'Próximo leilão'}
         </p>
         <div className="home-hero__tags">
-          <span
-            className={`ag-badge ${live ? 'ag-badge--live' : 'ag-badge--scheduled'}`}
-          >
-            {live ? 'Ao vivo' : 'Agendado'}
-          </span>
+          <StatusBadge status={live ? 'live' : 'scheduled'} />
           <span className="home-kicker">{lotLabel(lot.number)}</span>
         </div>
         <div>
@@ -146,36 +142,13 @@ function FeaturedSituation({
 }
 
 function HeroCountdown({ seconds }: { seconds: number }) {
-  const { first, second, inHours } = splitLeft(seconds);
-  const urgent = seconds < urgentSeconds ? ' ag-countdown--urgent' : '';
-
   return (
     <>
-      <div
-        className={`ag-countdown${urgent}`}
-        role="timer"
-        aria-label="Tempo restante do lote"
-      >
-        <div className="ag-countdown__units">
-          <div className="ag-countdown__unit">
-            <span className="ag-countdown__value home-countdown__value">
-              {first}
-            </span>
-            <span className="ag-countdown__label">
-              {inHours ? 'Horas' : 'Min'}
-            </span>
-          </div>
-          <span className="ag-countdown__sep home-countdown__sep">:</span>
-          <div className="ag-countdown__unit">
-            <span className="ag-countdown__value home-countdown__value">
-              {second}
-            </span>
-            <span className="ag-countdown__label">
-              {inHours ? 'Min' : 'Seg'}
-            </span>
-          </div>
-        </div>
-      </div>
+      <Countdown
+        seconds={seconds}
+        urgent={seconds < urgentSeconds}
+        place="home"
+      />
       <p className="home-hero__note">
         Lances nos últimos 2 minutos somam 2 minutos ao fim.
       </p>

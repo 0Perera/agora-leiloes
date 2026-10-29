@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ApiError, api } from '../../shared/api/client';
+import { api, isNotFound } from '../../shared/api/client';
 import type { LotAudit } from '../../shared/api/types';
 
 export type AuditState =
@@ -15,8 +15,7 @@ export type AuditState =
     };
 
 function failure(caught: unknown): AuditState {
-  const missing = caught instanceof ApiError && caught.status === 404;
-  return { status: missing ? 'missing' : 'error' };
+  return { status: isNotFound(caught) ? 'missing' : 'error' };
 }
 
 // falha no "Verificar de novo" mantém o veredito anterior e só avisa abaixo do botão

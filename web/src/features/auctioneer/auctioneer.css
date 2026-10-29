@@ -515,38 +515,6 @@
 }
 
 /* livro de lotes: tabela pautada com margem vermelha dupla */
-.panel-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-  border-bottom: 1px solid var(--gold-500);
-}
-
-.panel-tab {
-  min-height: 44px;
-  padding: 0 var(--space-4);
-  border: 0;
-  border-bottom: 3px solid transparent;
-  background: transparent;
-  cursor: pointer;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-muted);
-}
-
-.panel-tab[aria-pressed='true'] {
-  border-bottom: 3px double var(--gold-500);
-  background-color: var(--marble-100);
-  color: var(--ink);
-}
-
-.panel-tab-count {
-  color: var(--gold-700);
-}
-
 .panel-ledger {
   border-top: 1px solid var(--gold-500);
 }
@@ -763,11 +731,6 @@
 }
 
 /* esqueletos */
-.panel-skel {
-  background-color: var(--marble-200);
-  animation: panel-skel 1.4s ease-in-out infinite;
-}
-
 .panel-skel--label {
   height: 12px;
   width: 50%;
@@ -831,12 +794,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-}
-
-@keyframes panel-skel {
-  50% {
-    opacity: 0.5;
-  }
 }
 
 /* lote recém-criado: fundo dourado que some; com movimento reduzido, fica fixo até o timer */
@@ -905,12 +862,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .panel-skel {
-    animation: none;
-  }
 }
 
 /* abaixo da largura da tabela, cada lote vira um cartão com rótulos */

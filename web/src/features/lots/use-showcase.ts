@@ -1,12 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../../shared/api/client';
 import type { LotShowcase, LotStatus } from '../../shared/api/types';
+import type { Load } from '../../shared/lib/load';
 import { parseSearch, searchTab } from './showcase-search';
-
-export type Load<T> =
-  | { status: 'loading'; data: T | null }
-  | { status: 'error'; data: T | null }
-  | { status: 'ready'; data: T };
 
 const searchDelay = 300;
 

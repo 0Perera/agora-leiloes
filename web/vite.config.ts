@@ -1,7 +1,6 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   // fuso fixo nos testes, para o CI (UTC) e a máquina local darem o mesmo resultado

@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useParams } from 'react-router';
-import type { LotAudit, LotStatus } from '../../shared/api/types';
+import type { LotAudit } from '../../shared/api/types';
+import { formatStamp } from '../../shared/lib/date';
+import { parseLotId } from '../../shared/lib/lot-number';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel } from '../../shared/lib/roman';
 import { HashCopy } from '../../shared/ui/hash-copy';
 import { LoadError } from '../../shared/ui/load-error';
 import { NotFound } from '../../shared/ui/not-found';
-import { parseLotId } from '../live-room/room-summary';
+import { StatusBadge } from '../../shared/ui/status-badge';
 import {
   checkView,
   checkedText,
@@ -19,29 +21,6 @@ import { useAudit } from './use-audit';
 import './audit.css';
 
 const readmeUrl = 'https://github.com/0Perera/agora-leiloes#auditoria';
-
-const badges: Record<LotStatus, { className: string; text: string }> = {
-  live: { className: 'ag-badge--live', text: 'Ao vivo' },
-  scheduled: { className: 'ag-badge--scheduled', text: 'Agendado' },
-  ended: { className: 'ag-badge--closed', text: 'Encerrado' },
-};
-
-const timeFormat = new Intl.DateTimeFormat('pt-BR', {
-  day: 'numeric',
-  month: 'short',
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
-  hourCycle: 'h23',
-});
-
-function formatTime(iso: string): string {
-  const parts = timeFormat.formatToParts(new Date(iso));
-  const part = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((item) => item.type === type)?.value ?? '';
-  const month = part('month').replace('.', '');
-  return `${part('day')} ${month}, ${part('hour')}:${part('minute')}:${part('second')}`;
-}
 
 export function AuditPage() {
   const id = parseLotId(useParams().id);
@@ -78,7 +57,6 @@ function AuditScreen({ id }: { id: number }) {
 }
 
 function AuditHead({ audit }: { audit: LotAudit }) {
-  const badge = badges[audit.status];
   return (
     <header className="audit-head">
       <p className="audit-head__kicker">
@@ -86,7 +64,7 @@ function AuditHead({ audit }: { audit: LotAudit }) {
       </p>
       <h1 className="audit-head__title">{audit.title}</h1>
       <p className="audit-head__meta">
-        <span className={`ag-badge ${badge.className}`}>{badge.text}</span>
+        <StatusBadge status={audit.status} />
         {audit.artist} · {countText(audit.bids.length)}
       </p>
     </header>
@@ -263,7 +241,7 @@ function LedgerRow({ row }: { row: Row }) {
         {formatMoney(bid.amount)}
       </div>
       <div className="audit-row__time" role="cell" data-label="Horário">
-        {formatTime(bid.createdAt)}
+        {formatStamp(bid.createdAt)}
       </div>
       <div className="audit-row__code" role="cell" data-label="Código">
         <span className="audit-row__copy">

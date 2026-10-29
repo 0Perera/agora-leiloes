@@ -340,11 +340,6 @@
   gap: 10px;
 }
 
-.wallet-skel {
-  background-color: var(--marble-200);
-  animation: wallet-skel 1.4s ease-in-out infinite;
-}
-
 .wallet-skel--label {
   height: 12px;
   width: 110px;
@@ -366,12 +361,6 @@
 
 .wallet-skel--card {
   height: 320px;
-}
-
-@keyframes wallet-skel {
-  50% {
-    opacity: 0.5;
-  }
 }
 
 /* resumo da carteira no cabeçalho, em forma de pergaminho */
@@ -548,10 +537,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wallet-skel {
-    animation: none;
-  }
-
   .wallet-scroll {
     transition: none;
   }

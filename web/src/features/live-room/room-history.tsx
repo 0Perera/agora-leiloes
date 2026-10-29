@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import type { BidHistoryItem, LotDetail } from '../../shared/api/types';
+import { formatTime } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel } from '../../shared/lib/roman';
 import { topMark } from './room-summary';
@@ -11,13 +12,6 @@ type Props = {
   total: number;
   older: (() => Promise<void>) | null;
 };
-
-const timeFormat = new Intl.DateTimeFormat('pt-BR', {
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
-  hourCycle: 'h23',
-});
 
 export function RoomHistory({ lot, bids, total, older }: Props) {
   return (
@@ -109,9 +103,7 @@ function HistoryRow({
         {mark && <span className="room-history__leads">▲ {mark}</span>}
       </span>
       <span className="room-history__amount">{formatMoney(bid.amount)}</span>
-      <span className="room-history__time">
-        {timeFormat.format(new Date(bid.createdAt))}
-      </span>
+      <span className="room-history__time">{formatTime(bid.createdAt)}</span>
     </li>
   );
 }

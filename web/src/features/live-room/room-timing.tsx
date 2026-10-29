@@ -1,9 +1,10 @@
 import type { LotDetail } from '../../shared/api/types';
-import { secondsLeft, splitLeft } from '../../shared/lib/countdown';
+import { secondsLeft } from '../../shared/lib/countdown';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
-import { awaitsSettlement, countNote, summaryOf } from './room-summary';
 import { useNow } from '../../shared/lib/use-now';
+import { Countdown } from '../../shared/ui/countdown';
+import { awaitsSettlement, countNote, summaryOf } from './room-summary';
 
 type SummaryProps = {
   lot: LotDetail;
@@ -37,7 +38,11 @@ export function RoomSummary({ lot, offset, extended, leader }: SummaryProps) {
         {lot.status === 'scheduled' ? (
           <RoomOpens startsAt={lot.startsAt} />
         ) : (
-          <RoomCountdown seconds={live ? seconds : 0} urgent={note.urgent} />
+          <Countdown
+            seconds={live ? seconds : 0}
+            urgent={note.urgent}
+            place="room"
+          />
         )}
       </section>
       {!awaitsSettlement(lot) && (
@@ -59,39 +64,6 @@ function RoomOpens({ startsAt }: { startsAt: string }) {
       <span className="room-opens__note">
         Os lances só são aceitos a partir daí.
       </span>
-    </div>
-  );
-}
-
-function RoomCountdown({
-  seconds,
-  urgent,
-}: {
-  seconds: number;
-  urgent: boolean;
-}) {
-  const { first, second, inHours } = splitLeft(seconds);
-
-  return (
-    <div
-      className={urgent ? 'ag-countdown ag-countdown--urgent' : 'ag-countdown'}
-      role="timer"
-      aria-label="Tempo restante do lote"
-    >
-      <div className="ag-countdown__units">
-        <Unit value={first} label={inHours ? 'Horas' : 'Min'} />
-        <span className="ag-countdown__sep room-countdown__sep">:</span>
-        <Unit value={second} label={inHours ? 'Min' : 'Seg'} />
-      </div>
-    </div>
-  );
-}
-
-function Unit({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="ag-countdown__unit">
-      <span className="ag-countdown__value room-countdown__value">{value}</span>
-      <span className="ag-countdown__label">{label}</span>
     </div>
   );
 }

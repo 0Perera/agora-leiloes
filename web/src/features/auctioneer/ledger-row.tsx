@@ -5,6 +5,7 @@ import type { DashboardLot } from '../../shared/api/types';
 import { formatShortDate } from '../../shared/lib/date';
 import { formatMoney } from '../../shared/lib/money';
 import { lotLabel, toRoman } from '../../shared/lib/roman';
+import { StatusBadge } from '../../shared/ui/status-badge';
 import { receiptOf, resultOf } from './ledger-result';
 
 export type Fresh = { id: number; reveal: boolean };
@@ -17,12 +18,6 @@ type Props = {
   onAsk: () => void;
   onKeep: () => void;
   onConfirm: () => void;
-};
-
-const badges = {
-  live: { className: 'ag-badge ag-badge--live', text: 'Ao vivo' },
-  scheduled: { className: 'ag-badge ag-badge--scheduled', text: 'Agendado' },
-  ended: { className: 'ag-badge ag-badge--closed', text: 'Encerrado' },
 };
 
 function rowClass(cancelled: boolean, fresh: boolean): string {
@@ -80,9 +75,7 @@ export function LedgerRow({ lot, fresh, ...actions }: Props) {
         {lot.status === 'cancelled' ? (
           <span className="sr-only">Cancelado</span>
         ) : (
-          <span className={badges[lot.status].className}>
-            {badges[lot.status].text}
-          </span>
+          <StatusBadge status={lot.status} />
         )}
       </div>
       {cancelled ? (

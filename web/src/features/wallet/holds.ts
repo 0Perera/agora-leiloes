@@ -13,7 +13,7 @@ export function heldNote(count: number): string {
   return count === 1 ? 'reservado em 1 lote' : `reservado em ${count} lotes`;
 }
 
-// lote vencido continua comprometido até a liquidação (épico 5)
+// lote vencido continua comprometido até a liquidação
 export function holdNote(endsAt: string, now: number): HoldNote {
   if (Date.parse(endsAt) <= now) {
     return { title: 'Você arrematou', detail: 'aguardando liquidação' };

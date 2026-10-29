@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router';
 import { formatMoney } from '../../shared/lib/money';
 import { gaugeOf } from './gauge';
-import { useWallet } from './use-wallet';
+import { useWallet } from '../../shared/lib/use-wallet';
 import './wallet.css';
 
 export function WalletBadge() {

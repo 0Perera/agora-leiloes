@@ -3,7 +3,6 @@ import type { LotDetail } from '../../shared/api/types';
 import {
   awaitsSettlement,
   countNote,
-  parseLotId,
   retryTurn,
   summaryOf,
   topMark,
@@ -55,12 +54,6 @@ describe('countNote', () => {
     expect(countNote(false, 200, true).text).toBe(
       'Prorrogado em +2 min pelo último lance.',
     );
-  });
-});
-
-describe('parseLotId', () => {
-  it('não transforma id não numérico em busca na API', () => {
-    expect(parseLotId('abc')).toBeNull();
   });
 });
 

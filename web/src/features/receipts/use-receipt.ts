@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ApiError, api } from '../../shared/api/client';
+import { api, isNotFound } from '../../shared/api/client';
 import type { Receipt } from '../../shared/api/types';
 
 export type ReceiptState =
@@ -9,8 +9,7 @@ export type ReceiptState =
   | { status: 'ready'; receipt: Receipt; checkedAt: Date };
 
 export function failure(caught: unknown): ReceiptState {
-  const missing = caught instanceof ApiError && caught.status === 404;
-  return { status: missing ? 'missing' : 'error' };
+  return { status: isNotFound(caught) ? 'missing' : 'error' };
 }
 
 export function useReceipt(token: string) {

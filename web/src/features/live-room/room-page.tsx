@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router';
 import { LoadError } from '../../shared/ui/load-error';
 import { Niche } from '../../shared/ui/niche';
 import { NotFound } from '../../shared/ui/not-found';
-import { parseLotId } from './room-summary';
+import { parseLotId } from '../../shared/lib/lot-number';
 import { RoomView } from './room-view';
 import { useRoom } from './use-room';
 import './room.css';
