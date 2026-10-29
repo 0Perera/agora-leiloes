@@ -2,7 +2,7 @@
 title: 'Cancelamento com estorno'
 type: 'feature'
 created: '2026-10-28'
-status: 'in-progress'
+status: 'done'
 baseline_commit: '5b23cc71a433402898d4ba5d278075b7edd888af'
 route: 'dispatch'
 review_loop_iteration: 0
@@ -112,6 +112,29 @@ context: []
 ## Spec Change Log
 
 ## Review Triage Log
+
+| # | Achado | Veredito | Rota | Evidência |
+|---|---|---|---|---|
+| 1 | Contagem regressiva continua depois do cancelamento | medium | patch | `RoomSummary` não recebe `cancelled`; `secondsLeft` segue até o `endsAt` original |
+| 2 | POST de lance em voo volta 404 e troca a sala cancelada por "não encontrado" | low | patch | `bid-form.tsx:53` chama `onMissing`, que sobrescreve `cancelled`; correção é um guard no `missing` |
+| 3 | E1 não distingue "subtrair o lance" de "zerar o comprometido" nem confere perdedor e leiloeiro | medium | patch | só a carteira de `second`, que lidera um lote só |
+| 4 | Nada garante que cancelamento recusado não emite `cancelled` | medium | patch | mock `events` sem asserção em `lots.service.spec.ts` |
+| 5 | `cancelWarning` sem teste e spec de `cancellable` sem bidCount nem agendado | low | patch | F2 é critério de aceite |
+| 6 | ai-log descreve a ordem errada (selo é conferido antes do estorno) | low | patch | `revoke` confere o selo antes de `refund` |
+| 7 | Reconexão depois de evento perdido mostra "não encontrado" | low | reject | aceito no bloco congelado: `GET /lots/:id` continua 404 |
+| 8 | Aviso some se lances chegam depois do painel carregar | low | reject | cancelamento continua correto; só o texto do aviso depende do bidCount carregado |
+| 9 | `refund` sem guard para comprometido menor que o lance | false | reject | invariante do motor: o líder sempre tem o último lance comprometido; CHECK do banco é a última defesa |
+| 10 | Texto da confirmação diz "lances serão cancelados", mas ficam na cadeia | low | reject | texto definido pelo usuário; levado a ele |
+| 11 | `CLAUDE.md` com "cancelar sem lances" e exemplo do estorno fora do escopo | low | defer | arquivo de contexto do agente: decisão do usuário |
+| 12 | Timer não é recalculado no cancelamento | low | reject | liquidação pula cancelado e recalcula; regra do CLAUDE.md cita lance e prorrogação |
+| 13 | T1 e T2 iguais nos dados; nomes dos três `LOT_ENDED` parecidos | low | reject | estilo |
+| 14 | `AUDIT_STATUS_SQL` duplica `BOOK_SQL`; `BookStatus` importado do DTO do painel | low | reject | estilo |
+| 15 | `CancelledEvent` declarado e não usado no front | low | reject | estilo |
+| 16 | Destaque some em vez de pular para o próximo | low | reject | raro; recarregar resolve |
+| 17 | Ordem `COALESCE` de lost sem teste | low | reject | teste opcional |
+| 18 | `LOT_ENDED` antes do selo sem teste | low | reject | teste opcional |
+| 19 | `walletKey` sem teste | low | reject | teste opcional; hook sem teste no front |
+| 20 | `epics.md` ainda cita `LOT_HAS_BIDS` | low | reject | doc de planejamento, histórico |
 
 ## Verification
 

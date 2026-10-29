@@ -178,3 +178,7 @@
 - source_spec: `docs/stories/spec-6-1-seed-idempotente-e-compose-verificado.md`
   summary: atualizar no CLAUDE.md a regra "O lote ao vivo do seed termina em ~30 dias" para a janela decidida na 6.1 (ao vivo encerrando entre 7 e 10 dias depois do seed; agendados abrindo entre 5 e 6 dias).
   evidence: achado da revisão da 6.1; a spec segue a decisão do usuário e o CLAUDE.md ficou com o valor antigo.
+
+- source_spec: `docs/stories/spec-6-5-cancelamento-com-estorno.md`
+  summary: Atualizar o `CLAUDE.md` para o cancelamento com estorno ("Gerenciar é: criar, cancelar sem lances..." e o exemplo de "Fora do escopo" que cita o estorno).
+  evidence: depois da D-070, o lote ao vivo com lances é cancelável; arquivo de contexto do agente, só o usuário decide a redação.
