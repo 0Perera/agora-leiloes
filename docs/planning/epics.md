@@ -6,7 +6,7 @@ inputDocuments:
   - CLAUDE.md
   - docs/decisions.md
   - docs/screens.md
-  - docs/stories/1.1-esqueleto.md
+  - docs/stories/spec-1-1-esqueleto-do-monorepo-no-ar.md
 ---
 
 # Ágora - Épicos e stories
@@ -21,7 +21,7 @@ O leiloeiro cria lotes a partir do acervo, os licitantes depositam saldo simulad
 comprovante compartilhável e qualquer pessoa audita o histórico. Enunciado: PDF da Verzel. Escopo e opcionais: D-018.
 
 **Arquitetura (resumo):** fonte da verdade em `CLAUDE.md` (módulos, regras de banco, SSE, Cleveland, segurança, testes)
-e em `docs/decisions.md` (D-001 a D-038, que não são rediscutidas). Telas: `docs/screens.md` e o canvas do Claude Design.
+e em `docs/decisions.md` (D-001 a D-045, que não são rediscutidas; as substituídas depois estão no índice). Telas: `docs/screens.md` e o canvas do Claude Design.
 
 ## Inventário de requisitos
 
@@ -157,7 +157,7 @@ Como desenvolvedor,
 quero o monorepo com API, front, CI e deploy funcionando,
 para tirar o risco de deploy no primeiro dia.
 
-**Status:** concluída (`9c920bb`). Detalhe e critérios em `docs/stories/1.1-esqueleto.md`.
+**Status:** concluída (`9c920bb`). Detalhe e critérios em `docs/stories/spec-1-1-esqueleto-do-monorepo-no-ar.md`.
 
 ---
 

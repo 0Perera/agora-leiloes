@@ -2,30 +2,105 @@
 
 Registro das decisões do projeto que tinham alternativa real. Cada entrada diz o que foi escolhido, por quê e o que foi descartado.
 
-Entradas antigas não são editadas. Se uma decisão mudar, cria-se uma nova entrada com "Substitui D-NNN", e a antiga recebe o status "Substituída por D-NNN".
+Entradas antigas não são editadas. Se uma decisão mudar, cria-se uma nova entrada com "Substitui: D-NNN", e a antiga recebe o status "Substituída por D-NNN" (ou "Parcialmente substituída por D-NNN", quando só uma parte muda).
 
-D-001 a D-030 foram tomadas no planejamento (22 e 23/10/2026), antes da primeira linha de código.
+D-001 a D-030 foram tomadas no planejamento (22 e 23/10/2026), antes da primeira linha de código; D-036 a D-045, no planejamento dos épicos.
+
+## Índice
+
+| Número | Título | Status | Story |
+|---|---|---|---|
+| D-001 | NestJS + TypeScript no back-end | Aceita | planejamento |
+| D-002 | PostgreSQL com TypeORM | Aceita | planejamento |
+| D-003 | Itens da API do Cleveland Museum of Art | Aceita | planejamento |
+| D-004 | Snapshot do item, incluindo a imagem | Aceita | planejamento |
+| D-005 | Tempo real com SSE e alias público | Aceita | planejamento |
+| D-006 | JWT no header, validade de 8h, sem refresh | Aceita | planejamento |
+| D-007 | Deploy em Render (API) + Neon (banco) | Parcialmente substituída por D-027 | planejamento |
+| D-008 | Cold start aceito | Aceita | planejamento |
+| D-009 | Liquidação sem job periódico | Aceita | planejamento |
+| D-010 | Status do lote calculado pelo horário | Aceita | planejamento |
+| D-011 | Anti-sniping soma 2 min ao fim atual | Aceita | planejamento |
+| D-012 | Cadeia de HMAC contra adulteração | Aceita | planejamento |
+| D-013 | Alias por lote | Aceita | planejamento |
+| D-014 | Lock pessimista e transação única nos lances | Aceita | planejamento |
+| D-015 | Dinheiro em centavos, `integer` | Aceita | planejamento |
+| D-016 | Papéis escolhidos no cadastro | Aceita | planejamento |
+| D-017 | Lote não editável | Aceita | planejamento |
+| D-018 | Opcionais escolhidos | Aceita | planejamento |
+| D-019 | Testes com Jest, Testcontainers e TDD seletivo | Aceita | planejamento |
+| D-020 | Seed pelos services | Parcialmente substituída por D-069 | planejamento |
+| D-021 | Squash merge e título de PR validado | Aceita | planejamento |
+| D-022 | Lint padrão do Nest com limite de complexidade | Parcialmente substituída por D-028 | planejamento |
+| D-023 | Tipos do front declarados à mão | Aceita | planejamento |
+| D-024 | Testes no padrão do Nest | Aceita | planejamento |
+| D-025 | npm sem workspaces e front no Render | Aceita | planejamento |
+| D-026 | Pastas por domínio, não por camada | Aceita | planejamento |
+| D-027 | Banco no Postgres do Render, recriado na entrega | Aceita | planejamento |
+| D-028 | `any` proibido no lint | Aceita | planejamento |
+| D-029 | Comprovante assinado com HMAC | Aceita | planejamento |
+| D-030 | Docker Compose sobe o projeto inteiro | Parcialmente substituída por D-035 | planejamento |
+| D-031 | Migrations rodam no boot da API | Aceita | 1.1 |
+| D-032 | Nest CLI 11 no lugar do 12 | Aceita | 1.1 |
+| D-033 | oxlint no front, ESLint na API | Aceita | 1.1 |
+| D-034 | Deploy pelo Blueprint do Render | Aceita | 1.1 |
+| D-035 | Compose completo na story 1.1, com o front em nginx | Aceita | 1.1 |
+| D-036 | Número do lote sequencial, exibido em romano | Substituída por D-054 | planejamento |
+| D-037 | Destaque da vitrine pelo maior lance ao vivo | Aceita | planejamento |
+| D-038 | Dados da obra só do acervo | Aceita | planejamento |
+| D-039 | Carteira para toda conta | Aceita | planejamento |
+| D-040 | Hash de senha com `scrypt` nativo e guard JWT à mão | Aceita | planejamento |
+| D-041 | `react-router` v7 no modo biblioteca | Aceita | planejamento |
+| D-042 | Lance atual guardado no lote, como cópia só para exibição | Aceita | 3.2 |
+| D-043 | 422 para todas as recusas de lance | Aceita | 4.3 |
+| D-044 | Alias com 6 caracteres em base32 | Aceita | 4.2 |
+| D-045 | Lote encerrado no seed com `Clock` deslocado | Parcialmente substituída por D-067 | 6.1 |
+| D-046 | `id` de usuário `integer` autoincremento | Aceita | 2.1 |
+| D-047 | Token da sessão no `localStorage` | Aceita | 2.3 |
+| D-048 | Valores sempre com centavos | Aceita | 2.4 |
+| D-049 | Saldo atualizado só depois da confirmação da API | Aceita | 2.4 |
+| D-050 | Busca no acervo por departamento escolhido | Aceita | 3.1 |
+| D-051 | Peça em um lote ativo por vez | Aceita | 3.2 |
+| D-052 | Id de lote inválido responde 404 | Aceita | 3.3 |
+| D-053 | Número do lote só depois da criação | Aceita | 3.5 |
+| D-054 | Número do lote em romano com o número comum ao lado | Aceita | 3.5 |
+| D-055 | Commit do teste vermelho antes da implementação nas stories TDD | Aceita | 4.1 |
+| D-056 | Formato canônico do conteúdo assinado | Aceita | 4.2 |
+| D-057 | Só o UNIQUE (lot_id, seq) indexa os lances por lote | Aceita | 4.3 |
+| D-058 | Selo vazio gravado na criação do lote | Aceita | 4.3 |
+| D-059 | Lance recusado quando o selo do lote não confere | Aceita | 4.3 |
+| D-060 | Catálogo falso nos testes e2e | Aceita | 4.4 |
+| D-061 | Um container Postgres por execução do e2e, suítes em série | Aceita | 4.4 |
+| D-062 | Data do lance no evento do stream | Aceita | 4.5 |
+| D-063 | Teto de 20 lotes comprometidos na carteira, sem paginação | Aceita | 4.5 |
+| D-064 | Liquidação bloqueada quando o selo do lote não confere | Aceita | 5.2 |
+| D-065 | Comprovante na auditoria do lote | Aceita | 5.5 |
+| D-066 | Lista completa de lances na auditoria, sem paginação | Aceita | 5.5 |
+| D-067 | Lotes encerrados do seed liquidados no passado | Aceita | 6.1 |
+| D-068 | Limite de tentativas no login por IP, com o IP da Cloudflare | Aceita | 6.2 |
+| D-069 | Prazos dos lotes do seed em dias | Aceita | 6.1 |
 
 ## Modelo
 
-```
-## D-NNN: título curto
+    ## D-NNN: título curto
 
-Status: Aceita | Substituída por D-NNN
-Data: AAAA-MM-DD
-Story: X.Y (ou "planejamento")
+    Status: Aceita | Substituída por D-NNN | Parcialmente substituída por D-NNN
+    Data: AAAA-MM-DD
+    Story: X.Y (ou "planejamento")
+    Substitui: D-NNN (opcional; diz qual parte, quando parcial)
 
-**Decisão:** o que foi escolhido, em uma ou duas frases.
-**Por quê:** o motivo concreto.
-**Alternativas descartadas:** opção e motivo, uma por linha.
-**Consequência:** o que isso obriga ou limita daqui para frente.
-```
+    **Decisão:** o que foi escolhido, em uma ou duas frases.
+    **Por quê:** o motivo concreto.
+    **Alternativas descartadas:** opção e motivo, uma por linha.
+    **Consequência:** o que isso obriga ou limita daqui para frente.
 
 ---
 
 ## D-001: NestJS + TypeScript no back-end
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** API em NestJS com TypeScript.
 **Por quê:** estrutura de módulos, injeção de dependência e validação por DTO prontas; organização parecida com Spring, que já conheço.
@@ -34,7 +109,9 @@ Status: Aceita · Story: planejamento
 
 ## D-002: PostgreSQL com TypeORM
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** PostgreSQL acessado via TypeORM (`@nestjs/typeorm`).
 **Por quê:** integração nativa com o Nest, entidades como classes, lock pessimista (`pessimistic_write`) e `@Check` declarativos.
@@ -43,7 +120,9 @@ Status: Aceita · Story: planejamento
 
 ## D-003: Itens da API do Cleveland Museum of Art
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** tema arte clássica europeia, com itens da Open Access API do Cleveland Museum of Art.
 **Por quê:** sem chave, dados completos já na busca (sem N+1), acervo em domínio público (CC0), respostas testadas abaixo de 1s.
@@ -59,7 +138,9 @@ Status: Aceita · Story: planejamento
 
 ## D-004: Snapshot do item, incluindo a imagem
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** ao criar o lote, os dados da peça e a imagem são copiados para o banco. A imagem fica em `bytea` na tabela `lot_images` e é servida por `GET /lots/:id/image`.
 **Por quê:** o desafio exige que vitrine, sala, auditoria e comprovante funcionem com a API fora do ar. A API e o CDN de imagens da Cleveland são serviços separados; só guardar a URL ainda dependeria do CDN.
@@ -68,7 +149,9 @@ Status: Aceita · Story: planejamento
 
 ## D-005: Tempo real com SSE e alias público
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** `GET /lots/:id/stream` com `@Sse`, público. O evento traz o alias do licitante; o front compara com `me.alias` (vindo do `GET` autenticado) para mostrar "ganhando/superado".
 **Por quê:** a comunicação é só servidor → cliente, e o histórico com alias já é público por exigência da auditoria. Nenhuma dependência nova.
@@ -80,7 +163,9 @@ Status: Aceita · Story: planejamento
 
 ## D-006: JWT no header, validade de 8h, sem refresh
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** JWT em `Authorization: Bearer`, expirando em 8h, sem refresh token.
 **Por quê:** front e API ficam em domínios diferentes. Cookie viraria de terceiro (`SameSite=None`), que o Safari bloqueia. 8h evita que o avaliador seja deslogado no meio do teste.
@@ -89,7 +174,9 @@ Status: Aceita · Story: planejamento
 
 ## D-007: Deploy em Render (API) + Neon (banco)
 
-Status: Banco substituído por D-027 · Story: planejamento
+Status: Parcialmente substituída por D-027
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** API no Render Web Service free, banco no Neon free, front estático no Render Static Site ou Vercel.
 **Por quê:** os dois são gratuitos sem cartão. O Neon não expira.
@@ -98,16 +185,20 @@ Status: Banco substituído por D-027 · Story: planejamento
 
 ## D-008: Cold start aceito
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** sem pinger externo; o primeiro acesso pode levar até ~1 min, e isso é avisado no README.
-**Por quê:** zero trabalho extra.
+**Por quê:** um pinger é mais um serviço externo para configurar e manter dentro do prazo, e o atraso só acontece no primeiro acesso depois de 15 min sem tráfego.
 **Alternativas descartadas:** UptimeRobot chamando `/health` a cada 5 min.
 **Consequência:** `/health` não toca no banco.
 
 ## D-009: Liquidação sem job periódico
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** a liquidação acontece por um timer em memória apontando para o próximo `ends_at` e também quando alguém acessa um lote vencido.
 **Por quê:** a API dorme no Render, então um job agendado sozinho não basta. E um cron consultando o banco a cada minuto mantém o Neon ligado: no mínimo 0,25 CU × 744 h ≈ 186 CU-h, acima dos 100 do free.
@@ -116,7 +207,9 @@ Status: Aceita · Story: planejamento
 
 ## D-010: Status do lote calculado pelo horário
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** agendado, ao vivo e encerrado são calculados a partir de `starts_at`/`ends_at` na query. Só eventos viram coluna: `cancelled_at`, `settled_at`.
 **Por quê:** nenhum job precisa estar acordado para o status mudar.
@@ -125,7 +218,9 @@ Status: Aceita · Story: planejamento
 
 ## D-011: Anti-sniping soma 2 min ao fim atual
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** lance aceito faltando 2 min ou menos para o fim faz `ends_at += 2 min`.
 **Por quê:** é a leitura literal do enunciado ("estende o fim do lote para +2 minutos") e é como o Catawiki, uma das referências do desafio, funciona.
@@ -134,7 +229,9 @@ Status: Aceita · Story: planejamento
 
 ## D-012: Cadeia de HMAC contra adulteração
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** cada lance guarda um HMAC de `lot_id`, `seq`, `user_id`, valor, data e o hash anterior. O lote guarda um selo com HMAC da contagem e do último hash. O segredo fica só em variável de ambiente.
 **Por quê:** com hash simples (SHA-256), quem tem acesso ao banco recalcula a cadeia inteira. Com HMAC, recalcular exige o segredo. O `user_id` no HMAC impede trocar o dono de um lance; o selo detecta remoção do final.
@@ -143,7 +240,9 @@ Status: Aceita · Story: planejamento
 
 ## D-013: Alias por lote
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** licitantes aparecem como alias derivado de HMAC de `user_id` + `lot_id`.
 **Por quê:** o desafio exige auditoria e comprovante sem dado pessoal. Alias diferente por lote impede cruzar o comportamento de um licitante entre leilões.
@@ -152,7 +251,9 @@ Status: Aceita · Story: planejamento
 
 ## D-014: Lock pessimista e transação única nos lances
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** lance, liquidação e cancelamento rodam numa transação, com `FOR UPDATE` no lote e nas carteiras, que são travadas sempre em ordem de `id`.
 **Por quê:** lances simultâneos no mesmo lote não podem ler o mesmo "lance atual". A ordem fixa evita deadlock.
@@ -161,7 +262,9 @@ Status: Aceita · Story: planejamento
 
 ## D-015: Dinheiro em centavos, `integer`
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** valores em centavos, coluna `integer`, com teto validado no depósito e no lance.
 **Por quê:** sem erro de arredondamento. `bigint` e `numeric` voltam como string no driver.
@@ -170,7 +273,9 @@ Status: Aceita · Story: planejamento
 
 ## D-016: Papéis escolhidos no cadastro
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** o usuário escolhe `AUCTIONEER` ou `BIDDER` no cadastro, e o papel não muda depois.
 **Por quê:** o avaliador consegue testar os dois lados sem depender só do seed.
@@ -179,7 +284,9 @@ Status: Aceita · Story: planejamento
 
 ## D-017: Lote não editável
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** o leiloeiro cria, cancela (sem lances) e vê o resultado. Não edita.
 **Por quê:** editar lote com lances mexeria no que a auditoria registra, e o enunciado não pede edição.
@@ -188,7 +295,9 @@ Status: Aceita · Story: planejamento
 
 ## D-018: Opcionais escolhidos
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** dos opcionais, entram busca e filtro de lotes, Docker Compose e testes automatizados.
 **Por quê:** prazo de 7 dias com ~3h por dia. Busca e filtro são baratos com os dados do snapshot.
@@ -197,7 +306,9 @@ Status: Aceita · Story: planejamento
 
 ## D-019: Testes com Jest, Testcontainers e TDD seletivo
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** Jest; integração contra Postgres real via Testcontainers; TDD só para regras de lance, saldo comprometido, anti-sniping, liquidação e cadeia de HMAC.
 **Por quê:** TDD em tudo consome tempo que o prazo não tem. Nessas regras, um bug aparece direto para o avaliador.
@@ -206,7 +317,9 @@ Status: Aceita · Story: planejamento
 
 ## D-020: Seed pelos services
 
-Status: Aceita · Story: planejamento
+Status: Parcialmente substituída por D-069
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** o seed cria usuários, lotes e lances pelos mesmos services da aplicação, incluindo o download da imagem. O lote ao vivo termina em ~30 dias.
 **Por quê:** lance inserido por SQL não teria HMAC válido e a auditoria acusaria adulteração. O prazo longo mantém o lote aberto durante a avaliação.
@@ -215,7 +328,9 @@ Status: Aceita · Story: planejamento
 
 ## D-021: Squash merge e título de PR validado
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** uma branch e uma PR por story, merge por squash, título no formato Conventional Commits validado no CI.
 **Por quê:** a `main` fica com um commit por story, legível. Validar só o título dispensa commitlint e hooks locais.
@@ -224,16 +339,20 @@ Status: Aceita · Story: planejamento
 
 ## D-022: Lint padrão do Nest com limite de complexidade
 
-Status: Parcialmente substituída por D-028 · Story: planejamento
+Status: Parcialmente substituída por D-028
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** config de ESLint gerada pelo Nest CLI, mais `complexity: ['error', 10]`.
-**Por quê:** barra função com muitos caminhos aninhados, um dos pontos do feedback do desafio anterior ("código mal construído").
+**Por quê:** barra função com muitos caminhos aninhados, que fica difícil de ler e de testar.
 **Alternativas descartadas:** regras extras (`no-explicit-any` como erro, `no-floating-promises`).
 **Consequência:** função que estoura o limite é quebrada, nunca silenciada com `eslint-disable`.
 
 ## D-023: Tipos do front declarados à mão
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** o front declara os tipos das respostas em `web/src/shared/api/types.ts`. No back, toda resposta é uma classe em `*.dto.ts`.
 **Por quê:** a API tem umas 15 rotas e back e front mudam na mesma PR, então o risco de divergência é controlado. As respostas como classe deixam o Swagger pronto para ser ligado depois (documentação é desejada, mas não é prioridade).
@@ -244,16 +363,20 @@ Status: Aceita · Story: planejamento
 
 ## D-024: Testes no padrão do Nest
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** teste unitário em `*.spec.ts` ao lado do arquivo testado; integração em `api/test/*.e2e-spec.ts` com config própria do Jest.
 **Por quê:** é o padrão do framework e do Nest CLI. Ao lado do código, o import é `./bid.rules`, sem caminhos relativos longos.
-**Alternativas descartadas:** árvore espelhada como no Spring (`src/` e `test/` paralelos), que em TypeScript exige alias de import e vai contra o que o avaliador espera de um projeto Nest.
+**Alternativas descartadas:** árvore espelhada como no Spring (`src/` e `test/` paralelos), que em TypeScript exige alias de import e foge do que o Nest CLI gera.
 **Consequência:** a suíte lenta (Testcontainers) roda separada, com `npm run test:e2e`.
 
 ## D-025: npm sem workspaces e front no Render
 
-Status: Aceita · Story: planejamento · Complementa D-007
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** npm, com `package.json` e lockfile independentes em `api/` e `web/`. O front vai para o Render Static Site, junto com a API.
 **Por quê:** cada serviço no Render aponta o Root Directory para a sua pasta, sem comandos de workspace no build. Tudo numa plataforma só.
@@ -262,7 +385,9 @@ Status: Aceita · Story: planejamento · Complementa D-007
 
 ## D-026: Pastas por domínio, não por camada
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** uma pasta por módulo de domínio (`bids/`, `lots/`, `wallets/`...), com controller, service, entidade, regras e DTOs dentro.
 **Por quê:** é o padrão do Nest. A pasta coincide com o `@Module`, o `nest g resource` gera assim, e uma story mexe numa pasta só. Regras como "só o `catalog` chama a Cleveland" ficam fáceis de verificar.
@@ -271,25 +396,33 @@ Status: Aceita · Story: planejamento
 
 ## D-027: Banco no Postgres do Render, recriado na entrega
 
-Status: Aceita · Story: planejamento · Substitui a parte de banco da D-007
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
+Substitui: a parte de banco da D-007
 
 **Decisão:** o banco de produção é o Postgres free do Render, na mesma região da API. No dia da entrega, o banco é apagado, recriado e recebe o seed de novo.
-**Por quê:** tudo numa plataforma só, conexão pela URL interna sem SSL, e somem as restrições do Neon (cota de CU-h e compute desligando após 5 min). O free do Render expira em 30 dias, mas o Elite Dev avalia em até 4 dias após a entrega e o processo inteiro dura de 20 a 30 dias. Recriado na entrega, o banco cobre o processo inteiro.
+**Por quê:** tudo numa plataforma só, conexão pela URL interna sem SSL, e somem as restrições do Neon (cota de CU-h e compute desligando após 5 min). O free do Render expira em 30 dias; recriado no dia da entrega, o banco fica no ar pelos 30 dias seguintes a ela.
 **Alternativas descartadas:** Neon (não expira, mas exige string direta com SSL, pool ajustado e cuidado com a cota de CU-h).
 **Consequência:** o seed precisa ser confiável e repetível. Recriar o banco gera uma URL nova, que precisa ser atualizada na API. A proibição de cron perde o motivo da cota, mas a liquidação continua por timer em memória e no acesso, porque a API dorme.
 
 ## D-028: `any` proibido no lint
 
-Status: Aceita · Story: planejamento · Substitui a parte da D-022 que descartava `no-explicit-any`
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
+Substitui: a parte da D-022 que descartava `no-explicit-any`
 
 **Decisão:** `@typescript-eslint/no-explicit-any` como erro, na API e no front.
-**Por quê:** a config padrão do Nest desliga essa regra, então um `any` deixado pela IA passaria pelo CI. Tipagem consistente pesa na avaliação de qualidade.
+**Por quê:** a config padrão do Nest desliga essa regra, então um `any` deixado pela IA passaria pelo CI e desligaria a checagem de tipos naquele ponto.
 **Alternativas descartadas:** manter o padrão do Nest (o `any` só seria pego em revisão manual).
 **Consequência:** tipo desconhecido usa `unknown` com checagem.
 
 ## D-029: Comprovante assinado com HMAC
 
-Status: Aceita · Story: planejamento
+Status: Aceita
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** o comprovante guarda um HMAC de lote, alias do vencedor, valor, hash final da cadeia e data da liquidação, verificado a cada exibição. Um segredo só, com prefixo de domínio por uso (`bid:`, `seal:`, `alias:`, `receipt:`).
 **Por quê:** o token aleatório impede adivinhar o link, mas não prova que o conteúdo não foi alterado no banco. A assinatura prova. Reaproveita a mesma lógica da cadeia de lances.
@@ -298,7 +431,9 @@ Status: Aceita · Story: planejamento
 
 ## D-030: Docker Compose sobe o projeto inteiro
 
-Status: Aceita · Momento de implementação substituído por D-035 · Story: planejamento
+Status: Parcialmente substituída por D-035
+Data: 2026-10-23
+Story: planejamento
 
 **Decisão:** `docker compose up` sobe banco, API e web. Dockerfiles em `api/` e `web/` servem só ao compose.
 **Por quê:** quem avalia roda o projeto local com um comando, sem instalar Node.
@@ -353,7 +488,8 @@ Story: 1.1
 
 Status: Aceita
 Data: 2026-10-23
-Story: 1.1 · Substitui a parte da D-030 que adiava o compose para uma story própria
+Story: 1.1
+Substitui: a parte da D-030 que adiava o compose para uma story própria
 
 **Decisão:** os Dockerfiles e o compose com banco, API e web entram já na story 1.1. O front no container é o build do Vite servido por nginx, com fallback para `index.html`.
 **Por quê:** com o esqueleto pronto, o compose completo custava pouco e já deixa o projeto rodando com um comando. O nginx reproduz o Static Site do Render (arquivos estáticos e rewrite), sem dependência npm nova.
@@ -423,12 +559,14 @@ Story: planejamento
 
 **Decisão:** roteamento do front com `react-router` v7 no modo biblioteca (`createBrowserRouter`), sem o modo framework.
 **Por quê:** o front é um SPA estático no Render; o modo biblioteca não traz build próprio, SSR nem convenção de arquivos, e encaixa no Vite que já existe.
-**Alternativas descartadas:** modo framework do React Router (substitui o build do Vite e puxa SSR que não é usado); TanStack Router (mais tipado, mas menos conhecido pelo avaliador).
+**Alternativas descartadas:** modo framework do React Router (substitui o build do Vite e puxa SSR que não é usado); TanStack Router (rotas mais tipadas, mas dependência e convenções novas para poucas rotas).
 **Consequência:** rotas declaradas em `web/src/app/`, com guarda por papel feita no próprio layout das rotas.
 
 ## D-042: Lance atual guardado no lote, como cópia só para exibição
 
-Status: Aceita · Story: 3.2
+Status: Aceita
+Data: 2026-10-25
+Story: 3.2
 
 **Decisão:** a tabela `lots` guarda `current_bid` e `bid_count`, atualizados na mesma transação de cada lance, com o lote travado. Essas colunas servem só para exibir e ordenar (vitrine, destaque, painel). Tudo que envolve dinheiro ou vencedor lê a tabela de lances: a liquidação, o comprovante e a regra de "você já está ganhando" usam sempre o último lance da cadeia.
 **Por quê:** a vitrine lista vários lotes com o lance atual de cada um. Calcular o maior lance na tabela de lances a cada listagem é mais caro e mais difícil de indexar. Com a cópia no lote, a listagem lê uma coluna só. Mas a cópia não é protegida pela cadeia de HMAC: se alguém alterar `current_bid` direto no banco, nada detecta. A tabela de lances é protegida, e qualquer alteração nela aparece na auditoria. Por isso a cópia nunca decide quem paga nem quanto.
@@ -437,7 +575,9 @@ Status: Aceita · Story: 3.2
 
 ## D-043: 422 para todas as recusas de lance
 
-Status: Aceita · Story: 4.3
+Status: Aceita
+Data: 2026-10-25
+Story: 4.3
 
 **Decisão:** as cinco recusas de lance (`BID_BELOW_MINIMUM`, `INSUFFICIENT_BALANCE`, `ALREADY_WINNING`, `LOT_NOT_STARTED`, `LOT_ENDED`) respondem 422, com `{ code, ...detalhe }`. O front decide a mensagem pelo `code`, nunca pelo status.
 **Por quê:** em todas o pedido é bem formado, mas fere uma regra de negócio. Um status só deixa o filter simples e evita que o front dependa de uma divisão que não muda nada na tela.
@@ -446,7 +586,9 @@ Status: Aceita · Story: 4.3
 
 ## D-044: Alias com 6 caracteres em base32
 
-Status: Aceita · Story: 4.2
+Status: Aceita
+Data: 2026-10-25
+Story: 4.2
 
 **Decisão:** o alias do licitante no lote é "Licitante " seguido dos 6 primeiros caracteres em base32 do HMAC `alias:` de `user_id` + `lot_id` (ex.: "Licitante K7QX2M").
 **Por quê:** o front deriva "você está ganhando" comparando `me.alias` com o alias do evento. Dois licitantes com o mesmo alias no mesmo lote veriam os dois "ganhando". Com 6 caracteres (30 bits), a chance de colisão entre os licitantes de um lote é desprezível; com 4 (20 bits), deixa de ser.
@@ -455,7 +597,9 @@ Status: Aceita · Story: 4.2
 
 ## D-045: Lote encerrado no seed com `Clock` deslocado
 
-Status: Parcialmente substituída por D-067 · Story: 6.1
+Status: Parcialmente substituída por D-067
+Data: 2026-10-25
+Story: 6.1
 
 **Decisão:** além do lote ao vivo, o seed cria um lote já encerrado e liquidado. Para isso, o seed troca o `Clock` por um deslocado para o passado enquanto cria esse lote e os lances dele, sempre pelos services; depois volta ao relógio real e liquida o lote pelo service de liquidação.
 **Por quê:** o avaliador precisa ver comprovante, total recebido e a aba Encerrados no primeiro acesso, sem esperar um lote terminar. Passando pelos services, a cadeia de HMAC, o selo e a assinatura do comprovante saem válidos.
@@ -554,7 +698,8 @@ Story: 3.5
 
 Status: Aceita
 Data: 2026-10-27
-Story: 3.5 · Substitui D-036
+Story: 3.5
+Substitui: D-036
 
 **Decisão:** o número do lote aparece sempre em romano com o número comum ao lado: "Lote DXXXVII · nº 537". Acima de 3999, onde o romano padrão acaba, aparece só o número comum ("Lote nº 4000"). O número continua sequencial, global, único e imutável, e a busca aceita "537" ou "DXXXVII".
 **Por quê:** o romano fica longo e difícil de ler com o crescimento da numeração (888 vira DCCCLXXXVIII), quem não lê romano não sabe qual número digitar na busca, e a notação padrão não passa de 3999.
@@ -579,9 +724,9 @@ Data: 2026-10-27
 Story: 4.2
 
 **Decisão:** todo conteúdo assinado é `<prefixo>:` seguido dos campos em ordem fixa, separados por `|`, com HMAC-SHA256 em hex. Prefixos: `bid:` (`lot_id|seq|user_id|valor|data|hash anterior`), `seal:` (`lot_id|contagem|último hash`), `alias:` (`user_id|lot_id`) e `receipt:`. Data em ISO 8601 UTC com milissegundos (`toISOString()`), valor inteiro em centavos, e o primeiro lance (ou o lote sem lances) usa o `GENESIS` (64 zeros) como hash anterior.
-**Por quê:** a mesma entrada precisa gerar sempre o mesmo texto, senão a verificação falha sem adulteração nenhuma. O separador impede que dígitos passem de um campo para o vizinho sem mudar o hash (caso 12), e o prefixo impede que uma assinatura valha em outro contexto (D-029). O `lot_id` no selo impede que lotes sem lances tenham selos iguais: sem ele, quem apagasse todos os lances de um lote poderia copiar o selo de qualquer lote vazio e a auditoria mostraria o lote como íntegro.
+**Por quê:** a mesma entrada precisa gerar sempre o mesmo texto, senão a verificação falha sem adulteração nenhuma. O separador impede que dígitos passem de um campo para o vizinho sem mudar o hash (teste `muda o hash quando dígitos passam de um campo para o vizinho`), e o prefixo impede que uma assinatura valha em outro contexto (D-029). O `lot_id` no selo impede que lotes sem lances tenham selos iguais: sem ele, quem apagasse todos os lances de um lote poderia copiar o selo de qualquer lote vazio e a auditoria mostraria o lote como íntegro.
 **Alternativas descartadas:** JSON canônico (depende da ordem das chaves e da serialização de números); campos com prefixo de tamanho (mais robusto para texto livre, desnecessário com números, ISO e hex); data em epoch ms (menos legível na auditoria).
-**Consequência:** o formato não muda depois do seed, pelo mesmo motivo do segredo: todas as assinaturas gravadas deixariam de bater e a auditoria acusaria todos os lotes. O caso 15 (`chain.spec.ts`, valor conhecido) fixa o formato do lance e o caso 8 fixa o do selo: qualquer mudança neles quebra o teste.
+**Consequência:** o formato não muda depois do seed, pelo mesmo motivo do segredo: todas as assinaturas gravadas deixariam de bater e a auditoria acusaria todos os lotes. Em `api/src/audit/chain.spec.ts`, o teste `assina os campos em ordem fixa com prefixo bid:` fixa o formato do lance e o `selo de lote sem lances usa contagem zero e o hash genesis` fixa o do selo: qualquer mudança neles quebra o teste.
 
 ## D-057: Só o UNIQUE (lot_id, seq) indexa os lances por lote
 
@@ -624,7 +769,7 @@ Story: 4.4
 
 **Decisão:** a app dos testes e2e troca o `CatalogService` por um falso, que devolve a peça (com título configurável por `artworkId`) e uma imagem fixa. Os lotes continuam sendo criados por `POST /lots`.
 **Por quê:** o e2e prova lances, concorrência e vitrine contra um Postgres real; depender da Cleveland deixaria o CI instável e lento por um motivo alheio ao que está sendo testado. O download real e a validação da imagem já têm teste unitário desde a 3.2.
-**Alternativas descartadas:** chamar a Cleveland de verdade (rede no CI, peça que pode mudar ou sumir); servidor HTTP falso imitando a Cleveland (mais código de teste para cobrir o que os unitários já cobrem); `INSERT` direto em `lots` (pularia o selo vazio e o fluxo do leiloeiro, D-045).
+**Alternativas descartadas:** chamar a Cleveland de verdade (rede no CI, peça que pode mudar ou sumir); servidor HTTP falso imitando a Cleveland (mais código de teste para cobrir o que os unitários já cobrem); `INSERT` direto em `lots` (pularia o selo vazio e o fluxo do leiloeiro, D-058).
 **Consequência:** o e2e não detecta mudança no formato da resposta da Cleveland; isso fica com os testes do mapeamento.
 
 ## D-061: Um container Postgres por execução do e2e, suítes em série
@@ -697,7 +842,8 @@ Story: 5.5
 
 Status: Aceita
 Data: 2026-10-28
-Story: 6.1 · Substitui a parte da D-045 que liquidava com o relógio real
+Story: 6.1
+Substitui: a parte da D-045 que liquidava com o relógio real
 
 **Decisão:** o seed liquida cada lote encerrado com o `Clock` ainda deslocado, 1 minuto depois do `ends_at` do lote, pelo service de liquidação.
 **Por quê:** o comprovante e o painel mostram a data da liquidação; com o relógio real, um leilão que terminou há semanas apareceria liquidado no dia do seed.
@@ -714,3 +860,15 @@ Story: 6.2
 **Por quê:** sem limite, o login aceita força bruta de senha. No Render a requisição passa pela Cloudflare e pelo proxy do Render: sem `trust proxy`, todo mundo teria o IP do proxy; só com ele, `req.ip` pode virar o IP do servidor da Cloudflare, compartilhado por muitos clientes. A Cloudflare preenche e sobrescreve o `CF-Connecting-IP`, então o cliente não o falsifica por ela.
 **Alternativas descartadas:** limite global em todas as rotas (bloquearia lances e o stream sem ganho de segurança); só `req.ip` com `trust proxy` (risco de um limite único para todos atrás do mesmo servidor da Cloudflare); limite por e-mail (permite travar a conta de outra pessoa).
 **Consequência:** o risco é o proxy mudar: quem chamar a API direto, sem passar pela Cloudflare, pode mandar um `CF-Connecting-IP` falso e trocar de IP a cada tentativa. Conferir em produção que o cabeçalho chega e que dois aparelhos não dividem o mesmo contador. Contagem em memória, numa instância só, como os eventos do SSE.
+
+## D-069: Prazos dos lotes do seed em dias
+
+Status: Aceita
+Data: 2026-10-28
+Story: 6.1
+Substitui: a parte da D-020 sobre o prazo
+
+**Decisão:** os lotes ao vivo do seed encerram entre 7 e 10 dias depois da execução, e os agendados abrem entre 5 e 6 dias depois dela.
+**Por quê:** o seed roda no dia da entrega, junto com a recriação do banco (D-027), e o sistema é testado nos dias seguintes; 7 a 10 dias bastam para os lotes ao vivo continuarem abertos nesse período, e os agendados abrem antes de eles encerrarem.
+**Alternativas descartadas:** lote ao vivo terminando em ~30 dias, como dizia a D-020.
+**Consequência:** o seed precisa rodar de novo no dia da entrega; rodado antes, os lotes ao vivo podem encerrar cedo demais.
