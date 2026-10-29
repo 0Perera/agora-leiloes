@@ -915,16 +915,20 @@ Antes de escrever código, usei o Claude para destrinchar o enunciado e decidir 
 - O novo teto por depósito, nos dois lados, com testes.
 
 **O que revisei e pedi para mudar:**
-- Defini a lista de itens da story: rodapé, posição do licitante, os ajustes do painel, menu do cabeçalho, contas de demonstração, atalhos da sala, tempo em dias, fade das imagens e o bug do cache da imagem.
-- Defini os casos de teste da posição, o caso de integração do licitante superado e os casos da divisão do tempo e do endereço da imagem.
-- Escolhi os termos de sugestão de cada departamento, conferidos no acervo.
-- Pedi o crédito "Imagens das obras: Cleveland Museum of Art." no rodapé.
-- Detalhei o visual da caixa de contas de demonstração: fechada numa linha, aberta no estilo dos cartões, uma linha por conta.
-- Pedi uma função só para dividir e formatar o tempo restante na sala, no destaque, nos cards e em Meus lances.
-- Decidi subir o teto por depósito para R$ 10.000.000,00, sem mudar o teto do saldo.
+- Pedi os itens da story: rodapé, posição do licitante na sala, rolagem até a ficha, título do lote como link, sugestões de busca e menu do cabeçalho em duas linhas.
+- Escolhi a lista de sugestões por departamento, depois de ver que Rembrandt, Madonna e amphora só dão resultado num deles.
+- Aprovei os casos de teste da posição, o caso de integração do licitante superado, o crédito ao museu no rodapé e o ajuste do painel em modo cartão.
+- Pedi a caixa de contas de demonstração: fechada numa linha, aberta no estilo dos cartões, e o clique preenche, fecha e põe o foco no Entrar.
+- Pedi os três atalhos de valor da sala na mesma linha, mesmo com valores grandes.
+- Pedi uma função só para o tempo restante em dias e horas acima de 48 h, na sala, no destaque, nos cards e em Meus lances.
+- Pedi o fade nas imagens do acervo e a correção do cache da imagem, depois de ver duas janelas com obras diferentes para o mesmo lote.
+- Decidi subir o teto por depósito para R$ 10.000.000,00, sem mudar o teto do saldo, porque os lotes do seed passam de R$ 100 mil.
 
 **Sugestões rejeitadas e por quê:**
 - Nada a registrar.
 
 **Erro encontrado na revisão:**
-- Nada a registrar.
+- Atalhos de valor na casa dos milhões estouravam a coluna no celular; agora quebram depois do "R$".
+- Escolher uma sugestão pelo teclado deixava o foco perdido na página; agora volta ao botão de sugestões.
+- Na conferência das telas: o resumo das contas de demonstração aparecia cortado em 360px; agora quebra em duas linhas.
+- Na conferência das telas: o lote encerrado sem comprovante ficava com o rótulo "Ação" sozinho no cartão; agora a linha some.

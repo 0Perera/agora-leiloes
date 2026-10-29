@@ -2,7 +2,7 @@
 title: 'Polimento final'
 type: 'feature'
 created: '2026-10-28'
-status: 'in-progress'
+status: 'done'
 baseline_commit: '310e2964888def88dc58bd90c66d1e2fd2c0b389'
 route: 'dispatch'
 review_loop_iteration: 0
@@ -90,18 +90,18 @@ context: []
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `api/src/bids/standing.rules.spec.ts` -- casos aprovados, vermelho -- commit `test` (D-055)
-- [ ] `api/src/bids/standing.rules.ts`, `bidder-tops.ts`, `lots.service.ts`, `lot-detail.dto.ts`, e2e -- regra, query e `me.standing`
-- [ ] `web/src/shared/api/types.ts`, `use-room.ts`, `live-bids.ts`, `bid-situation.tsx`, `room-status.tsx` -- linha da posição e atualização em tempo real
-- [ ] `web/src/app/logo.tsx`, `footer.tsx`, `layout.tsx`, `header.tsx`, `layout.css` -- rodapé e menu abaixo de 420px
-- [ ] `web/src/features/auctioneer/*` -- itens 3, 4, 5, 7 e 11
-- [ ] `web/src/features/auth/demo-accounts-box.tsx`, `auth.css` -- item 8
-- [ ] `web/src/features/live-room/bid-form.tsx`, `room.css` -- item 9
-- [ ] `web/src/shared/lib/countdown.ts` + spec, `shared/ui/countdown.tsx` -- item 10
-- [ ] Item 13: teto por depósito, testes e `screens.md` (commit próprio, escopo `wallets`; front em commit `web`)
-- [ ] DTOs da API com `artworkId`, `types.ts`, `client.ts` + spec, chamadas de `lotImageUrl` -- item 12 (commit `fix`)
-- [ ] `docs/stories/deferred-work.md` -- itens da seção "Polimento visual" marcados como feitos na 6.6
-- [ ] `docs/ai-log.md`, `sprint-status.yaml` (6-5 e 6-6) -- registro da story
+- [x] `api/src/bids/standing.rules.spec.ts` -- casos aprovados, vermelho -- commit `test` (D-055)
+- [x] `api/src/bids/standing.rules.ts`, `bidder-tops.ts`, `lots.service.ts`, `lot-detail.dto.ts`, e2e -- regra, query e `me.standing`
+- [x] `web/src/shared/api/types.ts`, `use-room.ts`, `live-bids.ts`, `bid-situation.tsx`, `room-status.tsx` -- linha da posição e atualização em tempo real
+- [x] `web/src/app/logo.tsx`, `footer.tsx`, `layout.tsx`, `header.tsx`, `layout.css` -- rodapé e menu abaixo de 420px
+- [x] `web/src/features/auctioneer/*` -- itens 3, 4, 5, 7 e 11
+- [x] `web/src/features/auth/demo-accounts-box.tsx`, `auth.css` -- item 8
+- [x] `web/src/features/live-room/bid-form.tsx`, `room.css` -- item 9
+- [x] `web/src/shared/lib/countdown.ts` + spec, `shared/ui/countdown.tsx` -- item 10
+- [x] Item 13: teto por depósito, testes e `screens.md` (commit próprio, escopo `wallets`; front em commit `web`)
+- [x] DTOs da API com `artworkId`, `types.ts`, `client.ts` + spec, chamadas de `lotImageUrl` -- item 12 (commit `fix`)
+- [x] `docs/stories/deferred-work.md` -- itens da seção "Polimento visual" marcados como feitos na 6.6
+- [x] `docs/ai-log.md`, `sprint-status.yaml` (6-5 e 6-6) -- registro da story
 
 **Acceptance Criteria:**
 - Given qualquer tela, when rola até o fim, then vê o rodapé com faixa grega, logo, os três links (GitHub em nova aba) e a linha do desafio, sem rolagem horizontal a partir de 360px.
@@ -109,6 +109,15 @@ context: []
 - Given o painel no celular, when o leiloeiro escolhe uma obra, then a ficha fica visível e o foco está no lance inicial.
 - Given o livro de lotes, when o leiloeiro clica no título de um lote não cancelado, then abre a sala.
 - Given a tela em 360px, when o cabeçalho tem os links do licitante ou do leiloeiro, then o menu quebra em duas linhas sem rolar.
+
+## Review Triage Log
+
+| Achado | Veredito | Evidência | Rota |
+|---|---|---|---|
+| `room.css` `.room-chip` com `nowrap`: valores na casa dos milhões estouram a coluna em 360px | medium | lote aceita inicial e lance até ~R$ 21 mi; "R$ 10.000.000,00" a 11px passa de ~90px | patch |
+| `search-suggestions.tsx` `pick`: escolher pelo teclado esconde o botão focado e o foco cai no body | low | o painel recebe `hidden` com o foco dentro; correção direta | patch |
+| `lots.service.ts` `viewer`: lance entre a query do detalhe e `bidderTops` deixa `standing` um lance à frente de `bidCount` | low | inofensivo: o próximo GET (disparado pelo próprio evento) corrige; a proteção exige transação extra | rejeitado |
+| `use-room.ts` `useStanding`: resposta descartada quando `watching` muda com GET em voo | false | `watching` só cai com lote encerrado ou cancelado, quando a linha da posição não aparece; `hasBid` sobe no mesmo render do `bidCount` | rejeitado |
 
 ## Design Notes
 
@@ -122,3 +131,9 @@ Rodapé escuro como o canvas: faixa grega clara no topo, bloco com logo + "ÁGOR
 
 **Manual checks:**
 - Screenshots em 360, 768, 1024 e 1280px de vitrine (rodapé e menu), sala com posição e painel.
+
+## Implementation Notes
+
+- Menu do cabeçalho quebra a partir de 440px, não 420px: entre 420 e 440px ele ainda ficava numa linha com 4px entre os links. O rótulo curto "Painel" saiu, porque o nome completo cabe com a quebra.
+- `me.standing` vem da API também em lote encerrado; só o front esconde a linha fora da sala ao vivo.
+- Licitante com lance faz um `GET /lots/:id` a mais a cada lance novo na sala.
