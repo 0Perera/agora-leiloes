@@ -181,4 +181,4 @@
 
 - source_spec: `docs/stories/spec-6-5-cancelamento-com-estorno.md`
   summary: Atualizar o `CLAUDE.md` para o cancelamento com estorno ("Gerenciar é: criar, cancelar sem lances..." e o exemplo de "Fora do escopo" que cita o estorno).
-  evidence: depois da D-070, o lote ao vivo com lances é cancelável; arquivo de contexto do agente, só o usuário decide a redação.
+  evidence: depois da D-070, o lote ao vivo com lances é cancelável; arquivo de contexto do agente, só o usuário decide a redação. Resolvido na própria 6.5, a pedido do usuário.

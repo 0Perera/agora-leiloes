@@ -92,7 +92,7 @@ dto/place-bid.dto.ts
 - Erro de validação de DTO no formato `{ code: 'VALIDATION_FAILED', fields: { <campo>: <regra> } }`, para o front traduzir por campo.
 - Configuração só via variáveis de ambiente validadas na inicialização. Todo novo env vai para o `.env.example`.
 - Papel (`AUCTIONEER` ou `BIDDER`) escolhido no cadastro e fixo depois. Leiloeiro não dá lance; licitante não cria lote.
-- Lote não é editável depois de criado. "Gerenciar" é: criar, cancelar sem lances e ver o resultado.
+- Lote não é editável depois de criado. "Gerenciar" é: criar, cancelar antes do fim (com lances, o comprometido do líder é devolvido) e ver o resultado.
   Leiloeiro só vê e cancela os próprios lotes.
 - Lance em lote cancelado ou inexistente devolve 404, sem código de domínio próprio.
 
@@ -281,7 +281,7 @@ O README é a porta de entrada do avaliador, não a documentação inteira. O de
 Proibido no README:
 - Lista de todas as decisões (fica no `decisions.md`; o README traz só as 5 principais).
 - Histórico do desenvolvimento, "melhorias futuras", autocrítica ou tom de desculpa. O que ficou de fora é declarado
-  em "Fora do escopo" como fato ("cancelamento com estorno não foi implementado"), sem justificativa longa.
+  em "Fora do escopo" como fato ("documentação da API com Swagger não foi feita"), sem justificativa longa.
   Limitação entra como comportamento + motivo: "o primeiro acesso pode levar até 1 min (plano free do Render)".
 - Texto repetido de `docs/`, explicação de código, tutorial de ferramenta.
 
