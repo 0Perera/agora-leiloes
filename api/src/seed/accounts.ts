@@ -7,7 +7,7 @@ type Account = { name: string; email: string; role: Role };
 
 export const ACCOUNTS = {
   auctioneer: {
-    name: 'Leiloeiro',
+    name: 'Casa Ágora',
     email: 'leiloeiro@agora.dev',
     role: 'AUCTIONEER',
   },
