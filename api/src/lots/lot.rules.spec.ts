@@ -1,8 +1,8 @@
 import { DomainException } from '../common/domain.exception';
 import {
   assertAvailable,
-  assertCancellable,
   CancelState,
+  cancellation,
   ListedLot,
   Schedule,
   scheduleErrors,
@@ -24,7 +24,7 @@ function makeListed(override: Partial<ListedLot> = {}): ListedLot {
 }
 
 function makeCancelState(override: Partial<CancelState> = {}): CancelState {
-  return { endsAt: at(2 * HOUR), hasBids: false, ...override };
+  return { endsAt: at(2 * HOUR), last: null, ...override };
 }
 
 describe('lotRules.scheduleErrors', () => {
@@ -82,37 +82,46 @@ describe('lotRules.assertAvailable', () => {
   });
 });
 
-describe('lotRules.assertCancellable', () => {
-  it('aceita lote agendado sem lances', () => {
-    expect(() => assertCancellable(makeCancelState(), NOW)).not.toThrow();
+describe('lotRules.cancellation', () => {
+  it('aceita lote agendado sem estorno', () => {
+    expect(cancellation(makeCancelState(), NOW)).toEqual({ release: null });
   });
 
-  it('aceita lote ao vivo sem lances', () => {
+  it('aceita lote ao vivo sem lances sem estorno', () => {
     const lot = makeCancelState({ endsAt: at(60_000) });
 
-    expect(() => assertCancellable(lot, NOW)).not.toThrow();
+    expect(cancellation(lot, NOW)).toEqual({ release: null });
   });
 
-  it('recusa lote com lance com LOT_HAS_BIDS', () => {
-    const lot = makeCancelState({ hasBids: true });
+  it('libera o comprometido do líder em lote ao vivo com lances', () => {
+    const last = { userId: 7, amount: 150_000 };
+    const lot = makeCancelState({ endsAt: at(60_000), last });
 
-    expect(() => assertCancellable(lot, NOW)).toThrow(
-      new DomainException('LOT_HAS_BIDS'),
-    );
+    expect(cancellation(lot, NOW)).toEqual({ release: last });
   });
 
   it('recusa lote encerrado com LOT_ENDED', () => {
     const lot = makeCancelState({ endsAt: NOW });
 
-    expect(() => assertCancellable(lot, NOW)).toThrow(
+    expect(() => cancellation(lot, NOW)).toThrow(
       new DomainException('LOT_ENDED'),
     );
   });
 
   it('lote encerrado com lance recusa com LOT_ENDED', () => {
-    const lot = makeCancelState({ endsAt: at(-HOUR), hasBids: true });
+    const last = { userId: 7, amount: 150_000 };
+    const lot = makeCancelState({ endsAt: at(-HOUR), last });
 
-    expect(() => assertCancellable(lot, NOW)).toThrow(
+    expect(() => cancellation(lot, NOW)).toThrow(
+      new DomainException('LOT_ENDED'),
+    );
+  });
+
+  it('recusa lote encerrado com lance com LOT_ENDED', () => {
+    const last = { userId: 7, amount: 150_000 };
+    const lot = makeCancelState({ endsAt: NOW, last });
+
+    expect(() => cancellation(lot, NOW)).toThrow(
       new DomainException('LOT_ENDED'),
     );
   });
