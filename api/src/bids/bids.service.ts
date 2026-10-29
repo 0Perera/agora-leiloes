@@ -11,6 +11,7 @@ import { Lot } from '../lots/lot.entity';
 import { SettlementTimer } from '../settlement/settlement.timer';
 import { Wallet } from '../wallets/wallet.entity';
 import { lockWallets, walletOf } from '../wallets/wallet.lock';
+import { available } from '../wallets/wallet.rules';
 import {
   BidHistoryDto,
   HistoryRow,
@@ -19,6 +20,7 @@ import {
 import { BidResponseDto } from './dto/bid-response.dto';
 import { Bid } from './bid.entity';
 import { decide, Movement, Refusal } from './bid.rules';
+import { LastBid, lastBid } from './last-bid';
 
 const PAGE_SIZE = 20;
 
@@ -37,8 +39,6 @@ const HISTORY_SQL = `
 type PageRow = { [K in keyof HistoryRow]: HistoryRow[K] | null } & {
   total: number;
 };
-
-type LastBid = Pick<Bid, 'seq' | 'userId' | 'amount' | 'hash'>;
 
 type Placement = {
   lot: Pick<Lot, 'id'>;
@@ -69,7 +69,7 @@ export class BidsService {
   ): Promise<BidResponseDto> {
     const bid = await this.transact(userId, lotId, amount);
     // Fora da transação: evento só depois do commit, nunca de lance revertido.
-    this.events.publish(lotId, bid);
+    this.events.bid(lotId, bid);
     // Prorrogação muda o próximo fim; o recálculo não segura a resposta.
     this.timer.refresh();
     return bid;
@@ -93,7 +93,7 @@ export class BidsService {
     };
   }
 
-  // Liderança e mínimo saem do último lance de bids, nunca da cópia no lote (D-042).
+  // Liderança e mínimo saem do último lance da cadeia: ver D-042.
   private transact(
     userId: number,
     lotId: number,
@@ -114,7 +114,7 @@ export class BidsService {
         lot,
         last: last && { userId: last.userId, amount: last.amount },
         userId,
-        available: available(wallets, userId),
+        available: available(walletOf(wallets, userId)),
         amount,
         now,
       });
@@ -182,19 +182,6 @@ async function lockLot(manager: EntityManager, id: number) {
   });
   if (!lot) throw new NotFoundException();
   return lot;
-}
-
-function lastBid(manager: EntityManager, lotId: number) {
-  return manager.getRepository(Bid).findOne({
-    select: { seq: true, userId: true, amount: true, hash: true },
-    where: { lotId },
-    order: { seq: 'DESC' },
-  });
-}
-
-function available(wallets: Wallet[], userId: number): number {
-  const wallet = walletOf(wallets, userId);
-  return wallet.balance - wallet.committed;
 }
 
 async function move(

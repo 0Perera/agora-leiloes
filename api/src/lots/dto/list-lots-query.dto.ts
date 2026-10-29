@@ -1,4 +1,4 @@
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import {
   IsIn,
   IsInt,
@@ -8,9 +8,10 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { LOT_STATUSES, type LotStatus } from './lot-card.dto';
-
-const MAX_NUMBER = 2_147_483_647;
+import { MAX_INT } from '../../common/max-int';
+import { PageQueryDto } from '../../common/page-query.dto';
+import { trim } from '../../common/trim';
+import { LOT_STATUSES, type LotStatus } from '../lot-status';
 
 // Só dígitos: o Number aceitaria "1e3", "0x10" e " 7" como outro número de lote.
 function digits({ value }: { value: unknown }): unknown {
@@ -19,11 +20,7 @@ function digits({ value }: { value: unknown }): unknown {
     : value;
 }
 
-function trim({ value }: { value: unknown }): unknown {
-  return typeof value === 'string' ? value.trim() : value;
-}
-
-export class ListLotsQueryDto {
+export class ListLotsQueryDto extends PageQueryDto {
   @IsOptional()
   @IsIn(LOT_STATUSES)
   status: LotStatus = 'live';
@@ -38,13 +35,6 @@ export class ListLotsQueryDto {
   @Transform(digits)
   @IsInt()
   @Min(1)
-  @Max(MAX_NUMBER)
+  @Max(MAX_INT)
   number?: number;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @Max(100)
-  page: number = 1;
 }

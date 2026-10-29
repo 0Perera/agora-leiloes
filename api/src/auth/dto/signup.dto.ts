@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { ROLES } from '../../users/user.entity';
 import type { Role } from '../../users/user.entity';
-import { trim } from './trim';
+import { trim } from '../../common/trim';
 
 export class SignupDto {
   @Transform(trim)

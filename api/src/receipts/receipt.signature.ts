@@ -1,5 +1,5 @@
 import { timingSafeEqual } from 'node:crypto';
-import { sign as signFields } from '../audit/sign';
+import { sign } from '../common/sign';
 
 export type ReceiptFields = {
   lotId: number;
@@ -9,8 +9,8 @@ export type ReceiptFields = {
   settledAt: Date;
 };
 
-export function sign(secret: string, receipt: ReceiptFields): string {
-  return signFields(secret, 'receipt', [
+export function signReceipt(secret: string, receipt: ReceiptFields): string {
+  return sign(secret, 'receipt', [
     receipt.lotId,
     receipt.alias,
     receipt.amount,
@@ -19,12 +19,12 @@ export function sign(secret: string, receipt: ReceiptFields): string {
   ]);
 }
 
-export function verify(
+export function verifyReceipt(
   secret: string,
   receipt: ReceiptFields,
   signature: string,
 ): boolean {
-  const expected = Buffer.from(sign(secret, receipt), 'hex');
+  const expected = Buffer.from(signReceipt(secret, receipt), 'hex');
   const given = Buffer.from(signature, 'hex');
   // Tamanhos diferentes fazem o timingSafeEqual lançar erro.
   return given.length === expected.length && timingSafeEqual(given, expected);

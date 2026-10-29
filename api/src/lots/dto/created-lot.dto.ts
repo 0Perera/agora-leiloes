@@ -1,6 +1,6 @@
 import type { Lot } from '../lot.entity';
 
-export class LotResponseDto {
+export class CreatedLotDto {
   id!: number;
   number!: number;
   title!: string;
@@ -11,7 +11,7 @@ export class LotResponseDto {
   endsAt!: Date;
 }
 
-export type CreatedLot = Pick<
+export type CreatedLotFields = Pick<
   Lot,
   | 'id'
   | 'number'
@@ -23,7 +23,7 @@ export type CreatedLot = Pick<
   | 'endsAt'
 >;
 
-export function toLotResponse(lot: CreatedLot): LotResponseDto {
+export function toCreatedLot(lot: CreatedLotFields): CreatedLotDto {
   return {
     id: lot.id,
     number: lot.number,

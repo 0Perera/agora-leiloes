@@ -1,4 +1,4 @@
-import type { LotStatus } from '../../lots/dto/lot-card.dto';
+import type { LotStatus } from '../../lots/lot-status';
 import type { AuditResult, BidMark } from '../chain';
 
 export class AuditBidDto {

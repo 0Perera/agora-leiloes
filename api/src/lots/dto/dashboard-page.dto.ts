@@ -1,6 +1,6 @@
 import { DashboardLotDto } from './dashboard-lot.dto';
 
-export class BookCountsDto {
+export class DashboardCountsDto {
   all!: number;
   live!: number;
   scheduled!: number;
@@ -8,10 +8,10 @@ export class BookCountsDto {
   cancelled!: number;
 }
 
-export class DashboardBookDto {
+export class DashboardPageDto {
   items!: DashboardLotDto[];
   page!: number;
   pageSize!: number;
   total!: number;
-  counts!: BookCountsDto;
+  counts!: DashboardCountsDto;
 }

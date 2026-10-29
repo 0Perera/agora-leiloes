@@ -1,11 +1,3 @@
-import { Type } from 'class-transformer';
-import { IsInt, IsOptional, Max, Min } from 'class-validator';
+import { PageQueryDto } from '../../common/page-query.dto';
 
-export class BidHistoryQueryDto {
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @Max(100_000)
-  page: number = 1;
-}
+export class BidHistoryQueryDto extends PageQueryDto {}

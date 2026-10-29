@@ -1,25 +1,20 @@
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import {
   IsIn,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
-  Max,
   MaxLength,
-  Min,
 } from 'class-validator';
+import { PageQueryDto } from '../../common/page-query.dto';
+import { trim } from '../../common/trim';
 import {
   DEFAULT_DEPARTMENT,
   DEPARTMENTS,
   type Department,
 } from '../departments';
 
-function trim({ value }: { value: unknown }): unknown {
-  return typeof value === 'string' ? value.trim() : value;
-}
-
-export class SearchQueryDto {
+export class SearchQueryDto extends PageQueryDto {
   @Transform(trim)
   @IsString()
   @IsNotEmpty()
@@ -29,11 +24,4 @@ export class SearchQueryDto {
   @IsOptional()
   @IsIn(DEPARTMENTS)
   department: Department = DEFAULT_DEPARTMENT;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @Max(100)
-  page: number = 1;
 }

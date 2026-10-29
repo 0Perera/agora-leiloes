@@ -1,6 +1,6 @@
 import { toHistoryItem } from './bid-history.dto';
 
-describe('toHistoryItem', () => {
+describe('bidHistoryDto.toHistoryItem', () => {
   it('expõe só seq, alias, valor e data', () => {
     const row = {
       seq: 3,

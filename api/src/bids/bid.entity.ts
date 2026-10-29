@@ -29,7 +29,7 @@ export class Bid {
   @Column({ type: 'integer' })
   seq!: number;
 
-  // Lotes comprometidos da carteira filtram por licitante (EXPLAIN na spec da 4.5).
+  // Lotes comprometidos da carteira e meus lances filtram por licitante.
   @Index('bids_user_id')
   @Column({ name: 'user_id', type: 'integer' })
   userId!: number;

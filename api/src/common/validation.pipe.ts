@@ -1,18 +1,11 @@
-import {
-  BadRequestException,
-  ValidationError,
-  ValidationPipe,
-} from '@nestjs/common';
+import { ValidationError, ValidationPipe } from '@nestjs/common';
+import { validationFailed } from './validation-failed';
 
 export function validationPipe(): ValidationPipe {
   return new ValidationPipe({
     whitelist: true,
     transform: true,
-    exceptionFactory: (errors) =>
-      new BadRequestException({
-        code: 'VALIDATION_FAILED',
-        fields: toFields(errors),
-      }),
+    exceptionFactory: (errors) => validationFailed(toFields(errors)),
   });
 }
 

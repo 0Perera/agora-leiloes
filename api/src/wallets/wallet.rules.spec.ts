@@ -1,19 +1,20 @@
 import { DomainException } from '../common/domain.exception';
-import { deposit, MAX_BALANCE, WalletState } from './wallet.rules';
+import { MAX_INT } from '../common/max-int';
+import { deposit, WalletState } from './wallet.rules';
 
-function makeWallet(overrides: Partial<WalletState> = {}): WalletState {
-  return { balance: 5000, committed: 0, ...overrides };
+function makeWallet(override: Partial<WalletState> = {}): WalletState {
+  return { balance: 500_000, committed: 0, ...override };
 }
 
-describe('deposit', () => {
+describe('walletRules.deposit', () => {
   it('soma o valor ao saldo', () => {
-    expect(deposit(makeWallet(), 10000).balance).toBe(15000);
+    expect(deposit(makeWallet(), 100_000).balance).toBe(600_000);
   });
 
   it('aceita saldo exatamente no teto', () => {
-    const wallet = makeWallet({ balance: MAX_BALANCE - 10000 });
+    const wallet = makeWallet({ balance: MAX_INT - 100_000 });
 
-    expect(deposit(wallet, 10000).balance).toBe(MAX_BALANCE);
+    expect(deposit(wallet, 100_000).balance).toBe(MAX_INT);
   });
 
   it('recusa saldo acima do teto', () => {
@@ -25,13 +26,13 @@ describe('deposit', () => {
   });
 
   it('não altera o comprometido', () => {
-    const wallet = makeWallet({ balance: 60000, committed: 50000 });
+    const wallet = makeWallet({ balance: 600_000, committed: 500_000 });
 
-    const result = deposit(wallet, 10000);
+    const result = deposit(wallet, 100_000);
 
-    expect(result.committed).toBe(50000);
+    expect(result.committed).toBe(500_000);
     expect(result.balance - result.committed).toBe(
-      wallet.balance - wallet.committed + 10000,
+      wallet.balance - wallet.committed + 100_000,
     );
   });
 });

@@ -1,18 +1,11 @@
-import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsIn, IsOptional } from 'class-validator';
+import { PageQueryDto } from '../../common/page-query.dto';
 
 export const MY_BIDS_SECTIONS = ['ongoing', 'won', 'lost'] as const;
 export type MyBidsSection = (typeof MY_BIDS_SECTIONS)[number];
 
-export class MyBidsQueryDto {
+export class MyBidsQueryDto extends PageQueryDto {
   @IsOptional()
   @IsIn(MY_BIDS_SECTIONS)
   section: MyBidsSection = 'ongoing';
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @Max(100)
-  page: number = 1;
 }

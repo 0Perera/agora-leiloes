@@ -25,7 +25,7 @@ function endsAtOf(decision: BidDecision): Date {
   return decision.endsAt;
 }
 
-function makeBid(override: Partial<BidState> = {}): BidState {
+function makeState(override: Partial<BidState> = {}): BidState {
   return {
     lot: makeLot(),
     last: null,
@@ -37,10 +37,10 @@ function makeBid(override: Partial<BidState> = {}): BidState {
   };
 }
 
-describe('decide', () => {
+describe('bidRules.decide', () => {
   describe('status do lote', () => {
     it('recusa lance antes do início', () => {
-      const bid = makeBid({ lot: makeLot({ startsAt: at(MINUTE) }) });
+      const bid = makeState({ lot: makeLot({ startsAt: at(MINUTE) }) });
 
       expect(decide(bid)).toMatchObject({
         accepted: false,
@@ -49,26 +49,28 @@ describe('decide', () => {
     });
 
     it('aceita lance no instante exato do início', () => {
-      const bid = makeBid({ lot: makeLot({ startsAt: NOW }) });
+      const bid = makeState({ lot: makeLot({ startsAt: NOW }) });
 
       expect(decide(bid).accepted).toBe(true);
     });
 
     it('recusa lance no instante exato do fim', () => {
-      const bid = makeBid({ lot: makeLot({ endsAt: NOW }) });
+      const bid = makeState({ lot: makeLot({ endsAt: NOW }) });
 
       expect(decide(bid)).toEqual({ accepted: false, code: 'LOT_ENDED' });
     });
 
     it('recusa lance depois do fim', () => {
-      const bid = makeBid({ lot: makeLot({ endsAt: at(-MINUTE) }) });
+      const bid = makeState({ lot: makeLot({ endsAt: at(-MINUTE) }) });
 
       expect(decide(bid)).toEqual({ accepted: false, code: 'LOT_ENDED' });
     });
 
     it('a recusa por lote não iniciado informa o início', () => {
       const startsAt = at(HOUR);
-      const bid = makeBid({ lot: makeLot({ startsAt, endsAt: at(2 * HOUR) }) });
+      const bid = makeState({
+        lot: makeLot({ startsAt, endsAt: at(2 * HOUR) }),
+      });
 
       expect(decide(bid)).toEqual({
         accepted: false,
@@ -78,7 +80,7 @@ describe('decide', () => {
     });
 
     it('recusa por status antes de checar a liderança', () => {
-      const bid = makeBid({
+      const bid = makeState({
         lot: makeLot({ endsAt: at(-MINUTE) }),
         last: { userId: BIDDER, amount: 10_000 },
         amount: 11_000,
@@ -88,7 +90,7 @@ describe('decide', () => {
     });
 
     it('recusa por status antes de checar o valor', () => {
-      const bid = makeBid({
+      const bid = makeState({
         lot: makeLot({ endsAt: at(-MINUTE) }),
         amount: 9_000,
       });
@@ -99,7 +101,7 @@ describe('decide', () => {
 
   describe('líder', () => {
     it('recusa lance de quem já lidera', () => {
-      const bid = makeBid({
+      const bid = makeState({
         last: { userId: BIDDER, amount: 10_000 },
         amount: 11_000,
       });
@@ -108,7 +110,7 @@ describe('decide', () => {
     });
 
     it('aceita lance de quem foi superado', () => {
-      const bid = makeBid({
+      const bid = makeState({
         last: { userId: RIVAL, amount: 10_000 },
         amount: 11_000,
       });
@@ -117,7 +119,7 @@ describe('decide', () => {
     });
 
     it('recusa por liderança antes de checar o valor', () => {
-      const bid = makeBid({
+      const bid = makeState({
         last: { userId: BIDDER, amount: 10_000 },
         amount: 10_500,
       });
@@ -128,13 +130,13 @@ describe('decide', () => {
 
   describe('valor', () => {
     it('aceita primeiro lance igual ao lance inicial', () => {
-      const bid = makeBid({ amount: 10_000 });
+      const bid = makeState({ amount: 10_000 });
 
       expect(decide(bid).accepted).toBe(true);
     });
 
     it('recusa primeiro lance abaixo do lance inicial', () => {
-      const bid = makeBid({ amount: 9_999 });
+      const bid = makeState({ amount: 9_999 });
 
       expect(decide(bid)).toMatchObject({
         accepted: false,
@@ -143,7 +145,7 @@ describe('decide', () => {
     });
 
     it('aceita lance seguinte igual ao atual mais o incremento', () => {
-      const bid = makeBid({
+      const bid = makeState({
         last: { userId: RIVAL, amount: 10_000 },
         amount: 11_000,
       });
@@ -152,7 +154,7 @@ describe('decide', () => {
     });
 
     it('recusa lance seguinte abaixo do atual mais o incremento', () => {
-      const bid = makeBid({
+      const bid = makeState({
         last: { userId: RIVAL, amount: 10_000 },
         amount: 10_999,
       });
@@ -164,7 +166,7 @@ describe('decide', () => {
     });
 
     it('informa o mínimo aceito na recusa por valor', () => {
-      const bid = makeBid({
+      const bid = makeState({
         last: { userId: RIVAL, amount: 10_000 },
         amount: 10_500,
       });
@@ -179,7 +181,7 @@ describe('decide', () => {
 
   describe('saldo', () => {
     it('recusa lance acima do disponível', () => {
-      const bid = makeBid({ available: 9_999, amount: 10_000 });
+      const bid = makeState({ available: 9_999, amount: 10_000 });
 
       expect(decide(bid)).toMatchObject({
         accepted: false,
@@ -188,13 +190,13 @@ describe('decide', () => {
     });
 
     it('aceita lance igual ao disponível', () => {
-      const bid = makeBid({ available: 10_000, amount: 10_000 });
+      const bid = makeState({ available: 10_000, amount: 10_000 });
 
       expect(decide(bid).accepted).toBe(true);
     });
 
     it('recusa por status antes de checar o saldo', () => {
-      const bid = makeBid({
+      const bid = makeState({
         lot: makeLot({ endsAt: at(-MINUTE) }),
         available: 0,
       });
@@ -203,7 +205,7 @@ describe('decide', () => {
     });
 
     it('recusa por valor antes de checar o saldo', () => {
-      const bid = makeBid({ available: 0, amount: 9_000 });
+      const bid = makeState({ available: 0, amount: 9_000 });
 
       expect(decide(bid)).toEqual({
         accepted: false,
@@ -213,7 +215,7 @@ describe('decide', () => {
     });
 
     it('a recusa por saldo informa o disponível', () => {
-      const bid = makeBid({ available: 5_000, amount: 10_000 });
+      const bid = makeState({ available: 5_000, amount: 10_000 });
 
       expect(decide(bid)).toEqual({
         accepted: false,
@@ -225,7 +227,7 @@ describe('decide', () => {
 
   describe('saldo comprometido', () => {
     it('compromete o valor do lance na carteira do novo líder', () => {
-      const bid = makeBid({
+      const bid = makeState({
         last: { userId: RIVAL, amount: 10_000 },
         amount: 11_000,
       });
@@ -236,7 +238,7 @@ describe('decide', () => {
     });
 
     it('libera o valor do líder anterior', () => {
-      const bid = makeBid({
+      const bid = makeState({
         last: { userId: RIVAL, amount: 10_000 },
         amount: 11_000,
       });
@@ -247,13 +249,13 @@ describe('decide', () => {
     });
 
     it('primeiro lance não libera saldo de ninguém', () => {
-      const bid = makeBid({ amount: 10_000 });
+      const bid = makeState({ amount: 10_000 });
 
       expect(decide(bid)).toMatchObject({ accepted: true, release: null });
     });
 
     it('compromete o valor cheio do novo lance de quem foi superado e volta, não a diferença', () => {
-      const bid = makeBid({
+      const bid = makeState({
         last: { userId: RIVAL, amount: 11_000 },
         amount: 12_000,
       });
@@ -266,28 +268,28 @@ describe('decide', () => {
 
   describe('anti-sniping', () => {
     it('prorroga 2 min quando faltam exatamente 2 min', () => {
-      const bid = makeBid({ lot: makeLot({ endsAt: at(2 * MINUTE) }) });
+      const bid = makeState({ lot: makeLot({ endsAt: at(2 * MINUTE) }) });
 
       expect(decide(bid)).toMatchObject({ endsAt: at(4 * MINUTE) });
     });
 
     it('prorroga somando ao fim atual, não ao horário do lance', () => {
-      const bid = makeBid({ lot: makeLot({ endsAt: at(30_000) }) });
+      const bid = makeState({ lot: makeLot({ endsAt: at(30_000) }) });
 
       expect(decide(bid)).toMatchObject({ endsAt: at(30_000 + 2 * MINUTE) });
     });
 
     it('não prorroga quando faltam mais de 2 min', () => {
       const endsAt = at(2 * MINUTE + 1);
-      const bid = makeBid({ lot: makeLot({ endsAt }) });
+      const bid = makeState({ lot: makeLot({ endsAt }) });
 
       expect(decide(bid)).toMatchObject({ endsAt });
     });
 
     it('acumula prorrogação sobre um fim já prorrogado', () => {
-      const first = makeBid({ lot: makeLot({ endsAt: at(MINUTE) }) });
+      const first = makeState({ lot: makeLot({ endsAt: at(MINUTE) }) });
       const extended = endsAtOf(decide(first));
-      const second = makeBid({
+      const second = makeState({
         lot: makeLot({ endsAt: extended }),
         last: { userId: BIDDER, amount: 10_000 },
         userId: RIVAL,
@@ -299,7 +301,7 @@ describe('decide', () => {
     });
 
     it('lance recusado não prorroga', () => {
-      const bid = makeBid({
+      const bid = makeState({
         lot: makeLot({ endsAt: at(MINUTE) }),
         amount: 9_000,
       });

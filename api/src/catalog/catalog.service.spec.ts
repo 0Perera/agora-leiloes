@@ -7,7 +7,7 @@ const TTL_MS = 10 * 60 * 1000;
 
 class FakeCleveland {
   calls: ClevelandSearch[] = [];
-  failure: Error | null = null;
+  failure: DomainException | null = null;
 
   search(search: ClevelandSearch): Promise<unknown> {
     this.calls.push(search);
@@ -55,7 +55,7 @@ describe('CatalogService.search', () => {
 
     await service.search(makeSearch({ q: 'portrait' }));
     clock.now = TTL_MS - 1;
-    await service.search(makeSearch({ q: '  PORTRAIT ' }));
+    await service.search(makeSearch({ q: 'PORTRAIT' }));
 
     expect(client.calls).toHaveLength(1);
   });
@@ -70,9 +70,9 @@ describe('CatalogService.search', () => {
     expect(client.calls).toHaveLength(2);
   });
 
-  it('converte falha do client em CATALOG_UNAVAILABLE', async () => {
+  it('repassa o CATALOG_UNAVAILABLE do client', async () => {
     const { service, client } = makeService();
-    client.failure = new Error('network down');
+    client.failure = new DomainException('CATALOG_UNAVAILABLE');
 
     await expect(service.search(makeSearch())).rejects.toThrow(
       new DomainException('CATALOG_UNAVAILABLE'),
@@ -81,7 +81,7 @@ describe('CatalogService.search', () => {
 
   it('não guarda falha no cache', async () => {
     const { service, client } = makeService();
-    client.failure = new Error('network down');
+    client.failure = new DomainException('CATALOG_UNAVAILABLE');
     await expect(service.search(makeSearch())).rejects.toThrow();
 
     client.failure = null;

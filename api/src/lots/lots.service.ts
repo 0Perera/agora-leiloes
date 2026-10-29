@@ -1,15 +1,9 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   DataSource,
   EntityManager,
-  QueryFailedError,
   FindOptionsOrder,
   FindOptionsWhere,
   IsNull,
@@ -27,29 +21,30 @@ import { CatalogService } from '../catalog/catalog.service';
 import type { ImageFile } from '../catalog/cleveland.client';
 import type { AuthUser } from '../common/auth.guard';
 import { Clock } from '../common/clock';
+import { errorMessage } from '../common/error-message';
+import { validationFailed } from '../common/validation-failed';
 import { Env } from '../config/env.validation';
 import { Receipt } from '../receipts/receipt.entity';
 import { SettlementService } from '../settlement/settlement.service';
 import { SettlementTimer } from '../settlement/settlement.timer';
 import { CreateLotDto } from './dto/create-lot.dto';
 import { ListLotsQueryDto } from './dto/list-lots-query.dto';
-import {
-  LotCardDto,
-  LotStatus,
-  toLotCard,
-  type CardFields,
-} from './dto/lot-card.dto';
+import { LotCardDto, toLotCard, type CardFields } from './dto/lot-card.dto';
 import {
   LotDetailDto,
   LotResultDto,
   LotViewerDto,
   toLotDetail,
 } from './dto/lot-detail.dto';
-import type { CreatedLot } from './dto/lot-response.dto';
+import {
+  CreatedLotDto,
+  toCreatedLot,
+  type CreatedLotFields,
+} from './dto/created-lot.dto';
 import type { LotIdDto } from './dto/lot-id.dto';
 import { LotCountsDto, LotShowcaseDto } from './dto/lot-showcase.dto';
 import { LotImage } from './lot-image.entity';
-import { STATUS_SQL, STATUS_WHERE } from './lot-status';
+import { LotStatus, STATUS_SQL, STATUS_WHERE } from './lot-status';
 import { Lot } from './lot.entity';
 import {
   assertAvailable,
@@ -204,13 +199,16 @@ export class LotsService {
     return { id: lot.id };
   }
 
-  async create(auctioneerId: number, dto: CreateLotDto): Promise<CreatedLot> {
+  async create(
+    auctioneerId: number,
+    dto: CreateLotDto,
+  ): Promise<CreatedLotDto> {
     const conditions = toConditions(dto);
     const fields = scheduleErrors(conditions, this.clock.now());
-    if (Object.keys(fields).length > 0) throw invalid(fields);
+    if (Object.keys(fields).length > 0) throw validationFailed(fields);
 
     const artwork = await this.catalog.find(dto.artworkId);
-    if (!artwork) throw invalid({ artworkId: 'notFound' });
+    if (!artwork) throw validationFailed({ artworkId: 'notFound' });
     // Download fora da transação: nada de rede com transação aberta.
     const image = await this.catalog.image(artwork.imageUrl);
 
@@ -218,7 +216,7 @@ export class LotsService {
       this.insert(manager, { auctioneerId, artwork, conditions, image }),
     );
     this.timer.refresh();
-    return created;
+    return toCreatedLot(created);
   }
 
   // Lote alheio, inexistente ou já cancelado dá o mesmo 404: não revela que o lote existe.
@@ -276,7 +274,7 @@ export class LotsService {
     try {
       await this.settlement.settle(id);
     } catch (error) {
-      this.logger.error(`lot ${id} not settled: ${failure(error)}`);
+      this.logger.error(`lot ${id} not settled: ${errorMessage(error)}`);
     }
   }
 
@@ -336,7 +334,7 @@ export class LotsService {
       conditions: Conditions;
       image: ImageFile;
     },
-  ): Promise<CreatedLot> {
+  ): Promise<CreatedLotFields> {
     const { auctioneerId, artwork, conditions, image } = draft;
     // Serializa criações da mesma peça: sem o lock, duas checagens simultâneas passariam juntas.
     await manager.query('SELECT pg_advisory_xact_lock($1)', [artwork.id]);
@@ -357,7 +355,6 @@ export class LotsService {
     const id = Number(result.identifiers[0].id);
     const generated: unknown = result.generatedMaps[0]?.number;
     if (typeof generated !== 'number') throw new Error('lot number missing');
-    // Selo vazio desde a criação: selo nulo só existe em lote anterior à 4.3 (D-058).
     const seal = sealLot(this.secret, {
       lotId: id,
       count: 0,
@@ -420,20 +417,7 @@ function toSnapshot(artwork: ArtworkDetail) {
   };
 }
 
-function invalid(fields: Record<string, string>): BadRequestException {
-  return new BadRequestException({ code: 'VALIDATION_FAILED', fields });
-}
-
 function toResult({ lot, raw }: DetailRow): LotResultDto | null {
   if (lot.settledAt === null) return null;
   return { alias: raw.receiptAlias, amount: raw.receiptAmount };
-}
-
-// Só a mensagem do driver: a exceção inteira traria os parâmetros da query.
-function failure(error: unknown): string {
-  if (error instanceof QueryFailedError) {
-    const driverError: unknown = error.driverError;
-    return driverError instanceof Error ? driverError.message : 'unknown';
-  }
-  return error instanceof Error ? error.message : 'unknown';
 }

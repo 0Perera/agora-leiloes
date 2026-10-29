@@ -5,6 +5,7 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { Clock } from '../common/clock';
+import { errorMessage } from '../common/error-message';
 import { SettlementService } from './settlement.service';
 
 // Maior atraso aceito pelo setTimeout; acima disso o Node dispara na hora.
@@ -52,7 +53,7 @@ export class SettlementTimer
       const ids = await this.settlement.due(now);
       for (const id of ids) await this.settle(id);
     } catch (error) {
-      this.logger.error(`due lots lookup failed: ${reason(error)}`);
+      this.logger.error(`due lots lookup failed: ${errorMessage(error)}`);
     }
     // Mesmo instante do due: lote que encerrou durante o laço não some entre as duas consultas.
     await this.schedule(now);
@@ -62,7 +63,7 @@ export class SettlementTimer
     try {
       await this.settlement.settle(id);
     } catch (error) {
-      this.logger.error(`lot ${id} settlement failed: ${reason(error)}`);
+      this.logger.error(`lot ${id} settlement failed: ${errorMessage(error)}`);
     }
   }
 
@@ -77,7 +78,7 @@ export class SettlementTimer
       this.cancelRetry();
       this.arm(next);
     } catch (error) {
-      this.logger.error(`next lot lookup failed: ${reason(error)}`);
+      this.logger.error(`next lot lookup failed: ${errorMessage(error)}`);
       if (generation === this.generation) this.retryLater();
     }
   }
@@ -113,8 +114,4 @@ export class SettlementTimer
     this.handle = null;
     this.target = null;
   }
-}
-
-function reason(error: unknown): string {
-  return error instanceof Error ? error.message : 'unknown';
 }

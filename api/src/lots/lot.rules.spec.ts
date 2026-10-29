@@ -19,15 +19,15 @@ function makeSchedule(override: Partial<Schedule> = {}): Schedule {
   return { startsAt: at(HOUR), endsAt: at(2 * HOUR), ...override };
 }
 
-function makeLot(override: Partial<ListedLot> = {}): ListedLot {
+function makeListed(override: Partial<ListedLot> = {}): ListedLot {
   return { cancelledAt: null, endsAt: at(HOUR), ...override };
 }
 
-function makeCancel(override: Partial<CancelState> = {}): CancelState {
+function makeCancelState(override: Partial<CancelState> = {}): CancelState {
   return { endsAt: at(2 * HOUR), hasBids: false, ...override };
 }
 
-describe('scheduleErrors', () => {
+describe('lotRules.scheduleErrors', () => {
   it('recusa início mais de 1 min no passado', () => {
     expect(
       scheduleErrors(makeSchedule({ startsAt: at(-61_000) }), NOW),
@@ -62,39 +62,39 @@ describe('scheduleErrors', () => {
   });
 });
 
-describe('assertAvailable', () => {
+describe('lotRules.assertAvailable', () => {
   it('recusa peça em lote agendado ou ao vivo', () => {
-    expect(() => assertAvailable([makeLot()], NOW)).toThrow(
+    expect(() => assertAvailable([makeListed()], NOW)).toThrow(
       new DomainException('ARTWORK_ALREADY_LISTED'),
     );
   });
 
   it('aceita peça de lote cancelado', () => {
-    const lot = makeLot({ cancelledAt: at(-HOUR) });
+    const lot = makeListed({ cancelledAt: at(-HOUR) });
 
     expect(() => assertAvailable([lot], NOW)).not.toThrow();
   });
 
   it('aceita peça de lote encerrado', () => {
-    const lot = makeLot({ endsAt: NOW });
+    const lot = makeListed({ endsAt: NOW });
 
     expect(() => assertAvailable([lot], NOW)).not.toThrow();
   });
 });
 
-describe('assertCancellable', () => {
+describe('lotRules.assertCancellable', () => {
   it('aceita lote agendado sem lances', () => {
-    expect(() => assertCancellable(makeCancel(), NOW)).not.toThrow();
+    expect(() => assertCancellable(makeCancelState(), NOW)).not.toThrow();
   });
 
   it('aceita lote ao vivo sem lances', () => {
-    const lot = makeCancel({ endsAt: at(60_000) });
+    const lot = makeCancelState({ endsAt: at(60_000) });
 
     expect(() => assertCancellable(lot, NOW)).not.toThrow();
   });
 
   it('recusa lote com lance com LOT_HAS_BIDS', () => {
-    const lot = makeCancel({ hasBids: true });
+    const lot = makeCancelState({ hasBids: true });
 
     expect(() => assertCancellable(lot, NOW)).toThrow(
       new DomainException('LOT_HAS_BIDS'),
@@ -102,7 +102,7 @@ describe('assertCancellable', () => {
   });
 
   it('recusa lote encerrado com LOT_ENDED', () => {
-    const lot = makeCancel({ endsAt: NOW });
+    const lot = makeCancelState({ endsAt: NOW });
 
     expect(() => assertCancellable(lot, NOW)).toThrow(
       new DomainException('LOT_ENDED'),
@@ -110,7 +110,7 @@ describe('assertCancellable', () => {
   });
 
   it('lote encerrado com lance recusa com LOT_ENDED', () => {
-    const lot = makeCancel({ endsAt: at(-HOUR), hasBids: true });
+    const lot = makeCancelState({ endsAt: at(-HOUR), hasBids: true });
 
     expect(() => assertCancellable(lot, NOW)).toThrow(
       new DomainException('LOT_ENDED'),

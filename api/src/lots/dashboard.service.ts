@@ -2,24 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Clock } from '../common/clock';
-import { BookCountsDto, DashboardBookDto } from './dto/dashboard-book.dto';
+import { DashboardCountsDto, DashboardPageDto } from './dto/dashboard-page.dto';
 import { Receipt } from '../receipts/receipt.entity';
 import {
-  BookResultDto,
-  BookStatus,
+  DashboardResultDto,
+  DashboardStatus,
   DashboardLotDto,
   toDashboardLot,
 } from './dto/dashboard-lot.dto';
-import { BookFilter, DashboardQueryDto } from './dto/dashboard-query.dto';
+import { DashboardFilter, DashboardQueryDto } from './dto/dashboard-query.dto';
 import { DashboardSummaryDto } from './dto/dashboard-summary.dto';
 import { Lot } from './lot.entity';
 import { STATUS_SQL, STATUS_WHERE } from './lot-status';
 
 const PAGE_SIZE = 20;
 
-const BOOK_SQL = `CASE WHEN lot.cancelledAt IS NOT NULL THEN 'cancelled' ELSE ${STATUS_SQL} END`;
+const DASHBOARD_SQL = `CASE WHEN lot.cancelledAt IS NOT NULL THEN 'cancelled' ELSE ${STATUS_SQL} END`;
 
-const BOOK_WHERE: Record<BookFilter, string> = {
+const DASHBOARD_WHERE: Record<DashboardFilter, string> = {
   all: 'TRUE',
   live: `lot.cancelledAt IS NULL AND ${STATUS_WHERE.live}`,
   scheduled: `lot.cancelledAt IS NULL AND ${STATUS_WHERE.scheduled}`,
@@ -27,7 +27,7 @@ const BOOK_WHERE: Record<BookFilter, string> = {
   cancelled: 'lot.cancelledAt IS NOT NULL',
 };
 
-const BOOK_COLUMNS = [
+const DASHBOARD_COLUMNS = [
   'id',
   'number',
   'title',
@@ -40,8 +40,8 @@ const BOOK_COLUMNS = [
   'settledAt',
 ] as const;
 
-type BookRaw = {
-  status: BookStatus;
+type DashboardRaw = {
+  status: DashboardStatus;
   receiptAlias: string | null;
   receiptAmount: number | null;
   receiptToken: string | null;
@@ -74,23 +74,23 @@ export class DashboardService {
     @InjectRepository(Lot) private readonly lots: Repository<Lot>,
   ) {}
 
-  async book(
+  async list(
     auctioneerId: number,
     query: DashboardQueryDto,
-  ): Promise<DashboardBookDto> {
+  ): Promise<DashboardPageDto> {
     const now = this.clock.now();
     const { entities, raw } = await this.own(auctioneerId, now)
-      .select(BOOK_COLUMNS.map((column) => `lot.${column}`))
-      .addSelect(BOOK_SQL, 'status')
+      .select(DASHBOARD_COLUMNS.map((column) => `lot.${column}`))
+      .addSelect(DASHBOARD_SQL, 'status')
       .leftJoin(Receipt, 'receipt', 'receipt.lotId = lot.id')
       .addSelect('receipt.alias', 'receiptAlias')
       .addSelect('receipt.amount', 'receiptAmount')
       .addSelect('receipt.token', 'receiptToken')
-      .andWhere(BOOK_WHERE[query.status])
+      .andWhere(DASHBOARD_WHERE[query.status])
       .orderBy('lot.number', 'DESC')
       .offset((query.page - 1) * PAGE_SIZE)
       .limit(PAGE_SIZE)
-      .getRawAndEntities<BookRaw>();
+      .getRawAndEntities<DashboardRaw>();
     const counts = await this.counts(auctioneerId, now);
     const items: DashboardLotDto[] = entities.map((lot, index) =>
       toDashboardLot(lot, raw[index].status, toResult(lot, raw[index])),
@@ -137,15 +137,15 @@ export class DashboardService {
   private async counts(
     auctioneerId: number,
     now: Date,
-  ): Promise<BookCountsDto> {
+  ): Promise<DashboardCountsDto> {
     const builder = this.own(auctioneerId, now).select('COUNT(*)::int', 'all');
     for (const status of ['live', 'scheduled', 'ended', 'cancelled'] as const) {
       builder.addSelect(
-        `COUNT(*) FILTER (WHERE ${BOOK_WHERE[status]})::int`,
+        `COUNT(*) FILTER (WHERE ${DASHBOARD_WHERE[status]})::int`,
         status,
       );
     }
-    const row = await builder.getRawOne<BookCountsDto>();
+    const row = await builder.getRawOne<DashboardCountsDto>();
     return row ?? { all: 0, live: 0, scheduled: 0, ended: 0, cancelled: 0 };
   }
 
@@ -173,8 +173,8 @@ function toSummary(row: SummaryRow = EMPTY_SUMMARY): DashboardSummaryDto {
 // Nulo enquanto não liquidado; liquidado sem lances não tem comprovante e sai com nulos.
 function toResult(
   lot: Pick<Lot, 'settledAt'>,
-  raw: BookRaw,
-): BookResultDto | null {
+  raw: DashboardRaw,
+): DashboardResultDto | null {
   if (lot.settledAt === null) return null;
   return {
     alias: raw.receiptAlias,

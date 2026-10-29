@@ -1,4 +1,4 @@
-import type { WalletState } from '../wallet.rules';
+import { available, type WalletState } from '../wallet.rules';
 import { CommittedLotDto } from './committed-lot.dto';
 
 export class WalletResponseDto {
@@ -18,7 +18,7 @@ export function toWalletResponse(wallet: WalletState): WalletResponseDto {
   return {
     balance: wallet.balance,
     committed: wallet.committed,
-    available: wallet.balance - wallet.committed,
+    available: available(wallet),
   };
 }
 

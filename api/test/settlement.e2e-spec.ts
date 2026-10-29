@@ -5,17 +5,16 @@ import {
   type Account,
   at,
   BASE,
+  DEPOSIT,
   eventually,
+  INCREMENT,
   lockLot,
   start,
+  STARTING_BID,
   type Stream,
   type TestApp,
   waitForLockWaiters,
 } from './app';
-
-const STARTING_BID = 100_000;
-const INCREMENT = 5_000;
-const DEPOSIT = 1_000_000;
 
 type WalletRow = { userId: number; balance: number; committed: number };
 
@@ -99,7 +98,7 @@ function expectSold(rows: WalletRow[], amount: number): void {
   ]);
 }
 
-describe('liquidação pelo acesso ao lote', () => {
+describe('GET /lots/:id liquidando o lote vencido', () => {
   it('dois acessos simultâneos liquidam o lote uma vez só', async () => {
     await api.bid(bidder, lotId, STARTING_BID).expect(201);
     end();
@@ -208,7 +207,7 @@ describe('liquidação pelo acesso ao lote', () => {
   });
 });
 
-describe('acesso que não liquida o lote', () => {
+describe('GET /lots/:id sem liquidar o lote', () => {
   it('falha na liquidação não derruba o acesso ao lote', async () => {
     await api.bid(bidder, lotId, STARTING_BID).expect(201);
     await api.db.query(

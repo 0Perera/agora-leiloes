@@ -1,9 +1,10 @@
 import { IsInt, IsISO8601, Max, Min } from 'class-validator';
+import { MAX_INT } from '../../common/max-int';
 
 export class CreateLotDto {
   @IsInt()
   @Min(1)
-  @Max(2_147_483_647)
+  @Max(MAX_INT)
   artworkId!: number;
 
   @IsInt()

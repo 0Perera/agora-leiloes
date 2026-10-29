@@ -1,8 +1,8 @@
 import {
   type ReceiptFields,
-  verify as verifyReceipt,
+  verifyReceipt,
 } from '../receipts/receipt.signature';
-import { sign } from './sign';
+import { sign } from '../common/sign';
 
 export const GENESIS = '0'.repeat(64);
 

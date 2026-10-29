@@ -1,5 +1,5 @@
 import type { Lot } from '../lot.entity';
-import type { LotStatus } from './lot-card.dto';
+import type { LotStatus } from '../lot-status';
 
 export type DetailFields = Pick<
   Lot,

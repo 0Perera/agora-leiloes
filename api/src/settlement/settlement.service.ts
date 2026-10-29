@@ -11,18 +11,16 @@ import {
 } from 'typeorm';
 import { forLot } from '../audit/alias';
 import { expectedSeal } from '../audit/chain';
-import { Bid } from '../bids/bid.entity';
+import { LastBid, lastBid } from '../bids/last-bid';
 import { Clock } from '../common/clock';
 import { Env } from '../config/env.validation';
 import { SettledEventDto } from '../lots/dto/settled-event.dto';
 import { LotEventsService } from '../lots/lot-events.service';
 import { Lot } from '../lots/lot.entity';
 import { Receipt } from '../receipts/receipt.entity';
-import { sign } from '../receipts/receipt.signature';
+import { signReceipt } from '../receipts/receipt.signature';
 import { lockWallets, walletOf } from '../wallets/wallet.lock';
 import { decide, WalletMove } from './settlement.rules';
-
-type LastBid = Pick<Bid, 'seq' | 'userId' | 'amount' | 'hash'>;
 
 const OPEN = { cancelledAt: IsNull(), settledAt: IsNull() };
 
@@ -42,7 +40,7 @@ export class SettlementService {
     this.secret = config.get('BID_HMAC_SECRET', { infer: true });
   }
 
-  // Sem retorno nem erro de regra: também roda fora de HTTP (timer da 5.3, seed da 6.1).
+  // Sem retorno nem erro de regra: também roda fora de HTTP (timer e seed).
   async settle(lotId: number): Promise<void> {
     const result = await this.transact(lotId).catch(ignoreDuplicate);
     // Fora da transação: evento só depois do commit, nunca de liquidação revertida.
@@ -73,6 +71,7 @@ export class SettlementService {
       if (!lot) return null;
       // Lida depois do lock: é o settled_at e entra na assinatura (D-056).
       const now = this.clock.now();
+      // Vencedor e valor do último lance da cadeia: ver D-042.
       const last = await lastBid(manager, lotId);
       const decision = decide({ lot, last, now });
       if (!decision.settle) return null;
@@ -108,7 +107,7 @@ export class SettlementService {
       ...receipt,
       winnerUserId: last.userId,
       token: randomBytes(32).toString('base64url'),
-      signature: sign(this.secret, receipt),
+      signature: signReceipt(this.secret, receipt),
     });
     return { alias: receipt.alias, amount: receipt.amount };
   }
@@ -127,15 +126,6 @@ function lockLot(manager: EntityManager, id: number) {
     },
     where: { id },
     lock: { mode: 'pessimistic_write' },
-  });
-}
-
-// Vencedor e valor do último lance da cadeia, nunca de current_bid (D-042).
-function lastBid(manager: EntityManager, lotId: number) {
-  return manager.getRepository(Bid).findOne({
-    select: { seq: true, userId: true, amount: true, hash: true },
-    where: { lotId },
-    order: { seq: 'DESC' },
   });
 }
 
