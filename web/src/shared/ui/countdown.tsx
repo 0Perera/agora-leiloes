@@ -1,4 +1,11 @@
 import { splitLeft } from '../lib/countdown';
+import type { LeftUnit } from '../lib/countdown';
+
+const labels: Record<LeftUnit, [string, string]> = {
+  days: ['Dias', 'H'],
+  hours: ['Horas', 'Min'],
+  minutes: ['Min', 'Seg'],
+};
 
 type Props = {
   seconds: number;
@@ -7,7 +14,8 @@ type Props = {
 };
 
 export function Countdown({ seconds, urgent, place }: Props) {
-  const { first, second, inHours } = splitLeft(seconds);
+  const { first, second, unit } = splitLeft(seconds);
+  const [firstLabel, secondLabel] = labels[unit];
 
   return (
     <div
@@ -16,9 +24,9 @@ export function Countdown({ seconds, urgent, place }: Props) {
       aria-label="Tempo restante do lote"
     >
       <div className="ag-countdown__units">
-        <Unit value={first} label={inHours ? 'Horas' : 'Min'} place={place} />
+        <Unit value={first} label={firstLabel} place={place} />
         <span className={`ag-countdown__sep ${place}-countdown__sep`}>:</span>
-        <Unit value={second} label={inHours ? 'Min' : 'Seg'} place={place} />
+        <Unit value={second} label={secondLabel} place={place} />
       </div>
     </div>
   );
